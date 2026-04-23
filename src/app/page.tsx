@@ -55,6 +55,9 @@ export default function Home() {
               <p className="text-primary-dark/80 font-medium text-lg">
                 Abrimos 2 sábados al mes • 11:00 AM • Gamero 2670, Independencia
               </p>
+              <p className="font-medium text-primary-dark/70">
+                Próximas fechas: 9 y 23 de mayo
+              </p>
             </div>
           </div>
           <Link
