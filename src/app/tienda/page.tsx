@@ -1,6 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+
+function normalizarNombre(nombre: string): string {
+  return nombre
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function ImagenProducto({ nombre }: { nombre: string }) {
+  const [error, setError] = useState(false);
+  const src = `/images/productos/${normalizarNombre(nombre)}.jpg`;
+
+  if (error) {
+    return (
+      <div className="w-full aspect-square bg-gray-100 flex items-center justify-center rounded-t-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-gray-300">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full aspect-square relative rounded-t-lg overflow-hidden">
+      <Image
+        src={src}
+        alt={nombre}
+        fill
+        className="object-cover"
+        onError={() => setError(true)}
+        sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+      />
+    </div>
+  );
+}
 
 const WA_NUMBER = '56950807172';
 
@@ -330,7 +368,9 @@ export default function TiendaPage() {
                 {productosFiltrados.map((producto) => {
                   const cantidad = cantidadEnCarrito(producto.id);
                   return (
-                    <div key={producto.id} className="bg-white rounded-xl shadow-sm p-2 md:p-4 flex flex-col gap-2">
+                    <div key={producto.id} className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col gap-2">
+                      <ImagenProducto nombre={producto.nombre} />
+                      <div className="px-2 md:px-4 pb-2 md:pb-4 flex flex-col gap-2 flex-1">
                       <h3 className="text-xs md:text-sm font-semibold text-primary-dark leading-tight">
                         {producto.nombre}
                       </h3>
@@ -363,6 +403,7 @@ export default function TiendaPage() {
                           </button>
                         </div>
                       )}
+                      </div>
                     </div>
                   );
                 })}
