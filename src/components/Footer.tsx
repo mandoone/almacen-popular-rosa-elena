@@ -7,13 +7,13 @@ export default function Footer() {
     <footer className="bg-primary-dark text-white pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         {/* Logo */}
-        <div className="relative w-12 h-12 mb-4">
+        <div className="relative w-20 h-20 mb-4">
           <Image
             src="/images/logo.png"
             alt="Logo Almacén Popular Rosa Elena Morales Morales"
             fill
             className="object-contain"
-            sizes="48px"
+            sizes="80px"
           />
         </div>
 
@@ -38,14 +38,14 @@ export default function Footer() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <a href="mailto:almacenpopular.rosaelenamorarles@gmail.com" className="hover:text-primary-light transition-colors">
+            <a href="mailto:almacenpopular.rosaelenamorarles@gmail.com" className="hover:text-primary-light transition-colors text-sm break-all">
               almacenpopular.rosaelenamorarles@gmail.com
             </a>
           </div>
         </div>
 
         {/* Social Links */}
-        <div className="flex justify-center gap-8 mb-10">
+        <div className="flex flex-col items-center gap-4 mb-10">
           <a
             href="https://wa.me/56950807172"
             target="_blank"
