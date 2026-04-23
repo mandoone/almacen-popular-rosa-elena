@@ -109,7 +109,7 @@ export default function RosaElenaPage() {
       <section className="bg-primary-dark py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
         <div className="max-w-4xl mx-auto">
           <blockquote className="font-serif text-2xl sm:text-3xl text-white italic leading-snug mb-8">
-            "En su figura homenajeamos a las mujeres de nuestra población, quienes históricamente han asumido la tarea de cuidados y abastecimiento del hogar."
+            &ldquo;En su figura homenajeamos a las mujeres de nuestra población, quienes históricamente han asumido la tarea de cuidados y abastecimiento del hogar.&rdquo;
           </blockquote>
           <p className="text-primary-light text-lg font-medium tracking-wide">
             — Almacén Popular Rosa Elena Morales Morales, agosto 2020

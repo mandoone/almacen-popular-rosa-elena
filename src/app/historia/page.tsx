@@ -102,7 +102,7 @@ export default function HistoriaPage() {
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <blockquote className="border-l-4 border-primary pl-6 text-gray-700 italic text-lg leading-relaxed mb-4">
-            "Hace un tiempo con nuestrxs compañerxs quisimos dar un giro a lo que era la red de abastecimiento y llegamos a la idea que hoy en día está en funcionamiento. Queremos agradecer a todas las personas que estuvieron con nosotrxs en la inauguración del Almacén Popular Rosa Elena Morales Morales."
+            &ldquo;Hace un tiempo con nuestrxs compañerxs quisimos dar un giro a lo que era la red de abastecimiento y llegamos a la idea que hoy en día está en funcionamiento. Queremos agradecer a todas las personas que estuvieron con nosotrxs en la inauguración del Almacén Popular Rosa Elena Morales Morales.&rdquo;
           </blockquote>
           <p className="text-gray-500 text-sm pl-6">
             — Publicación Instagram, inauguración del almacén

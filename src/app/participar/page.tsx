@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const formas = [
   {
     title: "Turnos de atención",
