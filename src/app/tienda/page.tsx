@@ -252,10 +252,10 @@ export default function TiendaPage() {
     <div className="flex flex-col w-full">
       {/* HERO */}
       <section className="bg-primary-dark text-white py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="font-serif font-bold text-white text-4xl sm:text-5xl mb-4">
+        <h1 className="font-serif font-bold text-white text-2xl md:text-4xl mb-4">
           Productos disponibles
         </h1>
-        <p className="text-primary-light text-lg">
+        <p className="text-primary-light text-sm md:text-lg">
           Precios al costo • Sin fines de lucro • Retiro en Gamero 2670, Independencia
         </p>
       </section>
@@ -296,21 +296,21 @@ export default function TiendaPage() {
             )}
 
             {!loading && !error && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 px-2">
                 {productos.map((producto) => {
                   const cantidad = cantidadEnCarrito(producto.id);
                   return (
-                    <div key={producto.id} className="bg-white rounded-xl shadow-sm p-6 flex flex-col gap-3">
-                      <h3 className="font-semibold text-primary-dark text-lg leading-snug">
+                    <div key={producto.id} className="bg-white rounded-xl shadow-sm p-2 md:p-4 flex flex-col gap-2">
+                      <h3 className="text-xs md:text-sm font-semibold text-primary-dark leading-tight">
                         {producto.nombre}
                       </h3>
-                      <p className="font-bold text-2xl text-primary">
+                      <p className="font-bold text-sm md:text-lg text-primary">
                         {formatPrecio(producto.precio)}
                       </p>
                       {cantidad === 0 ? (
                         <button
                           onClick={() => agregar(producto)}
-                          className="mt-auto bg-primary text-white rounded-md px-4 py-2 font-medium hover:bg-primary-dark transition-colors"
+                          className="mt-auto bg-primary text-white rounded-md text-xs py-1.5 w-full font-medium hover:bg-primary-dark transition-colors"
                         >
                           Agregar
                         </button>
