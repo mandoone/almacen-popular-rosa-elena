@@ -142,6 +142,7 @@ export default function TiendaPage() {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [carritoAbierto, setCarritoAbierto] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {
     try {
@@ -296,8 +297,37 @@ export default function TiendaPage() {
             )}
 
             {!loading && !error && (
+              <>
+                {/* Buscador */}
+                <div className="w-full max-w-md mx-auto mb-6 relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Buscar producto..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    className="w-full bg-white border border-primary-light rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                {(() => {
+                  const productosFiltrados = productos.filter((p) =>
+                    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+                  );
+                  if (productosFiltrados.length === 0) {
+                    return (
+                      <p className="text-center text-gray-500 py-16">
+                        No se encontraron productos para tu búsqueda
+                      </p>
+                    );
+                  }
+                  return (
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 px-2">
-                {productos.map((producto) => {
+                {productosFiltrados.map((producto) => {
                   const cantidad = cantidadEnCarrito(producto.id);
                   return (
                     <div key={producto.id} className="bg-white rounded-xl shadow-sm p-2 md:p-4 flex flex-col gap-2">
@@ -337,6 +367,9 @@ export default function TiendaPage() {
                   );
                 })}
               </div>
+                  );
+                })()}
+              </>
             )}
           </div>
 
