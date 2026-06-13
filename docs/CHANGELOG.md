@@ -5,6 +5,25 @@
 
 ---
 
+## [FASE 1 — preparación] — Importación inicial de productos
+
+### Añadido
+- `scripts/import-products-from-old-sheet.gs`: Apps Script que importa productos y
+  precios desde el CSV de la planilla antigua hacia la hoja PRODUCTOS de la base
+  operativa. Replica la lógica de parseo de `src/app/api/productos/route.ts`, genera
+  `id_producto` correlativo (`PROD-001`…), limpia solo datos (conserva encabezados y
+  validaciones) y registra métricas en el log.
+- `docs/IMPORT_PRODUCTS.md`: guía de uso, mapeo de columnas y revisión manual posterior.
+
+### Notas
+- La planilla antigua se usa **solo como fuente de datos inicial**, no como base
+  operativa final.
+- El script trae marcadores `PEGAR_..._AQUI`; la **URL del CSV** y el **ID** de la
+  base se editan en Apps Script y **no se commitean** al repo.
+- No se modificó `src/` ni la lógica actual de lectura del catálogo.
+
+---
+
 ## [FASE 1 — preparación] — Base de datos operativa (Google Sheet)
 
 ### Añadido

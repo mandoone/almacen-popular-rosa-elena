@@ -36,6 +36,14 @@ ni secretos, revisados y commiteados en la rama de fase.
 - ✅ **Validar el script en Google Apps Script:** ejecutado y planilla creada
   correctamente (sin caracteres raros tras el fix de encoding a ASCII). El ID/URL
   de la planilla **no** se guardan en el repo.
+- ✅ **Crear la herramienta de importación inicial de productos**
+  (`scripts/import-products-from-old-sheet.gs`): migra productos y precios desde el
+  CSV antiguo hacia la hoja PRODUCTOS de la base operativa. Guía en
+  `docs/IMPORT_PRODUCTS.md`. *(La planilla antigua es solo fuente inicial, no base final.)*
+- ⬜ **Ejecutar la importación** en Apps Script y validar la hoja PRODUCTOS (configurar
+  `OLD_PRODUCTS_CSV_URL` y `TARGET_SPREADSHEET_ID` en Apps Script; no se commitean).
+- ⬜ **Revisar manualmente** los productos importados: categoria, prioridad,
+  unidad_medida, stock e imágenes (campos con valores por defecto).
 - ⬜ **Configurar los valores reales en la hoja CONFIG** (WhatsApp, margen, datos de
   aportes, etc.). Se hace a mano en la planilla; no se commitea al repo.
 - ⬜ Documentar el acceso a la nueva Sheet para la app (sin exponer secretos: el ID
