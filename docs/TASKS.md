@@ -30,9 +30,16 @@ ni secretos, revisados y commiteados en la rama de fase.
 > Objetivo: que los pedidos dejen de vivir en `localStorage` y se almacenen en la
 > Google Sheet operativa, visibles desde cualquier dispositivo en `/admin`.
 
-- 🚧 **Crear manualmente la nueva Google Sheet operativa** (fuente oficial de la
-  web) con las hojas definidas en `docs/DATA_MODEL.md`. *Bloquea el resto de FASE 1.*
-- ⬜ Documentar el acceso a la nueva Sheet (sin exponer secretos en el repo).
+- ✅ **Crear el script de setup de la Google Sheet operativa** (`scripts/setup-google-sheet.gs`),
+  que genera la planilla `BD_WEB_ALMACEN_ROSA_ELENA_MORALES` con las 10 hojas
+  definidas en `docs/DATA_MODEL.md`. Guía en `docs/GOOGLE_SHEET_SETUP.md`.
+- ✅ **Validar el script en Google Apps Script:** ejecutado y planilla creada
+  correctamente (sin caracteres raros tras el fix de encoding a ASCII). El ID/URL
+  de la planilla **no** se guardan en el repo.
+- ⬜ **Configurar los valores reales en la hoja CONFIG** (WhatsApp, margen, datos de
+  aportes, etc.). Se hace a mano en la planilla; no se commitea al repo.
+- ⬜ Documentar el acceso a la nueva Sheet para la app (sin exponer secretos: el ID
+  irá como variable de entorno en FASE 1).
 - ⬜ Definir el esquema final de `PEDIDOS` y `DETALLE_PEDIDOS`.
 - ⬜ Crear el **Apps Script Web App** (`doPost`/`doGet`) para escribir/leer pedidos.
 - ⬜ Implementar en la app el envío del pedido al backend (reemplazar guardado en
