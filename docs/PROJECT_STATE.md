@@ -86,7 +86,15 @@ Riesgos completos en `docs/TASKS.md` (FASE 1) y contexto en `docs/DATA_MODEL.md`
    decisión en `docs/DECISIONS.md` y diseño en `docs/DATA_MODEL.md`).
 3. Los pedidos deben ser **visibles desde cualquier dispositivo** en `/admin`.
 
-Bloqueante previo: **crear manualmente la Google Sheet operativa** (ver `docs/TASKS.md`).
+**Avance:** ya existe un script **validado** (`scripts/setup-google-sheet.gs`,
+guía en `docs/GOOGLE_SHEET_SETUP.md`) que crea la planilla operativa
+`BD_WEB_ALMACEN_ROSA_ELENA_MORALES` con sus 10 hojas. Se ejecutó en Google Apps
+Script y la planilla quedó creada correctamente. El **ID/URL** de la planilla no se
+guardan en el repo.
+
+**Pendiente inmediato:** cargar a mano los valores reales en la hoja CONFIG e
+implementar la lógica de pedidos reales (escritura/lectura vía Apps Script Web App).
+Ver `docs/TASKS.md`.
 
 ---
 

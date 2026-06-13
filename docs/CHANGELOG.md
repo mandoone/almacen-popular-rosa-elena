@@ -5,6 +5,33 @@
 
 ---
 
+## [FASE 1 — preparación] — Base de datos operativa (Google Sheet)
+
+### Añadido
+- `scripts/setup-google-sheet.gs`: Apps Script que crea la planilla operativa
+  `BD_WEB_ALMACEN_ROSA_ELENA_MORALES` con sus 10 hojas, encabezados, fila
+  congelada, formato, validaciones de lista y CONFIG precargada (valores vacíos).
+- `docs/GOOGLE_SHEET_SETUP.md`: guía de uso paso a paso del script.
+
+### Corregido
+- Encoding del script de setup: se reemplazaron caracteres no ASCII (tildes, ñ,
+  guion largo) por equivalentes ASCII para evitar textos corruptos (`NÃºmero`,
+  `almacÃ©n`) al copiar/pegar en Google Apps Script.
+
+### Validado
+- El script se ejecutó en Google Apps Script y creó la planilla operativa
+  correctamente. La primera ejecución evidenció el problema de encoding; tras el
+  fix, la segunda ejecución quedó limpia.
+
+### Notas
+- El **ID y la URL** de la planilla, los **datos reales de CONFIG** y cualquier
+  secreto **no se guardan en el repositorio**. El ID se manejará como configuración
+  / variable de entorno cuando se implemente FASE 1.
+- Pendiente: cargar a mano los valores reales de CONFIG e implementar los pedidos
+  reales (ver `docs/TASKS.md`).
+
+---
+
 ## [FASE 0] — Documentación viva
 
 ### Añadido
