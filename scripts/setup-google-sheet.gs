@@ -2,12 +2,12 @@
  * setup-google-sheet.gs
  * ------------------------------------------------------------------------------
  * Crea la base de datos operativa del sistema web del
- * Almacén Popular Rosa Elena Morales en una Google Sheet nueva y exclusiva.
+ * Almacen Popular Rosa Elena Morales en una Google Sheet nueva y exclusiva.
  *
  * USO (ver docs/GOOGLE_SHEET_SETUP.md):
  *   1. Abrir https://script.google.com/ y crear un proyecto nuevo.
  *   2. Pegar TODO el contenido de este archivo.
- *   3. Ejecutar la función crearBaseDatosAlmacen().
+ *   3. Ejecutar la funcion crearBaseDatosAlmacen().
  *   4. Autorizar permisos cuando lo solicite.
  *   5. Copiar la URL y el ID de la planilla desde el registro (Ver > Registros).
  *
@@ -19,8 +19,8 @@
 var NOMBRE_PLANILLA = 'BD_WEB_ALMACEN_ROSA_ELENA_MORALES';
 
 /**
- * Definición de cada hoja: nombre + encabezados (fila 1).
- * El orden de este arreglo es el orden en que se crean las pestañas.
+ * Definicion de cada hoja: nombre + encabezados (fila 1).
+ * El orden de este arreglo es el orden en que se crean las pestanas.
  */
 var HOJAS = [
   {
@@ -126,27 +126,27 @@ var VALIDACIONES = {
 
 /**
  * Valores iniciales para la hoja CONFIG.
- * NO incluir secretos reales aquí: estos son marcadores para completar a mano
+ * NO incluir secretos reales aqui: estos son marcadores para completar a mano
  * en la planilla una vez creada.
  * Filas: [clave, valor, descripcion, actualizado_en]
  */
 function valoresConfigIniciales(ahora) {
   return [
-    ['whatsapp_pedidos',    '', 'Número WhatsApp que recibe los pedidos (formato 569XXXXXXXX)', ahora],
-    ['whatsapp_contacto',   '', 'Número WhatsApp de contacto general', ahora],
-    ['margen_default_pct',  '', 'Margen por defecto en % para calcular precio_venta', ahora],
-    ['proxima_apertura',    '', 'Texto/fecha de la próxima apertura mostrada en el Home', ahora],
+    ['whatsapp_pedidos',    '', 'Numero WhatsApp que recibe los pedidos (formato 569XXXXXXXX)', ahora],
+    ['whatsapp_contacto',   '', 'Numero WhatsApp de contacto general', ahora],
+    ['margen_default_pct',  '', 'Margen por defecto en porcentaje para calcular precio_venta', ahora],
+    ['proxima_apertura',    '', 'Texto/fecha de la proxima apertura mostrada en el Home', ahora],
     ['banco_aportes',       '', 'Banco para aportes/transferencias', ahora],
-    ['cuenta_aportes',      '', 'Número de cuenta para aportes', ahora],
+    ['cuenta_aportes',      '', 'Numero de cuenta para aportes', ahora],
     ['titular_aportes',     '', 'Nombre del titular de la cuenta', ahora],
     ['rut_aportes',         '', 'RUT del titular de la cuenta', ahora],
-    ['email_contacto',      '', 'Email de contacto del almacén', ahora],
+    ['email_contacto',      '', 'Email de contacto del almacen', ahora],
     ['mensaje_home',        '', 'Mensaje destacado para mostrar en el Home', ahora]
   ];
 }
 
 /**
- * FUNCIÓN PRINCIPAL — ejecutar esta.
+ * FUNCION PRINCIPAL - ejecutar esta.
  */
 function crearBaseDatosAlmacen() {
   var ahora = nuevaMarcaTiempo_();
@@ -213,7 +213,7 @@ function crearHoja_(ss, def) {
   // Ajustar ancho de columnas al contenido del encabezado.
   for (var c = 1; c <= numCols; c++) {
     sheet.autoResizeColumn(c);
-    // Garantizar un ancho mínimo legible.
+    // Garantizar un ancho minimo legible.
     if (sheet.getColumnWidth(c) < 110) {
       sheet.setColumnWidth(c, 110);
     }
@@ -266,19 +266,19 @@ function cargarConfig_(ss, ahora) {
 }
 
 /**
- * Elimina la hoja por defecto ("Hoja 1" / "Sheet1") si quedó vacía y existe
+ * Elimina la hoja por defecto ("Hoja 1" / "Sheet1") si quedo vacia y existe
  * alguna de nuestras hojas. Nunca elimina una hoja del modelo.
  */
 function eliminarHojaInicial_(ss) {
   var nombresModelo = HOJAS.map(function (h) { return h.nombre; });
-  var posiblesIniciales = ['Sheet1', 'Hoja 1', 'Hoja1', 'Hoja de cálculo 1'];
+  var posiblesIniciales = ['Sheet1', 'Hoja 1', 'Hoja1', 'Hoja de calculo 1'];
 
   var hojas = ss.getSheets();
   for (var i = 0; i < hojas.length; i++) {
     var nombre = hojas[i].getName();
     var esModelo = nombresModelo.indexOf(nombre) !== -1;
     var esInicial = posiblesIniciales.indexOf(nombre) !== -1;
-    // Solo borrar si NO es del modelo y queda más de una hoja.
+    // Solo borrar si NO es del modelo y queda mas de una hoja.
     if (!esModelo && esInicial && ss.getSheets().length > 1) {
       ss.deleteSheet(hojas[i]);
     }
