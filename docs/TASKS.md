@@ -52,8 +52,17 @@ ni secretos, revisados y commiteados en la rama de fase.
   (WhatsApp, margen, datos de aportes, etc.). Se hace a mano; no se commitea al repo.
 - ⬜ Documentar el acceso a la nueva Sheet para la app (sin exponer secretos: el ID
   irá como variable de entorno en FASE 1).
-- ⬜ Definir el esquema final de `PEDIDOS` y `DETALLE_PEDIDOS`.
-- ⬜ Crear el **Apps Script Web App** (`doPost`/`doGet`) para escribir/leer pedidos.
+- ✅ Definir el esquema de `PEDIDOS` y `DETALLE_PEDIDOS` (ya cubierto por el modelo
+  y consumido por el backend de pedidos).
+- ✅ **Crear el backend Apps Script Web App** (`scripts/apps-script-pedidos.gs`):
+  `crearPedido` (público), `listarPedidos`/`obtenerPedido` (GET admin),
+  `actualizarEstadoPedido`/`cancelarPedido` (POST admin). Valida stock y precios en
+  servidor, descuenta/devuelve stock y registra MOVIMIENTOS_STOCK. Guía en
+  `docs/APPS_SCRIPT_PEDIDOS.md`.
+- ✅ **Desplegar y probar el backend:** probado manualmente en Apps Script — las 5
+  acciones (`crearPedido`, `listarPedidos`, `obtenerPedido`, `cancelarPedido`,
+  `actualizarEstadoPedido`) respondieron OK contra la base operativa. URL de Web App,
+  token y SPREADSHEET_ID **no** se commitean. *(Aún no conectado a `src/`.)*
 - ⬜ Implementar en la app el envío del pedido al backend (reemplazar guardado en
   `localStorage` del cliente).
 - ⬜ Reescribir `/admin` para **leer pedidos reales** desde la Sheet.
