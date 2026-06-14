@@ -5,6 +5,81 @@
 
 ---
 
+## [FASE 1] — Flujo de pedidos reales probado end-to-end (local)
+
+### Validado
+- Prueba **end-to-end local OK** del flujo completo de pedidos reales:
+  - `/api/productos` sirve el catálogo desde la base operativa con IDs reales
+    (`PROD-001…`).
+  - La tienda crea pedidos reales contra Apps Script; se actualizan PEDIDOS,
+    DETALLE_PEDIDOS, PRODUCTOS (stock) y MOVIMIENTOS_STOCK.
+  - El admin lista pedidos reales, muestra estados (pendiente/listo/cancelado),
+    cambia estado y cancela (stock y movimientos reflejados correctamente).
+  - `listarProductos` desplegado y validado en la Web App.
+
+### Notas
+- Probado con `.env.local` (solo local, ignorado por git). Sin URL, token ni
+  SPREADSHEET_ID reales en el repo.
+- Cierra el bloque `fase-1/conectar-web-pedidos`: la web ya opera con pedidos reales.
+
+---
+
+## [FASE 1] — Catálogo migrado a la base operativa
+
+### Cambiado
+- **`/api/productos` ya no lee el CSV de la planilla antigua.** Ahora el catálogo de
+  la tienda se sirve desde la **base operativa** (hoja PRODUCTOS) a través de la nueva
+  acción pública `listarProductos` de Apps Script. El `id` que recibe la tienda es el
+  `id_producto` real (`PROD-001…`), de modo que `crearPedido` valida los items sin
+  fallar (se elimina el bloqueante de IDs incompatibles).
+
+### Añadido
+- Acción GET pública `listarProductos` en `scripts/apps-script-pedidos.gs`: devuelve
+  solo productos con `activo = SI`, en el orden de la hoja, sin exponer `precio_costo`
+  ni `margen_pct`. No requiere token.
+- `listarProductos()` en `src/lib/appsScriptPedidos.ts` (helper de servidor, sin token).
+
+### Notas
+- Requiere **re-desplegar** la Web App de Apps Script (nueva versión) para que
+  `listarProductos` esté disponible.
+- Sin URL, token ni SPREADSHEET_ID reales en el repo.
+
+---
+
+## [FASE 1] — Web conectada al backend de pedidos (proxy interno)
+
+### Añadido
+- `src/lib/appsScriptPedidos.ts`: helper de **servidor** para llamar a la Web App de
+  Apps Script. Lee `GOOGLE_SCRIPT_PEDIDOS_URL` y `GOOGLE_SCRIPT_ADMIN_TOKEN` de
+  `process.env`; el token solo se usa en acciones admin y nunca llega al cliente.
+- Rutas proxy de Next: `src/app/api/pedidos` (POST público → `crearPedido`) y
+  `src/app/api/admin/pedidos` + `.../[id]` (GET lista, GET detalle, PATCH estado,
+  POST cancelar) para acciones admin.
+- `.env.example` con `GOOGLE_SCRIPT_PEDIDOS_URL` y `GOOGLE_SCRIPT_ADMIN_TOKEN`
+  vacíos. `.env.local` no se commitea.
+
+### Cambiado
+- **Tienda** (`src/app/tienda/page.tsx`): al confirmar, registra el pedido real vía
+  `POST /api/pedidos`, muestra el `id_pedido` y abre WhatsApp con ese número. Ya no
+  guarda pedidos en `localStorage` (el carrito sí sigue ahí).
+- **/admin** (`src/app/admin/page.tsx`): lee pedidos reales desde el proxy, ve
+  detalle, cambia estado y estado_pago, y cancela (devuelve stock). Ya no depende de
+  `localStorage`. Se removió el modo de edición de líneas (sin backend para ello).
+
+### Verificado
+- `npm run lint`: sin errores. `npm run build`: compila y type-check OK; las 3 rutas
+  nuevas quedan como dinámicas.
+
+### Pendiente / Riesgos
+- **IDs de producto desalineados:** `/api/productos` (CSV antiguo) entrega ids que no
+  coinciden con `id_producto` (`PROD-001…`) de la base operativa; el flujo real fallará
+  hasta alinear el catálogo. Ver `docs/TASKS.md`.
+- **`/api/admin/*` sin auth de servidor** (deuda técnica): el login del panel es solo
+  cliente. Documentado para una fase futura.
+- Flujo real end-to-end aún **no probado** (requiere `.env.local` + Web App desplegada).
+
+---
+
 ## [FASE 1 — preparación] — Backend de pedidos probado (OK)
 
 ### Validado

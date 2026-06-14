@@ -8,19 +8,19 @@
 
 ## 1. Estado actual
 
-- **Fuente única hoy:** una Google Sheet **publicada como CSV** (hoja "WEB"),
-  consumida en modo **solo lectura** por `src/app/api/productos/route.ts`.
-- El route handler descarga el CSV, busca la fila de encabezado "ARTÍCULO" y extrae
-  `nombre` (columna 1) y `precio` (columna 2); descarta filas sin precio y corta en
-  "TOTAL".
-- Devuelve al frontend: `{ id, nombre, precio }[]`.
-- **Limitaciones:** solo lectura, parser frágil ante cambios de formato/encoding,
-  hoja pública, sin pedidos, sin stock, sin clientes.
-- **Migración inicial (realizada):** esta planilla antigua se usó **solo como fuente
-  de datos inicial**. La hoja PRODUCTOS de la base operativa nueva ya fue **cargada
-  manualmente** con **53 productos reales** y su `precio_venta` del listado antiguo;
-  CONFIG quedó con datos temporales de prueba. La planilla antigua **ya no se usa**
-  como base operativa (ver decisión D5 en `docs/DECISIONS.md`).
+- **Fuente operativa:** la base de datos nueva `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`
+  alimenta **tanto el catálogo como los pedidos**:
+  - **Catálogo:** `src/app/api/productos/route.ts` obtiene los productos de la hoja
+    PRODUCTOS (`activo = SI`) vía la acción `listarProductos` de la Web App de Apps
+    Script; expone a la tienda `{ id, nombre, precio }` con `id = id_producto`
+    (`PROD-001…`).
+  - **Pedidos:** se crean/consultan vía la Web App (ver `docs/APPS_SCRIPT_PEDIDOS.md`),
+    escribiendo en PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y MOVIMIENTOS_STOCK.
+- **Planilla antigua (retirada):** la Google Sheet publicada como CSV (hoja "WEB") se
+  usó **solo como fuente de datos inicial** y **ya no alimenta** el catálogo ni la
+  operación. La hoja PRODUCTOS de la base nueva se **cargó manualmente** con **53
+  productos reales** y su `precio_venta`; CONFIG quedó con datos temporales de prueba
+  (ver decisión D5 en `docs/DECISIONS.md`).
 - El script `scripts/import-products-from-old-sheet.gs` (ver `docs/IMPORT_PRODUCTS.md`)
   queda como **herramienta auxiliar** reutilizable, pero **no fue necesario ejecutarlo**
   para esta primera carga.

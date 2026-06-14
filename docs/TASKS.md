@@ -63,12 +63,40 @@ ni secretos, revisados y commiteados en la rama de fase.
   acciones (`crearPedido`, `listarPedidos`, `obtenerPedido`, `cancelarPedido`,
   `actualizarEstadoPedido`) respondieron OK contra la base operativa. URL de Web App,
   token y SPREADSHEET_ID **no** se commitean. *(Aún no conectado a `src/`.)*
-- ⬜ Implementar en la app el envío del pedido al backend (reemplazar guardado en
-  `localStorage` del cliente).
-- ⬜ Reescribir `/admin` para **leer pedidos reales** desde la Sheet.
-- ⬜ Persistir cambios de estado del pedido (pendiente → listo → entregado) en el backend.
-- ⬜ Revisar seguridad del acceso admin (evitar contraseña hardcodeada en cliente).
-- ⬜ Actualizar `PROJECT_STATE.md`, `TEST_PLAN.md` y `CHANGELOG.md`.
+- ✅ **Conectar la web al backend vía proxy interno de Next** (rama
+  `fase-1/conectar-web-pedidos`): helper de servidor `src/lib/appsScriptPedidos.ts` +
+  rutas `src/app/api/pedidos` (público) y `src/app/api/admin/pedidos[/[id]]` (admin).
+  La URL de Web App y el token se leen de variables de entorno; nunca llegan al
+  cliente. `.env.example` con placeholders.
+- ✅ **Tienda conectada:** al confirmar, llama a `POST /api/pedidos` (pedido real),
+  muestra el `id_pedido` y abre WhatsApp con ese número. Deja de escribir
+  `pedidos-almacen` en `localStorage` (el carrito sí sigue en `localStorage`).
+- ✅ **/admin conectado a pedidos reales:** lista desde `/api/admin/pedidos`, ve
+  detalle, cambia estado (listo/entregado), cambia estado_pago y cancela (devuelve
+  stock). Ya no depende de `localStorage` para pedidos. Se removió el modo de edición
+  de líneas (sin acción de backend).
+- ✅ **Alinear IDs de producto (resuelto):** `/api/productos` dejó de leer el CSV
+  antiguo y ahora sirve el catálogo desde la **base operativa** (hoja PRODUCTOS) vía
+  la nueva acción pública `listarProductos` de Apps Script. El `id` expuesto a la
+  tienda es el `id_producto` real (`PROD-001…`), por lo que `crearPedido` valida sin
+  fallar. Solo expone productos con `activo = SI`; no devuelve `precio_costo` ni
+  `margen_pct`. *(Requiere re-desplegar la Web App para exponer `listarProductos`.)*
+- ✅ **Flujo real end-to-end probado localmente (OK):**
+  - `/api/productos` devuelve el catálogo desde la base operativa con IDs reales
+    (`PROD-001`, `PROD-002`, …).
+  - La tienda crea **pedidos reales** contra Apps Script.
+  - Las hojas se actualizan correctamente: PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS
+    (stock) y MOVIMIENTOS_STOCK.
+  - El admin lista los pedidos reales y muestra estados reales (pendiente, listo,
+    cancelado); cambiar estado y cancelar funcionan, con stock y movimientos
+    correctamente reflejados.
+  - `listarProductos` quedó **desplegado y validado** en la Web App.
+  - `.env.local` existe solo localmente y está ignorado por git.
+- ⬜ **Seguridad: proteger `/api/admin/*`** — hoy no tienen auth de servidor (el login
+  del panel es solo cliente). Deuda técnica registrada; pendiente gate real.
+- ⬜ Añadir selección de `forma_pago` en la tienda (hoy se envía `efectivo_al_retirar`
+  por defecto).
+- ⬜ Actualizar `PROJECT_STATE.md` cuando el flujo real quede validado.
 
 ---
 
