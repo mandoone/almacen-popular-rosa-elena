@@ -182,8 +182,9 @@ Parámetros globales del sistema (clave/valor).
   crea pedidos (PEDIDOS + DETALLE_PEDIDOS), descuenta/devuelve stock en PRODUCTOS y
   registra cada cambio en MOVIMIENTOS_STOCK (`salida`/origen `pedido` al crear,
   `devolucion`/origen `cancelacion` al cancelar). El backend lee las hojas **por
-  nombre de encabezado**, robusto ante reordenamientos de columnas. *(Pendiente de
-  despliegue/prueba.)*
+  nombre de encabezado**, robusto ante reordenamientos de columnas. **El flujo real
+  ya fue validado** manualmente contra las hojas PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y
+  MOVIMIENTOS_STOCK. *(Pendiente: conectar la web.)*
 - Los identificadores y relaciones (`*_id`) se mantienen simples (texto/numérico)
   por tratarse de una hoja de cálculo, no una base relacional.
 - Snapshots de `nombre`/`precio` en los detalles para preservar el histórico aunque

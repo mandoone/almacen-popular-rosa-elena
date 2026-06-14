@@ -5,6 +5,25 @@
 
 ---
 
+## [FASE 1 — preparación] — Backend de pedidos probado (OK)
+
+### Validado
+- Backend de pedidos reales **probado manualmente** en Google Apps Script contra la
+  base operativa. Resultado de las 5 acciones: **OK**.
+  - `crearPedido`: creó pedidos en PEDIDOS y DETALLE_PEDIDOS y descontó stock.
+  - `listarPedidos`: devolvió los pedidos existentes.
+  - `obtenerPedido`: devolvió cabecera + detalle.
+  - `cancelarPedido`: marcó cancelado y devolvió stock.
+  - `actualizarEstadoPedido`: cambió `estado_pedido` y `estado_pago` sin tocar stock.
+
+### Notas
+- El flujo real quedó validado contra las hojas PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y
+  MOVIMIENTOS_STOCK.
+- Pendiente: conectar la web (`src/`) al backend. URL de Web App, token y
+  SPREADSHEET_ID **no** se guardan en el repo.
+
+---
+
 ## [FASE 1 — preparación] — Backend de pedidos reales (Apps Script Web App)
 
 ### Añadido

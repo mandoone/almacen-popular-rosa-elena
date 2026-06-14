@@ -58,9 +58,11 @@ ni secretos, revisados y commiteados en la rama de fase.
   `crearPedido` (público), `listarPedidos`/`obtenerPedido` (GET admin),
   `actualizarEstadoPedido`/`cancelarPedido` (POST admin). Valida stock y precios en
   servidor, descuenta/devuelve stock y registra MOVIMIENTOS_STOCK. Guía en
-  `docs/APPS_SCRIPT_PEDIDOS.md`. *(Pendiente de prueba/despliegue; aún no conectado a `src/`.)*
-- ⬜ **Desplegar y probar el backend** (configurar `SPREADSHEET_ID` y `ADMIN_TOKEN` en
-  Apps Script; URL de Web App y token **no** se commitean).
+  `docs/APPS_SCRIPT_PEDIDOS.md`.
+- ✅ **Desplegar y probar el backend:** probado manualmente en Apps Script — las 5
+  acciones (`crearPedido`, `listarPedidos`, `obtenerPedido`, `cancelarPedido`,
+  `actualizarEstadoPedido`) respondieron OK contra la base operativa. URL de Web App,
+  token y SPREADSHEET_ID **no** se commitean. *(Aún no conectado a `src/`.)*
 - ⬜ Implementar en la app el envío del pedido al backend (reemplazar guardado en
   `localStorage` del cliente).
 - ⬜ Reescribir `/admin` para **leer pedidos reales** desde la Sheet.

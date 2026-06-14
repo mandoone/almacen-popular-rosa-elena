@@ -5,8 +5,16 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 
 - **Script:** `scripts/apps-script-pedidos.gs`
 - **Modelo de datos:** `docs/DATA_MODEL.md`
-- **Estado:** backend creado, **pendiente de prueba y despliegue**. Aún **no** está
-  conectado a la web (`src/`).
+- **Estado:** backend **probado manualmente** en Google Apps Script y funcionando
+  contra la base operativa. Aún **no** está conectado a la web (`src/`) — esa
+  conexión es el próximo bloque de FASE 1.
+
+> ✅ **Pruebas manuales realizadas (OK):**
+> - `crearPedido`: creó pedidos reales en PEDIDOS y DETALLE_PEDIDOS, descontó stock.
+> - `listarPedidos`: devolvió los pedidos existentes.
+> - `obtenerPedido`: devolvió cabecera + detalle.
+> - `cancelarPedido`: marcó el pedido como cancelado y devolvió el stock.
+> - `actualizarEstadoPedido`: cambió `estado_pedido` y `estado_pago` sin tocar stock.
 
 > ⚠️ La **URL de la Web App** y el **ADMIN_TOKEN** **no se commitean** al repositorio.
 > El `SPREADSHEET_ID` y el token se pegan a mano en Apps Script antes de desplegar.
