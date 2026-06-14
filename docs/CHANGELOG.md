@@ -5,6 +5,29 @@
 
 ---
 
+## [FASE 1 — preparación] — Backend de pedidos reales (Apps Script Web App)
+
+### Añadido
+- `scripts/apps-script-pedidos.gs`: Web App de Apps Script para pedidos reales.
+  Acciones: `crearPedido` (POST público), `listarPedidos` y `obtenerPedido` (GET con
+  token admin), `actualizarEstadoPedido` y `cancelarPedido` (POST con token admin).
+  - Valida en servidor existencia/estado del producto, stock y **calcula precios
+    desde `precio_venta`** (no confía en el frontend).
+  - Escribe en PEDIDOS y DETALLE_PEDIDOS, descuenta stock en PRODUCTOS y registra
+    MOVIMIENTOS_STOCK; `cancelarPedido` devuelve el stock.
+  - Helpers: respuesta JSON estándar, lectura de hojas por encabezado, `LockService`
+    para concurrencia, validación de config y manejo de errores con código.
+- `docs/APPS_SCRIPT_PEDIDOS.md`: guía de configuración, despliegue como Web App y
+  pruebas (`crearPedido`, `listarPedidos`, etc.).
+
+### Notas
+- **Pendiente de prueba/despliegue.** Todavía **no** se conecta a la web (`src/` sin
+  cambios).
+- `SPREADSHEET_ID` y `ADMIN_TOKEN` son marcadores `PEGAR_..._AQUI`; la **URL de la
+  Web App** y el **token** **no se commitean** al repo.
+
+---
+
 ## [FASE 1 — preparación] — Carga inicial de la base operativa
 
 ### Hecho

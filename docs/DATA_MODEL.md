@@ -176,8 +176,14 @@ Parámetros globales del sistema (clave/valor).
 
 ## 5. Notas de implementación
 
-- Mecanismo de escritura previsto: **Google Apps Script** (Web App `doPost`) que
+- Mecanismo de escritura: **Google Apps Script** (Web App `doPost`/`doGet`) que
   recibe los datos y los anexa a las hojas correspondientes. Ver `docs/DECISIONS.md`.
+  Implementado en `scripts/apps-script-pedidos.gs` (guía en `docs/APPS_SCRIPT_PEDIDOS.md`):
+  crea pedidos (PEDIDOS + DETALLE_PEDIDOS), descuenta/devuelve stock en PRODUCTOS y
+  registra cada cambio en MOVIMIENTOS_STOCK (`salida`/origen `pedido` al crear,
+  `devolucion`/origen `cancelacion` al cancelar). El backend lee las hojas **por
+  nombre de encabezado**, robusto ante reordenamientos de columnas. *(Pendiente de
+  despliegue/prueba.)*
 - Los identificadores y relaciones (`*_id`) se mantienen simples (texto/numérico)
   por tratarse de una hoja de cálculo, no una base relacional.
 - Snapshots de `nombre`/`precio` en los detalles para preservar el histórico aunque
