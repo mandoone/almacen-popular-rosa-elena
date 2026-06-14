@@ -5,6 +5,24 @@
 
 ---
 
+## [FASE 1 — preparación] — Carga inicial de la base operativa
+
+### Hecho
+- **Hoja PRODUCTOS cargada manualmente** con **53 productos reales** y su
+  `precio_venta` del listado antiguo.
+- **Hoja CONFIG cargada** con datos temporales de prueba.
+- La base operativa ya cuenta con CONFIG y PRODUCTOS, lista para iniciar la fase de
+  pedidos reales.
+
+### Notas
+- La carga inicial se resolvió **manualmente**, **sin ejecutar** el Apps Script
+  importador. `scripts/import-products-from-old-sheet.gs` queda como herramienta
+  auxiliar reutilizable.
+- La planilla antigua **deja de usarse** como base operativa.
+- Sin ID/URL de planillas ni secretos en el repo. No se modificó `src/`.
+
+---
+
 ## [FASE 1 — preparación] — Importación inicial de productos
 
 ### Añadido

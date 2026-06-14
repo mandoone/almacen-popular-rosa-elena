@@ -40,12 +40,16 @@ ni secretos, revisados y commiteados en la rama de fase.
   (`scripts/import-products-from-old-sheet.gs`): migra productos y precios desde el
   CSV antiguo hacia la hoja PRODUCTOS de la base operativa. Guía en
   `docs/IMPORT_PRODUCTS.md`. *(La planilla antigua es solo fuente inicial, no base final.)*
-- ⬜ **Ejecutar la importación** en Apps Script y validar la hoja PRODUCTOS (configurar
-  `OLD_PRODUCTS_CSV_URL` y `TARGET_SPREADSHEET_ID` en Apps Script; no se commitean).
-- ⬜ **Revisar manualmente** los productos importados: categoria, prioridad,
-  unidad_medida, stock e imágenes (campos con valores por defecto).
-- ⬜ **Configurar los valores reales en la hoja CONFIG** (WhatsApp, margen, datos de
-  aportes, etc.). Se hace a mano en la planilla; no se commitea al repo.
+  Queda como **herramienta auxiliar**: NO fue necesario ejecutarla para esta primera carga.
+- ✅ **Cargar la hoja PRODUCTOS:** hecho **manualmente** con **53 productos reales** y
+  su `precio_venta` del listado antiguo. La planilla antigua ya no se usa como base
+  operativa.
+- ✅ **Cargar la hoja CONFIG:** hecho a mano con **datos temporales de prueba** (sin
+  secretos en el repo).
+- ⬜ **Revisar/afinar** los productos cargados: categoria, prioridad, unidad_medida,
+  stock e imágenes.
+- ⬜ **Reemplazar los datos temporales de CONFIG** por los valores reales definitivos
+  (WhatsApp, margen, datos de aportes, etc.). Se hace a mano; no se commitea al repo.
 - ⬜ Documentar el acceso a la nueva Sheet para la app (sin exponer secretos: el ID
   irá como variable de entorno en FASE 1).
 - ⬜ Definir el esquema final de `PEDIDOS` y `DETALLE_PEDIDOS`.
