@@ -1,88 +1,35 @@
 import { NextResponse } from 'next/server';
+import { listarProductos, AppsScriptError } from '@/lib/appsScriptPedidos';
 
-// Hoja "WEB" — el almacén actualiza esta hoja cada apertura.
-// Este link nunca cambia.
-const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-eg1lNUq0eIN-cTT9ZU_i-K10eXPCgaRiKKsnufSYehzP6ppLZuoKGRyXddBsOTaFwVdleDV-ngKH/pub?gid=1487705909&single=true&output=csv';
+// Catalogo de la tienda: ahora se sirve desde la BASE OPERATIVA (hoja PRODUCTOS)
+// via la Web App de Apps Script. El `id` expuesto es el `id_producto` real
+// (PROD-001, ...), de modo que la tienda envia ese mismo id al crear el pedido y el
+// backend lo valida correctamente.
+//
+// (Historico: antes este endpoint leia un CSV publicado de la planilla antigua.
+// Esa fuente quedo retirada como catalogo operativo; ver docs/DATA_MODEL.md.)
+export const dynamic = 'force-dynamic';
 
-export const revalidate = 3600;
-
-interface Producto {
+interface ProductoTienda {
   id: string;
   nombre: string;
   precio: number;
 }
 
-function parseCSVLine(line: string): string[] {
-  const cells: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  for (const char of line) {
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      cells.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  cells.push(current.trim());
-  return cells;
-}
-
-function parseProductos(text: string): Producto[] {
-  const lines = text.split('\n');
-
-  // Encontrar la fila de encabezado: índice 1 contiene "RT" (cubre "ARTÍCULO" con cualquier encoding)
-  let inicioIdx = -1;
-  for (let i = 0; i < lines.length; i++) {
-    const cells = parseCSVLine(lines[i]);
-    const col1 = cells[1]?.replace(/"/g, '').trim().toUpperCase() ?? '';
-    if (col1.includes('RT') && col1.includes('CUL')) {
-      inicioIdx = i;
-    }
-  }
-
-  if (inicioIdx === -1) return [];
-
-  const productos: Producto[] = [];
-
-  for (let i = inicioIdx + 1; i < lines.length; i++) {
-    const cells = parseCSVLine(lines[i]);
-    const nombre = cells[1]?.replace(/"/g, '').trim() ?? '';
-    const precioRaw = cells[2]?.replace(/"/g, '').trim() ?? '';
-
-    if (!nombre || nombre.toUpperCase().includes('TOTAL')) break;
-
-    const precio = parseInt(precioRaw.replace(/[^0-9]/g, ''), 10) || 0;
-    if (!precio) continue;
-
-    productos.push({ id: `${i}-${nombre}`, nombre, precio });
-  }
-
-  return productos;
-}
-
 export async function GET() {
   try {
-    const res = await fetch(CSV_URL, {
-      next: { revalidate: 3600 },
-      headers: { 'Accept-Charset': 'utf-8' },
-    });
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: 'No se pudo obtener el catálogo' },
-        { status: 502 }
-      );
-    }
-    const text = await res.text();
-    const productos = parseProductos(text);
-    return NextResponse.json(productos);
-  } catch {
+    const productos = await listarProductos();
+    const data: ProductoTienda[] = productos.map((p) => ({
+      id: p.id_producto,
+      nombre: p.nombre,
+      precio: p.precio_venta,
+    }));
+    return NextResponse.json(data);
+  } catch (err) {
+    const status = err instanceof AppsScriptError ? err.status : 500;
     return NextResponse.json(
-      { error: 'Error interno al cargar el catálogo' },
-      { status: 500 }
+      { error: 'No se pudo obtener el catálogo' },
+      { status }
     );
   }
 }

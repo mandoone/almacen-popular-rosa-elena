@@ -25,6 +25,7 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 
 | Método | Acción | Token admin | Descripción |
 |--------|--------|:-----------:|-------------|
+| GET | `listarProductos` | ❌ público | Catálogo de la tienda: productos con `activo = SI`, sin `precio_costo`/`margen_pct`. |
 | POST | `crearPedido` | ❌ público | Crea pedido, valida stock/precios, descuenta stock. |
 | GET | `listarPedidos` | ✅ | Lista pedidos, del más reciente al más antiguo. |
 | GET | `obtenerPedido` | ✅ | Devuelve un pedido + su detalle. |
@@ -147,10 +148,44 @@ curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
 
 ---
 
-## 7. Pendiente (próximo bloque de FASE 1)
+## 7. Conexión con la web Next.js (proxy interno)
 
-- Desplegar y validar con datos reales.
-- Conectar la web (`src/`): que la tienda llame a `crearPedido` y que `/admin` use
-  `listarPedidos` / `obtenerPedido` / `actualizarEstadoPedido` / `cancelarPedido`.
-- Guardar la URL de la Web App y el token como configuración / variables de entorno
-  (fuera del repo).
+La web **no** llama a la Web App directamente: usa **route handlers internos de
+Next** como proxy, para no exponer la URL ni el token en el cliente.
+
+- Helper de servidor: `src/lib/appsScriptPedidos.ts` (lee las variables de entorno).
+- Rutas internas:
+  - `POST /api/pedidos` → `crearPedido` (público; lo usa la tienda).
+  - `GET /api/admin/pedidos` → `listarPedidos`.
+  - `GET /api/admin/pedidos/[id]` → `obtenerPedido`.
+  - `PATCH /api/admin/pedidos/[id]` → `actualizarEstadoPedido`.
+  - `POST /api/admin/pedidos/[id]` → `cancelarPedido`.
+
+### Variables de entorno (servidor)
+
+Crea `.env.local` (no se commitea) a partir de `.env.example`:
+
+```env
+GOOGLE_SCRIPT_PEDIDOS_URL=<URL .../exec de la Web App>
+GOOGLE_SCRIPT_ADMIN_TOKEN=<ADMIN_TOKEN del Apps Script>
+```
+
+> El token solo se usa en el servidor (acciones admin). **Nunca** uses `NEXT_PUBLIC_*`
+> para estos valores.
+
+### Catálogo alineado con la base operativa
+
+`/api/productos` ya **no** usa el CSV antiguo: sirve el catálogo desde la hoja
+PRODUCTOS vía `listarProductos`, por lo que el `id` que recibe la tienda es el
+`id_producto` real (`PROD-001…`) y `crearPedido` valida sin fallar.
+
+> ✅ `listarProductos` fue **desplegado y validado**: el flujo real (tienda → pedido →
+> hojas → admin) se probó end-to-end localmente con éxito.
+
+> ⚠️ Recuerda: cada vez que cambie el script hay que **re-desplegar** la Web App
+> (nueva versión) para que los cambios estén disponibles en la URL `.../exec`.
+
+### Pendiente
+
+- **Proteger `/api/admin/*`:** hoy sin autenticación de servidor (deuda técnica).
+- Probar el flujo real end-to-end con la Web App desplegada.

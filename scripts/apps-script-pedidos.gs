@@ -46,6 +46,9 @@ function doGet(e) {
     var action = params.action || '';
 
     switch (action) {
+      case 'listarProductos':
+        // Publico: catalogo para la tienda. No requiere token.
+        return jsonOk_({ productos: listarProductos_() });
       case 'listarPedidos':
         exigirToken_(params.token);
         return jsonOk_({ pedidos: listarPedidos_() });
@@ -250,6 +253,51 @@ function crearPedido_(body) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Catalogo publico para la tienda: productos con activo = SI, en el orden de la
+ * hoja PRODUCTOS. NO expone precio_costo ni margen_pct.
+ */
+function listarProductos_() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+
+  var cId = col_(prod, 'id_producto');
+  var cActivo = col_(prod, 'activo');
+  var cNombre = col_(prod, 'nombre');
+  var cCategoria = col_(prod, 'categoria');
+  var cPrioridad = col_(prod, 'prioridad');
+  var cUnidad = col_(prod, 'unidad_medida');
+  var cDecimal = col_(prod, 'permite_decimal');
+  var cPaso = col_(prod, 'paso_venta');
+  var cPrecio = col_(prod, 'precio_venta');
+  var cStock = col_(prod, 'stock_actual');
+  var cStockMin = col_(prod, 'stock_minimo');
+  var cImagen = col_(prod, 'imagen_url');
+
+  var productos = [];
+  for (var i = 0; i < prod.filas.length; i++) {
+    var fila = prod.filas[i];
+    var idProd = limpiar_(fila[cId]);
+    if (!idProd) continue;
+    if (String(fila[cActivo]).toUpperCase() !== 'SI') continue;
+
+    productos.push({
+      id_producto: idProd,
+      nombre: limpiar_(fila[cNombre]),
+      categoria: limpiar_(fila[cCategoria]),
+      prioridad: limpiar_(fila[cPrioridad]),
+      unidad_medida: limpiar_(fila[cUnidad]),
+      permite_decimal: limpiar_(fila[cDecimal]),
+      paso_venta: parseNum_(fila[cPaso]),
+      precio_venta: parseNum_(fila[cPrecio]),
+      stock_actual: parseNum_(fila[cStock]),
+      stock_minimo: parseNum_(fila[cStockMin]),
+      imagen_url: limpiar_(fila[cImagen])
+    });
+  }
+  return productos;
 }
 
 /**

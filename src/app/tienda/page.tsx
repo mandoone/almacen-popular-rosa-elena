@@ -64,6 +64,7 @@ interface CarritoPanelProps {
   onReducir: (id: string) => void;
   onVaciar: () => void;
   onEnviar: () => void;
+  enviando: boolean;
 }
 
 function formatPrecio(n: number) {
@@ -81,6 +82,7 @@ function CarritoPanel({
   onReducir,
   onVaciar,
   onEnviar,
+  enviando,
 }: CarritoPanelProps) {
   return (
     <div className="flex flex-col h-full">
@@ -161,12 +163,13 @@ function CarritoPanel({
       {/* Botón enviar */}
       <button
         onClick={onEnviar}
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-md transition-colors flex items-center justify-center gap-2 text-sm"
+        disabled={enviando}
+        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-600/60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-md transition-colors flex items-center justify-center gap-2 text-sm"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
         </svg>
-        Enviar pedido por WhatsApp
+        {enviando ? 'Enviando pedido...' : 'Enviar pedido por WhatsApp'}
       </button>
     </div>
   );
@@ -181,6 +184,7 @@ export default function TiendaPage() {
   const [telefono, setTelefono] = useState('');
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [busqueda, setBusqueda] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     try {
@@ -235,43 +239,66 @@ export default function TiendaPage() {
   const total = carrito.reduce((acc, i) => acc + i.producto.precio * i.cantidad, 0);
   const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0);
 
-  const enviarPedido = () => {
+  const enviarPedido = async () => {
+    if (enviando) return;
     if (!nombre.trim() || !telefono.trim()) {
       alert('Por favor ingresa tu nombre y teléfono para enviar el pedido.');
       return;
     }
-    const lista = carrito
-      .map((i) => `• ${i.producto.nombre} x${i.cantidad} = ${formatPrecio(i.producto.precio * i.cantidad)}`)
-      .join('\n');
 
-    const mensaje =
-      `Hola! Quiero hacer un pedido del Almacén Popular Rosa Elena Morales Morales:\n\n` +
-      `${lista}\n\n` +
-      `Total: ${formatPrecio(total)}\n` +
-      `Nombre: ${nombre}\n` +
-      `Teléfono: ${telefono}\n\n` +
-      `Iré a retirar el próximo sábado de apertura. ¡Gracias!`;
-
-    // Guardar pedido en localStorage para el panel de admin
-    const pedido = {
-      id: Date.now().toString(),
-      nombre,
-      telefono,
-      productos: carrito.map((i) => ({
-        nombre: i.producto.nombre,
-        cantidad: i.cantidad,
-        precio: i.producto.precio,
-      })),
-      total,
-      fecha: new Date().toISOString(),
-      estado: 'pendiente',
-    };
+    setEnviando(true);
     try {
-      const existentes = JSON.parse(localStorage.getItem('pedidos-almacen') ?? '[]');
-      localStorage.setItem('pedidos-almacen', JSON.stringify([pedido, ...existentes]));
-    } catch {}
+      // 1) Registrar el pedido REAL en la base operativa (vía proxy interno de Next).
+      //    El servidor valida stock y recalcula precios desde la hoja PRODUCTOS.
+      const res = await fetch('/api/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre_cliente: nombre.trim(),
+          telefono: telefono.trim(),
+          forma_pago: 'efectivo_al_retirar',
+          carrito: carrito.map((i) => ({
+            id_producto: i.producto.id,
+            cantidad: i.cantidad,
+            nombre: i.producto.nombre,
+          })),
+        }),
+      });
 
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.ok) {
+        const msg = json?.error || 'No se pudo registrar el pedido. Intenta nuevamente.';
+        alert('Error al enviar el pedido: ' + msg);
+        return;
+      }
+
+      const idPedido: string = json.data.id_pedido;
+      const totalReal: number = json.data.total ?? total;
+
+      // 2) Abrir WhatsApp con el resumen, incluyendo el N° de pedido real.
+      const lista = carrito
+        .map((i) => `• ${i.producto.nombre} x${i.cantidad} = ${formatPrecio(i.producto.precio * i.cantidad)}`)
+        .join('\n');
+
+      const mensaje =
+        `Hola! Quiero confirmar mi pedido del Almacén Popular Rosa Elena Morales Morales:\n\n` +
+        `N° de pedido: ${idPedido}\n\n` +
+        `${lista}\n\n` +
+        `Total: ${formatPrecio(totalReal)}\n` +
+        `Nombre: ${nombre}\n` +
+        `Teléfono: ${telefono}\n\n` +
+        `Iré a retirar el próximo sábado de apertura. ¡Gracias!`;
+
+      window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+
+      // 3) Pedido confirmado: limpiar carrito (el pedido ya vive en la base operativa).
+      alert(`¡Pedido registrado! Tu número de pedido es ${idPedido}.`);
+      vaciarCarrito();
+    } catch {
+      alert('No se pudo conectar para registrar el pedido. Revisa tu conexión e intenta de nuevo.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const carritoProps: CarritoPanelProps = {
@@ -285,6 +312,7 @@ export default function TiendaPage() {
     onReducir: reducir,
     onVaciar: vaciarCarrito,
     onEnviar: enviarPedido,
+    enviando,
   };
 
   return (
