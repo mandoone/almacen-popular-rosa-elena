@@ -5,6 +5,43 @@
 
 ---
 
+## [FASE 1 — preparación] — Carga inicial de la base operativa
+
+### Hecho
+- **Hoja PRODUCTOS cargada manualmente** con **53 productos reales** y su
+  `precio_venta` del listado antiguo.
+- **Hoja CONFIG cargada** con datos temporales de prueba.
+- La base operativa ya cuenta con CONFIG y PRODUCTOS, lista para iniciar la fase de
+  pedidos reales.
+
+### Notas
+- La carga inicial se resolvió **manualmente**, **sin ejecutar** el Apps Script
+  importador. `scripts/import-products-from-old-sheet.gs` queda como herramienta
+  auxiliar reutilizable.
+- La planilla antigua **deja de usarse** como base operativa.
+- Sin ID/URL de planillas ni secretos en el repo. No se modificó `src/`.
+
+---
+
+## [FASE 1 — preparación] — Importación inicial de productos
+
+### Añadido
+- `scripts/import-products-from-old-sheet.gs`: Apps Script que importa productos y
+  precios desde el CSV de la planilla antigua hacia la hoja PRODUCTOS de la base
+  operativa. Replica la lógica de parseo de `src/app/api/productos/route.ts`, genera
+  `id_producto` correlativo (`PROD-001`…), limpia solo datos (conserva encabezados y
+  validaciones) y registra métricas en el log.
+- `docs/IMPORT_PRODUCTS.md`: guía de uso, mapeo de columnas y revisión manual posterior.
+
+### Notas
+- La planilla antigua se usa **solo como fuente de datos inicial**, no como base
+  operativa final.
+- El script trae marcadores `PEGAR_..._AQUI`; la **URL del CSV** y el **ID** de la
+  base se editan en Apps Script y **no se commitean** al repo.
+- No se modificó `src/` ni la lógica actual de lectura del catálogo.
+
+---
+
 ## [FASE 1 — preparación] — Base de datos operativa (Google Sheet)
 
 ### Añadido

@@ -16,6 +16,14 @@
 - Devuelve al frontend: `{ id, nombre, precio }[]`.
 - **Limitaciones:** solo lectura, parser frágil ante cambios de formato/encoding,
   hoja pública, sin pedidos, sin stock, sin clientes.
+- **Migración inicial (realizada):** esta planilla antigua se usó **solo como fuente
+  de datos inicial**. La hoja PRODUCTOS de la base operativa nueva ya fue **cargada
+  manualmente** con **53 productos reales** y su `precio_venta` del listado antiguo;
+  CONFIG quedó con datos temporales de prueba. La planilla antigua **ya no se usa**
+  como base operativa (ver decisión D5 en `docs/DECISIONS.md`).
+- El script `scripts/import-products-from-old-sheet.gs` (ver `docs/IMPORT_PRODUCTS.md`)
+  queda como **herramienta auxiliar** reutilizable, pero **no fue necesario ejecutarlo**
+  para esta primera carga.
 
 ---
 
