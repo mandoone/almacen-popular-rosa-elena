@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe — Almacén Popular Rosa Elena Morales Morales</title>
+  <link rel="icon" href="../brandkit/assets/favicon.ico">
+  <link rel="stylesheet" href="../themes/almacen.css">
+  <style>
+    /* ── Layout del informe ─────────────────────────────────────────────── */
+    .report-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-6);
+    }
+
+    /* ── Portada ────────────────────────────────────────────────────────── */
+    .cover {
+      background-color: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: var(--space-16) var(--space-8);
+      text-align: center;
+      margin: calc(-1 * var(--space-8)) calc(-1 * var(--space-6)) var(--space-12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-6);
+    }
+
+    .cover-logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    .cover-title {
+      font-family: var(--font-serif);
+      font-size: var(--text-4xl);
+      font-weight: var(--weight-bold);
+      line-height: var(--leading-tight);
+      color: var(--color-white);
+    }
+
+    .cover-subtitle {
+      font-family: var(--font-sans);
+      font-size: var(--text-lg);
+      color: var(--color-primary-light);
+      font-weight: var(--weight-medium);
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: var(--space-6);
+      font-size: var(--text-sm);
+      color: var(--color-primary-light);
+      border-top: 1px solid rgba(196, 181, 253, 0.3);
+      padding-top: var(--space-4);
+      margin-top: var(--space-2);
+    }
+
+    /* ── Sección ────────────────────────────────────────────────────────── */
+    .section {
+      margin-bottom: var(--space-12);
+    }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      line-height: var(--leading-snug);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 2px solid var(--color-primary-light);
+    }
+
+    .section-body {
+      font-size: var(--text-base);
+      line-height: var(--leading-relaxed);
+      color: var(--color-gray-700);
+    }
+
+    .section-body p {
+      margin-bottom: var(--space-4);
+    }
+
+    /* ── Resumen ejecutivo ──────────────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+
+    .summary-card {
+      background-color: var(--color-surface-alt);
+      border: 1px solid var(--color-border-brand);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+    }
+
+    .summary-card-label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .summary-card-value {
+      font-family: var(--font-serif);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+    }
+
+    .summary-card-desc {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      margin-top: var(--space-1);
+    }
+
+    /* ── Tabla de estado por fase ───────────────────────────────────────── */
+    .phase-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-6);
+    }
+
+    .phase-table th {
+      background-color: var(--color-primary-dark);
+      color: var(--color-white);
+      font-weight: var(--weight-semibold);
+      text-align: left;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .phase-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+
+    .phase-table tr:nth-child(even) td {
+      background-color: var(--color-surface-alt);
+    }
+
+    /* ── Badges de estado ───────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .badge-done     { background-color: #DCFCE7; color: #15803D; }
+    .badge-progress { background-color: #FEF9C3; color: #A16207; }
+    .badge-pending  { background-color: var(--color-gray-100); color: var(--color-gray-600); }
+    .badge-debt     { background-color: #FEE2E2; color: #B91C1C; }
+
+    /* ── Lista de deudas técnicas ───────────────────────────────────────── */
+    .debt-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .debt-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background-color: var(--color-surface-alt);
+      border-left: 4px solid var(--color-primary-light);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .debt-item.high  { border-left-color: #DC2626; }
+    .debt-item.med   { border-left-color: #D97706; }
+    .debt-item.low   { border-left-color: var(--color-primary-light); }
+
+    .debt-title {
+      font-weight: var(--weight-semibold);
+      color: var(--color-gray-900);
+      margin-bottom: var(--space-1);
+      font-size: var(--text-sm);
+    }
+
+    .debt-desc {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ── Próximos pasos ─────────────────────────────────────────────────── */
+    .steps-list {
+      list-style: none;
+      counter-reset: steps;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .step-item {
+      counter-increment: steps;
+      display: flex;
+      gap: var(--space-4);
+      align-items: flex-start;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-bold);
+    }
+
+    .step-number::before { content: counter(steps); }
+
+    .step-content-title {
+      font-weight: var(--weight-semibold);
+      color: var(--color-primary-dark);
+      margin-bottom: var(--space-1);
+    }
+
+    .step-content-desc {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ── Pie de página ──────────────────────────────────────────────────── */
+    .report-footer {
+      background-color: var(--color-primary-dark);
+      color: var(--color-primary-light);
+      text-align: center;
+      padding: var(--space-8);
+      margin: var(--space-12) calc(-1 * var(--space-6)) 0;
+      font-size: var(--text-sm);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .report-footer strong {
+      color: var(--color-white);
+      font-family: var(--font-serif);
+      font-size: var(--text-base);
+    }
+
+    /* ── Divisor ────────────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background-color: var(--color-border);
+      margin: var(--space-8) 0;
+    }
+
+    /* ── Callout / nota ─────────────────────────────────────────────────── */
+    .callout {
+      background-color: var(--color-surface-alt);
+      border-left: 4px solid var(--color-primary);
+      padding: var(--space-4) var(--space-5);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: var(--text-sm);
+      color: var(--color-gray-700);
+      margin: var(--space-4) 0;
+    }
+  </style>
+</head>
+<body>
+<div class="report-page">
+
+  <!-- ══════════════════════════════════════════════════════════
+       PORTADA
+       ══════════════════════════════════════════════════════════ -->
+  <header class="cover">
+    <img
+      src="../brandkit/assets/logo.png"
+      alt="Logo Almacén Popular Rosa Elena Morales Morales"
+      class="cover-logo"
+    >
+    <div>
+      <h1 class="cover-title">Informe de Estado</h1>
+      <p class="cover-subtitle">Almacén Popular Rosa Elena Morales Morales</p>
+    </div>
+    <div class="cover-meta">
+      <span>Fecha: {{FECHA}}</span>
+      <span>|</span>
+      <span>Etapa: {{VERSION}}</span>
+      <span>|</span>
+      <span>Generado por: Claude Code</span>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════
+       1. RESUMEN EJECUTIVO
+       ══════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <p class="section-label">01</p>
+    <h2 class="section-title">Resumen ejecutivo</h2>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p class="summary-card-label">Estado general</p>
+        <p class="summary-card-value">{{ESTADO_GENERAL}}</p>
+        <p class="summary-card-desc">{{ESTADO_GENERAL_DESC}}</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-card-label">Páginas públicas</p>
+        <p class="summary-card-value">{{NUM_PAGINAS}}</p>
+        <p class="summary-card-desc">En producción</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-card-label">Pedidos en sistema</p>
+        <p class="summary-card-value">{{NUM_PEDIDOS}}</p>
+        <p class="summary-card-desc">Almacenados en Google Sheets</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-card-label">Productos activos</p>
+        <p class="summary-card-value">{{NUM_PRODUCTOS}}</p>
+        <p class="summary-card-desc">En catálogo operativo</p>
+      </div>
+    </div>
+
+    <div class="section-body">
+      <p>{{RESUMEN}}</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       2. ESTADO POR FASE
+       ══════════════════════════════════════════════════════════ -->
+  <section class="section avoid-break">
+    <p class="section-label">02</p>
+    <h2 class="section-title">Estado por fase</h2>
+
+    <table class="phase-table">
+      <thead>
+        <tr>
+          <th>Fase</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>FASE 0</strong></td>
+          <td>Documentación viva y metodología</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>AGENTS.md + docs/ (7 archivos)</td>
+        </tr>
+        <tr>
+          <td><strong>FASE 1</strong></td>
+          <td>Base operativa Google Sheets + pedidos reales + web conectada</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>Apps Script Web App + proxy Next.js + 53 productos</td>
+        </tr>
+        <tr>
+          <td><strong>FASE 2</strong></td>
+          <td>Panel del vendedor / administración mejorada</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Proteger /api/admin/*, forma_pago, notificaciones</td>
+        </tr>
+        <tr>
+          <td><strong>FASE 3</strong></td>
+          <td>Mejoras UX tienda (imágenes, categorías, filtros)</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Requiere cargar imágenes de productos</td>
+        </tr>
+        <tr>
+          <td><strong>FASE 4</strong></td>
+          <td>Design System — componentes React reutilizables</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Base: design-system/ ya iniciado</td>
+        </tr>
+        <tr>
+          <td><strong>FASE 5</strong></td>
+          <td>Pagos en línea (fuera de alcance inicial)</td>
+          <td><span class="badge badge-pending">Fuera de scope</span></td>
+          <td>Decisión D6: no se implementa online payment</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       3. INVENTARIO VISUAL
+       ══════════════════════════════════════════════════════════ -->
+  <section class="section page-break">
+    <p class="section-label">03</p>
+    <h2 class="section-title">Inventario visual</h2>
+
+    <div class="section-body">
+      <p><strong>Framework:</strong> Next.js 14 App Router · TypeScript · React 18 · Tailwind CSS 3.4</p>
+      <p><strong>Fuentes:</strong> Inter (sans-serif, cuerpo) + Playfair Display (serif, marca/títulos) vía Google Fonts</p>
+      <p><strong>Paleta:</strong> Morado institucional en 3 tonos: primary <code>#6B21A8</code> · light <code>#C4B5FD</code> · dark <code>#3B0764</code></p>
+      <p><strong>Íconos:</strong> SVG inline estilo Heroicons (sin librería externa)</p>
+      <p><strong>Consistencia visual:</strong> 6/10 — paleta y tipografía sólidas; estilos no abstraídos en componentes.</p>
+    </div>
+
+    <div class="callout">
+      Ver auditoría completa en <code>design-system/docs/WEB_STYLE_AUDIT.md</code>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       4. DEUDAS TÉCNICAS
+       ══════════════════════════════════════════════════════════ -->
+  <section class="section avoid-break">
+    <p class="section-label">04</p>
+    <h2 class="section-title">Deudas técnicas</h2>
+
+    <ul class="debt-list">
+      <li class="debt-item high">
+        <div>
+          <p class="debt-title">Proteger /api/admin/* con autenticación de servidor</p>
+          <p class="debt-desc">Hoy el panel admin valida la contraseña solo en el cliente. Las rutas de API son alcanzables sin token desde cualquier herramienta. Expone nombre, teléfono y total de los pedidos.</p>
+        </div>
+      </li>
+      <li class="debt-item med">
+        <div>
+          <p class="debt-title">Selección de forma_pago en la tienda</p>
+          <p class="debt-desc">Actualmente hardcodeada como 'efectivo_al_retirar'. No hay selector de medio de pago en el formulario de pedido.</p>
+        </div>
+      </li>
+      <li class="debt-item med">
+        <div>
+          <p class="debt-title">Fechas de apertura hardcodeadas en Home</p>
+          <p class="debt-desc">"9 y 23 de mayo" está hardcodeado en page.tsx. Debe actualizarse manualmente cada mes o consumirse desde CONFIG de la planilla.</p>
+        </div>
+      </li>
+      <li class="debt-item med">
+        <div>
+          <p class="debt-title">Reemplazar CONFIG temporal por valores definitivos</p>
+          <p class="debt-desc">WhatsApp, banco, margen por defecto y número de WhatsApp del almacén están con valores de prueba en la planilla de Google Sheets.</p>
+        </div>
+      </li>
+      <li class="debt-item low">
+        <div>
+          <p class="debt-title">Conflict de token --background vs bg-background</p>
+          <p class="debt-desc">CSS var --background (#ffffff) y token Tailwind background (#F9F5FF) tienen el mismo nombre semántico pero distinto valor.</p>
+        </div>
+      </li>
+      <li class="debt-item low">
+        <div>
+          <p class="debt-title">Archivos de fuente Geist muertos</p>
+          <p class="debt-desc">GeistVF.woff y GeistMonoVF.woff existen en src/app/fonts/ pero no están registrados en layout.tsx. Ocupan espacio sin uso.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       5. PRÓXIMOS PASOS
+       ══════════════════════════════════════════════════════════ -->
+  <section class="section page-break">
+    <p class="section-label">05</p>
+    <h2 class="section-title">Próximos pasos recomendados</h2>
+
+    <ol class="steps-list">
+      <li class="step-item">
+        <div class="step-number"></div>
+        <div>
+          <p class="step-content-title">Proteger las rutas /api/admin/* (alta prioridad)</p>
+          <p class="step-content-desc">Agregar verificación del token admin en el servidor en cada route handler de admin. Evita exposición de datos personales de los clientes.</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-number"></div>
+        <div>
+          <p class="step-content-title">Actualizar CONFIG en Google Sheets</p>
+          <p class="step-content-desc">Ingresar los valores reales: número de WhatsApp del almacén, datos bancarios, fechas de apertura. La planilla ya tiene la estructura lista.</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-number"></div>
+        <div>
+          <p class="step-content-title">Afinar productos en el catálogo</p>
+          <p class="step-content-desc">Revisar categoría, prioridad, unidad de medida y stock de los 53 productos cargados. Agregar imágenes de productos en public/images/productos/.</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-number"></div>
+        <div>
+          <p class="step-content-title">Agregar selector de forma_pago en la tienda</p>
+          <p class="step-content-desc">Dar al comprador la opción de elegir el medio de pago al confirmar el pedido (efectivo, transferencia).</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-number"></div>
+        <div>
+          <p class="step-content-title">Completar el Design System liviano</p>
+          <p class="step-content-desc">Con la estructura design-system/ ya creada, generar el primer informe HTML completo y validar el template. Luego expandir hacia componentes React si se requiere.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <div class="divider"></div>
+
+  <p style="font-size: var(--text-sm); color: var(--color-gray-400); text-align: center;">
+    Informe generado el {{FECHA}} · Proyecto comunitario sin fines de lucro
+  </p>
+
+</div><!-- /report-page -->
+
+<!-- ══════════════════════════════════════════════════════════
+     PIE DE PÁGINA
+     ══════════════════════════════════════════════════════════ -->
+<footer class="report-footer">
+  <strong>Almacén Popular Rosa Elena Morales Morales</strong>
+  <span>Gamero 2670, Independencia · almacenpopular.rosaelenamorarles@gmail.com</span>
+  <span>Proyecto comunitario sin fines de lucro · Población Juan Antonio Ríos</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!--
+  partial: section-block.html
+  Bloque de sección genérico reutilizable para informes.
+
+  Variables:
+    {{NUM}}       → número de sección (ej: "01", "02")
+    {{TITULO}}    → título de la sección
+    {{CONTENIDO}} → HTML o texto del cuerpo de la sección
+
+  Variantes de uso:
+    - Sección de texto simple: reemplazar {{CONTENIDO}} con párrafos
+    - Sección con tabla: insertar un <table class="phase-table"> dentro de {{CONTENIDO}}
+    - Sección con lista: insertar <ul class="debt-list"> o <ol class="steps-list">
+    - Sección con callout: insertar <div class="callout">
+
+  Clases disponibles desde themes/almacen.css (definidas en report-base.html):
+    .section          → contenedor con margen inferior
+    .section-label    → número de sección (xs, uppercase, primary)
+    .section-title    → título con línea inferior (serif, primary-dark)
+    .section-body     → cuerpo de texto (base, gray-700, leading-relaxed)
+    .phase-table      → tabla de fases
+    .badge-done       → badge verde "Completada"
+    .badge-progress   → badge amarillo "En progreso"
+    .badge-pending    → badge gris "Pendiente"
+    .badge-debt       → badge rojo "Deuda técnica"
+    .debt-list        → lista de deudas con borde lateral
+    .debt-item.high   → deuda alta (rojo)
+    .debt-item.med    → deuda media (ámbar)
+    .debt-item.low    → deuda baja (lavanda)
+    .steps-list       → lista numerada con círculos morados
+    .callout          → nota destacada con borde izquierdo
+    .summary-grid     → grid de tarjetas de resumen
+    .summary-card     → tarjeta individual del grid
+    .page-break       → salto de página al imprimir
+    .avoid-break      → evitar partir sección al imprimir
+    .no-print         → ocultar al imprimir
+
+  Ejemplo de uso completo:
+  ─────────────────────────────────────────────
+  <section class="section">
+    <p class="section-label">03</p>
+    <h2 class="section-title">Inventario de componentes</h2>
+    <div class="section-body">
+      <p>Se detectaron 8 variantes de botón sin abstraer...</p>
+    </div>
+    <div class="callout">
+      Ver detalle completo en <code>docs/WEB_STYLE_AUDIT.md</code>
+    </div>
+  </section>
+  ─────────────────────────────────────────────
+-->
+
+<section class="section">
+  <p class="section-label">{{NUM}}</p>
+  <h2 class="section-title">{{TITULO}}</h2>
+  <div class="section-body">
+    {{CONTENIDO}}
+  </div>
+</section>

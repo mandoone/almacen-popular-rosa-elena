@@ -5,6 +5,38 @@
 
 ---
 
+## [DS] — Design System liviano iniciado (2026-06-26)
+
+### Añadido
+- `WEB_STYLE_AUDIT.md` (raíz): auditoría visual completa del proyecto. Inventario de
+  colores, tipografía, componentes, espaciados, íconos, inconsistencias y propuesta de DS.
+- `design-system/`: estructura completa del Design System liviano.
+  - `README.md`: objetivo, flujo de trabajo y relación con la web.
+  - `brandkit/colors.md` y `brandkit/typography.md`: referencia de identidad visual.
+  - `brandkit/assets/`: copias de logo.png, logo-red.png y favicon.ico para templates.
+  - `themes/almacen.css`: variables CSS nativas extraídas de `tailwind.config.ts`.
+  - `templates/report-base.html`: template HTML completo para informes, con estilos de marca.
+  - `templates/partials/`: header, footer y section-block reutilizables.
+  - `prompts/generate-report.md` y `prompts/audit-visual.md`: instrucciones para Claude.
+  - `docs/WEB_STYLE_AUDIT.md`: copia de la auditoría (original en raíz intacto).
+  - `docs/decisions.md`: decisiones de arquitectura del DS (D1–D6).
+  - `docs/ADS-001_brandkit_analysis.md`: Brand Kit técnico completo (filosofía visual,
+    paleta, tokens, tipografía, espaciado, 10 variantes de botón, 3 variantes de card,
+    formularios, navbar, footer, hero, iconografía, uso del logo, reglas de consistencia,
+    elementos protegidos y candidatos a evolución, reutilización en informes HTML).
+  - `reports/.gitkeep`: carpeta preparada para informes generados.
+  - `reports/2026-06-26_estado_actual_web_almacen.html`: primer informe real generado con
+    identidad visual del Almacén. Cubre stack, estado por fases, paleta, tipografía,
+    deudas técnicas y próximos pasos. Reutiliza hero, feature cards, tabla admin,
+    badges, CTA section y footer de la web. Listo para imprimir como PDF.
+
+### Notas
+- No se modificó ningún archivo de `src/`, `public/`, `tailwind.config.ts` ni `globals.css`.
+- El DS es independiente del build de Next.js. Los templates HTML abren directamente en browser.
+- Primer informe validado visualmente. Pendiente: exportar a PDF con Ctrl+P desde Chrome.
+
+---
+
 ## [FASE 1] — Flujo de pedidos reales probado end-to-end (local)
 
 ### Validado

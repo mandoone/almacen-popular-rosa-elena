@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan de trabajo — Web Almacén Popular Rosa Elena Morales</title>
+
+  <!-- Tokens del Design System (carga Inter + Playfair Display via @import) -->
+  <link rel="stylesheet" href="../themes/almacen.css">
+
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       VARIABLES LOCALES — colores del documento
+       Mapeados a los tokens institucionales del DS Almacén
+       ═══════════════════════════════════════════════════════════ */
+    :root {
+      --c900: var(--color-primary-dark);    /* #3B0764 */
+      --c800: #52167A;
+      --c700: var(--color-primary);         /* #6B21A8 */
+      --c500: #9B72CD;
+      --c300: var(--color-primary-light);   /* #C4B5FD */
+      --c200: #D4C7FB;
+      --c100: #EBE5FC;
+      --c050: var(--color-background);      /* #F9F5FF */
+
+      --t900: #1F0836;
+      --t700: #4A3768;
+      --t500: #6E6290;
+
+      --line: #C8BAFB;
+
+      --success-bg:     #ECFCEF;
+      --success-border: #BBE4C5;
+      --success-text:   #1F6A37;
+
+      --pending-bg:     var(--color-background);
+      --pending-border: var(--color-border-brand);
+      --pending-text:   var(--color-primary-dark);
+
+      --warn-bg:        #FFF4DC;
+      --warn-border:    #FFD08A;
+      --warn-text:      #925900;
+
+      --danger-bg:      #FDECEC;
+      --danger-border:  #F5C4C4;
+      --danger-text:    #9A1F1F;
+
+      --doc-shadow: 0 12px 28px rgba(59, 7, 100, 0.09);
+      --r-xl: 24px;
+      --r-lg: 18px;
+      --r-md: 14px;
+      --r-sm: 10px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BASE
+       ═══════════════════════════════════════════════════════════ */
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--t900);
+      line-height: 1.6;
+      background: linear-gradient(180deg, var(--c050) 0%, #faf8fe 100%);
+    }
+
+    /* almacen.css hace reset de margin/padding — reestablecemos párrafo */
+    p { margin: 0 0 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .page {
+      width: min(1020px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════ */
+
+    .hero {
+      background: linear-gradient(160deg, var(--c900) 0%, var(--c800) 100%);
+      color: var(--color-white);
+      border-radius: 28px;
+      padding: 42px 40px 38px;
+      box-shadow: var(--doc-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: -70px; top: -70px;
+      width: 220px; height: 220px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -80px; bottom: -90px;
+      width: 220px; height: 220px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-logo {
+      position: absolute;
+      top: 24px;
+      right: 36px;
+      width: auto;
+      height: 128px;
+      object-fit: contain;
+      z-index: 1;
+      opacity: 0.88;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+      position: relative; z-index: 1;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 5vw, 50px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      position: relative; z-index: 1;
+    }
+
+    .hero-subtitle {
+      margin: 16px 0 0;
+      max-width: 800px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.90);
+      line-height: 1.55;
+      position: relative; z-index: 1;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 26px;
+      position: relative; z-index: 1;
+    }
+
+    .meta-card {
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.17);
+    }
+
+    .meta-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-weight: 700;
+      color: var(--color-white);
+      font-size: 15px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       METADATA DOCUMENTAL
+       ═══════════════════════════════════════════════════════════ */
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      margin-top: 18px;
+      padding: 11px 16px;
+      border-radius: var(--r-sm);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.13);
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.80);
+      position: relative;
+      z-index: 1;
+      line-height: 1.5;
+    }
+
+    .doc-meta-label {
+      font-weight: 700;
+      color: rgba(255,255,255,0.50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      margin-right: 5px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       LEYENDA
+       ═══════════════════════════════════════════════════════════ */
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: var(--color-white);
+      color: var(--t900);
+    }
+
+    .legend-done    { background: var(--success-bg);  border-color: var(--success-border); color: var(--success-text); }
+    .legend-pending { background: var(--pending-bg);  border-color: var(--pending-border); color: var(--pending-text); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECCIONES Y FASES
+       ═══════════════════════════════════════════════════════════ */
+
+    .section,
+    .phase {
+      background: var(--color-white);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+      box-shadow: var(--doc-shadow);
+      overflow: hidden;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 30px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: var(--c900);
+      font-weight: 700;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--c900);
+    }
+
+    .lead {
+      color: var(--t700);
+      font-size: 16.5px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       OBJETIVO Y USUARIOS
+       ═══════════════════════════════════════════════════════════ */
+
+    .objective-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .objective-item {
+      background: var(--c050);
+      border: 1px solid var(--c200);
+      color: var(--c900);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .user-card {
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      background: var(--c050);
+      padding: 18px;
+    }
+
+    .user-card h3 { margin-top: 0; }
+
+    /* ═══════════════════════════════════════════════════════════
+       FASES
+       ═══════════════════════════════════════════════════════════ */
+
+    .phase { margin-top: 22px; }
+
+    .phase-header {
+      padding: 22px 26px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, var(--c100) 0%, #faf8ff 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .phase-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 26px;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: var(--c900);
+      font-weight: 700;
+    }
+
+    .phase-body {
+      padding: 24px 26px 28px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BADGES DE ESTADO
+       ═══════════════════════════════════════════════════════════ */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      border-radius: 9999px;
+      padding: 7px 13px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      letter-spacing: 0.01em;
+    }
+
+    .status.done     { background: var(--success-bg);  border-color: var(--success-border);  color: var(--success-text); }
+    .status.pending  { background: var(--pending-bg);  border-color: var(--pending-border);  color: var(--pending-text); }
+    .status.priority { background: var(--danger-bg);   border-color: var(--danger-border);   color: var(--danger-text); }
+    .status.goal     { background: var(--c100);        border-color: var(--c200);             color: var(--c900); }
+
+    /* ═══════════════════════════════════════════════════════════
+       CHECKLISTS
+       ═══════════════════════════════════════════════════════════ */
+
+    .checklist {
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+    }
+
+    .checklist > li {
+      position: relative;
+      margin: 8px 0;
+      padding-left: 34px;
+      font-size: 15px;
+      color: var(--t900);
+      line-height: 1.55;
+    }
+
+    .checklist > li::before {
+      position: absolute;
+      left: 0; top: 0;
+      width: 24px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .checklist.done    > li::before { content: "✅"; }
+    .checklist.pending > li::before { content: "⬜"; }
+
+    .sublist {
+      list-style: none;
+      margin: 8px 0 10px 52px;
+      padding: 0 0 0 20px;
+      border-left: 3px solid var(--c200);
+      color: var(--t700);
+    }
+
+    .sublist li {
+      position: relative;
+      margin: 5px 0;
+      padding-left: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .sublist li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      color: var(--c700);
+      font-weight: 900;
+      font-size: 16px;
+      line-height: 1.1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NOTAS / CALLOUTS
+       ═══════════════════════════════════════════════════════════ */
+
+    .note {
+      margin: 14px 0;
+      padding: 13px 16px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--line);
+      background: #faf9fe;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--t700);
+    }
+
+    .note.green  { background: var(--success-bg);  border-color: var(--success-border); color: var(--success-text); }
+    .note.orange { background: var(--warn-bg);     border-color: var(--warn-border);    color: var(--warn-text); }
+
+    /* ═══════════════════════════════════════════════════════════
+       BLOQUE DE CÓDIGO
+       ═══════════════════════════════════════════════════════════ */
+
+    .code-box {
+      margin: 12px 0;
+      padding: 13px 16px;
+      border-radius: var(--r-md);
+      background: var(--c900);
+      color: var(--c100);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TABLA DE INFORMACIÓN
+       ═══════════════════════════════════════════════════════════ */
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14.5px;
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .info-table th {
+      width: 34%;
+      background: var(--c100);
+      color: var(--c900);
+      font-weight: 600;
+    }
+
+    .info-table td { color: var(--t700); }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER DEL DOCUMENTO
+       ═══════════════════════════════════════════════════════════ */
+
+    .doc-footer {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--t500);
+      padding-bottom: 8px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════ */
+
+    @media (max-width: 860px) {
+      .page { padding: 20px 0 48px; }
+      .hero { padding: 28px 24px; border-radius: 20px; }
+      .meta-grid, .objective-grid, .cards { grid-template-columns: 1fr; }
+      .phase-header { flex-direction: column; }
+      .hero-logo { width: auto; height: 86px; top: 18px; right: 22px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESIÓN / PDF
+       ═══════════════════════════════════════════════════════════ */
+
+    @media print {
+      body { background: #ffffff; }
+      .page { width: 100%; padding: 0; }
+      .hero, .section, .phase { box-shadow: none; }
+      .hero { border-radius: 0; }
+      .section, .phase { page-break-inside: avoid; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <!-- ══════════════════════════════════════════════════════════ HERO -->
+    <header class="hero">
+      <img src="../brandkit/assets/logo.png"
+           alt="Logo Almacén Popular Rosa Elena Morales Morales"
+           class="hero-logo">
+      <div class="hero-eyebrow">Plan de trabajo</div>
+      <h1>Web Almacén Popular<br>Rosa Elena Morales</h1>
+      <p class="hero-subtitle">
+        Estado de avance y planificación general para transformar la web en una herramienta operativa de apoyo al funcionamiento del almacén.
+      </p>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="meta-label">Estado actual</div>
+          <div class="meta-value">Fase 1 funcional</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Próxima prioridad</div>
+          <div class="meta-value">Seguridad admin</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Meta</div>
+          <div class="meta-value">Fase 10 operativa</div>
+        </div>
+      </div>
+      <div class="doc-meta">
+        <span><span class="doc-meta-label">Documento</span>Plan de trabajo web</span>
+        <span><span class="doc-meta-label">Versión</span>v0.1</span>
+        <span><span class="doc-meta-label">Fecha</span>2026-06-26</span>
+        <span><span class="doc-meta-label">Estado</span>Borrador interno</span>
+        <span><span class="doc-meta-label">Fuente</span>Plan de trabajo — Web Almacén Popular Rosa Elena Morales</span>
+      </div>
+    </header>
+
+    <div class="legend">
+      <span class="legend-item legend-done">✅ Realizado</span>
+      <span class="legend-item legend-pending">⬜ Pendiente</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ OBJETIVO DEL DOCUMENTO -->
+    <section class="section">
+      <h2>Objetivo del documento</h2>
+      <p class="lead">
+        Este documento presenta el estado de avance y la planificación general del desarrollo de la web del Almacén Popular Rosa Elena Morales.
+      </p>
+      <p>
+        El plan se organiza por fases, indicando qué etapas ya están completadas, cuáles están pendientes y cuál es el camino propuesto para llegar a una versión operativa completa del sistema.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ OBJETIVO GENERAL -->
+    <section class="section">
+      <h2>Objetivo general</h2>
+      <p>
+        La meta es que la página deje de ser solo una vitrina informativa y se transforme progresivamente en una herramienta de apoyo real para el funcionamiento del almacén.
+      </p>
+
+      <div class="objective-grid">
+        <div class="objective-item">Mostrar productos disponibles</div>
+        <div class="objective-item">Recibir pedidos online</div>
+        <div class="objective-item">Registrar ventas presenciales</div>
+        <div class="objective-item">Generar comandas</div>
+        <div class="objective-item">Controlar stock</div>
+        <div class="objective-item">Registrar compras</div>
+        <div class="objective-item">Manejar precios</div>
+        <div class="objective-item">Revisar caja</div>
+        <div class="objective-item">Registrar pendientes</div>
+        <div class="objective-item">Apoyar diseño de compras</div>
+        <div class="objective-item">Mostrar historia del almacén</div>
+        <div class="objective-item">Organizar información pública</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ ANTECEDENTES -->
+    <section class="section">
+      <h2>Antecedentes considerados</h2>
+      <p>
+        La planificación considera los avances ya realizados en la web, el informe anterior de estado del proyecto y los antecedentes recopilados en el Drive del Almacén Popular Rosa Elena Morales.
+      </p>
+
+      <ul class="sublist">
+        <li>informe anterior de estado de la web;</li>
+        <li>base actual de productos y pedidos;</li>
+        <li>carpeta Drive del almacén;</li>
+        <li>documento de diseño de compra;</li>
+        <li>documento de comandas;</li>
+        <li>imágenes y material gráfico recopilado;</li>
+        <li>criterios definidos sobre precios, stock, caja, pendientes y compras.</li>
+      </ul>
+
+      <h3>Carpeta Drive de referencia interna</h3>
+      <div class="code-box">https://drive.google.com/drive/folders/1oVjXYuqPKhRTO42padg1Vr9sERaiBm5y?usp=drive_link</div>
+
+      <h3>Material histórico / libro compartido como referencia</h3>
+      <div class="code-box">https://libros.uchile.cl/index.php/sisib/catalog/book/1481</div>
+
+      <p>
+        El material del Drive se utilizará como fuente de revisión, pero no todo se incorporará inmediatamente a la web. La prioridad inicial será usar los documentos que apoyan el funcionamiento operativo del almacén, especialmente finanzas, diseño de compra, comandas, productos, precios y stock.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ ESTADO GENERAL -->
+    <section class="section">
+      <h2>Estado general del proyecto</h2>
+      <p>La web ya cuenta con una primera base funcional.</p>
+
+      <ul class="sublist">
+        <li>página web base;</li>
+        <li>home inicial;</li>
+        <li>catálogo de productos;</li>
+        <li>carrito de compras;</li>
+        <li>envío de pedidos por WhatsApp;</li>
+        <li>páginas informativas;</li>
+        <li>primera versión de panel admin;</li>
+        <li>base operativa inicial;</li>
+        <li>pedidos reales guardados en Google Sheets;</li>
+        <li>panel admin leyendo pedidos reales;</li>
+        <li>stock descontándose al crear pedidos.</li>
+      </ul>
+
+      <div class="note green">
+        El avance más importante hasta ahora es que los pedidos ya no dependen solo del navegador o de un computador específico. La web ya puede registrar pedidos reales en una base operativa compartida y mostrarlos desde el panel admin.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ TIPOS DE USUARIOS -->
+    <section class="section">
+      <h2>Tipos de usuarios considerados</h2>
+      <div class="cards">
+
+        <article class="user-card">
+          <h3>Compradores / vecinas y vecinos</h3>
+          <p>Ingresan a la web para revisar productos, hacer pedidos, conocer el almacén y participar de la comunidad.</p>
+          <ul class="sublist">
+            <li>ver catálogo actualizado;</li>
+            <li>revisar precios;</li>
+            <li>agregar productos al carrito;</li>
+            <li>hacer pedidos desde celular o computador;</li>
+            <li>elegir forma de pago;</li>
+            <li>enviar resumen por WhatsApp;</li>
+            <li>retirar el pedido en la fecha de apertura;</li>
+            <li>conocer formas de aportar o participar.</li>
+          </ul>
+        </article>
+
+        <article class="user-card">
+          <h3>Vendedoras / vendedores</h3>
+          <p>Atienden durante la apertura presencial. Solo acceden a las herramientas necesarias para vender.</p>
+          <ul class="sublist">
+            <li>buscar productos;</li>
+            <li>registrar ventas presenciales;</li>
+            <li>ingresar cantidades;</li>
+            <li>registrar pagos o pendientes;</li>
+            <li>generar comanda;</li>
+            <li>descontar stock;</li>
+            <li>dejar historial de lo vendido.</li>
+          </ul>
+        </article>
+
+        <article class="user-card">
+          <h3>Administradoras / administradores</h3>
+          <p>Gestionan el funcionamiento general del almacén desde el panel completo.</p>
+          <ul class="sublist">
+            <li>ver pedidos online;</li>
+            <li>cambiar estado de pedidos;</li>
+            <li>confirmar pagos;</li>
+            <li>cancelar pedidos;</li>
+            <li>revisar stock;</li>
+            <li>editar productos;</li>
+            <li>actualizar precios;</li>
+            <li>revisar ventas presenciales;</li>
+            <li>registrar compras;</li>
+            <li>cuadrar ventas y pagos;</li>
+            <li>configurar datos del almacén.</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 0 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 0 — Orden inicial del proyecto</h2>
+        <span class="status done">Lista</span>
+      </div>
+      <div class="phase-body">
+        <ul class="checklist done">
+          <li>Revisar la página existente.</li>
+          <li>Ordenar el trabajo por etapas.</li>
+          <li>Definir un plan general de avance.</li>
+          <li>Separar lo técnico de lo operativo y lo público.</li>
+          <li>Empezar a organizar la información disponible.</li>
+          <li>Revisar informe anterior de estado.</li>
+          <li>Revisar Drive del almacén de forma preliminar.</li>
+          <li>Identificar documentos útiles para el sistema.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 1 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 1 — Base operativa y pedidos reales</h2>
+        <span class="status done">Funcional y probado</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase permitió que los pedidos no dependan solo del navegador o de un computador específico.</p>
+
+        <h3>1.1 Base operativa</h3>
+        <ul class="checklist done">
+          <li>Crear una base operativa para la web.</li>
+          <li>
+            Crear hojas principales para:
+            <ul class="sublist">
+              <li>productos;</li>
+              <li>pedidos;</li>
+              <li>detalle de pedidos;</li>
+              <li>clientes;</li>
+              <li>ventas;</li>
+              <li>compras;</li>
+              <li>movimientos de stock;</li>
+              <li>configuración.</li>
+            </ul>
+          </li>
+          <li>Cargar configuración temporal.</li>
+          <li>Cargar productos iniciales.</li>
+        </ul>
+
+        <h3>1.2 Productos iniciales</h3>
+        <ul class="checklist done">
+          <li>Cargar 53 productos reales.</li>
+          <li>Crear códigos internos para los productos.</li>
+          <li>Usar códigos tipo <strong>PROD-001</strong>, <strong>PROD-002</strong>, etc.</li>
+          <li>Cargar precios iniciales.</li>
+          <li>Usar stock temporal para pruebas.</li>
+        </ul>
+
+        <h3>1.3 Pedidos reales</h3>
+        <ul class="checklist done">
+          <li>Crear backend con Apps Script.</li>
+          <li>Permitir crear pedidos reales.</li>
+          <li>Guardar pedidos en Google Sheets.</li>
+          <li>Guardar detalle de productos pedidos.</li>
+          <li>Descontar stock al crear pedido.</li>
+          <li>Registrar movimientos de stock.</li>
+          <li>Permitir cancelar pedidos.</li>
+          <li>Devolver stock al cancelar.</li>
+          <li>Permitir cambiar estado del pedido.</li>
+          <li>Permitir cambiar estado de pago.</li>
+        </ul>
+
+        <h3>1.4 Conexión con la web</h3>
+        <ul class="checklist done">
+          <li>Conectar la tienda con la base operativa.</li>
+          <li>Conectar el catálogo a productos reales.</li>
+          <li>Conectar el panel admin a pedidos reales.</li>
+          <li>Dejar de depender de <strong>localStorage</strong> como base real de pedidos.</li>
+          <li>
+            Probar flujo completo:
+            <ul class="sublist">
+              <li>tienda;</li>
+              <li>pedido;</li>
+              <li>base operativa;</li>
+              <li>panel admin;</li>
+              <li>stock.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 2 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 2 — Seguridad del panel admin</h2>
+        <span class="status priority">Pendiente prioritario</span>
+      </div>
+      <div class="phase-body">
+        <p>Como ya hay pedidos reales y datos de personas, esta fase es prioritaria.</p>
+        <ul class="checklist pending">
+          <li>Crear acceso seguro para administrador.</li>
+          <li>Sacar clave hardcodeada del frontend.</li>
+          <li>Crear inicio de sesión real.</li>
+          <li>Crear cierre de sesión.</li>
+          <li>Usar sesión segura con cookie <strong>httpOnly</strong>.</li>
+          <li>Proteger el panel admin.</li>
+          <li>Proteger rutas internas del admin.</li>
+          <li>Evitar que cualquier persona con el link pueda ver pedidos.</li>
+          <li>Mantener claves y datos sensibles fuera del código público.</li>
+          <li>Probar acceso correcto.</li>
+          <li>Probar acceso rechazado sin sesión.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 3 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 3 — Configuración real del almacén</h2>
+        <span class="status pending">Pendiente operativo</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase busca reemplazar datos temporales por información oficial del almacén.</p>
+
+        <h3>3.1 Datos disponibles</h3>
+        <p>Ya se cuenta con datos oficiales de aportes autorizados para publicar en la web.</p>
+
+        <table class="info-table">
+          <tr><th>Titular</th><td>Carolina Soledad Catalán Valdebenito</td></tr>
+          <tr><th>RUT</th><td>18.119.544-4</td></tr>
+          <tr><th>Banco / plataforma</th><td>Mercado Pago</td></tr>
+          <tr><th>Tipo de cuenta</th><td>Cuenta Vista</td></tr>
+          <tr><th>Número de cuenta</th><td>1019738133</td></tr>
+          <tr><th>Correo</th><td>valdebenito.carolina.c@gmail.com</td></tr>
+        </table>
+
+        <div class="note green">
+          Estos datos deben quedar registrados en la configuración oficial del sistema y mostrarse en la sección pública de aportes.
+        </div>
+
+        <h3>3.2 Datos pendientes por confirmar</h3>
+        <ul class="checklist pending">
+          <li>Confirmar WhatsApp oficial para pedidos.</li>
+          <li>Confirmar contacto general.</li>
+          <li>Confirmar correo oficial del almacén para la web.</li>
+          <li>Confirmar próxima apertura.</li>
+          <li>Confirmar textos principales de la página.</li>
+          <li>Confirmar texto público para la sección de aportes.</li>
+          <li>Confirmar texto sobre cómo participar.</li>
+          <li>
+            Confirmar links oficiales:
+            <ul class="sublist">
+              <li>redes sociales;</li>
+              <li>correo;</li>
+              <li>libro o material histórico;</li>
+              <li>otros enlaces públicos relevantes.</li>
+            </ul>
+          </li>
+          <li>Revisar qué información del Drive se usará en la web pública.</li>
+          <li>Definir qué información queda solo como referencia interna.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 4 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 4 — Productos, stock, precios e imágenes</h2>
+        <span class="status pending">Pendiente operativo</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase busca ordenar bien los productos y cómo se venderán.</p>
+
+        <h3>4.1 Productos y categorías</h3>
+        <ul class="checklist pending">
+          <li>Revisar categorías reales.</li>
+          <li>
+            Ordenar productos por categoría:
+            <ul class="sublist">
+              <li>granel;</li>
+              <li>alimentos;</li>
+              <li>higiene;</li>
+              <li>limpieza;</li>
+              <li>otros.</li>
+            </ul>
+          </li>
+          <li>Revisar productos a granel.</li>
+          <li>Permitir cantidades con decimales para productos a granel.</li>
+          <li>
+            Definir unidad de venta:
+            <ul class="sublist">
+              <li>unidad;</li>
+              <li>kilo;</li>
+              <li>gramos;</li>
+              <li>litro;</li>
+              <li>mililitros.</li>
+            </ul>
+          </li>
+          <li>Revisar stock real por producto.</li>
+          <li>Definir stock mínimo por producto.</li>
+          <li>
+            Definir prioridad por producto:
+            <ul class="sublist">
+              <li>alta;</li>
+              <li>media;</li>
+              <li>baja.</li>
+            </ul>
+          </li>
+          <li>Mostrar alerta cuando un producto esté bajo stock.</li>
+        </ul>
+
+        <h3>4.2 Precios</h3>
+        <p>Se definió que el sistema debe manejar tres valores:</p>
+        <ul class="sublist">
+          <li>precio costo;</li>
+          <li>precio sugerido;</li>
+          <li>precio final de venta.</li>
+        </ul>
+
+        <ul class="checklist pending">
+          <li>Mantener precio costo por producto.</li>
+          <li>Calcular precio sugerido.</li>
+          <li>Mantener precio final de venta.</li>
+          <li>Mostrar al comprador solo el precio final de venta.</li>
+          <li>Mostrar al admin el precio costo y precio sugerido.</li>
+          <li>Usar margen global inicial de 10%.</li>
+          <li>Permitir cambiar el margen global.</li>
+          <li>Permitir margen por categoría.</li>
+          <li>Permitir margen específico por producto.</li>
+          <li>
+            Aplicar jerarquía de margen:
+            <ul class="sublist">
+              <li>margen por producto;</li>
+              <li>margen por categoría;</li>
+              <li>margen global.</li>
+            </ul>
+          </li>
+          <li>No cambiar automáticamente el precio publicado cuando cambie el costo.</li>
+          <li>Dejar producto como "requiere revisión de precio" cuando cambie el costo.</li>
+          <li>Permitir que el admin confirme o ajuste el precio final.</li>
+          <li>Guardar historial de cambios de costo y precio.</li>
+        </ul>
+
+        <h3>4.3 Imágenes de productos</h3>
+        <p>Nadia ya está trabajando en imágenes de productos. Se propone ordenar ese proceso para que cada imagen quede asociada claramente a un producto.</p>
+
+        <div class="note">
+          <strong>Organización sugerida en Drive:</strong><br>
+          Productos del almacén&nbsp;/&nbsp;originales&nbsp;/&nbsp;limpias_web&nbsp;/&nbsp;pendientes_revision&nbsp;/&nbsp;descartadas
+        </div>
+
+        <div class="note">
+          <strong>Formato sugerido de nombre de archivo:</strong><br>
+          <code style="font-family:var(--font-mono);font-size:13px">CODIGO_PRODUCTO_nombre-producto_version</code><br><br>
+          <strong>Ejemplos:</strong><br>
+          <code style="font-family:var(--font-mono);font-size:13px">PROD-001_arroz_v01</code><br>
+          <code style="font-family:var(--font-mono);font-size:13px">PROD-002_arroz-integral_v01</code><br>
+          <code style="font-family:var(--font-mono);font-size:13px">PROD-003_avena-integral_v01</code>
+        </div>
+
+        <ul class="checklist pending">
+          <li>Guardar originales sin editar.</li>
+          <li>Guardar imágenes limpias aprobadas para web.</li>
+          <li>Separar imágenes pendientes de revisión.</li>
+          <li>Separar imágenes descartadas.</li>
+          <li>Asociar cada imagen al código interno del producto.</li>
+          <li>Agregar campo de imagen en la base operativa de productos.</li>
+          <li>Definir si las imágenes finales se cargarán desde Drive, desde el proyecto web o desde otro sistema de almacenamiento.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 5 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 5 — Panel vendedor y comandas</h2>
+        <span class="status pending">Pendiente</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase busca digitalizar la venta presencial, manteniendo la lógica de las comandas actuales.</p>
+        <ul class="checklist pending">
+          <li>Crear panel vendedor.</li>
+          <li>Registrar venta presencial.</li>
+          <li>Buscar productos.</li>
+          <li>Agregar productos a una venta.</li>
+          <li>Ingresar cantidades.</li>
+          <li>Permitir cantidades decimales para productos a granel.</li>
+          <li>Calcular total automáticamente.</li>
+          <li>Descontar stock al confirmar venta.</li>
+          <li>Generar número de comanda.</li>
+          <li>Generar comanda automática.</li>
+          <li>Mantener formato similar al actual.</li>
+          <li>Permitir imprimir comanda.</li>
+          <li>Registrar nombre de vecina/o.</li>
+          <li>Registrar teléfono si corresponde.</li>
+          <li>Registrar integrante que atiende.</li>
+          <li>
+            Registrar modo de pago:
+            <ul class="sublist">
+              <li>efectivo;</li>
+              <li>transferencia;</li>
+              <li>pendiente.</li>
+            </ul>
+          </li>
+          <li>Registrar cuando alguien queda debiendo.</li>
+          <li>Asociar pendientes al número de comanda.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 6 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 6 — Caja, pendientes y cierre por apertura</h2>
+        <span class="status pending">Pendiente</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase busca ordenar ventas, dinero disponible, gastos y pendientes.</p>
+
+        <h3>6.1 Caja por apertura</h3>
+        <p>Cada apertura debería tener su propio cierre.</p>
+        <ul class="checklist pending">
+          <li>Registrar fecha de apertura.</li>
+          <li>Registrar ventas totales.</li>
+          <li>Separar efectivo.</li>
+          <li>Separar transferencias.</li>
+          <li>Separar pendientes.</li>
+          <li>Separar gastos extra.</li>
+          <li>Registrar integrante responsable.</li>
+          <li>Generar cierre por apertura.</li>
+        </ul>
+
+        <h3>6.2 Pendientes</h3>
+        <p>Los pendientes son ventas o comandas donde alguien quedó debiendo.</p>
+
+        <div class="note orange">
+          Los pendientes se tratan como cuentas por cobrar. No entran automáticamente como caja real; se muestran como referencia y el equipo decide manualmente si los considera en la caja final para compra.
+        </div>
+
+        <ul class="checklist pending">
+          <li>Registrar pendiente por cobrar.</li>
+          <li>Asociar pendiente a número de comanda.</li>
+          <li>Guardar nombre.</li>
+          <li>Guardar teléfono si existe.</li>
+          <li>Guardar monto.</li>
+          <li>Guardar fecha.</li>
+          <li>
+            Guardar estado:
+            <ul class="sublist">
+              <li>pendiente;</li>
+              <li>pagado.</li>
+            </ul>
+          </li>
+          <li>Permitir marcar pendiente como pagado.</li>
+          <li>Registrar fecha de pago.</li>
+          <li>
+            Registrar modo de pago cuando se regulariza:
+            <ul class="sublist">
+              <li>efectivo;</li>
+              <li>transferencia.</li>
+            </ul>
+          </li>
+          <li>Mostrar total de pendientes por cobrar.</li>
+        </ul>
+
+        <h3>6.3 Gastos extra</h3>
+        <ul class="checklist pending">
+          <li>Registrar gastos extra.</li>
+          <li>
+            Categorías iniciales:
+            <ul class="sublist">
+              <li>bencina;</li>
+              <li>bolsas;</li>
+              <li>propina;</li>
+              <li>transporte;</li>
+              <li>materiales;</li>
+              <li>otros.</li>
+            </ul>
+          </li>
+          <li>Ver historial de gastos.</li>
+          <li>Considerar estos gastos en la caja.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 7 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 7 — Compras y abastecimiento</h2>
+        <span class="status pending">Pendiente con criterio definido</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase toma como referencia el documento de "Diseño de compra" existente, pero busca automatizar parte del proceso.</p>
+
+        <h3>7.1 Registro de compras</h3>
+        <ul class="checklist pending">
+          <li>Registrar compras de productos.</li>
+          <li>Registrar fecha.</li>
+          <li>Registrar responsable.</li>
+          <li>Registrar productos comprados.</li>
+          <li>Registrar cantidad.</li>
+          <li>Registrar costo unitario.</li>
+          <li>Registrar costo total.</li>
+          <li>Actualizar stock.</li>
+          <li>Registrar movimiento de stock.</li>
+          <li>Actualizar precio costo.</li>
+          <li>Guardar historial de precios.</li>
+        </ul>
+
+        <h3>7.2 Caja disponible para compra</h3>
+        <p>El sistema debe poder considerar:</p>
+        <ul class="sublist">
+          <li>saldo en cuenta;</li>
+          <li>efectivo disponible;</li>
+          <li>pendientes por cobrar como referencia;</li>
+          <li>gastos extra;</li>
+          <li>caja final definida por el equipo.</li>
+        </ul>
+
+        <div class="note">
+          <strong>Modelo de referencia:</strong><br>
+          Caja calculada = saldo en cuenta + efectivo disponible + pendientes por cobrar − gastos extra
+        </div>
+
+        <div class="note green">
+          <strong>Criterio operativo:</strong><br>
+          Caja final para compra = monto confirmado manualmente por el equipo
+        </div>
+
+        <ul class="checklist pending">
+          <li>Registrar saldo en cuenta.</li>
+          <li>Registrar efectivo disponible.</li>
+          <li>Mostrar pendientes por cobrar como referencia.</li>
+          <li>Registrar gastos extra estimados.</li>
+          <li>Calcular caja disponible sugerida.</li>
+          <li>Permitir editar manualmente la caja final para compra.</li>
+          <li>Usar caja final confirmada para diseñar compra.</li>
+        </ul>
+
+        <h3>7.3 Diseño automático de compra</h3>
+        <ul class="checklist pending">
+          <li>Revisar stock actual.</li>
+          <li>Revisar stock mínimo.</li>
+          <li>Revisar prioridad de productos.</li>
+          <li>Revisar costo actualizado.</li>
+          <li>Revisar caja final disponible.</li>
+          <li>Proponer productos a comprar.</li>
+          <li>Priorizar productos críticos bajo stock.</li>
+          <li>Permitir editar la propuesta antes de confirmar.</li>
+          <li>Confirmar compra.</li>
+          <li>Actualizar stock.</li>
+          <li>Actualizar costos.</li>
+          <li>Generar historial.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 8 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 8 — Historial, reportes y administración avanzada</h2>
+        <span class="status pending">Pendiente avanzado</span>
+      </div>
+      <div class="phase-body">
+        <ul class="checklist pending">
+          <li>Ver historial de pedidos online.</li>
+          <li>Ver historial de ventas presenciales.</li>
+          <li>Ver historial de compras.</li>
+          <li>Ver historial de movimientos de stock.</li>
+          <li>Ver historial de precios.</li>
+          <li>Ver historial de pendientes.</li>
+          <li>Ver ventas por apertura.</li>
+          <li>Ver caja por apertura.</li>
+          <li>Ver productos más vendidos.</li>
+          <li>Ver productos bajo stock.</li>
+          <li>Editar productos desde admin.</li>
+          <li>Crear productos nuevos.</li>
+          <li>Activar o desactivar productos.</li>
+          <li>Editar stock con registro de motivo.</li>
+          <li>Editar configuración del almacén desde admin.</li>
+          <li>
+            Mejorar control de roles:
+            <ul class="sublist">
+              <li>admin;</li>
+              <li>vendedor.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 9 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 9 — Contenido público, historia y comunidad</h2>
+        <span class="status pending">Pendiente no urgente</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta fase usa el material del Drive que sirve para mostrar la identidad del almacén.</p>
+        <ul class="checklist pending">
+          <li>Revisar imágenes de Rosa Elena.</li>
+          <li>Revisar logo.</li>
+          <li>Revisar afiches.</li>
+          <li>Revisar boletines.</li>
+          <li>Revisar infografías.</li>
+          <li>Revisar fotos y videos.</li>
+          <li>Revisar calendario mensual.</li>
+          <li>Revisar libro o material histórico.</li>
+          <li>Definir si el libro se citará o enlazará desde la web.</li>
+          <li>Definir qué contenido va en la web pública.</li>
+          <li>Definir qué contenido queda como archivo interno.</li>
+          <li>Mejorar la sección de historia.</li>
+          <li>Explicar cómo funciona el almacén.</li>
+          <li>Explicar cómo participar.</li>
+          <li>Explicar cómo aportar.</li>
+          <li>Mejorar diseño visual.</li>
+          <li>Revisar versión móvil.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ FASE 10 -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase 10 — Producción y versión operativa final</h2>
+        <span class="status goal">Meta final</span>
+      </div>
+      <div class="phase-body">
+        <p>Esta sería la meta final de la primera versión completa del sistema.</p>
+        <ul class="checklist pending">
+          <li>Definir hosting final.</li>
+          <li>Configurar variables de producción.</li>
+          <li>Usar claves definitivas.</li>
+          <li>Usar token definitivo.</li>
+          <li>Probar tienda desde celular.</li>
+          <li>Probar pedidos desde fuera de red local.</li>
+          <li>Probar admin desde otro computador.</li>
+          <li>Probar panel vendedor.</li>
+          <li>Probar comanda imprimible.</li>
+          <li>Probar cierre de apertura.</li>
+          <li>Probar compra y actualización de stock.</li>
+          <li>Probar pendientes.</li>
+          <li>Validar flujo completo con el equipo del almacén.</li>
+          <li>Capacitar uso básico.</li>
+          <li>Dejar documentación mínima de uso.</li>
+          <li>Cerrar primera versión operativa.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ INFORMACIÓN DISPONIBLE -->
+    <section class="section">
+      <h2>Información disponible</h2>
+      <ul class="checklist done">
+        <li>Página web base.</li>
+        <li>Catálogo inicial.</li>
+        <li>Carrito.</li>
+        <li>Envío por WhatsApp.</li>
+        <li>Primera versión de admin.</li>
+        <li>Base operativa inicial.</li>
+        <li>Productos iniciales cargados.</li>
+        <li>Pedidos reales funcionando.</li>
+        <li>Panel admin leyendo pedidos reales.</li>
+        <li>Stock descontándose.</li>
+        <li>Flujo tienda → base operativa → admin probado.</li>
+        <li>Drive del almacén identificado.</li>
+        <li>Documento de diseño de compra identificado como referencia importante.</li>
+        <li>Documento de comandas identificado como referencia importante.</li>
+        <li>Datos oficiales de cuenta para aportes disponibles y autorizados.</li>
+        <li>Criterios de precios, caja, pendientes y comandas definidos.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ INFORMACIÓN PENDIENTE -->
+    <section class="section">
+      <h2>Información pendiente por confirmar</h2>
+      <ul class="checklist pending">
+        <li>WhatsApp oficial para pedidos.</li>
+        <li>Contacto general del almacén.</li>
+        <li>Correo oficial del almacén para la web.</li>
+        <li>Próxima fecha de apertura.</li>
+        <li>Texto oficial de aportes.</li>
+        <li>Texto oficial sobre cómo participar.</li>
+        <li>Texto oficial sobre el almacén.</li>
+        <li>Texto oficial sobre Rosa Elena Morales.</li>
+        <li>Links públicos oficiales.</li>
+        <li>Personas con acceso admin.</li>
+        <li>Personas con acceso vendedor.</li>
+        <li>Criterio final para publicación de imágenes de productos.</li>
+        <li>Criterio final para publicación de imágenes históricas o comunitarias.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ PRÓXIMO PASO -->
+    <section class="section">
+      <h2>Próximo paso recomendado</h2>
+      <div class="note orange">
+        <strong>Fase 2 — Seguridad del panel admin.</strong><br>
+        El sistema ya maneja pedidos reales y datos personales. Antes de agregar más funciones, conviene proteger bien el acceso al panel admin.
+      </div>
+
+      <p>Después de eso, se recomienda avanzar con:</p>
+      <ul class="sublist">
+        <li>Fase 3 — Configuración real del almacén;</li>
+        <li>Fase 4 — Productos, stock, precios e imágenes;</li>
+        <li>Fase 5 — Panel vendedor y comandas.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ SÍNTESIS -->
+    <section class="section">
+      <h2>Síntesis</h2>
+      <p>
+        Existe una primera base técnica funcionando: la tienda puede generar pedidos reales y el panel admin puede visualizarlos.
+      </p>
+      <p>
+        El avance pendiente consiste en transformar esa base inicial en un sistema operativo más completo para apoyar el funcionamiento diario del almacén: seguridad, productos, precios, stock, comandas, caja, pendientes, compras e historial.
+      </p>
+      <p>
+        El trabajo se proyecta por fases para permitir revisión, validación y avance ordenado hasta llegar a la primera versión operativa completa.
+      </p>
+    </section>
+
+    <!-- FOOTER DEL DOCUMENTO -->
+    <div class="doc-footer">
+      Web Almacén Popular Rosa Elena Morales — Plan de trabajo por fases · 26 de junio de 2026
+    </div>
+
+  </main>
+</body>
+</html>
