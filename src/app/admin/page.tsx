@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-
-// NOTA DE SEGURIDAD (deuda tecnica, ver docs/TASKS.md):
-// El acceso al panel se valida SOLO en el cliente (contrasena hardcodeada). Las
-// rutas /api/admin/* no tienen autenticacion de servidor. Pendiente de FASE futura.
-const PASS = 'almacen2024';
-const SESSION_KEY = 'admin-session';
+import { useRouter } from 'next/navigation';
 
 type Estado = 'pendiente' | 'listo' | 'entregado' | 'cancelado';
 type Filtro = 'todos' | Estado;
@@ -69,39 +64,6 @@ const ESTADO_PAGO_OPCIONES = [
   'pagado_efectivo',
   'anulado',
 ];
-
-// ── LOGIN ──────────────────────────────────────────────────────────────────────
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
-  const [pass, setPass] = useState('');
-  const [error, setError] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pass === PASS) { localStorage.setItem(SESSION_KEY, '1'); onLogin(); }
-    else { setError(true); setPass(''); }
-  };
-
-  return (
-    <div className="min-h-screen bg-primary-dark flex flex-col items-center justify-center px-4 gap-6">
-      <Image src="/images/logo.png" alt="Logo" width={80} height={80} className="object-contain" />
-      <h1 className="font-serif text-white text-3xl font-bold text-center">Panel de Administración</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={pass}
-          onChange={(e) => { setPass(e.target.value); setError(false); }}
-          className="px-4 py-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
-          autoFocus
-        />
-        {error && <p className="text-red-300 text-sm text-center">Contraseña incorrecta</p>}
-        <button type="submit" className="bg-white text-primary-dark font-semibold py-3 rounded-md hover:bg-gray-100 transition-colors">
-          Ingresar
-        </button>
-      </form>
-    </div>
-  );
-}
 
 // ── PANEL ──────────────────────────────────────────────────────────────────────
 function AdminPanel({ onLogout }: { onLogout: () => void }) {
@@ -424,16 +386,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
 
 // ── ROOT ───────────────────────────────────────────────────────────────────────
 export default function AdminPage() {
-  const [autenticado, setAutenticado] = useState<boolean | null>(null);
+  const router = useRouter();
 
-  useEffect(() => { setAutenticado(localStorage.getItem(SESSION_KEY) === '1'); }, []);
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth/logout', { method: 'POST' });
+    router.push('/admin/login');
+  };
 
-  const handleLogin = () => setAutenticado(true);
-  const handleLogout = () => { localStorage.removeItem(SESSION_KEY); setAutenticado(false); };
-
-  if (autenticado === null) return null;
-
-  return autenticado
-    ? <AdminPanel onLogout={handleLogout} />
-    : <LoginScreen onLogin={handleLogin} />;
+  return <AdminPanel onLogout={handleLogout} />;
 }
