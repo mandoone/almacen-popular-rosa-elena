@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estado del Proyecto — Almacén Popular Rosa Elena Morales Morales</title>
+  <link rel="icon" href="../brandkit/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../themes/almacen.css">
+  <style>
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT BASE
+       ═══════════════════════════════════════════════════ */
+
+    .page-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Sección base: replica el patrón <section> de la web */
+    .section {
+      padding: 5rem 1rem;
+    }
+    .section-sm { padding: 3rem 1rem; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .container-md  { max-width: 896px;  margin: 0 auto; padding: 0 1.5rem; }
+    .container-sm  { max-width: 768px;  margin: 0 auto; padding: 0 1.5rem; }
+    .container-xl  { max-width: 1152px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ═══════════════════════════════════════════════════
+       HERO — réplica exacta de páginas interiores de la web
+       (historia, rosa-elena, participar, tienda)
+       ═══════════════════════════════════════════════════ */
+
+    .hero {
+      background-color: var(--color-primary-dark);
+      color: white;
+      padding: 6rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: var(--space-6);
+    }
+
+    .hero-logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.25rem, 5vw, 3rem);
+      font-weight: var(--weight-bold);
+      color: white;
+      line-height: var(--leading-tight);
+      max-width: 700px;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-sans);
+      font-size: var(--text-xl);
+      color: var(--color-primary-light);
+      font-weight: var(--weight-medium);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      justify-content: center;
+      font-size: var(--text-sm);
+      color: var(--color-primary-light);
+      border-top: 1px solid rgba(196, 181, 253, 0.3);
+      padding-top: var(--space-5);
+      margin-top: var(--space-2);
+    }
+
+    .hero-meta span { opacity: 0.7; }
+    .hero-meta strong { color: white; opacity: 1; font-weight: 600; }
+
+    /* ═══════════════════════════════════════════════════
+       BANNER — réplica del aviso en /tienda (bg-primary-light)
+       ═══════════════════════════════════════════════════ */
+
+    .banner {
+      background-color: var(--color-primary-light);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .banner p {
+      color: var(--color-primary-dark);
+      font-weight: var(--weight-medium);
+      font-size: var(--text-base);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SECTION HEADERS — réplica h2 de secciones del Home
+       ═══════════════════════════════════════════════════ */
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.875rem, 4vw, 2.25rem);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--space-3);
+    }
+
+    .section-title-center { text-align: center; }
+
+    .section-body {
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
+      color: var(--color-gray-700);
+    }
+
+    .section-body p + p { margin-top: var(--space-4); }
+
+    /* ═══════════════════════════════════════════════════
+       STAT CARDS — réplica de tarjetas de resumen
+       (patrón: bg-surface-alt + border-brand)
+       ═══════════════════════════════════════════════════ */
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+
+    .stat-card {
+      background-color: var(--color-surface-alt);
+      border: 1px solid var(--color-border-brand);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .stat-card-label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .stat-card-value {
+      font-family: var(--font-serif);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      line-height: 1;
+    }
+
+    .stat-card-desc {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      margin-top: var(--space-2);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FEATURE CARDS — réplica exacta del grid "Qué somos"
+       en Home y tarjetas de Historia y Participar
+       ═══════════════════════════════════════════════════ */
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-8);
+      margin-top: var(--space-12);
+    }
+
+    .feature-card {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* Réplica exacta del icon container de la web:
+       shrink-0 w-14 h-14 bg-primary-light/30 rounded-lg
+       flex items-center justify-center text-primary-dark */
+    .feature-icon {
+      flex-shrink: 0;
+      width: 3.5rem;
+      height: 3.5rem;
+      background-color: rgba(196, 181, 253, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-dark);
+    }
+
+    .feature-icon svg { width: 1.75rem; height: 1.75rem; }
+
+    .feature-card h3 {
+      font-family: var(--font-sans);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+    }
+
+    .feature-card p {
+      font-size: var(--text-base);
+      color: var(--color-gray-600);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       PHASE TABLE — réplica de la tabla del panel admin
+       (cabecera dark, rows alternas)
+       ═══════════════════════════════════════════════════ */
+
+    .phase-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+      margin-top: var(--space-8);
+      background-color: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-default);
+    }
+
+    .phase-table thead th {
+      background-color: var(--color-primary-dark);
+      color: white;
+      font-weight: var(--weight-semibold);
+      text-align: left;
+      padding: var(--space-4) var(--space-5);
+      font-size: var(--text-sm);
+    }
+
+    .phase-table tbody td {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+      color: var(--color-gray-700);
+    }
+
+    .phase-table tbody tr:last-child td { border-bottom: none; }
+
+    /* Fila alterna: bg-background como en admin */
+    .phase-table tbody tr:nth-child(even) td {
+      background-color: var(--color-surface-alt);
+    }
+
+    .phase-name {
+      font-family: var(--font-sans);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      white-space: nowrap;
+    }
+
+    .phase-notes {
+      color: var(--color-gray-500);
+      font-size: var(--text-xs);
+      margin-top: var(--space-1);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       BADGES — réplica exacta de admin/page.tsx BADGE map
+       ═══════════════════════════════════════════════════ */
+
+    .badge {
+      display: inline-block;
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    /* Mapeo directo de los badges del panel admin */
+    .badge-done     { background-color: #DCFCE7; color: #15803D; }   /* entregado */
+    .badge-progress { background-color: #FEF9C3; color: #A16207; }   /* listo */
+    .badge-pending  { background-color: var(--color-gray-100); color: var(--color-gray-600); }
+    .badge-debt     { background-color: #FEE2E2; color: #B91C1C; }   /* cancelado → deuda */
+    .badge-ds       { background-color: rgba(196,181,253,0.3); color: var(--color-primary-dark); }
+
+    /* ═══════════════════════════════════════════════════
+       PALETA — componente nuevo para el informe
+       ═══════════════════════════════════════════════════ */
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+
+    .color-swatch {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .color-block {
+      height: 4rem;
+    }
+
+    .color-info {
+      padding: var(--space-3);
+      background-color: white;
+      border: 1px solid var(--color-border);
+      border-top: none;
+    }
+
+    .color-name {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      color: var(--color-gray-700);
+    }
+
+    .color-hex {
+      font-size: var(--text-xs);
+      color: var(--color-gray-400);
+      font-family: monospace;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       TIPO SPECIMEN — para mostrar tipografía
+       ═══════════════════════════════════════════════════ */
+
+    .type-specimen {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-8);
+      margin-top: var(--space-4);
+    }
+
+    .type-specimen + .type-specimen {
+      margin-top: var(--space-4);
+    }
+
+    .type-specimen-meta {
+      font-size: var(--text-xs);
+      color: var(--color-gray-400);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-3);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       DEBT CARDS — réplica de las cards de pedido del admin
+       pero adaptadas para deudas técnicas
+       ═══════════════════════════════════════════════════ */
+
+    .debt-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+
+    /* Replica bg-white rounded-xl shadow-sm p-6 del admin */
+    .debt-card {
+      background-color: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-6);
+      border-left: 4px solid transparent;
+    }
+
+    .debt-card.high  { border-left-color: #DC2626; }
+    .debt-card.med   { border-left-color: #D97706; }
+    .debt-card.low   { border-left-color: var(--color-primary-light); }
+
+    .debt-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+
+    .debt-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: var(--weight-semibold);
+      color: var(--color-primary-dark);
+    }
+
+    .debt-body {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      line-height: var(--leading-relaxed);
+      border-top: 1px solid var(--color-border);
+      padding-top: var(--space-3);
+      margin-top: var(--space-3);
+    }
+
+    .debt-impact {
+      font-size: var(--text-xs);
+      color: var(--color-gray-400);
+      margin-top: var(--space-2);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CTA / PRÓXIMOS PASOS — réplica sección "Súmate"
+       de Home (bg-primary, text-white)
+       ═══════════════════════════════════════════════════ */
+
+    .cta-section {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 6rem 1rem;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.875rem, 4vw, 2.5rem);
+      font-weight: var(--weight-bold);
+      color: white;
+      margin-bottom: var(--space-6);
+      line-height: var(--leading-tight);
+    }
+
+    .cta-section p {
+      color: var(--color-primary-light);
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-10);
+      line-height: var(--leading-relaxed);
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+      text-align: left;
+    }
+
+    /* Patrón de card blanca dentro de sección oscura */
+    .step-card {
+      background-color: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      background-color: white;
+      color: var(--color-primary);
+      font-weight: var(--weight-bold);
+      font-size: var(--text-sm);
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-weight: var(--weight-semibold);
+      color: white;
+      font-size: var(--text-base);
+    }
+
+    .step-desc {
+      font-size: var(--text-sm);
+      color: var(--color-primary-light);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       BLOCKQUOTE — réplica de historia/page.tsx
+       border-l-4 border-primary pl-6 italic text-gray-700
+       ═══════════════════════════════════════════════════ */
+
+    blockquote {
+      border-left: 4px solid var(--color-primary);
+      padding-left: var(--space-6);
+      color: var(--color-gray-700);
+      font-style: italic;
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
+      margin: var(--space-8) 0;
+    }
+
+    blockquote cite {
+      display: block;
+      font-style: normal;
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      margin-top: var(--space-3);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER — réplica exacta de Footer.tsx
+       ═══════════════════════════════════════════════════ */
+
+    .site-footer {
+      background-color: var(--color-primary-dark);
+      color: white;
+      padding: 3rem 1rem 2rem;
+    }
+
+    .site-footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .site-footer-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: var(--space-4);
+    }
+
+    .site-footer h3 {
+      font-family: var(--font-serif);
+      font-size: var(--text-2xl);
+      font-weight: var(--weight-bold);
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .site-footer-contact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+      text-align: center;
+    }
+
+    .site-footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+    }
+
+    .site-footer-contact-item svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: var(--color-primary-light);
+      flex-shrink: 0;
+    }
+
+    .site-footer-social {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+
+    .site-footer-social a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: white;
+      text-decoration: none;
+      font-size: var(--text-sm);
+      transition: color 0.15s;
+    }
+
+    .site-footer-social a:hover { color: var(--color-primary-light); }
+
+    .site-footer-social svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .site-footer-divider {
+      width: 100%;
+      height: 1px;
+      background-color: rgba(196, 181, 253, 0.3);
+      margin-bottom: var(--space-6);
+    }
+
+    .site-footer-copy {
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--color-primary-light);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       PRINT
+       ═══════════════════════════════════════════════════ */
+
+    @media print {
+      .banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .hero   { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cta-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .site-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .debt-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .phase-table thead th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page-break { page-break-before: always; }
+      .avoid-break { page-break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     HERO — réplica de páginas interiores (historia, rosa-elena, participar)
+     ═══════════════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <img
+    src="../brandkit/assets/logo.png"
+    alt="Logo Almacén Popular Rosa Elena Morales Morales"
+    class="hero-logo"
+  >
+  <div>
+    <h1>Estado actual del proyecto web</h1>
+    <p class="hero-subtitle">Almacén Popular Rosa Elena Morales Morales</p>
+  </div>
+  <div class="hero-meta">
+    <span><strong>Fecha:</strong> 26 de junio de 2026</span>
+    <span>·</span>
+    <span><strong>Etapa:</strong> FASE 1 completada</span>
+    <span>·</span>
+    <span><strong>Fase activa:</strong> Design System v0.1</span>
+    <span>·</span>
+    <span><strong>Generado por:</strong> Claude Code</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     BANNER — réplica del aviso en /tienda
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div class="banner">
+  <p>
+    Primer informe del Design System liviano v0.1 &mdash; refleja el estado real
+    del proyecto al 26 de junio de 2026. Solo lectura: no modifica la web.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     RESUMEN EN NÚMEROS
+     bg-white — réplica del bloque "Qué somos" del Home
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: white;">
+  <div class="container">
+    <p class="section-label">Resumen ejecutivo</p>
+    <h2 class="section-title">El proyecto en números</h2>
+    <p class="section-body">
+      La web del Almacén Popular Rosa Elena Morales Morales completó su primera fase
+      operativa. Los pedidos ya no viven en el navegador del cliente: se registran en tiempo
+      real en Google Sheets, son visibles desde cualquier dispositivo y el stock se gestiona
+      automáticamente.
+    </p>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <p class="stat-card-label">Páginas públicas</p>
+        <p class="stat-card-value">6</p>
+        <p class="stat-card-desc">Home · Tienda · Rosa Elena · Historia · Participar · Admin</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Productos activos</p>
+        <p class="stat-card-value">53</p>
+        <p class="stat-card-desc">Catálogo real cargado en la base operativa con precio_venta</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Fases completadas</p>
+        <p class="stat-card-value">2</p>
+        <p class="stat-card-desc">FASE 0 (documentación) y FASE 1 (pedidos reales) terminadas</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Acciones del backend</p>
+        <p class="stat-card-value">6</p>
+        <p class="stat-card-desc">crearPedido · listarProductos · listarPedidos · obtenerPedido · actualizarEstado · cancelarPedido</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     ESTADO POR FASE
+     bg-background — tabla al estilo del panel admin
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: var(--color-background);">
+  <div class="container-xl">
+    <p class="section-label">Progreso</p>
+    <h2 class="section-title">Estado por fase</h2>
+
+    <table class="phase-table">
+      <thead>
+        <tr>
+          <th style="width:12%">Fase</th>
+          <th style="width:25%">Objetivo</th>
+          <th style="width:12%">Estado</th>
+          <th>Hitos principales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="phase-name">FASE 0</span><div class="phase-notes">Documentación</div></td>
+          <td>Establecer metodología y documentación viva del proyecto</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>AGENTS.md · docs/ (8 archivos) · REQUIREMENTS, DATA_MODEL, TASKS, DECISIONS, TEST_PLAN, CHANGELOG · arnés liviano sin SDD</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">FASE 1</span><div class="phase-notes">Pedidos reales</div></td>
+          <td>Reemplazar localStorage por Google Sheets como base de datos operativa</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>Planilla BD_WEB_ALMACEN con 10 hojas · 53 productos cargados · Apps Script Web App (6 acciones, LockService) · proxy Next.js · flujo end-to-end probado · IDs PROD-001… alineados</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">DS v0.1</span><div class="phase-notes">Design System</div></td>
+          <td>Estructura mínima para generar informes con identidad visual del Almacén</td>
+          <td><span class="badge badge-ds">Iniciado</span></td>
+          <td>WEB_STYLE_AUDIT.md · design-system/ (brandkit, themes, templates, prompts) · ADS-001 Brand Kit · primer informe (este documento)</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">FASE 2</span><div class="phase-notes">Panel vendedor</div></td>
+          <td>Rol vendedor separado del administrador, vista de pedidos del día</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Proteger /api/admin/* · autenticación de servidor · forma_pago en tienda · notificaciones</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">FASE 3</span><div class="phase-notes">Productos y stock</div></td>
+          <td>Gestión de productos, precios con margen y control de stock avanzado</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Imágenes de producto · categorías · precio_venta = costo + margen · MOVIMIENTOS_STOCK completo</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">FASE 4</span><div class="phase-notes">Compras</div></td>
+          <td>Registro de compras y entradas de mercadería</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>COMPRAS · DETALLE_COMPRAS · movimientos de stock por entrada</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">FASE 5</span><div class="phase-notes">Caja y reportes</div></td>
+          <td>Registro de ventas, caja y reportes básicos del almacén</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>VENTAS · DETALLE_VENTAS · caja del día · reportes de stock y ventas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     ARQUITECTURA TÉCNICA
+     bg-white — feature cards como en Historia y Participar
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: white;">
+  <div class="container">
+    <p class="section-label section-title-center" style="text-align:center">Stack técnico</p>
+    <h2 class="section-title section-title-center">Cómo está construida la web</h2>
+    <div class="feature-grid">
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Code / Monitor icon (Heroicons outline) -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3" />
+          </svg>
+        </div>
+        <h3>Frontend</h3>
+        <p>
+          <strong style="color:var(--color-primary-dark)">Next.js 14</strong> App Router con TypeScript 5 y React 18.
+          Estilos con Tailwind CSS 3.4. Fuentes Inter + Playfair Display vía Google Fonts.
+          6 páginas públicas y 1 panel de administración.
+        </p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Server / Database icon (Heroicons outline) -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 3.75c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+          </svg>
+        </div>
+        <h3>Backend + datos</h3>
+        <p>
+          <strong style="color:var(--color-primary-dark)">Google Apps Script</strong> como Web App serverless con 6 acciones.
+          <strong style="color:var(--color-primary-dark)">Google Sheets</strong> como base de datos:
+          planilla BD_WEB_ALMACEN con 10 hojas (PRODUCTOS, PEDIDOS, DETALLE_PEDIDOS, MOVIMIENTOS_STOCK, CONFIG&hellip;).
+        </p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Shield / Lock icon (Heroicons outline) -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
+        </div>
+        <h3>Seguridad y secretos</h3>
+        <p>
+          La URL de la Web App y el token admin viven en <strong style="color:var(--color-primary-dark)">.env.local</strong>
+          (ignorado por git). El cliente nunca los ve. Proxy interno via route handlers de Next.js.
+          <strong style="color:var(--color-primary-dark)">Deuda pendiente:</strong> /api/admin/* sin auth de servidor.
+        </p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Cart icon (mismo path que en la web) -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+          </svg>
+        </div>
+        <h3>Flujo de pedidos</h3>
+        <p>
+          El comprador agrega productos al carrito (localStorage), ingresa nombre y teléfono,
+          y confirma. El servidor registra el pedido real con <strong style="color:var(--color-primary-dark)">LockService</strong>
+          (concurrencia), descuenta stock, y abre WhatsApp con el número de pedido.
+        </p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Users icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+          </svg>
+        </div>
+        <h3>Panel de administración</h3>
+        <p>
+          Login local en <code style="font-size:0.8em;background:#f3f4f6;padding:1px 5px;border-radius:4px">/admin</code>.
+          Lista pedidos reales desde Google Sheets, muestra detalle bajo demanda, cambia estado
+          (pendiente → listo → entregado) y estado de pago, cancela con devolución automática de stock.
+        </p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Design / Paintbrush icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+          </svg>
+        </div>
+        <h3>Design System liviano</h3>
+        <p>
+          <strong style="color:var(--color-primary-dark)">design-system/</strong> sin tocar la web:
+          Brand Kit, tokens CSS nativos, template HTML para informes y prompts para Claude.
+          Objetivo: documentos institucionales con identidad visual real del Almacén.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     IDENTIDAD VISUAL
+     bg-primary-light — réplica de sección de legado en /rosa-elena
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: var(--color-primary-light);">
+  <div class="container-xl">
+    <p class="section-label section-title-center" style="text-align:center">Brand Kit</p>
+    <h2 class="section-title section-title-center">Identidad visual del proyecto</h2>
+
+    <!-- Paleta de colores -->
+    <h3 style="font-family:var(--font-sans);font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary-dark);margin-bottom:var(--space-4);margin-top:var(--space-10)">
+      Paleta institucional
+    </h3>
+    <div class="palette-grid">
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#3B0764"></div>
+        <div class="color-info">
+          <p class="color-name">Primary Dark</p>
+          <p class="color-hex">#3B0764</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Hero · Footer · Navbar links</p>
+        </div>
+      </div>
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#6B21A8"></div>
+        <div class="color-info">
+          <p class="color-name">Primary</p>
+          <p class="color-hex">#6B21A8</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Acciones · Precios · Links activos</p>
+        </div>
+      </div>
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#C4B5FD"></div>
+        <div class="color-info">
+          <p class="color-name">Primary Light</p>
+          <p class="color-hex">#C4B5FD</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Bordes · Fondos suaves · Texto en oscuro</p>
+        </div>
+      </div>
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#F9F5FF;border:1px solid #e5e7eb"></div>
+        <div class="color-info">
+          <p class="color-name">Background</p>
+          <p class="color-hex">#F9F5FF</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Fondos de secciones secundarias</p>
+        </div>
+      </div>
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#FFFFFF;border:1px solid #e5e7eb"></div>
+        <div class="color-info">
+          <p class="color-name">White</p>
+          <p class="color-hex">#FFFFFF</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Cards · Navbar · Inputs</p>
+        </div>
+      </div>
+      <div class="color-swatch avoid-break">
+        <div class="color-block" style="background-color:#374151"></div>
+        <div class="color-info">
+          <p class="color-name">Texto cuerpo</p>
+          <p class="color-hex">#374151 · gray-700</p>
+          <p style="font-size:0.7rem;color:var(--color-gray-500);margin-top:2px">Párrafos · Contenido largo</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tipografía -->
+    <h3 style="font-family:var(--font-sans);font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary-dark);margin-bottom:var(--space-4);margin-top:var(--space-10)">
+      Tipografía
+    </h3>
+
+    <div class="type-specimen avoid-break">
+      <p class="type-specimen-meta">Playfair Display — Serif · Bold 700 · Títulos y marca</p>
+      <p style="font-family:var(--font-serif);font-size:2rem;font-weight:700;color:var(--color-primary-dark);line-height:1.2">
+        Almacén Popular Rosa Elena Morales Morales
+      </p>
+      <p style="font-family:var(--font-serif);font-size:1.25rem;font-weight:700;color:var(--color-primary-dark);margin-top:0.5rem;line-height:1.3;font-style:italic">
+        &ldquo;Su memoria nos inspira&rdquo;
+      </p>
+    </div>
+
+    <div class="type-specimen avoid-break">
+      <p class="type-specimen-meta">Inter — Sans-serif · Regular / Medium / Semibold / Bold · Interfaz y cuerpo</p>
+      <p style="font-family:var(--font-sans);font-size:1.125rem;line-height:1.625;color:var(--color-gray-700)">
+        Somos un proyecto comunitario sin fines de lucro, autogestionado por pobladores y
+        pobladoras de la Población Juan Antonio Ríos. Nuestro objetivo es garantizar acceso
+        a productos básicos a precios justos.
+      </p>
+      <div style="margin-top:0.75rem;display:flex;gap:1rem;flex-wrap:wrap;font-family:var(--font-sans);font-size:0.875rem;color:var(--color-gray-500)">
+        <span style="font-weight:400">Regular 400</span>
+        <span style="font-weight:500">Medium 500</span>
+        <span style="font-weight:600">Semibold 600</span>
+        <span style="font-weight:700">Bold 700</span>
+      </div>
+    </div>
+
+    <!-- Consistencia -->
+    <div style="margin-top:var(--space-8);background-color:white;border-radius:var(--radius-lg);padding:var(--space-6);box-shadow:var(--shadow-default);">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4)">
+        <div>
+          <p style="font-size:var(--text-sm);font-weight:var(--weight-bold);color:var(--color-primary-dark);margin-bottom:var(--space-1)">
+            Nivel de consistencia visual
+          </p>
+          <p style="font-size:var(--text-sm);color:var(--color-gray-500)">
+            Paleta y tipografía sólidas; componentes sin abstraer. Ver ADS-001 para detalle.
+          </p>
+        </div>
+        <div style="font-family:var(--font-serif);font-size:2.5rem;font-weight:700;color:var(--color-primary)">
+          6/10
+        </div>
+      </div>
+      <div style="margin-top:var(--space-4);background-color:var(--color-border);border-radius:var(--radius-full);height:8px;overflow:hidden">
+        <div style="background-color:var(--color-primary);height:100%;width:60%;border-radius:var(--radius-full)"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     DEUDAS TÉCNICAS
+     bg-white — cards al estilo de pedidos del admin
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section page-break" style="background-color: white;">
+  <div class="container-xl">
+    <p class="section-label">Deudas técnicas</p>
+    <h2 class="section-title">Lo que queda pendiente</h2>
+
+    <div class="debt-list">
+
+      <div class="debt-card high avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">Proteger /api/admin/* con autenticación de servidor</p>
+          <span class="badge badge-debt">Alta prioridad</span>
+        </div>
+        <p class="debt-body">
+          El panel /admin verifica la contraseña solo en el cliente (JavaScript). Las rutas
+          <code>/api/admin/pedidos</code> y <code>/api/admin/pedidos/[id]</code> son alcanzables
+          desde cualquier herramienta sin token. Cualquier persona que conozca la ruta puede
+          leer nombre, teléfono y total de todos los pedidos.
+        </p>
+        <p class="debt-impact">Impacto: exposición de datos personales de compradores (nombre, teléfono). Prioridad máxima antes de FASE 2.</p>
+      </div>
+
+      <div class="debt-card med avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">forma_pago hardcodeada en la tienda</p>
+          <span class="badge badge-progress">Media</span>
+        </div>
+        <p class="debt-body">
+          El pedido siempre se registra con <code>forma_pago: 'efectivo_al_retirar'</code>.
+          No hay selector de medio de pago en el formulario. Si en el futuro se acepta
+          transferencia, hay que agregar el control en tienda/page.tsx y la validación en
+          el backend.
+        </p>
+        <p class="debt-impact">Impacto: menor. No bloquea operación actual. Pendiente para FASE 2.</p>
+      </div>
+
+      <div class="debt-card med avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">CONFIG de la planilla con datos temporales</p>
+          <span class="badge badge-progress">Media</span>
+        </div>
+        <p class="debt-body">
+          La hoja CONFIG en BD_WEB_ALMACEN tiene valores de prueba: número de WhatsApp del
+          almacén, margen por defecto, datos bancarios y fechas de apertura. Estos deben
+          actualizarse manualmente en Google Sheets antes de la primera apertura real.
+        </p>
+        <p class="debt-impact">Impacto: el almacén no puede operar con datos reales hasta completar esto.</p>
+      </div>
+
+      <div class="debt-card med avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">Fechas de apertura y número WhatsApp hardcodeados</p>
+          <span class="badge badge-progress">Media</span>
+        </div>
+        <p class="debt-body">
+          En <code>src/app/page.tsx</code> la fecha "9 y 23 de mayo" está hardcodeada y
+          desactualizada. El número <code>56950807172</code> aparece en <code>tienda/page.tsx</code>
+          y en <code>Footer.tsx</code>. Ambos deberían consumirse desde CONFIG en la planilla.
+        </p>
+        <p class="debt-impact">Impacto: el Home muestra fechas incorrectas a los visitantes.</p>
+      </div>
+
+      <div class="debt-card low avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">Conflicto de token --background vs bg-background</p>
+          <span class="badge badge-pending">Baja</span>
+        </div>
+        <p class="debt-body">
+          La variable CSS <code>--background</code> definida en <code>globals.css</code> vale
+          <code>#ffffff</code>, pero el token Tailwind <code>background</code> en
+          <code>tailwind.config.ts</code> vale <code>#F9F5FF</code>. El mismo nombre semántico
+          tiene dos valores distintos. No causa bugs visibles hoy pero es una trampa para futuras modificaciones.
+        </p>
+        <p class="debt-impact">Impacto: bajo actualmente. Resolver en FASE 4 (Design System React).</p>
+      </div>
+
+      <div class="debt-card low avoid-break">
+        <div class="debt-header">
+          <p class="debt-title">Archivos de fuente Geist sin usar</p>
+          <span class="badge badge-pending">Baja</span>
+        </div>
+        <p class="debt-body">
+          <code>src/app/fonts/GeistVF.woff</code> y <code>src/app/fonts/GeistMonoVF.woff</code>
+          existen en el proyecto pero no están registradas en <code>layout.tsx</code>. Son los
+          archivos por defecto del scaffold de <code>create-next-app</code> que nunca se
+          eliminaron. Ocupan 140 KB sin propósito.
+        </p>
+        <p class="debt-impact">Impacto: ninguno funcional. Limpieza de deuda técnica menor.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PRÓXIMOS PASOS
+     bg-primary — réplica exacta de sección "Súmate" del Home
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="container-md">
+    <h2>¿Qué sigue?</h2>
+    <p>
+      Con FASE 1 operativa, el foco pasa a proteger los datos de los compradores,
+      afinar el catálogo real y preparar la FASE 2 del panel de administración.
+    </p>
+    <div class="steps-grid">
+
+      <div class="step-card avoid-break">
+        <span class="step-number">1</span>
+        <p class="step-title">Proteger /api/admin/*</p>
+        <p class="step-desc">
+          Agregar verificación del token admin en el servidor en cada route handler de admin.
+          Prioridad máxima antes de cualquier apertura pública.
+        </p>
+      </div>
+
+      <div class="step-card avoid-break">
+        <span class="step-number">2</span>
+        <p class="step-title">Actualizar CONFIG en la planilla</p>
+        <p class="step-desc">
+          Ingresar valores reales en la hoja CONFIG: número WhatsApp del almacén,
+          datos bancarios, fechas de apertura y margen por defecto.
+        </p>
+      </div>
+
+      <div class="step-card avoid-break">
+        <span class="step-number">3</span>
+        <p class="step-title">Afinar los 53 productos</p>
+        <p class="step-desc">
+          Revisar categoría, prioridad, unidad de medida y stock de cada producto.
+          Cargar imágenes en <code style="background:rgba(255,255,255,0.15);padding:1px 4px;border-radius:3px">public/images/productos/</code>.
+        </p>
+      </div>
+
+      <div class="step-card avoid-break">
+        <span class="step-number">4</span>
+        <p class="step-title">Selector de forma_pago</p>
+        <p class="step-desc">
+          Dar al comprador la opción de elegir entre efectivo al retirar o transferencia
+          bancaria al confirmar el pedido.
+        </p>
+      </div>
+
+      <div class="step-card avoid-break">
+        <span class="step-number">5</span>
+        <p class="step-title">Primer informe DS validado</p>
+        <p class="step-desc">
+          Este documento. Validar que el template se ve correctamente y exporta bien a PDF.
+          Luego avanzar al DS React (FASE 4) o a FASE 2, según prioridad.
+        </p>
+      </div>
+
+      <div class="step-card avoid-break">
+        <span class="step-number">6</span>
+        <p class="step-title">Reescribir README.md</p>
+        <p class="step-desc">
+          El README actual muestra el boilerplate de <code style="background:rgba(255,255,255,0.15);padding:1px 4px;border-radius:3px">create-next-app</code>.
+          Reemplazarlo con una descripción real del proyecto y enlace a <code style="background:rgba(255,255,255,0.15);padding:1px 4px;border-radius:3px">docs/</code>.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CITA FINAL — réplica del blockquote de historia/page.tsx
+     bg-background
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section-sm" style="background-color: var(--color-background);">
+  <div class="container-sm">
+    <blockquote>
+      &ldquo;Queremos agradecer a todas las personas que estuvieron con nosotrxs en la
+      inauguración del Almacén Popular Rosa Elena Morales Morales.&rdquo;
+      <cite>— Publicación Instagram, inauguración del almacén · agosto 2020</cite>
+    </blockquote>
+    <p style="font-size:var(--text-sm);color:var(--color-gray-400);margin-top:var(--space-6);text-align:center">
+      Informe generado el 26 de junio de 2026 &middot; Design System liviano v0.1 &middot;
+      No distribuir externamente sin autorización
+    </p>
+  </div>
+</section>
+
+</div><!-- /page-wrap -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     FOOTER — réplica exacta de src/components/Footer.tsx
+     ═══════════════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+
+    <img
+      src="../brandkit/assets/logo.png"
+      alt="Logo Almacén Popular Rosa Elena Morales Morales"
+      class="site-footer-logo"
+    >
+
+    <h3>Almacén Popular<br>Rosa Elena Morales Morales</h3>
+
+    <div class="site-footer-contact">
+      <div class="site-footer-contact-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Gamero 2670, Independencia, Santiago</span>
+      </div>
+      <div class="site-footer-contact-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <a href="mailto:almacenpopular.rosaelenamorarles@gmail.com"
+           style="color:white;font-size:0.875rem;word-break:break-all">
+          almacenpopular.rosaelenamorarles@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <div class="site-footer-social">
+      <a href="https://wa.me/56950807172" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+        <span>+56 9 5080 7172</span>
+      </a>
+      <a href="https://instagram.com/almacenpopular.rosamoralesm" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+        <span>@almacenpopular.rosamoralesm</span>
+      </a>
+    </div>
+
+    <div class="site-footer-divider"></div>
+
+    <div class="site-footer-copy">
+      <p>Proyecto comunitario sin fines de lucro &bull; Población Juan Antonio Ríos</p>
+      <p>&copy; 2026 Almacén Popular Rosa Elena Morales Morales. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

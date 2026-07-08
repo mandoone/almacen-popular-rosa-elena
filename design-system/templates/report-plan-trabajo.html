@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITULO}} — Almacén Popular Rosa Elena Morales</title>
+
+  <!--
+    TEMPLATE: report-plan-trabajo.html
+    Design System Almacén Popular Rosa Elena Morales Morales — v0.1
+
+    Uso:
+      1. Copiar este archivo a design-system/reports/FECHA_nombre.html
+      2. Reemplazar todos los {{VARIABLES}} con el contenido real
+      3. Abrir en Chrome y usar Ctrl+P para exportar a PDF
+
+    Variables de cabecera:
+      {{TITULO}}           → título del documento (ej: "Plan de trabajo")
+      {{DESCRIPCION}}      → subtítulo (una oración)
+      {{ESTADO_ACTUAL}}    → estado del proyecto (ej: "Fase 1 funcional")
+      {{PRIORIDAD}}        → próxima acción (ej: "Seguridad admin")
+      {{META}}             → meta final (ej: "Fase 10 operativa")
+      {{EYEBROW}}          → etiqueta tipo del documento (ej: "Plan de trabajo")
+      {{FECHA}}            → fecha de generación (ej: "26 de junio de 2026")
+
+    Patrones de componentes disponibles:
+      .section             → sección blanca con padding (texto, resúmenes)
+      .phase               → bloque de fase (header + body)
+      .phase-header        → cabecera con título + badge de estado
+      .phase-body          → contenido de la fase
+      .status.done         → badge verde "Lista / Completada"
+      .status.pending      → badge morado "Pendiente"
+      .status.priority     → badge rojo "Pendiente prioritario"
+      .status.goal         → badge lavanda "Meta final"
+      .checklist.done      → lista con ✅
+      .checklist.pending   → lista con ⬜
+      .sublist             → sublista con viñeta morada y borde izquierdo
+      .note                → nota de contexto (gris claro)
+      .note.green          → nota de éxito (verde claro)
+      .note.orange         → nota de advertencia (ámbar)
+      .code-box            → bloque de código (fondo morado oscuro)
+      .info-table          → tabla de dos columnas (th/td)
+      .cards               → grid 3 columnas de tarjetas de usuario
+      .user-card           → tarjeta de perfil de usuario
+      .objective-grid      → grid 2 columnas de chips de objetivo
+      .objective-item      → chip de objetivo
+  -->
+
+  <!-- Tokens del Design System (Inter + Playfair Display via @import) -->
+  <link rel="stylesheet" href="../themes/almacen.css">
+
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       VARIABLES LOCALES — remapeo de colores al DS del Almacén
+       ═══════════════════════════════════════════════════════════ */
+    :root {
+      /* Paleta morada mapeada a tokens del DS */
+      --c900: var(--color-primary-dark);    /* #3B0764 — más oscuro */
+      --c800: #52167A;                      /* intermedio */
+      --c700: var(--color-primary);         /* #6B21A8 — principal */
+      --c500: #9B72CD;                      /* entre primary y primary-light */
+      --c300: var(--color-primary-light);   /* #C4B5FD — lavanda */
+      --c200: #D4C7FB;
+      --c100: #EBE5FC;
+      --c050: var(--color-background);      /* #F9F5FF */
+
+      /* Texto */
+      --t900: #1F0836;
+      --t700: #4A3768;
+      --t500: #6E6290;
+
+      /* Bordes */
+      --line: #C8BAFB;
+
+      /* Estado */
+      --success-bg:     #ECFCEF;
+      --success-border: #BBE4C5;
+      --success-text:   #1F6A37;
+
+      --pending-bg:     var(--color-background);
+      --pending-border: var(--color-border-brand);
+      --pending-text:   var(--color-primary-dark);
+
+      --warn-bg:        #FFF4DC;
+      --warn-border:    #FFD08A;
+      --warn-text:      #925900;
+
+      --danger-bg:      #FDECEC;
+      --danger-border:  #F5C4C4;
+      --danger-text:    #9A1F1F;
+
+      /* Sombra propia del documento */
+      --doc-shadow: 0 12px 28px rgba(59, 7, 100, 0.09);
+
+      /* Border radius de documento (más generosos que los del DS web) */
+      --r-xl:   24px;
+      --r-lg:   18px;
+      --r-md:   14px;
+      --r-sm:   10px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BASE (override de almacen.css para contexto documento)
+       ═══════════════════════════════════════════════════════════ */
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--t900);
+      line-height: 1.6;
+      background: linear-gradient(180deg, var(--c050) 0%, #faf8fe 100%);
+    }
+
+    /* almacen.css resetea margin: 0 en todos los elementos —
+       reestablecemos el espaciado de párrafo aquí */
+    p { margin: 0 0 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .page {
+      width: min(1020px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════ */
+
+    .hero {
+      background: linear-gradient(160deg, var(--c900) 0%, var(--c800) 100%);
+      color: var(--color-white);
+      border-radius: 28px;
+      padding: 42px 40px 38px;
+      box-shadow: var(--doc-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Círculo decorativo superior derecho */
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: -70px; top: -70px;
+      width: 220px; height: 220px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    /* Círculo decorativo inferior izquierdo */
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -80px; bottom: -90px;
+      width: 220px; height: 220px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-logo {
+      position: absolute;
+      top: 24px;
+      right: 36px;
+      width: auto;
+      height: 128px;
+      object-fit: contain;
+      z-index: 1;
+      opacity: 0.92;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+      position: relative; z-index: 1;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 5vw, 50px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      position: relative; z-index: 1;
+    }
+
+    .hero-subtitle {
+      margin: 16px 0 0;
+      max-width: 800px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.90);
+      line-height: 1.55;
+      position: relative; z-index: 1;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 26px;
+      position: relative; z-index: 1;
+    }
+
+    .meta-card {
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.17);
+    }
+
+    .meta-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-weight: 700;
+      color: var(--color-white);
+      font-size: 15px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       METADATA DOCUMENTAL
+       ═══════════════════════════════════════════════════════════ */
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+      margin-top: 18px;
+      padding: 11px 16px;
+      border-radius: var(--r-sm);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.13);
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.80);
+      position: relative;
+      z-index: 1;
+      line-height: 1.5;
+    }
+
+    .doc-meta-label {
+      font-weight: 700;
+      color: rgba(255,255,255,0.50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      margin-right: 5px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       LEYENDA
+       ═══════════════════════════════════════════════════════════ */
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: var(--color-white);
+      color: var(--t900);
+    }
+
+    .legend-done    { background: var(--success-bg);  border-color: var(--success-border); color: var(--success-text); }
+    .legend-pending { background: var(--pending-bg);  border-color: var(--pending-border); color: var(--pending-text); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECCIONES Y FASES
+       ═══════════════════════════════════════════════════════════ */
+
+    .section,
+    .phase {
+      background: var(--color-white);
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+      box-shadow: var(--doc-shadow);
+      overflow: hidden;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 30px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: var(--c900);
+      font-weight: 700;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--c900);
+    }
+
+    .lead {
+      color: var(--t700);
+      font-size: 16.5px;
+    }
+
+    /* Grids de objetivos y usuarios */
+
+    .objective-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .objective-item {
+      background: var(--c050);
+      border: 1px solid var(--c200);
+      color: var(--c900);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .user-card {
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      background: var(--c050);
+      padding: 18px;
+    }
+
+    .user-card h3 { margin-top: 0; }
+
+    /* Fases */
+
+    .phase { margin-top: 22px; }
+
+    .phase-header {
+      padding: 22px 26px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, var(--c100) 0%, #faf8ff 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .phase-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 26px;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: var(--c900);
+      font-weight: 700;
+    }
+
+    .phase-body {
+      padding: 24px 26px 28px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BADGES DE ESTADO
+       ═══════════════════════════════════════════════════════════ */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      border-radius: 9999px;
+      padding: 7px 13px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      letter-spacing: 0.01em;
+    }
+
+    .status.done     { background: var(--success-bg);  border-color: var(--success-border);  color: var(--success-text); }
+    .status.pending  { background: var(--pending-bg);  border-color: var(--pending-border);  color: var(--pending-text); }
+    .status.priority { background: var(--danger-bg);   border-color: var(--danger-border);   color: var(--danger-text); }
+    .status.goal     { background: var(--c100);        border-color: var(--c200);             color: var(--c900); }
+
+    /* ═══════════════════════════════════════════════════════════
+       CHECKLISTS
+       ═══════════════════════════════════════════════════════════ */
+
+    .checklist {
+      list-style: none;
+      margin: 12px 0 0;
+      padding: 0;
+    }
+
+    .checklist > li {
+      position: relative;
+      margin: 8px 0;
+      padding-left: 34px;
+      font-size: 15px;
+      color: var(--t900);
+      line-height: 1.55;
+    }
+
+    .checklist > li::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 24px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .checklist.done    > li::before { content: "✅"; }
+    .checklist.pending > li::before { content: "⬜"; }
+
+    .sublist {
+      list-style: none;
+      margin: 8px 0 10px 52px;
+      padding: 0 0 0 20px;
+      border-left: 3px solid var(--c200);
+      color: var(--t700);
+    }
+
+    .sublist li {
+      position: relative;
+      margin: 5px 0;
+      padding-left: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .sublist li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      color: var(--c700);
+      font-weight: 900;
+      font-size: 16px;
+      line-height: 1.1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NOTAS / CALLOUTS
+       ═══════════════════════════════════════════════════════════ */
+
+    .note {
+      margin: 14px 0;
+      padding: 13px 16px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--line);
+      background: #faf9fe;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--t700);
+    }
+
+    .note.green  { background: var(--success-bg);  border-color: var(--success-border);  color: var(--success-text); }
+    .note.orange { background: var(--warn-bg);     border-color: var(--warn-border);     color: var(--warn-text); }
+
+    /* ═══════════════════════════════════════════════════════════
+       BLOQUE DE CÓDIGO
+       ═══════════════════════════════════════════════════════════ */
+
+    .code-box {
+      margin: 12px 0;
+      padding: 13px 16px;
+      border-radius: var(--r-md);
+      background: var(--c900);
+      color: var(--c100);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TABLA DE INFORMACIÓN (2 columnas)
+       ═══════════════════════════════════════════════════════════ */
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14.5px;
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .info-table th {
+      width: 34%;
+      background: var(--c100);
+      color: var(--c900);
+      font-weight: 600;
+    }
+
+    .info-table td { color: var(--t700); }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER DEL DOCUMENTO
+       ═══════════════════════════════════════════════════════════ */
+
+    .doc-footer {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--t500);
+      padding: 0 0 8px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════ */
+
+    @media (max-width: 860px) {
+      .page { padding: 20px 0 48px; }
+      .hero { padding: 28px 24px; border-radius: 20px; }
+      .meta-grid, .objective-grid, .cards { grid-template-columns: 1fr; }
+      .phase-header { flex-direction: column; }
+      .hero-logo { width: auto; height: 86px; top: 18px; right: 22px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESIÓN / PDF
+       ═══════════════════════════════════════════════════════════ */
+
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; padding: 0; }
+      .hero, .section, .phase { box-shadow: none; }
+      .hero { border-radius: 0; }
+      .section, .phase { page-break-inside: avoid; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <!-- ══════════════════════════════════════════════════════════
+         HERO — reemplazar {{VARIABLES}} con contenido real
+         ══════════════════════════════════════════════════════════ -->
+    <header class="hero">
+      <img src="../brandkit/assets/logo.png" alt="Logo Almacén" class="hero-logo">
+      <div class="hero-eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITULO}}</h1>
+      <p class="hero-subtitle">{{DESCRIPCION}}</p>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="meta-label">Estado actual</div>
+          <div class="meta-value">{{ESTADO_ACTUAL}}</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Próxima prioridad</div>
+          <div class="meta-value">{{PRIORIDAD}}</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Meta</div>
+          <div class="meta-value">{{META}}</div>
+        </div>
+      </div>
+      <div class="doc-meta">
+        <span><span class="doc-meta-label">Documento</span>{{DOCUMENTO}}</span>
+        <span><span class="doc-meta-label">Versión</span>{{VERSION}}</span>
+        <span><span class="doc-meta-label">Fecha</span>{{FECHA}}</span>
+        <span><span class="doc-meta-label">Estado</span>{{ESTADO}}</span>
+        <span><span class="doc-meta-label">Fuente</span>{{FUENTE}}</span>
+      </div>
+    </header>
+
+    <!-- Leyenda de estados -->
+    <div class="legend">
+      <span class="legend-item legend-done">✅ Realizado</span>
+      <span class="legend-item legend-pending">⬜ Pendiente</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SECCIÓN GENÉRICA — texto y listas
+         ══════════════════════════════════════════════════════════ -->
+    <section class="section">
+      <h2>{{TITULO_SECCION}}</h2>
+      <p class="lead">{{LEAD_SECCION}}</p>
+      <p>{{CONTENIDO_SECCION}}</p>
+
+      <!-- Ejemplo de sublist -->
+      <ul class="sublist">
+        <li>ítem 1;</li>
+        <li>ítem 2;</li>
+        <li>ítem 3.</li>
+      </ul>
+
+      <!-- Ejemplo de nota -->
+      <div class="note green">
+        Nota de éxito o hito alcanzado.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SECCIÓN CON GRID DE OBJETIVOS
+         ══════════════════════════════════════════════════════════ -->
+    <section class="section">
+      <h2>Objetivos del sistema</h2>
+      <div class="objective-grid">
+        <div class="objective-item">Objetivo 1</div>
+        <div class="objective-item">Objetivo 2</div>
+        <div class="objective-item">Objetivo 3</div>
+        <div class="objective-item">Objetivo 4</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SECCIÓN CON TARJETAS DE USUARIO (3 columnas)
+         ══════════════════════════════════════════════════════════ -->
+    <section class="section">
+      <h2>Tipos de usuarios</h2>
+      <div class="cards">
+        <article class="user-card">
+          <h3>Perfil A</h3>
+          <p>Descripción del perfil.</p>
+          <ul class="sublist">
+            <li>capacidad 1;</li>
+            <li>capacidad 2.</li>
+          </ul>
+        </article>
+        <article class="user-card">
+          <h3>Perfil B</h3>
+          <p>Descripción del perfil.</p>
+        </article>
+        <article class="user-card">
+          <h3>Perfil C</h3>
+          <p>Descripción del perfil.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BLOQUE DE FASE — COMPLETADA
+         ══════════════════════════════════════════════════════════ -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase N — {{NOMBRE_FASE}}</h2>
+        <span class="status done">Lista</span>
+        <!-- Otras opciones: pending / priority / goal -->
+      </div>
+      <div class="phase-body">
+        <p>Descripción de la fase.</p>
+
+        <h3>N.1 Sub-etapa</h3>
+        <ul class="checklist done">
+          <li>Tarea completada 1.</li>
+          <li>
+            Tarea con sublista:
+            <ul class="sublist">
+              <li>detalle a;</li>
+              <li>detalle b.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="note">
+          Nota de contexto sobre la fase.
+        </div>
+
+        <!-- Ejemplo de código / referencia técnica -->
+        <div class="code-box">
+          referencia técnica o comando
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BLOQUE DE FASE — PENDIENTE PRIORITARIO
+         ══════════════════════════════════════════════════════════ -->
+    <section class="phase">
+      <div class="phase-header">
+        <h2 class="phase-title">Fase N+1 — {{NOMBRE_FASE_PEND}}</h2>
+        <span class="status priority">Pendiente prioritario</span>
+      </div>
+      <div class="phase-body">
+        <p>Descripción de por qué esta fase es prioritaria.</p>
+        <ul class="checklist pending">
+          <li>Tarea pendiente 1.</li>
+          <li>Tarea pendiente 2.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TABLA DE INFORMACIÓN (datos, configuración, etc.)
+         ══════════════════════════════════════════════════════════ -->
+    <section class="section">
+      <h2>Datos de referencia</h2>
+      <table class="info-table">
+        <tr><th>Campo</th><td>Valor</td></tr>
+        <tr><th>Campo 2</th><td>Valor 2</td></tr>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FOOTER DEL DOCUMENTO
+         ══════════════════════════════════════════════════════════ -->
+    <div class="doc-footer">
+      Almacén Popular Rosa Elena Morales — {{EYEBROW}} — {{FECHA}}
+    </div>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan de Trabajo — Web Almacén Popular Rosa Elena Morales Morales</title>
+  <link rel="icon" href="../brandkit/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../themes/almacen.css">
+  <style>
+
+    /* ── BASE ── */
+    .page-wrap { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .section     { padding: 5rem 1rem; }
+    .section-sm  { padding: 3rem 1rem; }
+    .section-xs  { padding: 2rem 1rem; }
+
+    .container    { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+    .container-md { max-width:  900px; margin: 0 auto; padding: 0 1.5rem; }
+    .container-lg { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── HERO ── */
+    .hero {
+      background-color: var(--color-primary-dark);
+      color: white;
+      padding: 5.5rem 1rem 5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--space-5);
+    }
+    .hero-logo { width: 100px; height: 100px; object-fit: contain; }
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: var(--weight-bold);
+      color: white;
+      line-height: var(--leading-tight);
+      max-width: 720px;
+    }
+    .hero-subtitle {
+      font-size: var(--text-lg);
+      color: var(--color-primary-light);
+      font-weight: var(--weight-medium);
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      justify-content: center;
+      font-size: var(--text-sm);
+      color: var(--color-primary-light);
+      border-top: 1px solid rgba(196,181,253,0.25);
+      padding-top: var(--space-4);
+      margin-top: var(--space-1);
+    }
+    .hero-meta strong { color: white; font-weight: 600; }
+
+    /* ── BANNER ── */
+    .banner {
+      background-color: var(--color-primary-light);
+      padding: 0.875rem 1rem;
+      text-align: center;
+    }
+    .banner p {
+      color: var(--color-primary-dark);
+      font-weight: var(--weight-medium);
+      font-size: var(--text-sm);
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--space-3);
+    }
+    .center { text-align: center; }
+    .section-body {
+      font-size: var(--text-base);
+      line-height: var(--leading-relaxed);
+      color: var(--color-gray-700);
+    }
+    .section-body p + p { margin-top: var(--space-4); }
+
+    /* ── STAT CARDS ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    .stat-card {
+      background-color: var(--color-surface-alt);
+      border: 1px solid var(--color-border-brand);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-6);
+    }
+    .stat-card-label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+    .stat-card-value {
+      font-family: var(--font-serif);
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      line-height: 1;
+    }
+    .stat-card-desc {
+      font-size: var(--text-xs);
+      color: var(--color-gray-500);
+      margin-top: var(--space-2);
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ── FEATURE CARDS — réplica exacta del "Qué somos" del Home ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-6);
+      margin-top: var(--space-10);
+    }
+    .feature-card {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 3.5rem;
+      height: 3.5rem;
+      background-color: rgba(196,181,253,0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-dark);
+    }
+    .feature-icon svg { width: 1.75rem; height: 1.75rem; }
+    .feature-card h3 {
+      font-family: var(--font-sans);
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+    }
+    .feature-card p {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      line-height: var(--leading-relaxed);
+    }
+    .feature-card ul {
+      font-size: var(--text-sm);
+      color: var(--color-gray-600);
+      line-height: 1.75;
+      padding-left: 0;
+      list-style: none;
+      margin: 0;
+    }
+    .feature-card ul li::before {
+      content: "·";
+      color: var(--color-primary);
+      font-weight: bold;
+      margin-right: 0.4em;
+    }
+
+    /* ── BADGE — réplica del panel admin ── */
+    .badge {
+      display: inline-block;
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .badge-done     { background-color: #DCFCE7; color: #15803D; }
+    .badge-priority { background-color: #FEE2E2; color: #B91C1C; }
+    .badge-pending  { background-color: var(--color-gray-100); color: var(--color-gray-600); }
+    .badge-info     { background-color: rgba(196,181,253,0.3); color: var(--color-primary-dark); }
+    .badge-warn     { background-color: #FEF9C3; color: #A16207; }
+
+    /* ── PHASE TABLE — réplica del admin ── */
+    .phase-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+      margin-top: var(--space-8);
+      background-color: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-default);
+    }
+    .phase-table thead th {
+      background-color: var(--color-primary-dark);
+      color: white;
+      font-weight: var(--weight-semibold);
+      text-align: left;
+      padding: var(--space-4) var(--space-5);
+    }
+    .phase-table tbody td {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+      color: var(--color-gray-700);
+      line-height: var(--leading-relaxed);
+    }
+    .phase-table tbody tr:last-child td { border-bottom: none; }
+    .phase-table tbody tr:nth-child(even) td { background-color: var(--color-surface-alt); }
+    .phase-table tbody tr.row-priority td { background-color: #FFF5F5 !important; }
+    .phase-name {
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      white-space: nowrap;
+    }
+    .phase-sub {
+      font-size: var(--text-xs);
+      color: var(--color-gray-400);
+      margin-top: 2px;
+    }
+
+    /* ── CHECKLIST BLOCK ── */
+    .check-section {
+      background-color: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-7);
+      border-left: 4px solid var(--color-primary-light);
+    }
+    .check-section.priority { border-left-color: #DC2626; }
+    .check-section.done     { border-left-color: #16A34A; }
+
+    .check-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      margin-bottom: var(--space-1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .check-desc {
+      font-size: var(--text-sm);
+      color: var(--color-gray-500);
+      margin-bottom: var(--space-5);
+      line-height: var(--leading-relaxed);
+    }
+    .check-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-2);
+    }
+    .check-item {
+      font-size: var(--text-sm);
+      color: var(--color-gray-700);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      line-height: var(--leading-relaxed);
+    }
+    .check-item .icon-done  { color: #16A34A; flex-shrink: 0; }
+    .check-item .icon-pend  { color: var(--color-gray-300); flex-shrink: 0; }
+    .check-item .icon-alert { color: #DC2626; flex-shrink: 0; }
+
+    /* ── 2-COLUMN GRID ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-top: var(--space-8);
+    }
+    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+    .info-card {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-default);
+      padding: var(--space-6);
+    }
+    .info-card h3 {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: var(--weight-bold);
+      color: var(--color-primary-dark);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .info-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .info-card ul li {
+      font-size: var(--text-sm);
+      color: var(--color-gray-700);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      line-height: var(--leading-relaxed);
+    }
+    .dot-green { color: #16A34A; font-size: 1.1em; flex-shrink: 0; line-height: 1.5; }
+    .dot-gray  { color: var(--color-gray-300); font-size: 1.1em; flex-shrink: 0; line-height: 1.5; }
+
+    /* ── CTA SECTION — réplica "Súmate" del Home ── */
+    .cta-section {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 5.5rem 1rem;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: var(--weight-bold);
+      color: white;
+      margin-bottom: var(--space-5);
+      line-height: var(--leading-tight);
+    }
+    .cta-section p {
+      color: var(--color-primary-light);
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-8);
+      line-height: var(--leading-relaxed);
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Bloque de código — réplica de los code-blocks del PDF */
+    .code-block {
+      background-color: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: var(--space-5) var(--space-6);
+      font-family: monospace;
+      font-size: var(--text-sm);
+      color: white;
+      line-height: 1.8;
+      text-align: left;
+      max-width: 480px;
+      margin: 0 auto var(--space-6);
+    }
+
+    .next-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-6);
+      text-align: left;
+    }
+    .step-card {
+      background-color: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: white;
+      color: var(--color-primary);
+      font-weight: var(--weight-bold);
+      font-size: var(--text-xs);
+      border-radius: var(--radius-full);
+    }
+    .step-title { font-weight: var(--weight-semibold); color: white; font-size: var(--text-sm); }
+    .step-desc  { font-size: var(--text-xs); color: var(--color-primary-light); line-height: var(--leading-relaxed); }
+
+    /* ── ALERT BOX ── */
+    .alert-box {
+      background-color: #FFF5F5;
+      border: 1px solid #FCA5A5;
+      border-left: 4px solid #DC2626;
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .alert-box-title {
+      font-weight: var(--weight-bold);
+      color: #B91C1C;
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-1);
+    }
+    .alert-box p {
+      font-size: var(--text-sm);
+      color: #7F1D1D;
+      line-height: var(--leading-relaxed);
+    }
+
+    /* ── FOOTER — réplica exacta de Footer.tsx ── */
+    .site-footer {
+      background-color: var(--color-primary-dark);
+      color: white;
+      padding: 3rem 1rem 2rem;
+    }
+    .site-footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .site-footer-logo { width: 72px; height: 72px; object-fit: contain; margin-bottom: var(--space-4); }
+    .site-footer h3 {
+      font-family: var(--font-serif);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-bold);
+      text-align: center;
+      margin-bottom: var(--space-5);
+    }
+    .site-footer-contact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      text-align: center;
+    }
+    .site-footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+    }
+    .site-footer-contact-item svg { width: 1.125rem; height: 1.125rem; color: var(--color-primary-light); }
+    .site-footer-divider {
+      width: 100%;
+      height: 1px;
+      background-color: rgba(196,181,253,0.3);
+      margin-bottom: var(--space-5);
+    }
+    .site-footer-copy {
+      text-align: center;
+      font-size: var(--text-xs);
+      color: var(--color-primary-light);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      .hero, .banner, .cta-section, .site-footer,
+      .check-section.priority, .check-section.done,
+      .phase-table thead th, .phase-table tbody tr.row-priority td,
+      .alert-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page-break  { page-break-before: always; }
+      .avoid-break { page-break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════════════ -->
+<header class="hero">
+  <img src="../brandkit/assets/logo.png" alt="Logo Almacén Popular" class="hero-logo">
+  <div>
+    <h1>Plan de trabajo<br>Web del Almacén Popular</h1>
+    <p class="hero-subtitle">Rosa Elena Morales Morales</p>
+  </div>
+  <div class="hero-meta">
+    <span><strong>Versión:</strong> Preview DS · 26 de junio de 2026</span>
+    <span>·</span>
+    <span><strong>Fases:</strong> 0–10</span>
+    <span>·</span>
+    <span><strong>Completadas:</strong> Fase 0 y Fase 1</span>
+    <span>·</span>
+    <span><strong>Siguiente:</strong> Fase 2 — Seguridad</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     BANNER
+     ══════════════════════════════════════════════════════ -->
+<div class="banner">
+  <p>Vista previa generada con el Design System v0.1 — basada en el PDF "Plan de trabajo" · Solo para revisión interna</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     OBJETIVO — bg-white
+     ══════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: white;">
+  <div class="container-md">
+    <p class="section-label">Objetivo general</p>
+    <h2 class="section-title">De vitrina a herramienta operativa</h2>
+    <div class="section-body">
+      <p>
+        La meta es que la página deje de ser solo una vitrina informativa y se transforme
+        progresivamente en una <strong>herramienta de apoyo real para el funcionamiento diario del
+        almacén</strong>: registrar pedidos, controlar stock, manejar precios, registrar compras,
+        revisar caja y gestionar pendientes.
+      </p>
+      <p>
+        El trabajo se organiza en 10 fases secuenciales para permitir revisión, validación y
+        avance ordenado hasta llegar a la primera versión operativa completa.
+      </p>
+    </div>
+    <div class="stat-grid" style="margin-top: var(--space-10);">
+      <div class="stat-card">
+        <p class="stat-card-label">Fases totales</p>
+        <p class="stat-card-value">10</p>
+        <p class="stat-card-desc">Fases 0 a 9. Meta final: versión en producción con flujo completo.</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Completadas</p>
+        <p class="stat-card-value">2</p>
+        <p class="stat-card-desc">Fase 0 (organización) y Fase 1 (pedidos reales en Google Sheets).</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Tipos de usuario</p>
+        <p class="stat-card-value">3</p>
+        <p class="stat-card-desc">Compradores, vendedores y administradores, con vistas separadas.</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card-label">Productos activos</p>
+        <p class="stat-card-value">53</p>
+        <p class="stat-card-desc">Catálogo cargado con códigos PROD-001… y precios de venta iniciales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     USUARIOS — bg-background
+     ══════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: var(--color-background);">
+  <div class="container">
+    <p class="section-label center">Perfiles de uso</p>
+    <h2 class="section-title center">Quiénes usan la web</h2>
+    <div class="feature-grid">
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Users icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
+        </div>
+        <h3>Compradores / vecinas y vecinos</h3>
+        <p>Ingresan a la web para revisar el catálogo y hacer pedidos desde celular o computador.</p>
+        <ul>
+          <li>Ver catálogo y precios actualizados</li>
+          <li>Agregar productos al carrito</li>
+          <li>Elegir forma de pago</li>
+          <li>Confirmar pedido y retirar en fecha de apertura</li>
+          <li>Conocer la historia del almacén y cómo participar</li>
+        </ul>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Tag / Store icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+          </svg>
+        </div>
+        <h3>Vendedoras / vendedores</h3>
+        <p>Atienden durante la apertura presencial. Solo acceden a las herramientas necesarias para vender.</p>
+        <ul>
+          <li>Buscar y agregar productos a una venta</li>
+          <li>Registrar cantidad y forma de pago</li>
+          <li>Generar comanda automática</li>
+          <li>Descontar stock al confirmar</li>
+          <li>Registrar pendientes (deudas)</li>
+          <li>No tienen acceso a la administración completa</li>
+        </ul>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <!-- Cog / Admin icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <h3>Administradoras / administradores</h3>
+        <p>Gestionan el funcionamiento general del almacén. Acceso completo al sistema.</p>
+        <ul>
+          <li>Ver y gestionar pedidos online</li>
+          <li>Editar productos, precios y stock</li>
+          <li>Revisar ventas presenciales y compras</li>
+          <li>Cuadrar caja por apertura</li>
+          <li>Gestionar pendientes por cobrar</li>
+          <li>Configurar datos generales del almacén</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     RESUMEN DE FASES — tabla general — bg-white
+     ══════════════════════════════════════════════════════ -->
+<section class="section page-break" style="background-color: white;">
+  <div class="container-lg">
+    <p class="section-label">Mapa de fases</p>
+    <h2 class="section-title">Las 10 etapas del proyecto</h2>
+    <p class="section-body">
+      El desarrollo se divide en fases secuenciales. Las primeras dos ya están completas.
+      La Fase 2 es la <strong>prioridad inmediata</strong> porque el sistema ya maneja datos reales de personas.
+    </p>
+    <table class="phase-table">
+      <thead>
+        <tr>
+          <th style="width:10%">Fase</th>
+          <th style="width:28%">Nombre</th>
+          <th style="width:13%">Estado</th>
+          <th>Qué resuelve</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="phase-name">Fase 0</span></td>
+          <td>Orden inicial del proyecto</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>Revisión de estado, documentación viva, organización del trabajo por etapas, identificación de documentos del Drive.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 1</span></td>
+          <td>Base operativa y pedidos reales</td>
+          <td><span class="badge badge-done">Completada</span></td>
+          <td>Google Sheets como base de datos, 53 productos con PROD-001…, pedidos reales con LockService, panel admin conectado, stock actualizado automáticamente.</td>
+        </tr>
+        <tr class="row-priority">
+          <td><span class="phase-name">Fase 2</span></td>
+          <td><strong>Seguridad del panel admin</strong></td>
+          <td><span class="badge badge-priority">Prioritaria</span></td>
+          <td>Acceso seguro para administrador: sesión con cookie httpOnly, rutas /api/admin protegidas, cierre de sesión, clave fuera del frontend. <em>El sistema ya tiene datos personales de compradores.</em></td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 3</span></td>
+          <td>Configuración real del almacén</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Reemplazar datos temporales: WhatsApp oficial, correo, fecha de apertura, textos públicos, cuenta bancaria para aportes (datos disponibles y autorizados).</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 4</span></td>
+          <td>Productos, stock, precios e imágenes</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Categorías, unidades de venta (unidad/kilo/gramos), stock mínimo, 3 niveles de precio (costo / sugerido / venta), jerarquía de márgenes, imágenes de Nadia organizadas por código PROD.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 5</span></td>
+          <td>Panel vendedor y comandas</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Digitalizar la venta presencial: buscar productos, registrar venta, generar comanda imprimible, registrar modo de pago y pendientes.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 6</span></td>
+          <td>Caja, pendientes y cierre por apertura</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Caja por apertura (efectivo + transferencias + pendientes − gastos), gestión de cuentas por cobrar, gastos extra categorizados.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 7</span></td>
+          <td>Compras y abastecimiento</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Registro de compras, actualización de stock y costos, caja disponible para compra (calculada + editable), diseño automático de compra por prioridad y stock mínimo.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 8</span></td>
+          <td>Historial, reportes y admin avanzada</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Historiales de pedidos, ventas, compras, precios y stock. Edición de productos, stock y configuración desde el panel. Control de roles admin/vendedor.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 9</span></td>
+          <td>Contenido público, historia y comunidad</td>
+          <td><span class="badge badge-pending">Pendiente</span></td>
+          <td>Revisión del material del Drive (imágenes, afiches, boletines, libro histórico), mejora de secciones Historia y Participar, diseño visual y versión móvil.</td>
+        </tr>
+        <tr>
+          <td><span class="phase-name">Fase 10</span></td>
+          <td>Producción y versión operativa final</td>
+          <td><span class="badge badge-info">Meta final</span></td>
+          <td>Hosting definitivo, variables de producción, prueba de todos los flujos desde dispositivos reales, capacitación del equipo, documentación mínima de uso.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     DETALLE FASES 1–2 — bg-background (foco prioritario)
+     ══════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: var(--color-background);">
+  <div class="container-lg">
+    <p class="section-label">Detalle de avance</p>
+    <h2 class="section-title">Lo que está listo y lo que sigue</h2>
+
+    <!-- ALERTA FASE 2 -->
+    <div class="alert-box avoid-break">
+      <p class="alert-box-title">Atención: seguridad pendiente</p>
+      <p>
+        La Fase 2 es prioritaria antes de agregar cualquier función nueva.
+        El sistema ya registra pedidos reales con nombres y teléfonos de compradores.
+        Las rutas <code style="background:#fee2e2;padding:1px 4px;border-radius:3px">/api/admin/*</code> no están protegidas por servidor:
+        cualquier persona que conozca la URL puede leer los datos.
+      </p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:var(--space-5);">
+
+      <!-- FASE 1 — completa -->
+      <div class="check-section done avoid-break">
+        <div class="check-title">
+          <span>Fase 1 — Base operativa y pedidos reales</span>
+          <span class="badge badge-done">Completada y probada</span>
+        </div>
+        <p class="check-desc">
+          Los pedidos ya no dependen del navegador de un computador específico. La tienda genera
+          pedidos reales que quedan registrados en Google Sheets y son visibles desde el panel admin.
+          Flujo completo probado: tienda → pedido → base operativa → admin → stock.
+        </p>
+        <div class="check-list">
+          <span class="check-item"><span class="icon-done">✓</span> Base operativa en Google Sheets (10 hojas)</span>
+          <span class="check-item"><span class="icon-done">✓</span> 53 productos con códigos PROD-001…</span>
+          <span class="check-item"><span class="icon-done">✓</span> Backend con Apps Script (6 acciones)</span>
+          <span class="check-item"><span class="icon-done">✓</span> Pedidos reales guardados con detalle</span>
+          <span class="check-item"><span class="icon-done">✓</span> Stock descontado al crear pedido</span>
+          <span class="check-item"><span class="icon-done">✓</span> LockService para concurrencia</span>
+          <span class="check-item"><span class="icon-done">✓</span> Cancelar pedido devuelve stock</span>
+          <span class="check-item"><span class="icon-done">✓</span> Panel admin lee pedidos reales</span>
+          <span class="check-item"><span class="icon-done">✓</span> Cambiar estado y estado de pago</span>
+          <span class="check-item"><span class="icon-done">✓</span> Proxy interno: claves nunca van al cliente</span>
+        </div>
+      </div>
+
+      <!-- FASE 2 — prioritaria -->
+      <div class="check-section priority avoid-break">
+        <div class="check-title">
+          <span>Fase 2 — Seguridad del panel admin</span>
+          <span class="badge badge-priority">Pendiente prioritario</span>
+        </div>
+        <p class="check-desc">
+          Implementar autenticación real en el servidor: sesión con cookie httpOnly, rutas
+          /api/admin/* protegidas, clave fuera del código frontend, inicio y cierre de sesión reales.
+        </p>
+        <div class="check-list">
+          <span class="check-item"><span class="icon-alert">○</span> Crear acceso seguro para administrador</span>
+          <span class="check-item"><span class="icon-alert">○</span> Sacar clave hardcodeada del frontend</span>
+          <span class="check-item"><span class="icon-alert">○</span> Crear inicio de sesión real</span>
+          <span class="check-item"><span class="icon-alert">○</span> Crear cierre de sesión</span>
+          <span class="check-item"><span class="icon-alert">○</span> Usar sesión con cookie httpOnly</span>
+          <span class="check-item"><span class="icon-alert">○</span> Proteger rutas /api/admin/*</span>
+          <span class="check-item"><span class="icon-alert">○</span> Evitar acceso sin sesión válida</span>
+          <span class="check-item"><span class="icon-alert">○</span> Mantener claves fuera del código público</span>
+          <span class="check-item"><span class="icon-alert">○</span> Probar acceso correcto</span>
+          <span class="check-item"><span class="icon-alert">○</span> Probar acceso rechazado sin sesión</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     INFORMACIÓN DISPONIBLE Y PENDIENTE — bg-white, 2 cols
+     ══════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: white;">
+  <div class="container-lg">
+    <p class="section-label">Estado de la información</p>
+    <h2 class="section-title">Qué tenemos y qué falta confirmar</h2>
+    <div class="two-col">
+
+      <div class="info-card avoid-break">
+        <h3>Información disponible</h3>
+        <ul>
+          <li><span class="dot-green">●</span> Página web base funcional</li>
+          <li><span class="dot-green">●</span> Catálogo de 53 productos con precios</li>
+          <li><span class="dot-green">●</span> Carrito y envío por WhatsApp</li>
+          <li><span class="dot-green">●</span> Panel admin operativo</li>
+          <li><span class="dot-green">●</span> Base operativa en Google Sheets</li>
+          <li><span class="dot-green">●</span> Pedidos reales funcionando y probados</li>
+          <li><span class="dot-green">●</span> Stock descontándose automáticamente</li>
+          <li><span class="dot-green">●</span> Drive del almacén identificado</li>
+          <li><span class="dot-green">●</span> Documento de diseño de compra</li>
+          <li><span class="dot-green">●</span> Documento de comandas como referencia</li>
+          <li><span class="dot-green">●</span> Datos de cuenta para aportes (autorizados)</li>
+          <li><span class="dot-green">●</span> Criterios de precios, caja y pendientes definidos</li>
+        </ul>
+      </div>
+
+      <div class="info-card avoid-break">
+        <h3>Pendiente por confirmar</h3>
+        <ul>
+          <li><span class="dot-gray">○</span> WhatsApp oficial para pedidos</li>
+          <li><span class="dot-gray">○</span> Contacto general del almacén</li>
+          <li><span class="dot-gray">○</span> Correo oficial para la web</li>
+          <li><span class="dot-gray">○</span> Próxima fecha de apertura</li>
+          <li><span class="dot-gray">○</span> Texto oficial de aportes</li>
+          <li><span class="dot-gray">○</span> Texto sobre cómo participar</li>
+          <li><span class="dot-gray">○</span> Texto oficial sobre el almacén</li>
+          <li><span class="dot-gray">○</span> Texto oficial sobre Rosa Elena Morales</li>
+          <li><span class="dot-gray">○</span> Links públicos oficiales</li>
+          <li><span class="dot-gray">○</span> Personas con acceso admin y vendedor</li>
+          <li><span class="dot-gray">○</span> Criterio publicación imágenes de productos</li>
+          <li><span class="dot-gray">○</span> Criterio publicación imágenes históricas</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Nota de aportes: mención sin datos sensibles -->
+    <div style="margin-top:var(--space-6);background-color:var(--color-surface-alt);border:1px solid var(--color-border-brand);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);">
+      <p style="font-size:var(--text-sm);color:var(--color-primary-dark);font-weight:var(--weight-semibold);margin-bottom:var(--space-1)">
+        Cuenta de aportes ya disponible
+      </p>
+      <p style="font-size:var(--text-sm);color:var(--color-gray-600);line-height:var(--leading-relaxed)">
+        Los datos de la cuenta bancaria para aportes (Mercado Pago, Cuenta Vista) están disponibles
+        y son autorizados para publicación. Deben registrarse en la hoja CONFIG de la planilla y
+        mostrarse en la sección pública de aportes cuando esté lista (Fase 3).
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     VISIÓN FASE 4 — Precios — bg-background
+     ══════════════════════════════════════════════════════ -->
+<section class="section page-break" style="background-color: var(--color-background);">
+  <div class="container-lg">
+    <p class="section-label">Criterios acordados — Fase 4</p>
+    <h2 class="section-title">El sistema de precios</h2>
+    <p class="section-body">
+      Se definió que el sistema manejará tres valores por producto.
+      El comprador solo ve el precio final de venta; el administrador ve el costo y el sugerido.
+    </p>
+
+    <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); margin-top: var(--space-8);">
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3>Precio costo</h3>
+        <p>Lo que costó el producto al comprarlo. Solo visible para el administrador. Se actualiza al registrar compras y guarda historial.</p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+          </svg>
+        </div>
+        <h3>Precio sugerido</h3>
+        <p>Calculado con margen sobre el costo. El margen puede ser global (10% inicial), por categoría o por producto. Jerarquía: producto &gt; categoría &gt; global.</p>
+      </div>
+
+      <div class="feature-card avoid-break">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185zM9.75 9h.008v.008H9.75V9zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 4.5h.008v.008h-.008V13.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+        </div>
+        <h3>Precio final de venta</h3>
+        <p>El que ve el comprador. <strong>No cambia automáticamente</strong> cuando cambia el costo: el producto queda marcado como "requiere revisión" y el admin confirma el ajuste.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CTA — PRÓXIMO PASO — bg-primary, réplica de "Súmate"
+     ══════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="container-md">
+    <h2>¿Qué sigue ahora?</h2>
+    <p>
+      El sistema ya maneja pedidos reales. El paso prioritario es proteger el acceso
+      antes de avanzar a cualquier otra función.
+    </p>
+
+    <div class="code-block">
+      Fase 2 &mdash; Seguridad del panel admin<br>
+      Motivo: datos personales de compradores<br>
+      ya están registrados en la base operativa.
+    </div>
+
+    <p style="margin-bottom: var(--space-4);">Después de la seguridad, el orden recomendado:</p>
+    <div class="next-steps-grid">
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <p class="step-title">Seguridad del admin</p>
+        <p class="step-desc">Sesión real con cookie httpOnly. Rutas /api/admin/* protegidas. Clave fuera del frontend.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <p class="step-title">Configuración real</p>
+        <p class="step-desc">WhatsApp, correo, fecha de apertura, textos públicos y cuenta de aportes en CONFIG.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">4</span>
+        <p class="step-title">Productos y precios</p>
+        <p class="step-desc">Categorías, unidades, stock mínimo, 3 niveles de precio, imágenes de Nadia organizadas.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">5</span>
+        <p class="step-title">Panel vendedor</p>
+        <p class="step-desc">Venta presencial, comanda imprimible, modo de pago, pendientes por cobrar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SÍNTESIS — bg-background
+     ══════════════════════════════════════════════════════ -->
+<section class="section-sm" style="background-color: var(--color-background);">
+  <div class="container-md">
+    <blockquote style="border-left: 4px solid var(--color-primary); padding-left: 1.5rem; color: var(--color-gray-700); font-style: italic; font-size: var(--text-lg); line-height: 1.6; margin: 0;">
+      "Existe una primera base técnica funcionando: la tienda puede generar pedidos reales
+      y el panel admin puede visualizarlos. El avance pendiente consiste en transformar esa
+      base inicial en un sistema operativo más completo para apoyar el funcionamiento diario
+      del almacén."
+      <cite style="display:block;font-style:normal;font-size:var(--text-sm);color:var(--color-gray-500);margin-top:0.75rem">— Síntesis del Plan de trabajo, junio 2026</cite>
+    </blockquote>
+    <p style="font-size:var(--text-xs);color:var(--color-gray-400);text-align:center;margin-top:2.5rem">
+      Vista previa generada con el Design System v0.1 del Almacén · 26 de junio de 2026 ·
+      Fuente: PDF "Plan de trabajo — Web Almacén Popular Rosa Elena Morales" ·
+      No distribuir externamente sin autorización
+    </p>
+  </div>
+</section>
+
+</div><!-- /page-wrap -->
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER — réplica exacta de Footer.tsx
+     ══════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <img src="../brandkit/assets/logo.png" alt="Logo Almacén Popular" class="site-footer-logo">
+    <h3>Almacén Popular<br>Rosa Elena Morales Morales</h3>
+    <div class="site-footer-contact">
+      <div class="site-footer-contact-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span>Gamero 2670, Independencia, Santiago</span>
+      </div>
+      <div class="site-footer-contact-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <a href="mailto:almacenpopular.rosaelenamorarles@gmail.com" style="color:white;font-size:0.875rem;word-break:break-all">
+          almacenpopular.rosaelenamorarles@gmail.com
+        </a>
+      </div>
+    </div>
+    <div class="site-footer-divider"></div>
+    <div class="site-footer-copy">
+      <p>Proyecto comunitario sin fines de lucro &bull; Población Juan Antonio Ríos</p>
+      <p>&copy; 2026 Almacén Popular Rosa Elena Morales Morales. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
