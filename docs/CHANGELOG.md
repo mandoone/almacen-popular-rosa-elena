@@ -5,6 +5,43 @@
 
 ---
 
+## [FASE 1] — Seguridad del panel admin (2026-07-07)
+
+### Añadido
+- `src/lib/session.ts`: helpers de sesión firmada con HMAC-SHA256 usando Web Crypto
+  API. Compatible con Edge Runtime (middleware) y Node.js 18+. Sin dependencias
+  externas. Token con timestamp + firma hex; expira a las 8 horas.
+- `src/middleware.ts`: middleware Next.js que protege `/admin`, `/admin/*` y
+  `/api/admin/*`. Permite sin sesión: `/admin/login` y `/api/admin/auth/*`. Redirige
+  al login si sin sesión (páginas) o responde 401 JSON (rutas API). Si hay sesión
+  válida y se visita `/admin/login`, redirige al panel (evita loop).
+- `src/app/admin/login/page.tsx`: formulario de login admin. Envía password vía
+  `POST /api/admin/auth/login`; en éxito redirige a `/admin`.
+- `src/app/api/admin/auth/login/route.ts`: valida password contra
+  `ADMIN_PANEL_PASSWORD` (comparación de tiempo constante), genera token firmado y
+  devuelve cookie `admin_session` httpOnly.
+- `src/app/api/admin/auth/logout/route.ts`: elimina cookie `admin_session`.
+- Variables de entorno: `ADMIN_PANEL_PASSWORD` y `ADMIN_SESSION_SECRET` (agregadas
+  a `.env.example`).
+
+### Cambiado
+- `src/app/admin/page.tsx`: eliminada contraseña hardcodeada (`almacen2024`),
+  eliminado `LoginScreen` con auth solo de cliente, eliminado uso de `localStorage`
+  para sesión. El componente raíz ahora llama `POST /api/admin/auth/logout` y
+  redirige al login al cerrar sesión. El acceso real lo controla el middleware.
+
+### Seguridad resuelta
+- `/api/admin/*` ya no es alcanzable sin sesión válida.
+- La contraseña ya no está expuesta en el bundle JS del cliente.
+- La sesión vive en cookie httpOnly (no accesible desde JavaScript).
+- En producción la cookie lleva `Secure: true`.
+
+### Pendiente (deploy)
+- Agregar `ADMIN_PANEL_PASSWORD` y `ADMIN_SESSION_SECRET` en Vercel Production y
+  hacer redeploy para activar en producción.
+
+---
+
 ## [DS] — Design System liviano iniciado (2026-06-26)
 
 ### Añadido
