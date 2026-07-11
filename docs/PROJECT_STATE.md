@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: FASE 0.
+> tarea que cambie el estado. Última actualización: 2026-07-11.
 
 ---
 
@@ -11,8 +11,19 @@ Web del **Almacén Popular Rosa Elena Morales** — proyecto comunitario sin fin
 lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran los
 sábados de apertura.
 
-- **Fase activa:** FASE 0 (documentación viva) → preparando FASE 1.
-- **Rama de trabajo:** `fase-0/documentacion-viva`.
+- **Estado funcional:** FASE 2 de seguridad administrativa cerrada y validada.
+- **Próxima prioridad:** diagnóstico operativo de pedidos, pagos y stock (FASE 3A
+  en los informes v0.2).
+- **Rama documental actual:** `docs/piloto-informes-v02`.
+
+### Sistema documental
+
+- ✅ Sistema documental v0.1 consolidado en `design-system/` y `reports/`.
+- ✅ Dos tipos oficiales: informe de avance para el Almacén e informe técnico interno.
+- ✅ Dos pilotos HTML v0.2 aprobados como referencias visuales.
+- ✅ Fuentes Markdown, templates y CSS documental separados.
+- ⬜ Automatización Markdown → HTML → PDF pendiente; no se instalaron dependencias.
+- ⬜ PDF finales pendientes de una tarea posterior.
 
 ---
 
@@ -25,8 +36,8 @@ sábados de apertura.
 | Estilos | Tailwind CSS 3.4 + PostCSS |
 | Fuentes | `next/font` (Inter + Playfair Display) |
 | Lint | ESLint 8 + `eslint-config-next` |
-| Datos catálogo | Google Sheet publicada como CSV (solo lectura) |
-| Backend | **No existe** (solo un route handler de lectura del catálogo) |
+| Datos catálogo | Google Sheets operativa, consumida mediante Apps Script |
+| Backend | Google Apps Script Web App + proxy interno de Next.js |
 
 Scripts: `dev`, `build`, `start`, `lint`. Sin librerías de estado, base de datos
 ni pagos.
@@ -52,49 +63,37 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Qué funciona hoy
 
-- ✅ **Catálogo dinámico** desde Google Sheets CSV (revalida cada 1 h).
+- ✅ **Catálogo dinámico** desde la base operativa de Google Sheets.
 - ✅ **Carrito** completo (agregar/reducir/vaciar, persistido en `localStorage`).
 - ✅ **Buscador** de productos por nombre.
 - ✅ **Envío de pedido por WhatsApp** con mensaje pre-armado (`wa.me`).
 - ✅ **Imágenes de producto** por convención de nombre, con fallback.
-- ✅ **Panel `/admin`** con login por contraseña, filtros por estado, ver/editar/
-  eliminar pedidos y cambio de estado (pendiente → listo → entregado).
+- ✅ **Pedidos reales compartidos** en Google Sheets, visibles entre dispositivos.
+- ✅ **Panel `/admin` protegido** con login real, cookie `httpOnly`, middleware y
+  rutas administrativas con autenticación de servidor.
+- ✅ **Flujo end-to-end** tienda → pedido → base operativa → admin → stock probado.
 
 ---
 
-## Qué NO funciona / Problema principal
+## Pendientes principales
 
-🔴 **Los pedidos viven solo en el `localStorage` del navegador del cliente.**
-
-- Antes de abrir WhatsApp, el pedido se guarda en `localStorage` del dispositivo
-  del cliente.
-- El panel `/admin` lee de **su propio** `localStorage`, por lo que **no ve los
-  pedidos hechos por los clientes desde otros dispositivos**.
-- No hay backend ni almacenamiento compartido: el flujo de pedidos no es operable
-  en una apertura real.
-
-Riesgos completos en `docs/TASKS.md` (FASE 1) y contexto en `docs/DATA_MODEL.md`.
+- Revisar el flujo reversible de estados de pedido.
+- Separar estado de pago y método de pago si corresponde.
+- Revalidar stock al cancelar, corregir o reabrir pedidos.
+- Reemplazar datos temporales de CONFIG por información oficial del Almacén.
+- Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
 
 ---
 
 ## Prioridad actual
 
-**Pedidos reales en Google Sheets** (objetivo de FASE 1):
+**Diagnóstico operativo de pedidos, pagos y stock**:
 
-1. Los pedidos **no** deben quedar solo en `localStorage`.
-2. Los pedidos deben almacenarse en una **Google Sheet operativa nueva** (ver
-   decisión en `docs/DECISIONS.md` y diseño en `docs/DATA_MODEL.md`).
-3. Los pedidos deben ser **visibles desde cualquier dispositivo** en `/admin`.
-
-**Avance:** ya existe un script **validado** (`scripts/setup-google-sheet.gs`,
-guía en `docs/GOOGLE_SHEET_SETUP.md`) que crea la planilla operativa
-`BD_WEB_ALMACEN_ROSA_ELENA_MORALES` con sus 10 hojas. Se ejecutó en Google Apps
-Script y la planilla quedó creada correctamente. El **ID/URL** de la planilla no se
-guardan en el repo.
-
-**Pendiente inmediato:** cargar a mano los valores reales en la hoja CONFIG e
-implementar la lógica de pedidos reales (escritura/lectura vía Apps Script Web App).
-Ver `docs/TASKS.md`.
+1. Mapear el flujo actual desde el panel hasta Apps Script y Google Sheets.
+2. Confirmar transiciones válidas de `estado_pedido`.
+3. Determinar el origen y significado de valores combinados como `pagado_efectivo`.
+4. Probar cancelación, corrección, reapertura y movimientos de stock.
+5. Definir el modelo mínimo antes de implementar nuevas funciones.
 
 ---
 
@@ -102,6 +101,6 @@ Ver `docs/TASKS.md`.
 
 - Número WhatsApp `56950807172` (tienda, participar, footer).
 - URL del CSV de Google Sheets (en `src/app/api/productos/route.ts`).
-- Contraseña del panel admin (en el cliente — riesgo, ver FASE 1).
+- Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
 - Fechas de apertura en el Home (desactualizadas).
 - Dirección: Gamero 2670, Independencia.

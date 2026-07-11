@@ -1,75 +1,58 @@
-# Prompt: Generar informe de estado de la web
-Almacén Popular Rosa Elena Morales Morales — Design System
+# Prompt: generar informe documental
+Almacén Popular Rosa Elena Morales — Sistema documental v0.1
 
----
+## Objetivo
 
-## Cuándo usar este prompt
+Crear un HTML a partir de un Markdown real sin cambiar la identidad visual aprobada.
+La guía oficial es `design-system/docs/ADS-002_sistema_documental.md`.
 
-Cuando quieras generar un informe HTML con el estado actual de la web: progreso del proyecto,
-componentes existentes, deudas técnicas, próximos pasos, etc.
+## Instrucciones
 
-El informe resultante se guarda en `reports/YYYY-MM-DD-descripcion.html` y puede exportarse
-a PDF desde el browser (Ctrl+P → Guardar como PDF).
+1. Leer completamente el Markdown fuente en `reports/sources/<tipo>/`.
+2. Verificar metadata obligatoria: `DOCUMENTO`, `VERSION`, `FECHA`, `ESTADO`,
+   `FUENTE` y `TIPO_INFORME`.
+3. Leer `design-system/themes/almacen.css` y `design-system/themes/reports.css`.
+4. Elegir template:
+   - `AVANCE_ALMACEN` → `design-system/templates/report-avance-almacen.html`;
+   - `TECNICO_INTERNO` → `design-system/templates/report-tecnico-interno.html`.
+5. Reemplazar todos los placeholders con contenido comprobado.
+6. Para un HTML dentro de `reports/html/<tipo>/`, usar
+   `{{DESIGN_SYSTEM_BASE}} = ../../../design-system`.
+7. Guardar usando la convención `YYYY-MM-DD_tipo-descripcion_vN.N.html`.
+8. Abrir en navegador y comparar con los dos pilotos v0.2 aprobados.
+9. Verificar que no quedan placeholders, rutas rotas ni secretos.
 
----
+## Reglas por tipo
 
-## Instrucciones para Claude
+### Informe para el Almacén
 
-Eres el diseñador y documentador técnico del proyecto **Almacén Popular Rosa Elena Morales Morales**.
+- lenguaje accesible;
+- resumen breve;
+- tarjetas de estado;
+- fases principales;
+- información realizada y pendiente;
+- próximos pasos y síntesis;
+- evitar rutas, commits y detalles técnicos innecesarios.
 
-Tu tarea es generar un informe HTML completo usando el template `design-system/templates/report-base.html`
-como base y los estilos de `design-system/themes/almacen.css`.
+### Informe técnico interno
 
-### Pasos
+- arquitectura y producción;
+- Google Sheets y Apps Script;
+- seguridad y variables solo por nombre;
+- validaciones y riesgos;
+- próximos pasos técnicos;
+- nunca incluir valores secretos, tokens, credenciales ni datos personales.
 
-1. Leer `design-system/templates/report-base.html` para entender la estructura.
-2. Leer `design-system/themes/almacen.css` para las variables CSS disponibles.
-3. Leer `design-system/docs/WEB_STYLE_AUDIT.md` como fuente de verdad del estado visual.
-4. Leer `docs/PROJECT_STATE.md` y `docs/TASKS.md` del proyecto para el estado funcional.
-5. Generar el informe rellenando el template con datos reales.
-6. Guardar el resultado en `design-system/reports/YYYY-MM-DD-estado-web.html`.
+## Componentes permitidos
 
-### Qué debe incluir el informe
+Usar las clases oficiales de `reports.css`: `.report-hero`, `.report-document-control`,
+`.report-card`, `.report-phase`, `.report-badge`, `.report-checklist`, `.report-table`,
+`.report-callout`, `.report-steps`, `.report-synthesis` y `.report-footer`.
 
-- **Portada:** nombre del proyecto, fecha, logo
-- **Resumen ejecutivo:** 3-4 bullets del estado actual
-- **Estado por fase:** FASE 0, FASE 1 (completadas), FASE 2+ (pendientes)
-- **Inventario visual:** colores, tipografía, componentes existentes
-- **Deudas técnicas:** lista priorizada
-- **Próximos pasos recomendados**
-- **Pie de página:** datos de contacto, fecha de generación
+No crear una estética nueva, no convertir el informe en landing page y no copiar un
+bloque grande de CSS dentro del HTML generado.
 
-### Reglas de formato
+## Estado actual
 
-- El HTML debe ser autocontenido (sin dependencias externas salvo Google Fonts y la ruta relativa al CSS).
-- Usar las variables de `themes/almacen.css` para todos los colores y tipografías.
-- El logo se referencia desde `../brandkit/assets/logo.png` (ruta relativa desde `reports/`).
-- El informe debe verse bien impreso (usar clases `page-break`, `avoid-break`, `no-print` según corresponda).
-- Tono: institucional pero accesible. El lector puede ser un vecino del barrio o un técnico.
-
-### Qué NO hacer
-
-- No inventar datos de contacto o estados del proyecto.
-- No incluir precios de costo ni datos sensibles de la planilla.
-- No incluir la URL ni el token de Apps Script.
-- No modificar el template base ni el CSS del tema.
-
----
-
-## Variables a rellenar en el template
-
-```
-{{FECHA}}           → fecha del informe (ej: 26 de junio de 2026)
-{{VERSION}}         → número de versión o etapa (ej: FASE 1 completa)
-{{RESUMEN}}         → 2-3 frases del estado general
-{{ESTADO_FASE_0}}   → completado / en progreso / pendiente
-{{ESTADO_FASE_1}}   → completado / en progreso / pendiente
-{{ESTADO_FASE_2}}   → completado / en progreso / pendiente
-```
-
----
-
-## Ejemplo de invocación
-
-> "Genera un informe de estado de la web con fecha de hoy. Usa el template base del DS y
->  rellénalo con el estado real del proyecto según PROJECT_STATE.md y TASKS.md."
+La conversión es manual. No ejecutar ni inventar un pipeline automático. No generar
+PDF hasta que el HTML haya sido aprobado visualmente.

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe técnico v0.2 — Web Almacén Popular Rosa Elena Morales</title>
+  <link rel="icon" href="../../../design-system/brandkit/assets/favicon.ico">
+  <link rel="stylesheet" href="../../../design-system/themes/almacen.css">
+  <style>
+    :root {
+      --c900:var(--color-primary-dark); --c800:#52167a; --c700:var(--color-primary); --c300:var(--color-primary-light);
+      --c100:#ebe5fc; --c050:var(--color-background); --t900:#1f0836; --t700:#4a3768; --t500:#6e6290; --line:#c8bafb;
+      --success-bg:#ecfcef; --success-border:#bbe4c5; --success-text:#1f6a37; --pending-bg:#f9f5ff;
+      --pending-border:#c4b5fd; --pending-text:#3b0764; --warn-bg:#fff4dc; --warn-border:#ffd08a; --warn-text:#925900;
+      --danger-bg:#fdecec; --danger-border:#f5c4c4; --danger-text:#9a1f1f; --doc-shadow:0 12px 28px rgba(59,7,100,.09);
+    }
+    @page { size:A4; margin:13mm; }
+    body { color:var(--t900); background:linear-gradient(180deg,var(--c050),#faf8fe); line-height:1.58; }
+    p { margin:0 0 13px; } p:last-child { margin-bottom:0; }
+    .page { width:min(100%,1020px); margin:0 auto; padding:36px 20px 64px; }
+    .hero { position:relative; overflow:hidden; padding:48px 44px 34px; border-radius:24px; color:#fff;
+      background:linear-gradient(135deg,var(--c900),var(--c800)); box-shadow:var(--doc-shadow); }
+    .hero::before,.hero::after { content:""; position:absolute; border-radius:999px; background:rgba(196,181,253,.11); }
+    .hero::before { width:330px; height:330px; right:-120px; top:-170px; } .hero::after { width:170px; height:170px; left:-90px; bottom:-95px; }
+    .hero-logo { position:absolute; z-index:2; right:38px; top:28px; width:105px; height:105px; object-fit:contain; }
+    .hero-copy { position:relative; z-index:1; max-width:740px; padding-right:110px; }
+    .eyebrow { display:inline-block; padding:6px 12px; border:1px solid rgba(255,255,255,.24); border-radius:999px; color:var(--c300);
+      font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .hero h1 { margin:18px 0 10px; max-width:700px; color:#fff; font:700 clamp(34px,5vw,50px)/1.08 var(--font-serif); }
+    .hero-subtitle { max-width:700px; color:var(--c300); font-size:17px; line-height:1.5; }
+    .meta-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:30px; }
+    .meta-card { padding:15px 16px; border:1px solid rgba(255,255,255,.16); border-radius:14px; background:rgba(255,255,255,.08); }
+    .meta-label { color:var(--c300); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .meta-value { margin-top:5px; color:#fff; font-size:13px; font-weight:600; line-height:1.35; }
+    .doc-meta { position:relative; z-index:1; display:grid; grid-template-columns:1.4fr .65fr .75fr 1.35fr 1.7fr; margin-top:18px;
+      overflow:hidden; border:1px solid rgba(255,255,255,.16); border-radius:12px; }
+    .doc-meta span { padding:11px 12px; color:#fff; font-size:10px; border-right:1px solid rgba(255,255,255,.14); }
+    .doc-meta span:last-child { border-right:0; }
+    .doc-meta-label { display:block; padding:0!important; margin-bottom:2px; border:0!important; color:var(--c300)!important;
+      font-size:9px!important; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
+    .legend { display:flex; gap:10px; flex-wrap:wrap; margin:16px 4px 22px; }
+    .legend-item,.status { display:inline-flex; align-items:center; width:max-content; padding:6px 10px; border:1px solid; border-radius:999px;
+      font-size:10px; font-weight:700; white-space:nowrap; }
+    .done { background:var(--success-bg); border-color:var(--success-border); color:var(--success-text); }
+    .pending { background:var(--pending-bg); border-color:var(--pending-border); color:var(--pending-text); }
+    .priority,.medium { background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text); }
+    .critical,.high { background:var(--danger-bg); border-color:var(--danger-border); color:var(--danger-text); }
+    .section,.phase { margin-top:20px; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:var(--doc-shadow); }
+    .section { padding:28px 30px; } .section-label { margin:0 0 5px; color:var(--c700); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    h2 { margin:0 0 14px; color:var(--c900); font:700 27px/1.2 var(--font-serif); } h3 { margin:20px 0 8px; color:var(--c900); font-size:16px; }
+    h4 { margin:15px 0 7px; color:var(--c700); font-size:13px; letter-spacing:.02em; }
+    .lead { color:var(--t700); font-size:16px; line-height:1.65; }
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:18px; }
+    .card { min-height:110px; padding:16px; border:1px solid var(--line); border-radius:14px; background:var(--c050); }
+    .card-label { color:var(--c700); font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .card-value { margin:5px 0 3px; color:var(--c900); font-size:18px; font-weight:700; line-height:1.2; }
+    .card-desc { color:var(--t500); font-size:11px; line-height:1.45; }
+    .phase-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 22px; border-bottom:1px solid var(--line);
+      border-radius:18px 18px 0 0; background:linear-gradient(90deg,var(--c100),var(--c050)); }
+    .phase-title { margin:0; font:700 21px/1.25 var(--font-serif); } .phase-body { padding:22px 26px 25px; }
+    .checklist { display:grid; gap:7px; margin:11px 0 0; padding:0; list-style:none; }
+    .checklist li { position:relative; padding-left:26px; color:var(--t700); font-size:13px; }
+    .checklist.done-list li::before { content:"✓"; position:absolute; left:0; top:0; width:18px; height:18px; border-radius:50%; color:#fff;
+      background:#2f8b4a; font-size:11px; font-weight:700; line-height:18px; text-align:center; }
+    .checklist.pending-list li::before { content:""; position:absolute; left:1px; top:3px; width:14px; height:14px; border:2px solid var(--c300); border-radius:4px; }
+    table { width:100%; margin-top:15px; border-collapse:separate; border-spacing:0; overflow:hidden; border:1px solid var(--line); border-radius:12px; font-size:12px; }
+    th { padding:10px 12px; color:#fff; background:var(--c900); text-align:left; font-size:10px; letter-spacing:.04em; text-transform:uppercase; }
+    td { padding:9px 12px; border-top:1px solid #e9e2fb; color:var(--t700); vertical-align:top; } tr:nth-child(even) td { background:var(--c050); }
+    code { padding:1px 5px; border-radius:4px; color:var(--c900); background:var(--c100); font-family:var(--font-mono); font-size:.92em; }
+    .code-box { margin:13px 0; padding:14px 17px; overflow-wrap:anywhere; border-radius:11px; color:var(--c300); background:var(--c900);
+      font:12px/1.6 var(--font-mono); white-space:pre-wrap; }
+    .note { margin-top:15px; padding:14px 17px; border-left:4px solid var(--c700); border-radius:10px; background:var(--c050); color:var(--t700); font-size:13px; }
+    .note.success { border-left-color:#2f8b4a; background:var(--success-bg); } .note.warning { border-left-color:#d28b19; background:var(--warn-bg); }
+    .note.danger { border-left-color:#bd3030; background:var(--danger-bg); }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .info-box { padding:17px; border:1px solid var(--line); border-radius:14px; background:var(--c050); }
+    .info-box h3 { margin:0 0 8px; font-size:15px; } .info-box p,.info-box li { font-size:12px; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; counter-reset:step; }
+    .step { counter-increment:step; padding:18px; border-radius:14px; color:#fff; background:var(--c900); }
+    .step::before { content:counter(step); display:grid; place-items:center; width:28px; height:28px; margin-bottom:10px; border-radius:50%; color:var(--c900); background:var(--c300); font-weight:700; }
+    .step strong { display:block; margin-bottom:5px; font-size:13px; } .step span { color:var(--c300); font-size:11px; line-height:1.5; }
+    .synthesis { margin-top:20px; padding:30px; border-radius:18px; color:#fff; background:linear-gradient(135deg,var(--c900),var(--c700)); box-shadow:var(--doc-shadow); }
+    .synthesis h2 { color:#fff; } .synthesis p { color:#eee6ff; } .doc-footer { padding:24px 4px 0; color:var(--t500); font-size:10px; text-align:center; }
+    @media (max-width:760px) {
+      .hero { padding:32px 24px; } .hero-logo { width:76px; height:76px; right:18px; top:18px; } .hero-copy { padding-right:66px; }
+      .meta-grid,.cards,.steps,.two-col,.three-col { grid-template-columns:1fr; } .doc-meta { grid-template-columns:1fr 1fr; }
+      .doc-meta span { border-bottom:1px solid rgba(255,255,255,.14); } .section { padding:23px 20px; } .phase-header { align-items:flex-start; flex-direction:column; }
+    }
+    @media print {
+      body { background:#fff; font-size:9.7pt; } .page { width:100%; padding:0; } .hero,.section,.phase,.synthesis { box-shadow:none; } .hero { border-radius:0; }
+      .section,.phase,.card,.info-box,.note,.step,table { break-inside:avoid; page-break-inside:avoid; } .page-break { break-before:page; page-break-before:always; }
+      * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <img class="hero-logo" src="../../../design-system/brandkit/assets/logo.png" alt="Logo Almacén Popular Rosa Elena Morales">
+      <div class="hero-copy">
+        <span class="eyebrow">Informe técnico interno · v0.2</span>
+        <h1>Estado técnico actual<br>del proyecto web</h1>
+        <p class="hero-subtitle">Cierre de la Fase 2 en producción y base técnica para diagnosticar el modelo operativo de pedidos, pagos y stock.</p>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card"><div class="meta-label">Estado actual</div><div class="meta-value">Fase 2 cerrada y validada en producción</div></div>
+        <div class="meta-card"><div class="meta-label">Próxima prioridad</div><div class="meta-value">Fase 3A — Diagnóstico operativo</div></div>
+        <div class="meta-card"><div class="meta-label">Uso</div><div class="meta-value">Documento técnico interno</div></div>
+      </div>
+      <div class="doc-meta">
+        <span><span class="doc-meta-label">Documento</span>Estado técnico complementario</span>
+        <span><span class="doc-meta-label">Versión</span>v0.2 técnica</span>
+        <span><span class="doc-meta-label">Fecha fuente</span>2026-07-08</span>
+        <span><span class="doc-meta-label">Estado</span>Fase 2 cerrada / listo para Fase 3A</span>
+        <span><span class="doc-meta-label">Fuente</span>Informe_Tecnico_Estado_Actual_Web_Almacen_Rosa_Elena_v0.2.md</span>
+      </div>
+    </header>
+
+    <div class="legend"><span class="legend-item done">✓ Implementado y validado</span><span class="legend-item pending">□ Pendiente</span><span class="legend-item priority">● Próxima prioridad</span><span class="legend-item critical">! Riesgo crítico/alto</span></div>
+
+    <section class="section">
+      <p class="section-label">01 · Resumen técnico</p>
+      <h2>Estado ejecutivo actual</h2>
+      <p class="lead">La aplicación pasó de pedidos locales a una arquitectura operativa compartida: frontend Next.js, persistencia en Google Sheets, backend liviano en Apps Script y panel admin protegido mediante sesión de servidor.</p>
+      <div class="cards">
+        <article class="card"><div class="card-label">Producción</div><div class="card-value">Ready</div><div class="card-desc">Sitio público y administración validados en Vercel.</div></article>
+        <article class="card"><div class="card-label">Datos</div><div class="card-value">Sheets</div><div class="card-desc">Base operativa compartida dentro del Drive institucional.</div></article>
+        <article class="card"><div class="card-label">Backend</div><div class="card-value">Apps Script</div><div class="card-desc">Catálogo, pedidos, estados y movimientos de stock.</div></article>
+        <article class="card"><div class="card-label">Seguridad</div><div class="card-value">Fase 2</div><div class="card-desc">Login, cookie httpOnly, firma y middleware.</div></article>
+      </div>
+      <table>
+        <thead><tr><th>Área</th><th>Estado técnico</th></tr></thead>
+        <tbody><tr><td>Sitio público</td><td>Funcionando en Vercel Production.</td></tr><tr><td>Catálogo</td><td>Conectado a Google Sheets.</td></tr>
+        <tr><td>Pedidos online</td><td>Funcionando con pedidos reales.</td></tr><tr><td>Panel y APIs admin</td><td>Protegidos con login, sesión y middleware.</td></tr>
+        <tr><td>Próxima prioridad</td><td>Fase 3A: estados de pedido, pagos, cancelaciones y stock.</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <p class="section-label">02 · Arquitectura</p>
+      <h2>Arquitectura actual</h2>
+      <div class="three-col">
+        <article class="info-box"><h3>Aplicación web</h3><ul class="checklist done-list"><li>Next.js 14 App Router.</li><li>TypeScript y React 18.</li><li>Tailwind CSS.</li><li>Deploy desde GitHub a Vercel.</li></ul></article>
+        <article class="info-box"><h3>Backend liviano</h3><ul class="checklist done-list"><li>Google Apps Script Web App.</li><li>Proxy interno en Next.js.</li><li>Validación de pedidos y precios.</li><li>Operaciones administrativas.</li></ul></article>
+        <article class="info-box"><h3>Persistencia</h3><ul class="checklist done-list"><li>Google Sheets como base operativa.</li><li>Productos, pedidos y detalle.</li><li>Stock y movimientos.</li><li>Configuración centralizada.</li></ul></article>
+      </div>
+      <div class="code-box">Navegador público
+  → rutas API de Next.js
+  → Google Apps Script
+  → BD_WEB_ALMACEN_ROSA_ELENA_MORALES
+
+Panel admin
+  → sesión segura y middleware
+  → rutas /api/admin/* protegidas
+  → Apps Script con token de servidor</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">03 · Producción</p>
+      <h2>Estado de producción</h2>
+      <table>
+        <thead><tr><th>Componente</th><th>Estado</th><th>Evidencia registrada</th></tr></thead>
+        <tbody>
+          <tr><td>Vercel Production</td><td><span class="status done">Activo</span></td><td>Deploy desde la rama principal y estado Ready.</td></tr>
+          <tr><td>Sitio público</td><td><span class="status done">Validado</span></td><td>Catálogo y tienda siguen disponibles.</td></tr>
+          <tr><td>Panel administrativo</td><td><span class="status done">Validado</span></td><td>Redirección a login, acceso correcto y logout probado.</td></tr>
+          <tr><td>API pública de productos</td><td><span class="status done">Validada</span></td><td>Continúa devolviendo productos reales.</td></tr>
+        </tbody>
+      </table>
+      <div class="note">La URL pública y los commits de despliegue permanecen documentados en la fuente Markdown. Esta maqueta prioriza el estado técnico y evita convertir identificadores en elementos visuales principales.</div>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">04 · Google Sheets</p>
+      <h2>Base operativa compartida</h2>
+      <p>La base oficial es <strong>BD_WEB_ALMACEN_ROSA_ELENA_MORALES</strong>, ubicada en <strong>01_Base operativa WEB</strong> dentro del Drive del almacén. El identificador técnico no se reproduce en esta maqueta.</p>
+      <table>
+        <thead><tr><th>Dominio</th><th>Hojas principales</th><th>Uso actual</th></tr></thead>
+        <tbody>
+          <tr><td>Configuración y catálogo</td><td><code>CONFIG</code>, <code>PRODUCTOS</code></td><td>Parámetros operativos y catálogo real.</td></tr>
+          <tr><td>Pedidos y clientes</td><td><code>CLIENTES</code>, <code>PEDIDOS</code>, <code>DETALLE_PEDIDOS</code></td><td>Persistencia de pedidos y sus líneas.</td></tr>
+          <tr><td>Ventas y compras</td><td><code>VENTAS</code>, <code>DETALLE_VENTAS</code>, <code>COMPRAS</code>, <code>DETALLE_COMPRAS</code></td><td>Estructura preparada para fases futuras.</td></tr>
+          <tr><td>Inventario</td><td><code>MOVIMIENTOS_STOCK</code></td><td>Registro de descuentos y devoluciones.</td></tr>
+        </tbody>
+      </table>
+      <div class="note warning"><strong>Pendiente técnico:</strong> revalidar el comportamiento de stock al cancelar, corregir o reabrir pedidos antes de ampliar el flujo operativo.</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">05 · Apps Script</p>
+      <h2>Backend operativo</h2>
+      <table>
+        <thead><tr><th>Flujo</th><th>Estado</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td>Listar productos</td><td><span class="status done">Funcionando</span></td><td>Entrega catálogo activo a la web.</td></tr>
+          <tr><td>Crear y guardar pedido</td><td><span class="status done">Funcionando</span></td><td>Valida datos, guarda cabecera y detalle.</td></tr>
+          <tr><td>Descontar stock</td><td><span class="status done">Funcionando</span></td><td>Registra movimiento asociado.</td></tr>
+          <tr><td>Listar y actualizar pedidos</td><td><span class="status done">Funcionando</span></td><td>Consumido por las rutas administrativas.</td></tr>
+          <tr><td>Cambiar estado de pago</td><td><span class="status pending">Disponible</span></td><td>El modelo semántico debe revisarse en Fase 3A.</td></tr>
+          <tr><td>Cancelar y devolver stock</td><td><span class="status priority">Revalidar</span></td><td>Declarado como implementado; requiere pruebas operativas.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fases 0 y 1 — Base documental y flujo real</h2><span class="status done">Cerradas</span></div>
+      <div class="phase-body">
+        <div class="two-col">
+          <div><h3>Fase 0</h3><ul class="checklist done-list"><li>Trabajo organizado por etapas.</li><li>Documentación viva y metodología liviana.</li><li>Fuentes técnicas y operativas separadas.</li><li>Hechos probados registrados.</li></ul></div>
+          <div><h3>Fase 1</h3><ul class="checklist done-list"><li>Base operativa compartida.</li><li>53 productos con IDs reales.</li><li>Pedidos y detalle persistidos.</li><li>Stock y movimientos conectados.</li><li>Flujo tienda → base → admin probado.</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Bloque complementario — Drive y producción</h2><span class="status done">Realizado</span></div>
+      <div class="phase-body">
+        <ul class="checklist done-list"><li>Carpeta WEB y subcarpetas organizadas en Drive.</li><li>Base operativa reubicada sin cambiar su conexión.</li>
+          <li>Variables necesarias configuradas en producción.</li><li>Token administrativo rotado después de una exposición accidental.</li>
+          <li>Apps Script y producción actualizados.</li><li>Catálogo y panel revalidados después del cambio.</li></ul>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fase 2 — Seguridad del panel admin</h2><span class="status done">Lista en producción</span></div>
+      <div class="phase-body">
+        <h3>Riesgos eliminados</h3>
+        <table><thead><tr><th>Situación anterior</th><th>Nivel</th><th>Resultado</th></tr></thead><tbody>
+          <tr><td>Contraseña visible en el frontend</td><td><span class="status critical">Crítico</span></td><td>Retirada del código cliente.</td></tr>
+          <tr><td>Sesión basada en <code>localStorage</code></td><td><span class="status critical">Crítico</span></td><td>Reemplazada por cookie <code>httpOnly</code> firmada.</td></tr>
+          <tr><td>Rutas admin sin autenticación real</td><td><span class="status critical">Crítico</span></td><td>Protegidas por middleware y sesión de servidor.</td></tr>
+        </tbody></table>
+        <h3>Implementación</h3>
+        <ul class="checklist done-list"><li>Login y logout administrativos.</li><li>Cookie segura firmada con HMAC-SHA256.</li>
+          <li><code>ADMIN_SESSION_SECRET</code> para firma y <code>ADMIN_PANEL_PASSWORD</code> para acceso.</li><li>Protección de <code>/admin</code>, <code>/admin/*</code> y <code>/api/admin/*</code>.</li>
+          <li>Excepciones controladas para login y logout.</li><li>Secretos mantenidos fuera del código público.</li></ul>
+        <div class="code-box">/admin sin sesión → /admin/login
+/admin/login con sesión válida → /admin
+/api/admin/* sin sesión → 401 JSON
+login correcto → cookie httpOnly firmada
+logout → cookie eliminada</div>
+      </div>
+    </section>
+
+    <section class="section page-break">
+      <p class="section-label">06 · Variables</p>
+      <h2>Variables documentadas sin valores</h2>
+      <p>La maqueta conserva exclusivamente los nombres requeridos por el sistema. Los valores reales no deben aparecer en documentos, código ni chats.</p>
+      <table><thead><tr><th>Variable</th><th>Uso</th><th>Exposición permitida</th></tr></thead><tbody>
+        <tr><td><code>GOOGLE_SCRIPT_PEDIDOS_URL</code></td><td>Endpoint privado de Apps Script consumido por el servidor.</td><td>Solo nombre.</td></tr>
+        <tr><td><code>GOOGLE_SCRIPT_ADMIN_TOKEN</code></td><td>Autoriza operaciones administrativas contra Apps Script.</td><td>Solo nombre.</td></tr>
+        <tr><td><code>ADMIN_PANEL_PASSWORD</code></td><td>Credencial de acceso administrativo.</td><td>Solo nombre.</td></tr>
+        <tr><td><code>ADMIN_SESSION_SECRET</code></td><td>Firma la sesión administrativa.</td><td>Solo nombre.</td></tr>
+      </tbody></table>
+      <div class="note danger"><strong>Regla:</strong> ningún valor real se incluye en esta maqueta. La rotación y carga de secretos continúa siendo manual.</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">07 · Validaciones</p>
+      <h2>Pruebas registradas</h2>
+      <div class="two-col">
+        <div class="info-box"><h3>Validación local</h3><ul class="checklist done-list"><li>Redirección de admin sin sesión.</li><li>Login incorrecto rechazado y correcto aceptado.</li><li>API admin responde 401 sin cookie.</li><li>Catálogo público permanece disponible.</li><li>Panel carga y actualiza pedidos reales.</li><li>Logout elimina sesión.</li><li>Lint y build exitosos.</li></ul></div>
+        <div class="info-box"><h3>Validación en producción</h3><ul class="checklist done-list"><li>Variables agregadas manualmente.</li><li>Deploy automático completado.</li><li>Vercel Production en estado Ready.</li><li>Login, panel y logout probados.</li><li>Catálogo y tienda pública operativos.</li><li>Pedidos reales visibles en admin.</li></ul></div>
+      </div>
+      <div class="note success">La Fase 2 se considera cerrada porque fue implementada, probada localmente, desplegada y validada sobre la web real.</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">08 · Riesgos actuales</p>
+      <h2>Riesgos y acciones recomendadas</h2>
+      <table><thead><tr><th>Riesgo</th><th>Nivel</th><th>Acción</th></tr></thead><tbody>
+        <tr><td>Stock al cancelar o reabrir no revalidado</td><td><span class="status high">Alto</span></td><td>Probar antes de modificar flujos.</td></tr>
+        <tr><td>Estados de pedido poco reversibles</td><td><span class="status medium">Medio</span></td><td>Diseñar correcciones en Fase 3B.</td></tr>
+        <tr><td>Estado y método de pago mezclados</td><td><span class="status medium">Medio</span></td><td>Determinar origen real en Fase 3A.</td></tr>
+        <tr><td>Panel administrativo aún básico</td><td><span class="status medium">Medio</span></td><td>Mejorar después del modelo operativo.</td></tr>
+        <tr><td>Repositorio dentro de Dropbox</td><td><span class="status medium">Medio</span></td><td>Mantener precauciones con Git.</td></tr>
+        <tr><td>Roles admin/vendedor no separados</td><td><span class="status pending">Bajo por ahora</span></td><td>Retomar antes del panel vendedor.</td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fase 3A — Diagnóstico operativo</h2><span class="status priority">Próxima prioridad técnica</span></div>
+      <div class="phase-body">
+        <p>Antes de avanzar a productos avanzados, caja o panel vendedor, debe verificarse cómo se manejan estados, pagos, cancelaciones, correcciones y stock.</p>
+        <div class="two-col">
+          <ul class="checklist pending-list"><li>Revisar columnas de <code>PEDIDOS</code>, <code>DETALLE_PEDIDOS</code> y <code>MOVIMIENTOS_STOCK</code>.</li><li>Revisar funciones de crear, listar, actualizar y cancelar pedidos.</li><li>Revisar rutas API administrativas y frontend admin.</li></ul>
+          <ul class="checklist pending-list"><li>Identificar el origen de <code>pagado_efectivo</code>.</li><li>Confirmar stock al cancelar y reabrir.</li><li>Proponer modelo mínimo de pedido, pago y método.</li><li>Definir cambios seguros para Fase 3B.</li></ul>
+        </div>
+        <div class="note"><strong>Entregable:</strong> mapa técnico del flujo actual de pedido y propuesta mínima de corrección, sin implementar todavía.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">09 · Modelo preliminar</p>
+      <h2>Separación recomendada para evaluar</h2>
+      <div class="three-col">
+        <article class="info-box"><h3>Estado del pedido</h3><div class="code-box">pendiente
+listo
+entregado
+cancelado</div></article>
+        <article class="info-box"><h3>Estado de pago</h3><div class="code-box">pendiente
+pagado
+parcial
+anulado</div></article>
+        <article class="info-box"><h3>Método de pago</h3><div class="code-box">efectivo
+transferencia
+otro</div></article>
+      </div>
+      <div class="note warning">Propuesta preliminar: no implementar sin completar el diagnóstico de Fase 3A y confirmar las reglas operativas con el almacén.</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">10 · Próximos pasos técnicos</p>
+      <h2>Secuencia recomendada</h2>
+      <div class="steps">
+        <article class="step"><strong>Mapear el flujo real</strong><span>Seguir pedido, pago, cancelación y stock desde la interfaz hasta Sheets.</span></article>
+        <article class="step"><strong>Reproducir casos críticos</strong><span>Validar cancelación, reversa, reactivación y movimientos de inventario.</span></article>
+        <article class="step"><strong>Definir el modelo mínimo</strong><span>Separar conceptos y diseñar transiciones antes de modificar código.</span></article>
+      </div>
+      <div class="note"><strong>Criterio de no avance:</strong> no saltar directamente a Fase 4 o Fase 5 mientras el núcleo operativo del pedido siga ambiguo.</div>
+    </section>
+
+    <section class="synthesis">
+      <p class="section-label" style="color:var(--c300)">14 · Síntesis técnica</p>
+      <h2>La seguridad está cerrada; ahora corresponde estabilizar la operación</h2>
+      <p>La web cuenta con base operativa compartida, pedidos reales, stock conectado y panel administrativo protegido. La Fase 2 fue implementada, probada localmente, desplegada y validada en producción.</p>
+      <p>La siguiente prioridad técnica no es sumar muchas funciones: es comprender y corregir el modelo actual de pedido para reducir errores en estados, pagos, cancelaciones y reposición de stock. Ese diagnóstico será la base de una Fase 3B segura.</p>
+    </section>
+
+    <footer class="doc-footer">Web Almacén Popular Rosa Elena Morales · Informe técnico interno v0.2 · Maqueta HTML piloto para revisión visual</footer>
+  </main>
+</body>
+</html>

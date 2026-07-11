@@ -40,7 +40,9 @@ archivo `themes/almacen.css`. No se divide por tipo de token.
 **Razón:** El DS es liviano. La complejidad de múltiples archivos de tokens no está justificada
 para el volumen actual. Un solo import lo resuelve todo.
 
-**Revisión:** si el DS crece a más de 3 templates con necesidades distintas, se divide.
+**Revisión:** esta decisión queda precisada por D7. `almacen.css` continúa como único
+archivo de tokens de identidad; los componentes documentales se separan en
+`reports.css` para evitar duplicación entre templates.
 
 ---
 
@@ -77,3 +79,58 @@ HTML/PDF generados no se commitean por defecto.
 en el historial. Commitear todos generaría ruido en el repo.
 
 **Convención de nombres:** `reports/YYYY-MM-DD-descripcion.html`
+
+**Revisión:** esta decisión queda reemplazada por D10. Las fuentes Markdown y las
+referencias visuales aprobadas sí se versionan; los previews descartables y PDF de
+prueba no se versionan por defecto.
+
+---
+
+## D7 — Separar identidad y componentes documentales
+
+**Decisión:** `themes/almacen.css` conserva exclusivamente identidad visual y tokens;
+`themes/reports.css` contiene los componentes de informes y las reglas de impresión.
+
+**Razón:** los dos pilotos v0.2 aprobados repetían CSS dentro de cada HTML. Separar la
+capa documental permite reutilizar el diseño sin cambiar el brandkit ni tocar Next.js.
+
+**Consecuencia:** todos los templates oficiales cargan primero `almacen.css` y luego
+`reports.css`. Los pilotos aprobados permanecen intactos como referencia visual.
+
+---
+
+## D8 — Dos tipos oficiales de informe
+
+**Decisión:** se soportan `AVANCE_ALMACEN` y `TECNICO_INTERNO`, cada uno con template
+propio y una misma base visual.
+
+**Razón:** el contenido dirigido al Almacén necesita síntesis y lenguaje accesible;
+el informe interno necesita arquitectura, validaciones y riesgos técnicos.
+
+**Consecuencia:** no se fuerzan ambos contenidos dentro de una plantilla genérica ni
+se crean identidades visuales diferentes.
+
+---
+
+## D9 — El Markdown del repo es la fuente oficial
+
+**Decisión:** las fuentes viven en `reports/sources/`. Drive recibe copias aprobadas,
+pero no reemplaza al Markdown versionado en el repositorio.
+
+**Razón:** editar en dos lugares produciría versiones divergentes y perdería trazabilidad.
+
+**Consecuencia:** toda corrección parte en el repo, genera un HTML nuevo y luego una
+copia publicada en Drive.
+
+---
+
+## D10 — Política de versionado de artefactos
+
+**Decisión:** se versionan Markdown fuente, templates, CSS, guías y HTML aprobados
+como referencia. HTML de prueba descartables y PDF de prueba no se versionan por
+defecto. Los PDF finales se versionan solo si se decide conservarlos en el historial.
+
+**Razón:** conservar evidencia relevante sin llenar Git de salidas transitorias.
+
+**Consecuencia:** los dos pilotos v0.2 aprobados forman parte de la base documental;
+la publicación en Drive conserva las versiones enviadas.

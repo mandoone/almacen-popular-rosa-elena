@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe de avance v0.2 — Web Almacén Popular Rosa Elena Morales</title>
+  <link rel="icon" href="../../../design-system/brandkit/assets/favicon.ico">
+  <link rel="stylesheet" href="../../../design-system/themes/almacen.css">
+  <style>
+    :root {
+      --c900: var(--color-primary-dark); --c800: #52167a; --c700: var(--color-primary);
+      --c300: var(--color-primary-light); --c100: #ebe5fc; --c050: var(--color-background);
+      --t900: #1f0836; --t700: #4a3768; --t500: #6e6290; --line: #c8bafb;
+      --success-bg: #ecfcef; --success-border: #bbe4c5; --success-text: #1f6a37;
+      --pending-bg: #f9f5ff; --pending-border: #c4b5fd; --pending-text: #3b0764;
+      --warn-bg: #fff4dc; --warn-border: #ffd08a; --warn-text: #925900;
+      --doc-shadow: 0 12px 28px rgba(59,7,100,.09);
+    }
+    @page { size: A4; margin: 14mm; }
+    body { color: var(--t900); background: linear-gradient(180deg,var(--c050),#faf8fe); line-height: 1.6; }
+    p { margin: 0 0 14px; } p:last-child { margin-bottom: 0; }
+    .page { width: min(100%,980px); margin: 0 auto; padding: 36px 20px 64px; }
+    .hero { position: relative; overflow: hidden; padding: 48px 44px 34px; border-radius: 24px; color: #fff;
+      background: linear-gradient(135deg,var(--c900),var(--c800)); box-shadow: var(--doc-shadow); }
+    .hero::before,.hero::after { content:""; position:absolute; border-radius:999px; background:rgba(196,181,253,.11); }
+    .hero::before { width:330px; height:330px; right:-120px; top:-170px; }
+    .hero::after { width:170px; height:170px; left:-90px; bottom:-95px; }
+    .hero-logo { position:absolute; z-index:2; right:38px; top:28px; width:105px; height:105px; object-fit:contain; }
+    .hero-copy { position:relative; z-index:1; max-width:720px; padding-right:110px; }
+    .eyebrow { display:inline-block; padding:6px 12px; border:1px solid rgba(255,255,255,.24); border-radius:999px;
+      color:var(--c300); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .hero h1 { margin:18px 0 10px; max-width:650px; color:#fff; font:700 clamp(34px,5vw,52px)/1.08 var(--font-serif); }
+    .hero-subtitle { max-width:670px; color:var(--c300); font-size:18px; line-height:1.5; }
+    .meta-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:30px; }
+    .meta-card { padding:15px 16px; border:1px solid rgba(255,255,255,.16); border-radius:14px; background:rgba(255,255,255,.08); }
+    .meta-label { color:var(--c300); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .meta-value { margin-top:5px; color:#fff; font-size:14px; font-weight:600; line-height:1.35; }
+    .doc-meta { position:relative; z-index:1; display:grid; grid-template-columns:1.35fr .55fr .75fr .9fr 1.6fr; gap:0;
+      margin-top:18px; overflow:hidden; border:1px solid rgba(255,255,255,.16); border-radius:12px; }
+    .doc-meta span { padding:11px 12px; color:#fff; font-size:11px; border-right:1px solid rgba(255,255,255,.14); }
+    .doc-meta span:last-child { border-right:0; }
+    .doc-meta-label { display:block; padding:0!important; margin-bottom:2px; border:0!important; color:var(--c300)!important;
+      font-size:9px!important; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
+    .legend { display:flex; gap:10px; flex-wrap:wrap; margin:16px 4px 22px; }
+    .legend-item,.status { display:inline-flex; align-items:center; width:max-content; padding:6px 10px; border:1px solid; border-radius:999px;
+      font-size:11px; font-weight:700; white-space:nowrap; }
+    .done { background:var(--success-bg); border-color:var(--success-border); color:var(--success-text); }
+    .pending { background:var(--pending-bg); border-color:var(--pending-border); color:var(--pending-text); }
+    .priority { background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text); }
+    .section,.phase { margin-top:20px; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:var(--doc-shadow); }
+    .section { padding:28px 30px; }
+    .section-label { margin:0 0 5px; color:var(--c700); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    h2 { margin:0 0 14px; color:var(--c900); font:700 28px/1.2 var(--font-serif); }
+    h3 { margin:20px 0 8px; color:var(--c900); font-size:16px; }
+    .lead { color:var(--t700); font-size:17px; line-height:1.65; }
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:18px; }
+    .card { min-height:112px; padding:17px; border:1px solid var(--line); border-radius:14px; background:var(--c050); }
+    .card-label { color:var(--c700); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .card-value { margin:5px 0 3px; color:var(--c900); font-size:20px; font-weight:700; line-height:1.2; }
+    .card-desc { color:var(--t500); font-size:12px; line-height:1.45; }
+    .phase-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 22px; border-bottom:1px solid var(--line);
+      border-radius:18px 18px 0 0; background:linear-gradient(90deg,var(--c100),var(--c050)); }
+    .phase-title { margin:0; font:700 22px/1.25 var(--font-serif); }
+    .phase-body { padding:22px 26px 25px; }
+    .checklist { display:grid; gap:8px; margin:12px 0 0; padding:0; list-style:none; }
+    .checklist li { position:relative; padding-left:26px; color:var(--t700); font-size:14px; }
+    .checklist.done-list li::before { content:"✓"; position:absolute; left:0; top:0; width:18px; height:18px; border-radius:50%;
+      color:#fff; background:#2f8b4a; font-size:11px; font-weight:700; line-height:18px; text-align:center; }
+    .checklist.pending-list li::before { content:""; position:absolute; left:1px; top:3px; width:14px; height:14px; border:2px solid var(--c300); border-radius:4px; }
+    table { width:100%; margin-top:16px; border-collapse:separate; border-spacing:0; overflow:hidden; border:1px solid var(--line); border-radius:12px; font-size:13px; }
+    th { padding:11px 13px; color:#fff; background:var(--c900); text-align:left; font-size:11px; letter-spacing:.04em; text-transform:uppercase; }
+    td { padding:10px 13px; border-top:1px solid #e9e2fb; color:var(--t700); vertical-align:top; }
+    tr:nth-child(even) td { background:var(--c050); }
+    .note { margin-top:16px; padding:15px 18px; border-left:4px solid var(--c700); border-radius:10px; background:var(--c050); color:var(--t700); }
+    .note.success { border-left-color:#2f8b4a; background:var(--success-bg); }
+    .code-box { margin:14px 0; padding:15px 18px; border-radius:11px; color:var(--c300); background:var(--c900);
+      font:13px/1.6 var(--font-mono); white-space:pre-wrap; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; counter-reset:step; }
+    .step { counter-increment:step; padding:18px; border-radius:14px; color:#fff; background:var(--c900); }
+    .step::before { content:counter(step); display:grid; place-items:center; width:28px; height:28px; margin-bottom:10px; border-radius:50%;
+      color:var(--c900); background:var(--c300); font-weight:700; }
+    .step strong { display:block; margin-bottom:5px; font-size:14px; } .step span { color:var(--c300); font-size:12px; line-height:1.5; }
+    .synthesis { margin-top:20px; padding:30px; border-radius:18px; color:#fff; background:linear-gradient(135deg,var(--c900),var(--c700)); box-shadow:var(--doc-shadow); }
+    .synthesis h2 { color:#fff; } .synthesis p { color:#eee6ff; }
+    .doc-footer { padding:24px 4px 0; color:var(--t500); font-size:11px; text-align:center; }
+    @media (max-width:760px) {
+      .hero { padding:32px 24px; } .hero-logo { width:76px; height:76px; right:18px; top:18px; }
+      .hero-copy { padding-right:66px; } .meta-grid,.cards,.steps,.two-col { grid-template-columns:1fr; }
+      .doc-meta { grid-template-columns:1fr 1fr; } .doc-meta span { border-bottom:1px solid rgba(255,255,255,.14); }
+      .section { padding:23px 20px; } .phase-header { align-items:flex-start; flex-direction:column; }
+    }
+    @media print {
+      body { background:#fff; font-size:10.5pt; } .page { width:100%; padding:0; }
+      .hero,.section,.phase,.synthesis { box-shadow:none; } .hero { border-radius:0; }
+      .section,.phase,.card,.note,.step,table { break-inside:avoid; page-break-inside:avoid; }
+      .page-break { break-before:page; page-break-before:always; }
+      * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <img class="hero-logo" src="../../../design-system/brandkit/assets/logo.png" alt="Logo Almacén Popular Rosa Elena Morales">
+      <div class="hero-copy">
+        <span class="eyebrow">Informe de avance · v0.2</span>
+        <h1>Web Almacén Popular<br>Rosa Elena Morales</h1>
+        <p class="hero-subtitle">Estado de avance actualizado para el Almacén: base operativa, pedidos reales y seguridad del panel administrativo.</p>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card"><div class="meta-label">Estado actual</div><div class="meta-value">Fase 2 completada</div></div>
+        <div class="meta-card"><div class="meta-label">Próxima prioridad</div><div class="meta-value">Fase 3 y orden operativo de pedidos</div></div>
+        <div class="meta-card"><div class="meta-label">Meta</div><div class="meta-value">Primera versión operativa completa</div></div>
+      </div>
+      <div class="doc-meta">
+        <span><span class="doc-meta-label">Documento</span>Estado de avance actualizado</span>
+        <span><span class="doc-meta-label">Versión</span>v0.2</span>
+        <span><span class="doc-meta-label">Fecha fuente</span>2026-07-08</span>
+        <span><span class="doc-meta-label">Estado</span>Para revisión</span>
+        <span><span class="doc-meta-label">Fuente</span>Informe_Avance_Almacen_Web_Rosa_Elena_v0.2.md</span>
+      </div>
+    </header>
+
+    <div class="legend">
+      <span class="legend-item done">✓ Realizado</span>
+      <span class="legend-item pending">□ Pendiente</span>
+      <span class="legend-item priority">● Próxima prioridad</span>
+    </div>
+
+    <section class="section">
+      <p class="section-label">Resumen ejecutivo</p>
+      <h2>Una base funcional, compartida y más segura</h2>
+      <p class="lead">La web ya muestra productos reales, recibe pedidos online, guarda la información en una base compartida y permite administrar pedidos desde un panel protegido.</p>
+      <div class="cards">
+        <article class="card"><div class="card-label">Catálogo</div><div class="card-value">53 productos</div><div class="card-desc">Productos iniciales con códigos internos y precios.</div></article>
+        <article class="card"><div class="card-label">Pedidos</div><div class="card-value">Flujo real</div><div class="card-desc">Tienda, base operativa, admin y stock conectados.</div></article>
+        <article class="card"><div class="card-label">Administración</div><div class="card-value">Protegida</div><div class="card-desc">Login real, sesión segura y rutas internas protegidas.</div></article>
+        <article class="card"><div class="card-label">Siguiente foco</div><div class="card-value">Fase 3A</div><div class="card-desc">Estados, pagos, cancelaciones y stock.</div></article>
+      </div>
+      <div class="note success"><strong>Hito principal:</strong> el panel admin ya no queda disponible para cualquier persona que conozca el enlace. Ahora exige un inicio de sesión válido.</div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">Estado actual</p>
+      <h2>Avance por área</h2>
+      <table>
+        <thead><tr><th>Área</th><th>Estado</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>Página, catálogo y carrito</td><td><span class="status done">Realizado</span></td><td>La tienda muestra productos reales y permite preparar pedidos.</td></tr>
+          <tr><td>Pedidos y base compartida</td><td><span class="status done">Realizado</span></td><td>Los pedidos se guardan en la base operativa y actualizan stock.</td></tr>
+          <tr><td>Panel administrativo</td><td><span class="status done">Realizado</span></td><td>Lee pedidos reales y permite operar sus estados.</td></tr>
+          <tr><td>Seguridad administrativa</td><td><span class="status done">Realizado</span></td><td>Acceso, sesión y rutas internas protegidas.</td></tr>
+          <tr><td>Configuración oficial y operación</td><td><span class="status priority">Próxima etapa</span></td><td>Confirmar datos oficiales y ordenar estados, pagos y cancelaciones.</td></tr>
+          <tr><td>Panel vendedor, caja y cierre</td><td><span class="status pending">Pendiente</span></td><td>Se abordará después de estabilizar el núcleo de pedidos.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <p class="section-label">Trabajo complementario</p>
+      <h2>Drive y base operativa ordenados</h2>
+      <p>Se creó una carpeta específica para centralizar la información de la web y evitar que el trabajo dependa de archivos sueltos.</p>
+      <div class="code-box">WEB — Almacén Popular Rosa Elena Morales
+├── 00_Documentación
+├── 01_Base operativa WEB
+├── 02_Respaldos y versiones
+├── 03_Diseño y recursos visuales
+└── 99_Archivo histórico</div>
+      <ul class="checklist done-list">
+        <li>Carpeta web y subcarpetas creadas dentro del Drive del almacén.</li>
+        <li>Base operativa ubicada en <strong>01_Base operativa WEB</strong>.</li>
+        <li>Conexión de la web mantenida después del ordenamiento.</li>
+        <li>Base lista para continuar el trabajo por etapas.</li>
+      </ul>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fase 0 — Orden inicial del proyecto</h2><span class="status done">Lista</span></div>
+      <div class="phase-body">
+        <p>Se revisó la web existente, se ordenó el trabajo por etapas y se separaron las necesidades técnicas, operativas y públicas.</p>
+        <ul class="checklist done-list">
+          <li>Plan general y fases de trabajo definidas.</li><li>Documentación útil identificada.</li>
+          <li>Drive revisado y estructura inicial organizada.</li><li>Información disponible clasificada para continuar.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fase 1 — Base operativa y pedidos reales</h2><span class="status done">Funcional y probada</span></div>
+      <div class="phase-body">
+        <p>Los pedidos dejaron de depender del navegador de cada persona. La tienda, la base operativa y el panel admin trabajan sobre información compartida.</p>
+        <div class="two-col">
+          <div><h3>Base y productos</h3><ul class="checklist done-list"><li>Hojas de productos, pedidos, clientes, ventas, compras, stock y configuración.</li><li>53 productos reales con códigos internos y precios iniciales.</li><li>Catálogo conectado a la base operativa.</li></ul></div>
+          <div><h3>Pedidos reales</h3><ul class="checklist done-list"><li>Creación y detalle de pedidos guardados.</li><li>Stock descontado y movimientos registrados.</li><li>Cancelación, estado de pedido y estado de pago disponibles.</li><li>Flujo completo probado.</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase">
+      <div class="phase-header"><h2 class="phase-title">Fase 2 — Seguridad del panel admin</h2><span class="status done">Lista y probada</span></div>
+      <div class="phase-body">
+        <p>La protección básica anterior fue reemplazada por un acceso administrativo real y probado.</p>
+        <ul class="checklist done-list">
+          <li>Clave retirada del código público y almacenada fuera del frontend.</li><li>Inicio y cierre de sesión implementados.</li>
+          <li>Sesión segura mediante cookie protegida.</li><li>Panel y rutas internas protegidos.</li>
+          <li>Accesos correctos, rechazos sin sesión y tienda pública probados.</li><li>Funcionamiento validado en producción.</li>
+        </ul>
+        <div class="note success">Sin acceso válido, una persona no puede entrar al panel ni consultar los pedidos.</div>
+      </div>
+    </section>
+
+    <section class="phase page-break">
+      <div class="phase-header"><h2 class="phase-title">Fase 3 — Configuración real y orden operativo</h2><span class="status priority">Próxima prioridad</span></div>
+      <div class="phase-body">
+        <p>La próxima etapa reemplaza datos temporales por información oficial y revisa el funcionamiento cotidiano de pedidos, pagos, cancelaciones y stock.</p>
+        <div class="two-col">
+          <div><h3>Configuración oficial</h3><ul class="checklist pending-list"><li>Confirmar WhatsApp, correo y contacto general.</li><li>Confirmar próxima apertura y textos públicos.</li><li>Definir links oficiales, accesos y uso de imágenes.</li></ul></div>
+          <div><h3>Fase 3A — Operación</h3><ul class="checklist pending-list"><li>Revisar estados de pedido y posibilidad de corregir errores.</li><li>Separar estado y método de pago si corresponde.</li><li>Revalidar stock al cancelar o corregir pedidos.</li><li>Mejorar confirmaciones del panel admin.</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">Información por confirmar</p>
+      <h2>Datos necesarios para continuar</h2>
+      <div class="two-col">
+        <ul class="checklist pending-list"><li>WhatsApp y correo oficiales.</li><li>Próxima fecha de apertura.</li><li>Textos sobre aportes y participación.</li><li>Texto institucional del almacén.</li></ul>
+        <ul class="checklist pending-list"><li>Texto sobre Rosa Elena Morales.</li><li>Links públicos oficiales.</li><li>Personas con acceso admin y vendedor.</li><li>Criterio para imágenes de productos e históricas.</li></ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">Próximos pasos</p>
+      <h2>Qué sigue ahora</h2>
+      <div class="steps">
+        <article class="step"><strong>Confirmar información oficial</strong><span>Completar contactos, fechas, textos y accesos que hoy siguen pendientes.</span></article>
+        <article class="step"><strong>Diagnosticar la operación</strong><span>Revisar estados, pagos, cancelaciones y comportamiento del stock.</span></article>
+        <article class="step"><strong>Acordar el modelo mínimo</strong><span>Definir reglas claras antes de ampliar productos, caja o panel vendedor.</span></article>
+      </div>
+      <div class="note"><strong>Criterio de avance:</strong> estabilizar primero el pedido, porque es el núcleo operativo del sistema.</div>
+    </section>
+
+    <section class="synthesis">
+      <p class="section-label" style="color:var(--c300)">Síntesis</p>
+      <h2>La web ya superó su primera etapa crítica</h2>
+      <p>El proyecto dejó de ser una vitrina con pedidos locales y ahora cuenta con catálogo real, base compartida, pedidos operativos, stock conectado y panel admin protegido. La Fase 2 está completada.</p>
+      <p>El siguiente avance debe concentrarse en ordenar el uso diario del panel: estados de pedido, pagos, cancelaciones y stock. Esa base permitirá avanzar con mayor seguridad hacia productos, comandas, caja, compras e historial.</p>
+    </section>
+
+    <footer class="doc-footer">Almacén Popular Rosa Elena Morales · Informe de avance v0.2 · Maqueta HTML piloto para revisión visual</footer>
+  </main>
+</body>
+</html>

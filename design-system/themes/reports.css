@@ -1,0 +1,506 @@
+/*
+ * reports.css — Componentes documentales oficiales v0.1
+ * Almacén Popular Rosa Elena Morales
+ *
+ * Base visual: pilotos v0.2 aprobados el 2026-07-11 y
+ * design-system/templates/report-plan-trabajo.html.
+ *
+ * Requiere cargar primero themes/almacen.css.
+ * Este archivo no se usa en la aplicación Next.js.
+ */
+
+:root {
+  --report-purple-900: var(--color-primary-dark);
+  --report-purple-800: #52167a;
+  --report-purple-700: var(--color-primary);
+  --report-purple-300: var(--color-primary-light);
+  --report-purple-100: #ebe5fc;
+  --report-purple-050: var(--color-background);
+  --report-text-900: #1f0836;
+  --report-text-700: #4a3768;
+  --report-text-500: #6e6290;
+  --report-line: #c8bafb;
+  --report-success-bg: #ecfcef;
+  --report-success-border: #bbe4c5;
+  --report-success-text: #1f6a37;
+  --report-warning-bg: #fff4dc;
+  --report-warning-border: #ffd08a;
+  --report-warning-text: #925900;
+  --report-danger-bg: #fdecec;
+  --report-danger-border: #f5c4c4;
+  --report-danger-text: #9a1f1f;
+  --report-shadow: 0 12px 28px rgba(59, 7, 100, 0.09);
+}
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+body.report-document {
+  color: var(--report-text-900);
+  background: linear-gradient(180deg, var(--report-purple-050), #faf8fe);
+  line-height: 1.6;
+}
+
+.report-document p { margin: 0 0 14px; }
+.report-document p:last-child { margin-bottom: 0; }
+
+.report-page {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 36px 20px 64px;
+}
+
+/* Portada */
+.report-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 48px 44px 34px;
+  border-radius: 24px;
+  color: var(--color-white);
+  background: linear-gradient(135deg, var(--report-purple-900), var(--report-purple-800));
+  box-shadow: var(--report-shadow);
+}
+
+.report-hero::before,
+.report-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: var(--radius-full);
+  background: rgba(196, 181, 253, 0.11);
+}
+
+.report-hero::before { width: 330px; height: 330px; right: -120px; top: -170px; }
+.report-hero::after { width: 170px; height: 170px; left: -90px; bottom: -95px; }
+
+.report-hero-logo {
+  position: absolute;
+  z-index: 2;
+  top: 28px;
+  right: 38px;
+  width: 105px;
+  height: 105px;
+  object-fit: contain;
+}
+
+.report-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 740px;
+  padding-right: 110px;
+}
+
+.report-eyebrow {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-full);
+  color: var(--report-purple-300);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.report-hero h1 {
+  max-width: 700px;
+  margin: 18px 0 10px;
+  color: var(--color-white);
+  font: var(--weight-bold) clamp(34px, 5vw, 52px) / 1.08 var(--font-serif);
+}
+
+.report-hero-subtitle {
+  max-width: 700px;
+  color: var(--report-purple-300);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+/* Tarjetas superiores y ficha documental */
+.report-meta-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.report-meta-card {
+  padding: 15px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.report-meta-label,
+.report-card-label {
+  color: var(--report-purple-300);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.report-meta-value {
+  margin-top: 5px;
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+.report-document-control {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.35fr 0.6fr 0.75fr 1.1fr 1.7fr 1fr;
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+}
+
+.report-document-control > span {
+  padding: 11px 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--color-white);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.report-document-control > span:last-child { border-right: 0; }
+
+.report-document-label {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--report-purple-300);
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* Estados */
+.report-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 4px 22px;
+}
+
+.report-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  padding: 6px 10px;
+  border: 1px solid;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.report-badge.is-done {
+  border-color: var(--report-success-border);
+  color: var(--report-success-text);
+  background: var(--report-success-bg);
+}
+
+.report-badge.is-pending,
+.report-badge.is-info {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  background: var(--color-background);
+}
+
+.report-badge.is-priority,
+.report-badge.is-medium {
+  border-color: var(--report-warning-border);
+  color: var(--report-warning-text);
+  background: var(--report-warning-bg);
+}
+
+.report-badge.is-critical,
+.report-badge.is-high {
+  border-color: var(--report-danger-border);
+  color: var(--report-danger-text);
+  background: var(--report-danger-bg);
+}
+
+/* Secciones, fases y contenido */
+.report-section,
+.report-phase {
+  margin-top: 20px;
+  border: 1px solid var(--report-line);
+  border-radius: 18px;
+  background: var(--color-white);
+  box-shadow: var(--report-shadow);
+}
+
+.report-section { padding: 28px 30px; }
+
+.report-section-label {
+  margin: 0 0 5px;
+  color: var(--color-primary);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.report-section h2,
+.report-synthesis h2 {
+  margin: 0 0 14px;
+  color: var(--color-primary-dark);
+  font: var(--weight-bold) 27px / 1.2 var(--font-serif);
+}
+
+.report-section h3,
+.report-phase h3 {
+  margin: 20px 0 8px;
+  color: var(--color-primary-dark);
+  font-size: var(--text-base);
+}
+
+.report-lead {
+  color: var(--report-text-700);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.report-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.report-card,
+.report-info-box {
+  padding: 17px;
+  border: 1px solid var(--report-line);
+  border-radius: 14px;
+  background: var(--report-purple-050);
+}
+
+.report-card { min-height: 110px; }
+.report-card-label { color: var(--color-primary); }
+.report-card-value { margin: 5px 0 3px; color: var(--color-primary-dark); font-size: var(--text-xl); font-weight: var(--weight-bold); line-height: 1.2; }
+.report-card-description { color: var(--report-text-500); font-size: var(--text-xs); line-height: var(--leading-normal); }
+
+.report-phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--report-line);
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(90deg, var(--report-purple-100), var(--report-purple-050));
+}
+
+.report-phase-title { margin: 0; font: var(--weight-bold) 22px / 1.25 var(--font-serif); }
+.report-phase-body { padding: 22px 26px 25px; }
+
+.report-two-columns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.report-three-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+/* Checklists */
+.report-checklist {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.report-checklist > li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--report-text-700);
+  font-size: var(--text-sm);
+}
+
+.report-checklist.is-done > li::before {
+  content: "✓";
+  position: absolute;
+  top: 1px;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  color: var(--color-white);
+  background: #2f8b4a;
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.report-checklist.is-pending > li::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-primary-light);
+  border-radius: 4px;
+}
+
+/* Tablas y bloques auxiliares */
+.report-table {
+  width: 100%;
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--report-line);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.report-table th {
+  padding: 11px 13px;
+  color: var(--color-white);
+  background: var(--color-primary-dark);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.report-table td {
+  padding: 10px 13px;
+  border-top: 1px solid #e9e2fb;
+  color: var(--report-text-700);
+  vertical-align: top;
+}
+
+.report-table tr:nth-child(even) td { background: var(--report-purple-050); }
+
+.report-document code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--color-primary-dark);
+  background: var(--report-purple-100);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.report-code-block {
+  margin: 14px 0;
+  padding: 15px 18px;
+  overflow-wrap: anywhere;
+  border-radius: 11px;
+  color: var(--report-purple-300);
+  background: var(--color-primary-dark);
+  font: 13px / 1.6 var(--font-mono);
+  white-space: pre-wrap;
+}
+
+.report-callout {
+  margin-top: 16px;
+  padding: 15px 18px;
+  border-left: 4px solid var(--color-primary);
+  border-radius: 10px;
+  color: var(--report-text-700);
+  background: var(--report-purple-050);
+}
+
+.report-callout.is-success { border-left-color: #2f8b4a; background: var(--report-success-bg); }
+.report-callout.is-warning { border-left-color: #d28b19; background: var(--report-warning-bg); }
+.report-callout.is-danger { border-left-color: #bd3030; background: var(--report-danger-bg); }
+
+/* Próximos pasos, síntesis y pie */
+.report-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  counter-reset: report-step;
+}
+
+.report-step {
+  counter-increment: report-step;
+  padding: 18px;
+  border-radius: 14px;
+  color: var(--color-white);
+  background: var(--color-primary-dark);
+}
+
+.report-step::before {
+  content: counter(report-step);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-full);
+  color: var(--color-primary-dark);
+  background: var(--color-primary-light);
+  font-weight: var(--weight-bold);
+}
+
+.report-step strong { display: block; margin-bottom: 5px; font-size: var(--text-sm); }
+.report-step span { color: var(--color-primary-light); font-size: var(--text-xs); line-height: var(--leading-normal); }
+
+.report-synthesis {
+  margin-top: 20px;
+  padding: 30px;
+  border-radius: 18px;
+  color: var(--color-white);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  box-shadow: var(--report-shadow);
+}
+
+.report-synthesis h2 { color: var(--color-white); }
+.report-synthesis p { color: #eee6ff; }
+
+.report-footer {
+  padding: 24px 4px 0;
+  color: var(--report-text-500);
+  font-size: 10px;
+  text-align: center;
+}
+
+.report-page-break { break-before: page; page-break-before: always; }
+.report-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+.report-no-print { display: initial; }
+
+@media (max-width: 760px) {
+  .report-hero { padding: 32px 24px; }
+  .report-hero-logo { top: 18px; right: 18px; width: 76px; height: 76px; }
+  .report-hero-copy { padding-right: 66px; }
+  .report-meta-grid,
+  .report-cards,
+  .report-steps,
+  .report-two-columns,
+  .report-three-columns { grid-template-columns: 1fr; }
+  .report-document-control { grid-template-columns: 1fr 1fr; }
+  .report-document-control > span { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  .report-section { padding: 23px 20px; }
+  .report-phase-header { align-items: flex-start; flex-direction: column; }
+}
+
+@media print {
+  body.report-document { background: var(--color-white); font-size: 10pt; }
+  .report-page { width: 100%; padding: 0; }
+  .report-hero,
+  .report-section,
+  .report-phase,
+  .report-synthesis { box-shadow: none; }
+  .report-hero { border-radius: 0; }
+  .report-section,
+  .report-phase,
+  .report-card,
+  .report-info-box,
+  .report-callout,
+  .report-step,
+  .report-table { break-inside: avoid; page-break-inside: avoid; }
+  .report-no-print { display: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

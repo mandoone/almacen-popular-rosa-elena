@@ -87,3 +87,33 @@
 - Estas son pruebas **manuales**; no hay suite automatizada (coherente con el arnés
   liviano, ver `docs/DECISIONS.md`).
 - Antes de cada apertura real conviene ejecutar T1–T9 como checklist mínima.
+
+---
+
+## 4. Pruebas manuales — Sistema documental
+
+### TD1 — Metadata completa
+1. Abrir el Markdown fuente.
+2. Verificar `DOCUMENTO`, `VERSION`, `FECHA`, `ESTADO`, `FUENTE` y `TIPO_INFORME`.
+- ✅ Esperado: todos los campos existen y usan valores permitidos por ADS-002.
+
+### TD2 — Integridad del HTML
+1. Generar el HTML desde el template correspondiente.
+2. Buscar marcadores `{{...}}`.
+3. Abrir el HTML desde `reports/html/<tipo>/`.
+- ✅ Esperado: no quedan placeholders y cargan `almacen.css`, `reports.css` y logo.
+
+### TD3 — Comparación visual
+1. Comparar portada, ficha, tarjetas, fases, badges, tablas y síntesis con los
+   pilotos v0.2 aprobados.
+- ✅ Esperado: mantiene identidad y estructura documental; no parece landing page.
+
+### TD4 — Impresión A4
+1. Abrir vista previa de impresión con fondos activados, escala 100 % y sin
+   encabezados/pies del navegador.
+2. Revisar saltos, tablas largas, fases y síntesis.
+- ✅ Esperado: contenido legible, sin cortes críticos ni desbordamiento horizontal.
+
+### TD5 — Ausencia de secretos
+1. Buscar tokens, credenciales, valores de variables e IDs privados.
+- ✅ Esperado: solo aparecen nombres de variables; ningún valor sensible.
