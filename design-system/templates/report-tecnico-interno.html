@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{DOCUMENTO}} — Web Almacén Popular Rosa Elena Morales</title>
+  <!-- En reports/html/*/*, usar {{DESIGN_SYSTEM_BASE}} = ../../../design-system -->
+  <link rel="icon" href="{{DESIGN_SYSTEM_BASE}}/brandkit/assets/favicon.ico">
+  <link rel="stylesheet" href="{{DESIGN_SYSTEM_BASE}}/themes/almacen.css">
+  <link rel="stylesheet" href="{{DESIGN_SYSTEM_BASE}}/themes/reports.css">
+</head>
+<body class="report-document report-type-tecnico-interno">
+  <main class="report-page">
+    <header class="report-hero">
+      <img class="report-hero-logo" src="{{DESIGN_SYSTEM_BASE}}/brandkit/assets/logo.png" alt="Logo Almacén Popular Rosa Elena Morales">
+      <div class="report-hero-copy">
+        <span class="report-eyebrow">{{TIPO_INFORME}} · {{VERSION}}</span>
+        <h1>{{TITULO}}</h1>
+        <p class="report-hero-subtitle">{{SUBTITULO}}</p>
+      </div>
+      <div class="report-meta-grid">
+        <div class="report-meta-card"><div class="report-meta-label">Estado actual</div><div class="report-meta-value">{{ESTADO_ACTUAL}}</div></div>
+        <div class="report-meta-card"><div class="report-meta-label">Próxima prioridad</div><div class="report-meta-value">{{PRIORIDAD}}</div></div>
+        <div class="report-meta-card"><div class="report-meta-label">Uso</div><div class="report-meta-value">{{USO}}</div></div>
+      </div>
+      <div class="report-document-control">
+        <span><span class="report-document-label">Documento</span>{{DOCUMENTO}}</span>
+        <span><span class="report-document-label">Versión</span>{{VERSION}}</span>
+        <span><span class="report-document-label">Fecha</span>{{FECHA}}</span>
+        <span><span class="report-document-label">Estado</span>{{ESTADO}}</span>
+        <span><span class="report-document-label">Fuente</span>{{FUENTE}}</span>
+        <span><span class="report-document-label">Tipo</span>{{TIPO_INFORME}}</span>
+      </div>
+    </header>
+
+    <div class="report-legend">
+      <span class="report-badge is-done">✓ Implementado y validado</span>
+      <span class="report-badge is-pending">□ Pendiente</span>
+      <span class="report-badge is-priority">● Próxima prioridad</span>
+      <span class="report-badge is-critical">! Riesgo crítico/alto</span>
+    </div>
+
+    <section class="report-section">
+      <p class="report-section-label">01 · Resumen técnico</p>
+      <h2>{{RESUMEN_TITULO}}</h2>
+      <p class="report-lead">{{RESUMEN_EJECUTIVO}}</p>
+      <div class="report-cards">{{CARDS_ESTADO_HTML}}</div>
+      {{TABLA_ESTADO_HTML}}
+    </section>
+
+    <section class="report-section">
+      <p class="report-section-label">02 · Arquitectura</p>
+      <h2>{{ARQUITECTURA_TITULO}}</h2>
+      {{ARQUITECTURA_HTML}}
+    </section>
+
+    <section class="report-section">
+      <p class="report-section-label">03 · Producción</p>
+      <h2>{{PRODUCCION_TITULO}}</h2>
+      {{PRODUCCION_HTML}}
+    </section>
+
+    <section class="report-section report-page-break">
+      <p class="report-section-label">04 · Google Sheets y Apps Script</p>
+      <h2>{{BACKEND_TITULO}}</h2>
+      {{GOOGLE_SHEETS_HTML}}
+      {{APPS_SCRIPT_HTML}}
+    </section>
+
+    {{FASES_TECNICAS_HTML}}
+
+    <section class="report-section report-page-break">
+      <p class="report-section-label">Variables</p>
+      <h2>Variables documentadas sin valores</h2>
+      {{VARIABLES_HTML}}
+    </section>
+
+    <section class="report-section">
+      <p class="report-section-label">Validaciones</p>
+      <h2>{{VALIDACIONES_TITULO}}</h2>
+      {{VALIDACIONES_HTML}}
+    </section>
+
+    <section class="report-section">
+      <p class="report-section-label">Riesgos</p>
+      <h2>{{RIESGOS_TITULO}}</h2>
+      {{RIESGOS_HTML}}
+    </section>
+
+    <section class="report-section">
+      <p class="report-section-label">Próximos pasos técnicos</p>
+      <h2>{{PROXIMOS_PASOS_TITULO}}</h2>
+      <div class="report-steps">{{PROXIMOS_PASOS_HTML}}</div>
+    </section>
+
+    <section class="report-synthesis">
+      <p class="report-section-label" style="color: var(--color-primary-light)">Síntesis técnica</p>
+      <h2>{{SINTESIS_TITULO}}</h2>
+      {{SINTESIS_HTML}}
+    </section>
+
+    <footer class="report-footer">Web Almacén Popular Rosa Elena Morales · {{DOCUMENTO}} · {{VERSION}} · {{FECHA}}</footer>
+  </main>
+</body>
+</html>

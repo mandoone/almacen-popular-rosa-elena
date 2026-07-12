@@ -1,65 +1,82 @@
-# Design System — Almacén Popular Rosa Elena Morales Morales
+# Design System — Almacén Popular Rosa Elena Morales
 
-Sistema de diseño liviano para generar documentos e informes con la identidad visual del Almacén.
+Sistema de diseño liviano para producir documentos e informes con la identidad
+visual institucional del Almacén.
 
-> Este NO es un sistema de componentes React. Es un kit de referencia visual + templates HTML
-> estáticos para producir informes y documentos institucionales sin tocar la web.
+> No es un sistema de componentes React. No modifica la aplicación Next.js.
 
----
+## Documentos oficiales
 
-## Objetivo inicial
-
-Generar informes HTML/PDF de estado de la web usando la misma identidad visual del Almacén Popular:
-paleta morada institucional, tipografía Inter + Playfair Display, logos y tono editorial.
-
----
+- `docs/ADS-001_brandkit_analysis.md`: identidad visual y reglas de marca.
+- `docs/ADS-002_sistema_documental.md`: guía operativa del sistema documental.
+- `docs/decisions.md`: decisiones técnicas del Design System.
 
 ## Estructura
 
-```
+```text
 design-system/
-├── README.md          ← este archivo
-├── brandkit/          ← identidad visual: colores, tipografía, assets
-├── docs/              ← auditoría y decisiones de diseño
-├── themes/            ← variables CSS nativas para templates
-├── templates/         ← templates HTML de informes
-├── prompts/           ← instrucciones para Claude para generar informes
-└── reports/           ← informes generados (HTML → PDF)
+├── brandkit/          identidad visual y assets
+├── docs/              guías, auditorías y decisiones
+├── themes/
+│   ├── almacen.css    tokens de identidad
+│   └── reports.css    componentes documentales
+├── templates/
+│   ├── report-avance-almacen.html
+│   └── report-tecnico-interno.html
+└── prompts/           instrucciones reutilizables
+
+reports/
+├── sources/           Markdown fuente
+├── html/              HTML generado y referencias aprobadas
+└── pdf/               PDF finales cuando corresponda
 ```
 
----
+## Flujo oficial
 
-## Flujo de trabajo
-
-```
-1. Pedir a Claude que genere un informe
-   → usar prompts/generate-report.md como referencia
-
-2. Claude rellena templates/report-base.html con datos reales
-
-3. Guardar el resultado en reports/YYYY-MM-DD-nombre.html
-
-4. Abrir en browser → Ctrl+P → Guardar como PDF
+```text
+Markdown fuente
+→ template HTML oficial
+→ informe HTML
+→ revisión visual
+→ PDF final
+→ copia publicada en Drive
 ```
 
----
+La versión 0.1 todavía usa composición manual controlada. No existe un pipeline
+automático Markdown → HTML → PDF y no se han instalado dependencias para crearlo.
 
-## Qué lee de la web (sin modificarla)
+## Tipos de informe
 
-| Fuente en la web | Qué aporta al DS |
-|---|---|
-| `tailwind.config.ts` | Tokens de color y tipografía |
-| `src/app/globals.css` | Reset y variables CSS existentes |
-| `public/images/logo.png` | Logo principal (copiado en `brandkit/assets/`) |
-| `public/images/logo-red.png` | Logo histórico (copiado en `brandkit/assets/`) |
+| Tipo | Template | Audiencia |
+|---|---|---|
+| `AVANCE_ALMACEN` | `templates/report-avance-almacen.html` | Almacén y lectores no técnicos. |
+| `TECNICO_INTERNO` | `templates/report-tecnico-interno.html` | Trabajo técnico interno. |
 
-**Regla:** nunca modificar `src/`, `public/`, `tailwind.config.ts` ni `globals.css` desde aquí.
+## CSS
 
----
+- `themes/almacen.css`: colores, tipografías, espaciados, radios, sombras y tokens.
+- `themes/reports.css`: portada, ficha, tarjetas, badges, fases, checklists, tablas,
+  callouts, síntesis, pie y reglas A4.
 
-## Qué NO hace este DS (todavía)
+Los templates cargan ambos archivos en ese orden.
 
-- No refactoriza componentes React de la web.
-- No genera PDFs automáticamente (se hace manual vía browser).
-- No tiene pipeline de build propio.
-- No reemplaza a Tailwind en la web.
+## Referencias visuales aprobadas
+
+- `reports/html/avance-almacen/preview_2026-07-11_avance-almacen_estado-proyecto_v0.2.html`.
+- `reports/html/tecnico-interno/preview_2026-07-11_tecnico-interno_estado-actual_v0.2.html`.
+
+Estas referencias se conservan intactas para comparar futuros informes. No se
+rediseñan sin una decisión documentada.
+
+## Relación con la web
+
+El Design System documental puede leer tokens y assets de la web como referencia,
+pero nunca modifica `src/`, `public/`, `tailwind.config.ts` ni `globals.css` desde
+este flujo.
+
+## Estado de automatización
+
+- HTML: composición manual desde Markdown y templates.
+- Revisión: apertura directa en navegador.
+- PDF: exportación manual pendiente de habilitación.
+- Pipeline automático: pendiente de decisión e implementación.

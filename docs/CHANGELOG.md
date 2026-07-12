@@ -5,6 +5,32 @@
 
 ---
 
+## [DS 0.1] — Sistema documental consolidado (2026-07-11)
+
+### Añadido
+- `design-system/docs/ADS-002_sistema_documental.md`: guía oficial de flujo,
+  metadata, tipos, componentes, nombres, PDF y relación repo/Drive.
+- `design-system/themes/reports.css`: componentes documentales extraídos de los
+  pilotos v0.2 aprobados.
+- Templates oficiales para informes de avance y técnicos internos.
+- `reports/README.md` y estructura de fuentes, HTML y PDF por tipo.
+- Pruebas manuales TD1–TD5 para metadata, HTML, consistencia visual, A4 y secretos.
+
+### Conservado
+- Dos Markdown v0.2 como fuentes oficiales iniciales.
+- Dos HTML piloto v0.2 como referencias visuales aprobadas.
+
+### Cambiado
+- `design-system/README.md`, decisiones y prompt de generación apuntan al flujo
+  Markdown → HTML → revisión → PDF y a la nueva estructura `reports/`.
+
+### Pendiente
+- Elegir e implementar la herramienta automática Markdown → HTML → PDF.
+- Generar PDF únicamente después de aprobar el pipeline.
+- Unificar la nomenclatura de fases entre el backlog histórico y los informes v0.2.
+
+---
+
 ## [FASE 1] — Seguridad del panel admin (2026-07-07)
 
 ### Añadido
@@ -25,7 +51,7 @@
   a `.env.example`).
 
 ### Cambiado
-- `src/app/admin/page.tsx`: eliminada contraseña hardcodeada (`almacen2024`),
+- `src/app/admin/page.tsx`: eliminada [contraseña histórica hardcodeada omitida],
   eliminado `LoginScreen` con auth solo de cliente, eliminado uso de `localStorage`
   para sesión. El componente raíz ahora llama `POST /api/admin/auth/logout` y
   redirige al login al cerrar sesión. El acceso real lo controla el middleware.

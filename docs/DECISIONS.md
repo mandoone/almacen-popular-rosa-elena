@@ -64,3 +64,12 @@ Formato: **contexto → decisión → consecuencias**.
 - **Decisión:** **no** integrar Webpay / Mercado Pago / pagos online por ahora.
 - **Consecuencias:** fuera de alcance actual (ver `docs/REQUIREMENTS.md`).
   Reevaluable en una fase futura si surge la necesidad.
+
+## D7 — Repo como fuente oficial del sistema documental
+
+- **Contexto:** los informes y recursos visuales también se distribuyen mediante
+  Drive, lo que puede producir versiones divergentes si ambos lugares se editan.
+- **Decisión:** el Markdown, templates, CSS y guías del repo son la fuente oficial.
+  Drive conserva copias aprobadas y versiones enviadas.
+- **Consecuencias:** toda corrección parte en el repo y genera una salida nueva. El
+  sistema documental se rige por `design-system/docs/ADS-002_sistema_documental.md`.

@@ -5,6 +5,24 @@
 
 ---
 
+## BLOQUE TRANSVERSAL — Sistema documental v0.1
+
+- ✅ Conservar los Markdown v0.2 en `reports/sources/`.
+- ✅ Aprobar y conservar dos HTML piloto como referencia visual.
+- ✅ Crear `design-system/docs/ADS-002_sistema_documental.md`.
+- ✅ Separar tokens (`almacen.css`) y componentes documentales (`reports.css`).
+- ✅ Crear templates para `AVANCE_ALMACEN` y `TECNICO_INTERNO`.
+- ✅ Crear estructura `reports/sources`, `reports/html` y `reports/pdf` por tipo.
+- ✅ Documentar convención de nombres y relación repo/Drive.
+- ⬜ Elegir herramienta para automatizar Markdown → HTML sin acoplarla a Next.js.
+- ⬜ Implementar validación automática de metadata, rutas y placeholders.
+- ⬜ Implementar generación PDF solo después de aprobar el flujo HTML.
+- ⬜ Unificar la nomenclatura de fases: los informes v0.2 llaman FASE 2 a seguridad
+  admin y FASE 3 a configuración; este backlog histórico reservaba FASE 2 para
+  panel vendedor y FASE 3 para productos/stock.
+
+---
+
 ## FASE 0 — Documentación viva (rama `fase-0/documentacion-viva`)
 
 - ✅ Crear rama `fase-0/documentacion-viva`.
@@ -92,11 +110,11 @@ ni secretos, revisados y commiteados en la rama de fase.
     correctamente reflejados.
   - `listarProductos` quedó **desplegado y validado** en la Web App.
   - `.env.local` existe solo localmente y está ignorado por git.
-- ⬜ **Seguridad: proteger `/api/admin/*`** — hoy no tienen auth de servidor (el login
-  del panel es solo cliente). Deuda técnica registrada; pendiente gate real.
+- ✅ **Seguridad: proteger `/api/admin/*`** — login real, cookie `httpOnly`, sesión
+  firmada y middleware validados localmente y en producción.
 - ⬜ Añadir selección de `forma_pago` en la tienda (hoy se envía `efectivo_al_retirar`
   por defecto).
-- ⬜ Actualizar `PROJECT_STATE.md` cuando el flujo real quede validado.
+- ✅ Actualizar `PROJECT_STATE.md` con el flujo real y el sistema documental v0.1.
 
 ---
 
