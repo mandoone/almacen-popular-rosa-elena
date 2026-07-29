@@ -11,7 +11,12 @@ import {
 //   PATCH  -> actualizar estado_pedido (y estado_pago opcional)
 //   POST   -> cancelar pedido (devuelve stock en el backend)
 //
-// DEUDA TECNICA: sin autenticacion de servidor (ver docs/TASKS.md).
+// Autenticacion: la cubre `src/middleware.ts` (matcher '/api/admin/:path+').
+//
+// DEUDA TECNICA ABIERTA (FASE 3A): este proxy reenvia estado_pedido y estado_pago
+// sin validar la transicion; Apps Script tampoco la valida. Eso permite secuencias
+// que descuadran el stock (doble devolucion / stock no devuelto).
+// Ver docs/fase-3a/DIAGNOSTICO_ACTUAL.md, hallazgos 3 y 4.
 export const dynamic = 'force-dynamic';
 
 function manejarError(err: unknown) {

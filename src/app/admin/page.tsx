@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-type Estado = 'pendiente' | 'listo' | 'entregado' | 'cancelado';
+// 'recibido' aún NO lo emite el backend (Apps Script crea los pedidos en
+// 'pendiente'), pero se declara desde ya para que el panel no se rompa el día que
+// la migración de FASE 3A lo empiece a devolver.
+// Ver docs/fase-3a/DIAGNOSTICO_ACTUAL.md (hallazgo 11).
+type Estado = 'recibido' | 'pendiente' | 'listo' | 'entregado' | 'cancelado';
 type Filtro = 'todos' | Estado;
 
 interface Pedido {
@@ -46,17 +50,30 @@ function formatFecha(valor: string) {
 }
 
 const BADGE: Record<Estado, string> = {
+  recibido: 'bg-blue-100 text-blue-700',
   pendiente: 'bg-orange-100 text-orange-700',
   listo: 'bg-yellow-100 text-yellow-700',
   entregado: 'bg-green-100 text-green-700',
   cancelado: 'bg-gray-200 text-gray-600',
 };
 const LABEL: Record<Estado, string> = {
+  recibido: 'Recibido',
   pendiente: 'Pendiente',
   listo: 'Listo',
   entregado: 'Entregado',
   cancelado: 'Cancelado',
 };
+
+const BADGE_DESCONOCIDO = 'bg-gray-100 text-gray-500';
+
+// El estado llega como texto libre desde la hoja: si algún día trae un valor que
+// el panel no conoce, se muestra tal cual en vez de romper el badge.
+function badgeDe(estado: string) {
+  return BADGE[estado as Estado] ?? BADGE_DESCONOCIDO;
+}
+function labelDe(estado: string) {
+  return LABEL[estado as Estado] ?? estado ?? 'Sin estado';
+}
 
 const ESTADO_PAGO_OPCIONES = [
   'pendiente',
@@ -295,8 +312,8 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                           {pedido.id_pedido} · {formatFecha(pedido.fecha_hora)}
                         </p>
                       </div>
-                      <span className={`self-start text-xs font-semibold px-3 py-1 rounded-full ${BADGE[pedido.estado_pedido]}`}>
-                        {LABEL[pedido.estado_pedido]}
+                      <span className={`self-start text-xs font-semibold px-3 py-1 rounded-full ${badgeDe(pedido.estado_pedido)}`}>
+                        {labelDe(pedido.estado_pedido)}
                       </span>
                     </div>
 
