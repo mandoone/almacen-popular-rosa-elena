@@ -5,6 +5,11 @@ import {
   cancelarPedido,
   AppsScriptError,
 } from '@/lib/appsScriptPedidos';
+import {
+  decidirPatchEstado,
+  decidirCancelacion,
+  type DecisionProxy,
+} from '@/lib/fase3a/proxyAdmin';
 
 // Proxy admin por pedido:
 //   GET    -> detalle (cabecera + lineas)
@@ -13,16 +18,39 @@ import {
 //
 // Autenticacion: la cubre `src/middleware.ts` (matcher '/api/admin/:path+').
 //
-// DEUDA TECNICA ABIERTA (FASE 3A): este proxy reenvia estado_pedido y estado_pago
-// sin validar la transicion; Apps Script tampoco la valida. Eso permite secuencias
-// que descuadran el stock (doble devolucion / stock no devuelto).
-// Ver docs/fase-3a/DIAGNOSTICO_ACTUAL.md, hallazgos 3 y 4.
+// VALIDACION DE TRANSICIONES (FASE 3A, etapa 1.5a):
+// Antes de reenviar un cambio de estado se lee el estado actual del pedido y se
+// decide con las funciones puras de `@/lib/fase3a/proxyAdmin`. Cierra por el lado
+// de Next.js los hallazgos 3, 4 y 5 de docs/fase-3a/DIAGNOSTICO_ACTUAL.md.
+//
+// LIMITACION CONOCIDA: es un leer-luego-escribir en dos llamadas HTTP, asi que
+// queda una ventana de carrera entre el GET y la escritura. Es una mitigacion
+// fuerte, no una garantia; la garantia exige el bloqueo optimista dentro de Apps
+// Script (ver docs/fase-3a/CONTRATO_APPS_SCRIPT_PROPUESTO.md §2).
 export const dynamic = 'force-dynamic';
 
 function manejarError(err: unknown) {
   const status = err instanceof AppsScriptError ? err.status : 500;
   const message = err instanceof Error ? err.message : 'Error inesperado.';
   return NextResponse.json({ ok: false, error: message }, { status });
+}
+
+function rechazo(decision: DecisionProxy) {
+  return NextResponse.json(
+    { ok: false, error: decision.motivo ?? 'Operacion no permitida.' },
+    { status: decision.status ?? 409 }
+  );
+}
+
+/**
+ * Lee el estado actual del pedido desde la hoja.
+ *
+ * Usa la accion `obtenerPedido`, que YA existe en el Apps Script desplegado: no
+ * hace falta ninguna accion nueva ni columna nueva para validar transiciones.
+ */
+async function leerEstadoActual(idPedido: string): Promise<string> {
+  const { pedido } = await obtenerPedido(idPedido);
+  return String(pedido?.estado_pedido ?? '');
 }
 
 export async function GET(
@@ -49,6 +77,15 @@ export async function PATCH(
         { status: 400 }
       );
     }
+
+    // Solo se consulta el estado actual si la peticion pretende cambiarlo; una
+    // actualizacion de pago sola no necesita la llamada extra a Apps Script.
+    if (body.estado_pedido) {
+      const estadoActual = await leerEstadoActual(params.id);
+      const decision = decidirPatchEstado(estadoActual, body.estado_pedido);
+      if (!decision.permitido) return rechazo(decision);
+    }
+
     const data = await actualizarEstadoPedido({
       id_pedido: params.id,
       estado_pedido: String(body.estado_pedido || ''),
@@ -65,6 +102,10 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const estadoActual = await leerEstadoActual(params.id);
+    const decision = decidirCancelacion(estadoActual);
+    if (!decision.permitido) return rechazo(decision);
+
     const data = await cancelarPedido(params.id);
     return NextResponse.json({ ok: true, data });
   } catch (err) {
