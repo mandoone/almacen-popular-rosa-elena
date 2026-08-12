@@ -360,7 +360,16 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                           {abierto ? 'Ocultar detalle' : 'Ver detalle'}
                         </button>
 
-                        {pedido.estado_pedido === 'pendiente' && transiciones.includes('listo') && (
+                        {transiciones.includes('pendiente') && (
+                          <button
+                            onClick={() => cambiarEstado(pedido, 'pendiente')}
+                            disabled={ocupado}
+                            className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+                          >
+                            {pedido.estado_pedido === 'recibido' ? 'Confirmar pendiente' : 'Volver a pendiente'}
+                          </button>
+                        )}
+                        {transiciones.includes('listo') && (
                           <button
                             onClick={() => cambiarEstado(pedido, 'listo')}
                             disabled={ocupado}
