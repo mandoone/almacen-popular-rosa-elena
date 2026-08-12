@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe de avance v0.3 — Web Almacén Popular Rosa Elena Morales</title>
+  <link rel="icon" href="../../../design-system/brandkit/assets/favicon.ico">
+  <link rel="stylesheet" href="../../../design-system/themes/almacen.css">
+  <style>
+    :root {
+      --c900: var(--color-primary-dark, #3b0764);
+      --c800: #52167a;
+      --c700: var(--color-primary, #6b21a8);
+      --c300: var(--color-primary-light, #c4b5fd);
+      --c100: #ebe5fc;
+      --c050: var(--color-background, #f8f5ff);
+      --t900: #1f0836;
+      --t700: #4a3768;
+      --t500: #6e6290;
+      --line: #c8bafb;
+      --success-bg: #ecfcef;
+      --success-border: #bbe4c5;
+      --success-text: #1f6a37;
+      --pending-bg: #f9f5ff;
+      --pending-border: #c4b5fd;
+      --pending-text: #3b0764;
+      --priority-bg: #fff4dc;
+      --priority-border: #ffd08a;
+      --priority-text: #925900;
+      --answer-bg: #eef5ff;
+      --answer-border: #a9c8f5;
+      --answer-text: #164e8a;
+      --validate-bg: #ebfaf7;
+      --validate-border: #9adbcf;
+      --validate-text: #16645a;
+      --internal-bg: #f2f0f6;
+      --internal-border: #c9c2d6;
+      --internal-text: #51465f;
+      --doc-shadow: 0 12px 28px rgba(59, 7, 100, .09);
+    }
+
+    * { box-sizing: border-box; }
+    @page { size: A4; margin: 14mm; }
+    body {
+      margin: 0;
+      color: var(--t900);
+      background: linear-gradient(180deg, var(--c050), #faf8fe);
+      font-family: var(--font-sans, Arial, sans-serif);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    p { margin: 0 0 9px; }
+    p:last-child { margin-bottom: 0; }
+    .page { width: min(100%, 920px); margin: 0 auto; padding: 24px 14px 42px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 32px 30px 23px;
+      border-radius: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--c900), var(--c800));
+      box-shadow: var(--doc-shadow);
+    }
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(196, 181, 253, .11);
+      content: "";
+    }
+    .hero::before { width: 330px; height: 330px; right: -120px; top: -170px; }
+    .hero::after { width: 170px; height: 170px; left: -90px; bottom: -95px; }
+    .hero-logo { position: absolute; z-index: 2; top: 21px; right: 27px; width: 96px; height: 96px; object-fit: contain; }
+    .hero-copy { position: relative; z-index: 1; max-width: 720px; padding-right: 100px; }
+    .eyebrow {
+      display: inline-block;
+      padding: 4px 9px;
+      border: 1px solid rgba(255, 255, 255, .24);
+      border-radius: 999px;
+      color: var(--c300);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      margin: 12px 0 7px;
+      max-width: 650px;
+      color: #fff;
+      font-family: var(--font-serif, Georgia, serif);
+      font-size: clamp(26px, 3.5vw, 37px);
+      line-height: 1.08;
+    }
+    .hero-subtitle { max-width: 670px; color: var(--c300); font-size: 12.5px; line-height: 1.5; }
+    .meta-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px; }
+    .meta-card { padding: 10px 11px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 10px; background: rgba(255, 255, 255, .08); }
+    .meta-label { color: var(--c300); font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .meta-value { margin-top: 3px; color: #fff; font-size: 9.5px; font-weight: 600; line-height: 1.35; }
+
+    .doc-meta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(64px, .55fr) minmax(82px, .72fr) minmax(0, 1.05fr) minmax(0, 1.65fr);
+      margin-top: 12px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 9px;
+    }
+    .doc-meta-item {
+      min-width: 0;
+      padding: 7px 8px;
+      border-right: 1px solid rgba(255, 255, 255, .14);
+      color: #fff;
+      font-size: 7.5px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+    .doc-meta-item:last-child { border-right: 0; }
+    .doc-meta-label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--c300);
+      font-size: 6.5px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 7px; margin: 11px 3px 15px; }
+    .legend-item,
+    .status {
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+      padding: 4px 7px;
+      border: 1px solid;
+      border-radius: 999px;
+      font-size: 7.5px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .done { border-color: var(--success-border); color: var(--success-text); background: var(--success-bg); }
+    .pending { border-color: var(--pending-border); color: var(--pending-text); background: var(--pending-bg); }
+    .priority { border-color: var(--priority-border); color: var(--priority-text); background: var(--priority-bg); }
+    .answer { border-color: var(--answer-border); color: var(--answer-text); background: var(--answer-bg); }
+    .validate { border-color: var(--validate-border); color: var(--validate-text); background: var(--validate-bg); }
+    .internal { border-color: var(--internal-border); color: var(--internal-text); background: var(--internal-bg); }
+
+    .section,
+    .phase { margin-top: 13px; border: 1px solid var(--line); border-radius: 13px; background: #fff; box-shadow: var(--doc-shadow); }
+    .section { padding: 18px 20px; }
+    .section-label { margin: 0 0 5px; color: var(--c700); font-size: 7px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h2 { margin: 0 0 9px; color: var(--c900); font-family: var(--font-serif, Georgia, serif); font-size: 19px; line-height: 1.2; }
+    h3 { margin: 13px 0 5px; color: var(--c900); font-size: 11.5px; }
+    .lead { color: var(--t700); font-size: 12px; line-height: 1.55; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+    .card { min-height: 76px; padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--c050); }
+    .card-label { color: var(--c700); font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .card-value { margin: 3px 0 2px; color: var(--c900); font-size: 14px; font-weight: 700; line-height: 1.2; }
+    .card-desc { color: var(--t500); font-size: 8.5px; line-height: 1.45; }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--line);
+      border-radius: 13px 13px 0 0;
+      background: linear-gradient(90deg, var(--c100), var(--c050));
+    }
+    .phase-title { margin: 0; font-family: var(--font-serif, Georgia, serif); font-size: 15.5px; line-height: 1.25; }
+    .phase-body { padding: 14px 18px 16px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .checklist { display: grid; gap: 5px; margin: 8px 0 0; padding: 0; list-style: none; }
+    .checklist li { position: relative; padding-left: 19px; color: var(--t700); font-size: 9.5px; }
+    .checklist.done-list li::before {
+      position: absolute;
+      left: 0;
+      top: 1px;
+      display: grid;
+      place-items: center;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      color: #fff;
+      background: #2f8b4a;
+      font-size: 8px;
+      font-weight: 700;
+      content: "✓";
+    }
+    .checklist.pending-list li::before {
+      position: absolute;
+      left: 1px;
+      top: 2px;
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid var(--c300);
+      border-radius: 3px;
+      content: "";
+    }
+    .checklist .status { margin-right: 4px; vertical-align: middle; }
+
+    table { width: 100%; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; border-collapse: separate; border-spacing: 0; overflow: hidden; font-size: 8.8px; }
+    th { padding: 7px 9px; color: #fff; background: var(--c900); text-align: left; font-size: 7px; letter-spacing: .04em; text-transform: uppercase; }
+    td { padding: 6px 9px; border-top: 1px solid #e9e2fb; color: var(--t700); vertical-align: top; }
+    tr:nth-child(even) td { background: var(--c050); }
+    .note { margin-top: 10px; padding: 10px 12px; border-left: 4px solid var(--c700); border-radius: 7px; color: var(--t700); background: var(--c050); }
+    .note.success { border-left-color: #2f8b4a; background: var(--success-bg); }
+    .code-box { margin: 9px 0; padding: 10px 12px; border-radius: 8px; color: var(--c300); background: var(--c900); font: 8.5px/1.6 var(--font-mono, Consolas, monospace); white-space: pre-wrap; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 11px; counter-reset: step; }
+    .step { padding: 12px; border-radius: 10px; color: #fff; background: var(--c900); counter-increment: step; }
+    .step::before { display: grid; place-items: center; width: 20px; height: 20px; margin-bottom: 7px; border-radius: 50%; color: var(--c900); background: var(--c300); font-size: 9px; font-weight: 700; content: counter(step); }
+    .step strong { display: block; margin-bottom: 5px; font-size: 9.5px; }
+    .step span { color: var(--c300); font-size: 8px; line-height: 1.5; }
+    .synthesis { margin-top: 13px; padding: 20px; border-radius: 13px; color: #fff; background: linear-gradient(135deg, var(--c900), var(--c700)); box-shadow: var(--doc-shadow); }
+    .synthesis h2 { color: #fff; }
+    .synthesis p { color: #eee6ff; }
+    .doc-footer { padding: 16px 4px 0; color: var(--t500); font-size: 7.5px; text-align: center; }
+
+    @media (max-width: 760px) {
+      .page { padding: 14px 10px 28px; }
+      .hero { padding: 28px 20px 22px; }
+      .hero-logo { top: 18px; right: 18px; width: 76px; height: 76px; }
+      .hero-copy { padding-right: 68px; }
+      .meta-grid,
+      .cards,
+      .steps,
+      .two-col { grid-template-columns: 1fr; }
+      .doc-meta { grid-template-columns: 1fr 1fr; }
+      .doc-meta-item { border-right: 1px solid rgba(255, 255, 255, .14); border-bottom: 1px solid rgba(255, 255, 255, .14); }
+      .doc-meta-item:nth-child(2n) { border-right: 0; }
+      .doc-meta-item:last-child { grid-column: 1 / -1; border-right: 0; border-bottom: 0; }
+      .phase-header { align-items: flex-start; flex-direction: column; }
+      .table-scroll { overflow-x: auto; }
+    }
+
+    @media print {
+      body { background: #fff; font-size: 7.2pt; }
+      .page { width: 100%; padding: 0; }
+      .hero,
+      .section,
+      .phase,
+      .synthesis { box-shadow: none; }
+      .hero { border-radius: 0; }
+      .card,
+      .note,
+      .step,
+      table { break-inside: avoid; page-break-inside: avoid; }
+      .phase-header,
+      .phase h3 { break-after: avoid-page; page-break-after: avoid; }
+      .phase li { break-inside: avoid; page-break-inside: avoid; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <img class="hero-logo" src="../../../design-system/brandkit/assets/logo.png" alt="Logo Almacén Popular Rosa Elena Morales">
+      <div class="hero-copy">
+        <span class="eyebrow">Informe de avance · v0.3</span>
+        <h1>Web Almacén Popular<br>Rosa Elena Morales</h1>
+        <p class="hero-subtitle">Fase 3A: panel administrativo más claro, validaciones preventivas y preparación segura del siguiente bloque.</p>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card"><div class="meta-label">Estado actual</div><div class="meta-value">Avance actualizado para revisión</div></div>
+        <div class="meta-card"><div class="meta-label">Próxima prioridad</div><div class="meta-value">Entorno TEST para stock y acciones simultáneas</div></div>
+        <div class="meta-card"><div class="meta-label">Producción</div><div class="meta-value">Sin cambios durante esta etapa</div></div>
+      </div>
+      <div class="doc-meta" aria-label="Ficha documental">
+        <div class="doc-meta-item"><span class="doc-meta-label">Documento</span>Estado de avance — Fase 3A</div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Versión</span>v0.3</div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Fecha</span>2026-08-12</div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Estado</span>Para revisión</div>
+        <div class="doc-meta-item"><span class="doc-meta-label">Corte técnico</span>1adcbb6 · estado y checklist Fase 3A</div>
+      </div>
+    </header>
+
+    <div class="legend" aria-label="Leyenda de etiquetas">
+      <span class="legend-item done">✓ Realizado</span>
+      <span class="legend-item pending">□ Pendiente</span>
+      <span class="legend-item priority">● Próxima prioridad</span>
+      <span class="legend-item answer">● Responde Almacén</span>
+      <span class="legend-item validate">● Validar Almacén</span>
+      <span class="legend-item internal">● Uso interno técnico</span>
+    </div>
+
+    <section class="section">
+      <p class="section-label">1 · Resumen ejecutivo</p>
+      <h2>Una base administrativa más clara y revisable</h2>
+      <p class="lead">Desde el informe anterior se avanzó en la claridad del panel administrativo y en las validaciones que evitan cambios de estado incorrectos. La nueva versión de la web presenta un flujo base propuesto y preparado para validación, muestra las acciones que corresponden a cada estado e impide ofrecer cambios que ese flujo no permite.</p>
+      <p>También se creó un modo de demostración local para revisar el panel sin conectarlo a pedidos reales. Esta demostración fue revisada visualmente y aprobada: permitió comprobar los estados, botones y cambios de pantalla sin consultar ni modificar la base operativa del Almacén.</p>
+      <div class="cards">
+        <article class="card"><div class="card-label">Panel admin</div><div class="card-value">Alineado</div><div class="card-desc">Las acciones visibles dependen del estado conocido del pedido.</div></article>
+        <article class="card"><div class="card-label">Modo demo</div><div class="card-value">Aprobado</div><div class="card-desc">Revisión visual local con datos simulados y sin pedidos reales.</div></article>
+        <article class="card"><div class="card-label">Rama técnica</div><div class="card-value">Lista</div><div class="card-desc">Preparada para respaldo y revisión mediante Git.</div></article>
+        <article class="card"><div class="card-label">Siguiente foco</div><div class="card-value">Entorno TEST</div><div class="card-desc">Probar stock antes de considerar cualquier cambio real.</div></article>
+      </div>
+      <div class="note success"><strong>Protección de esta etapa:</strong> no se modificó Google Sheets real, Apps Script productivo, Vercel ni la web en producción; tampoco se realizaron pruebas de stock sobre pedidos reales.</div>
+      <p>El próximo paso técnico será crear copias separadas de Google Sheets y Apps Script para probar el nuevo manejo del stock de manera segura. En paralelo, Nadia y Carolina deben responder o validar algunas reglas operativas para personalizar el sistema según el funcionamiento real del Almacén.</p>
+      <div class="note"><strong>Idea central:</strong> el panel ya tiene una base más clara y revisable. El cambio del stock real se hará después, usando un entorno de prueba separado y con un criterio explícito para decidir si es seguro avanzar.</div>
+    </section>
+
+    <section class="phase">
+      <header class="phase-header">
+        <h2 class="phase-title">2 · Qué cambió desde la versión anterior</h2>
+        <span class="status done">Realizado</span>
+      </header>
+      <div class="phase-body">
+        <div class="two-col">
+          <div>
+            <h3>2.1 Panel administrativo más claro</h3>
+            <ul class="checklist done-list">
+              <li>Se ordenaron las acciones disponibles para cada estado del pedido.</li>
+              <li>Se agregaron acciones válidas que antes no aparecían.</li>
+              <li>Se ocultaron acciones que el flujo no permite.</li>
+              <li>Los pedidos entregados o cancelados no ofrecen nuevos cambios de estado.</li>
+              <li>Los estados desconocidos quedan sin acciones y requieren revisión manual.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>2.2 Flujo de estados definido</h3>
+            <div class="code-box">Recibido → Pendiente → Listo → Entregado
+     └────────→ Listo
+
+Listo → Pendiente
+Recibido / Pendiente / Listo → Cancelado</div>
+            <p>Un pedido no pasa directamente de <strong>Pendiente</strong> a <strong>Entregado</strong>: primero debe quedar <strong>Listo</strong>. Los pedidos <strong>Entregado</strong> y <strong>Cancelado</strong> son finales y no se reabren desde el panel.</p>
+          </div>
+        </div>
+
+        <h3>2.3 Validaciones para evitar errores</h3>
+        <p>La nueva versión de la web revisa el estado conocido antes de ofrecer o reenviar una acción desde el panel. Esto reduce el riesgo de cancelar dos veces un pedido, cambiar uno ya entregado, ofrecer una transición no permitida u operar automáticamente un estado que el sistema no reconoce.</p>
+        <div class="note"><strong>Alcance actual:</strong> esta es una protección preventiva del panel y de su proxy administrativo, la capa intermedia de la web. La validación definitiva dentro del backend real de Apps Script y Sheets todavía no fue implementada y se probará primero en el entorno TEST.</div>
+
+        <div class="two-col">
+          <div>
+            <h3>2.4 Demostración local segura</h3>
+            <p>Se preparó un modo demo con pedidos simulados. No es una URL pública productiva: Omar puede mostrar esta versión en una revisión local guiada. El demo no toca pedidos reales ni datos productivos y vuelve a su estado inicial al recargar la página.</p>
+          </div>
+          <div>
+            <h3>2.5 QA visual aprobado</h3>
+            <ul class="checklist done-list">
+              <li>Se muestran todos los estados necesarios.</li>
+              <li>Las acciones visibles corresponden a cada estado.</li>
+              <li>Los cambios se pueden simular visualmente.</li>
+              <li>No se solicita <code>/api/admin/pedidos</code>.</li>
+              <li>No se consultan pedidos ni datos reales.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>2.6 Preparación del siguiente bloque</h3>
+        <p>Se documentó el futuro manejo seguro y coordinado de pedidos y stock —llamado internamente <strong>backend atómico</strong>— y se creó un checklist para preparar un entorno TEST separado. Este trabajo permite avanzar con orden sin improvisar cambios en producción.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">3 · Qué se puede revisar ya</p>
+      <h2>Una revisión local guiada, sin datos productivos</h2>
+      <p class="lead">Omar puede mostrar la versión actual mediante una revisión local guiada del modo demo del panel administrativo. Sirve para evaluar la claridad de los nombres, los botones y el orden del trabajo. No es una URL pública productiva, no permite operar pedidos reales y no toca datos productivos.</p>
+      <div class="two-col">
+        <div>
+          <h3>3.1 Estados visibles</h3>
+          <ul class="checklist done-list">
+            <li>Recibido</li>
+            <li>Pendiente</li>
+            <li>Listo</li>
+            <li>Entregado</li>
+            <li>Cancelado</li>
+            <li>Un estado desconocido para comprobar la revisión manual</li>
+          </ul>
+        </div>
+        <div>
+          <h3>3.2 Acciones visibles por estado</h3>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Estado</th><th>Acciones disponibles en el demo</th></tr></thead>
+              <tbody>
+                <tr><td>Recibido</td><td>Confirmar pendiente · Marcar listo · Cancelar</td></tr>
+                <tr><td>Pendiente</td><td>Marcar listo · Cancelar</td></tr>
+                <tr><td>Listo</td><td>Volver a pendiente · Entregado · Cancelar</td></tr>
+                <tr><td>Entregado</td><td>Sin cambios de estado</td></tr>
+                <tr><td>Cancelado</td><td>Sin cambios de estado</td></tr>
+                <tr><td>Estado desconocido</td><td>Sin cambios; requiere revisión</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note"><strong>Límite de esta revisión:</strong> el demo no está conectado a pedidos reales. Permite revisar con seguridad la organización del panel, pero todavía no demuestra el futuro movimiento de stock. Esa prueba corresponde al siguiente bloque técnico, sobre copias TEST.</div>
+    </section>
+
+    <section class="phase">
+      <header class="phase-header">
+        <h2 class="phase-title">4 · Estado actual de Fase 3A</h2>
+        <span class="status done">Avance comprobado</span>
+      </header>
+      <div class="phase-body">
+        <div class="two-col">
+          <div>
+            <h3>4.1 Completado</h3>
+            <ul class="checklist done-list">
+              <li>Modelo base de estados y transiciones.</li>
+              <li>Validaciones preventivas en el acceso administrativo.</li>
+              <li>Botones del panel alineados con el flujo permitido.</li>
+              <li>Acciones válidas faltantes agregadas.</li>
+              <li>Modo demo local aislado.</li>
+              <li>QA visual local aprobado.</li>
+              <li>Diseño del backend futuro documentado.</li>
+              <li>Checklist interno del entorno TEST preparado.</li>
+              <li>Rama técnica preparada para respaldo y revisión mediante Git.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>4.2 Decisiones para personalizar con el Almacén</h3>
+            <p>Quedan definiciones prácticas para responder junto con Nadia y Carolina, además de propuestas operativas que necesitan su validación. Estas respuestas permitirán personalizar el sistema; no se presentan como errores ni como retrasos del Almacén.</p>
+
+            <h3>4.3 Pendiente técnico interno</h3>
+            <ul class="checklist pending-list">
+              <li>Crear copias TEST de Google Sheets y Apps Script.</li>
+              <li>Conectar ambas copias sin usar recursos productivos.</li>
+              <li>Implementar en TEST el nuevo momento de descuento del stock.</li>
+              <li>Probar concurrencia, es decir, dos acciones realizadas al mismo tiempo, además de errores y recuperación.</li>
+              <li>Ensayar cómo volver de forma segura al estado anterior —rollback— antes de considerar producción.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note"><strong>4.4 Próxima prioridad:</strong> crear el entorno TEST y demostrar que el stock se descuenta o devuelve una sola vez, incluso cuando existen acciones simultáneas o problemas de conexión.</div>
+      </div>
+    </section>
+
+    <section class="phase">
+      <header class="phase-header">
+        <h2 class="phase-title">5 · Checklist actualizado</h2>
+        <span class="status done">Seguimiento</span>
+      </header>
+      <div class="phase-body">
+        <h3>5.1 Avances realizados</h3>
+        <ul class="checklist done-list">
+          <li><span class="status done">Realizado</span>Proteger el panel administrativo.</li>
+          <li><span class="status done">Realizado</span>Preparar el flujo base de estados para validación.</li>
+          <li><span class="status done">Realizado</span>Validar transiciones peligrosas antes de reenviarlas.</li>
+          <li><span class="status done">Realizado</span>Alinear los botones del panel administrativo.</li>
+          <li><span class="status done">Realizado</span>Agregar las acciones válidas que faltaban.</li>
+          <li><span class="status done">Realizado</span>Crear un modo demo local y aislado.</li>
+          <li><span class="status done">Realizado</span>Aprobar el QA visual local del modo demo.</li>
+          <li><span class="status done">Realizado</span>Confirmar que el demo no consulta <code>/api/admin/pedidos</code>.</li>
+          <li><span class="status done">Realizado</span>Documentar el manejo seguro y coordinado de pedidos y stock.</li>
+          <li><span class="status done">Realizado</span>Crear el checklist interno del entorno TEST.</li>
+          <li><span class="status done">Realizado</span>Dejar la rama preparada para push y revisión.</li>
+        </ul>
+
+        <div class="two-col">
+          <div>
+            <h3>5.2 Propuestas que debe validar el Almacén</h3>
+            <ul class="checklist pending-list">
+              <li><span class="status validate">Validar Almacén</span>Confirmar el flujo Recibido → Pendiente/Listo → Entregado.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar que no se entregue directamente desde Pendiente.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar que Entregado y Cancelado sean estados finales.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar que un pedido cancelado deba reemplazarse por uno nuevo si la persona vuelve a pedirlo.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar que el stock se descuente al aceptar el pedido, no al recibirlo por la web.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar las categorías iniciales: Granel, Alimentos, Limpieza, Higiene y Otros.</li>
+              <li><span class="status validate">Validar Almacén</span>Confirmar las unidades de venta: unidad, kilo, gramos, litro, mililitro y pack.</li>
+              <li><span class="status validate">Validar Almacén</span>Validar los textos públicos actuales como base preliminar.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>5.3 Decisiones que debe responder el Almacén</h3>
+            <ul class="checklist pending-list">
+              <li><span class="status answer">Responde Almacén</span>Definir el horario de apertura y retiro.</li>
+              <li><span class="status answer">Responde Almacén</span>Definir cuándo se cierran los pedidos online antes de cada apertura.</li>
+              <li><span class="status answer">Responde Almacén</span>Definir quiénes pueden confirmar pedidos.</li>
+              <li><span class="status answer">Responde Almacén</span>Definir quiénes pueden cancelar pedidos.</li>
+              <li><span class="status answer">Responde Almacén</span>Informar qué productos serán solo para venta presencial.</li>
+              <li><span class="status answer">Responde Almacén</span>Indicar cambios o aportes para los textos, historia, comunidad y participación.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>5.4 Próxima prioridad técnica</h3>
+        <ul class="checklist pending-list">
+          <li><span class="status priority">Próxima prioridad</span>Preparar copias TEST separadas.</li>
+          <li><span class="status priority">Próxima prioridad</span>Probar el stock y dos acciones realizadas al mismo tiempo.</li>
+          <li><span class="status priority">Próxima prioridad</span>Definir la decisión de avanzar o detener —Go/No-Go— antes de planificar cambios reales.</li>
+        </ul>
+
+        <div class="two-col">
+          <div>
+            <h3>5.5 Trabajo de uso interno técnico</h3>
+            <ul class="checklist pending-list">
+              <li><span class="status internal">Uso interno técnico</span>Crear la copia Sheet TEST.</li>
+              <li><span class="status internal">Uso interno técnico</span>Crear la copia Apps Script TEST.</li>
+              <li><span class="status internal">Uso interno técnico</span>Conectar Apps Script a Sheet mediante un ID explícito.</li>
+              <li><span class="status internal">Uso interno técnico</span>Usar variables TEST únicamente en el entorno local.</li>
+              <li><span class="status internal">Uso interno técnico</span>Implementar estado esperado e idempotencia —evitar descuentos repetidos— en TEST.</li>
+              <li><span class="status internal">Uso interno técnico</span>Probar descuentos y devoluciones de stock.</li>
+              <li><span class="status internal">Uso interno técnico</span>Probar acciones concurrentes.</li>
+              <li><span class="status internal">Uso interno técnico</span>Ensayar rollback y reconciliación.</li>
+              <li><span class="status internal">Uso interno técnico</span>Mantener producción intacta hasta contar con una decisión de avanzar.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>5.6 Pendientes posteriores</h3>
+            <ul class="checklist pending-list">
+              <li><span class="status pending">Pendiente</span>Separar completamente estado de pago y método de pago.</li>
+              <li><span class="status pending">Pendiente</span>Agregar motivo y responsable en las cancelaciones reales.</li>
+              <li><span class="status pending">Pendiente</span>Permitir edición controlada de pedidos recibidos.</li>
+              <li><span class="status pending">Pendiente</span>Agregar filtros operativos pendientes al panel.</li>
+              <li><span class="status pending">Pendiente</span>Revisar productos, precios, categorías, unidades e imágenes después de estabilizar pedidos y stock.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">6 · Continuidad del plan general</p>
+      <h2>Avance y próximos bloques</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Bloque</th><th>Estado actualizado</th></tr></thead>
+          <tbody>
+            <tr><td>Base de la página, catálogo y carrito</td><td><span class="status done">Realizado</span></td></tr>
+            <tr><td>Pedidos reales y base operativa compartida</td><td><span class="status done">Realizado</span> con modelo de stock anterior</td></tr>
+            <tr><td>Seguridad del panel administrativo</td><td><span class="status done">Realizado</span></td></tr>
+            <tr><td>UI y validaciones administrativas de Fase 3A</td><td><span class="status done">Realizado</span> en la rama técnica</td></tr>
+            <tr><td>Revisión demo de Fase 3A</td><td><span class="status done">Realizado</span> localmente</td></tr>
+            <tr><td>Reglas operativas del Almacén</td><td><span class="status answer">Responde Almacén</span> <span class="status validate">Validar Almacén</span></td></tr>
+            <tr><td>Entorno TEST y backend de stock</td><td><span class="status priority">Próxima prioridad</span></td></tr>
+            <tr><td>Migración y cambio productivo de stock</td><td><span class="status pending">Pendiente</span> después de decidir si se avanza o se detiene</td></tr>
+            <tr><td>Productos, panel vendedor, caja y compras</td><td><span class="status pending">Pendiente</span> para etapas posteriores</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="phase">
+      <header class="phase-header">
+        <h2 class="phase-title">7 · Próximos pasos por responsable</h2>
+        <span class="status priority">Próxima prioridad</span>
+      </header>
+      <div class="phase-body">
+        <div class="steps">
+          <article class="step">
+            <strong>Almacén — Nadia y Carolina</strong>
+            <span>Responder los puntos operativos; validar el flujo de estados, categorías, unidades y textos; e indicar ajustes de lenguaje o nombres de botones.</span>
+          </article>
+          <article class="step">
+            <strong>Omar / desarrollo</strong>
+            <span>Subir la rama para respaldo y revisión sin desplegar; preparar el entorno TEST; probar stock solo en copias; documentar resultados y decidir si avanzar o detener.</span>
+          </article>
+          <article class="step">
+            <strong>Límites de esta etapa</strong>
+            <span>No tocar producción, Google Sheet real, Apps Script productivo ni Vercel antes de aprobar el siguiente bloque.</span>
+          </article>
+        </div>
+        <div class="two-col">
+          <div>
+            <h3>7.1 Almacén — Nadia y Carolina</h3>
+            <ol>
+              <li><span class="status answer">Responde Almacén</span> Responder los puntos operativos pendientes.</li>
+              <li><span class="status validate">Validar Almacén</span> Revisar si el flujo propuesto acomoda la operación real.</li>
+              <li><span class="status validate">Validar Almacén</span> Confirmar categorías, unidades y textos preliminares.</li>
+              <li><span class="status validate">Validar Almacén</span> Indicar ajustes de lenguaje o nombres de botones.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>7.2 Omar / desarrollo</h3>
+            <ol>
+              <li><span class="status priority">Próxima prioridad</span> Subir la rama para respaldo y revisión, sin desplegarla automáticamente como cambio productivo.</li>
+              <li><span class="status internal">Uso interno técnico</span> Preparar el entorno TEST separado.</li>
+              <li><span class="status internal">Uso interno técnico</span> Probar el comportamiento del stock usando solo las copias.</li>
+              <li><span class="status internal">Uso interno técnico</span> Documentar resultados y definir si corresponde avanzar o detenerse.</li>
+              <li><span class="status pending">Pendiente</span> Generar el PDF de este informe después de revisar el HTML.</li>
+            </ol>
+          </div>
+        </div>
+        <h3>7.3 Límites técnicos de esta etapa</h3>
+        <ul class="checklist pending-list">
+          <li><span class="status internal">Uso interno técnico</span>No tocar producción todavía.</li>
+          <li><span class="status internal">Uso interno técnico</span>No probar sobre Google Sheet real.</li>
+          <li><span class="status internal">Uso interno técnico</span>No editar Apps Script productivo.</li>
+          <li><span class="status internal">Uso interno técnico</span>No modificar Vercel antes de aprobar el siguiente bloque.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="synthesis">
+      <p class="section-label">8 · Síntesis final</p>
+      <h2>Una base revisable antes de tocar el stock real</h2>
+      <p>El proyecto avanzó desde el diagnóstico hacia una base administrativa más clara y controlada. El panel ya refleja un flujo base propuesto y preparado para validación, evita ofrecer acciones inválidas y cuenta con una demostración local revisada y aprobada.</p>
+      <p>El Almacén ya puede revisar la lógica general, los nombres y las decisiones de operación sin que esa revisión afecte pedidos o stock reales. Lo que falta por parte de Nadia y Carolina es personalizar el sistema mediante respuestas y validaciones concretas sobre horarios, responsables, categorías, unidades y contenido.</p>
+      <p>El cambio del stock real todavía no fue aplicado. Antes de tocar producción se creará un entorno TEST con copias separadas, se probarán descuentos, devoluciones, acciones simultáneas y la recuperación segura ante errores. Con esos resultados se decidirá si corresponde avanzar.</p>
+      <p><strong>Cierre:</strong> la base administrativa de Fase 3A ya es revisable. El siguiente paso combina dos trabajos coordinados: validación operativa del Almacén y pruebas técnicas seguras fuera de producción.</p>
+    </section>
+
+    <footer class="doc-footer">
+      <p><strong>Corte técnico:</strong> 1adcbb6 docs: actualizar estado y checklist fase 3a · <strong>Rama:</strong> feature/fase-3a-operativa</p>
+      <p><strong>Fuente:</strong> 2026-08-12_avance-almacen_estado-proyecto_v0.3.md · <strong>Referencia visual:</strong> v0.2.2 · PDF aún no generado</p>
+    </footer>
+  </main>
+</body>
+</html>
