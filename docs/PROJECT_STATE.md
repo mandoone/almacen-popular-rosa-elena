@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-07-11.
+> tarea que cambie el estado. Última actualización: 2026-08-12.
 
 ---
 
@@ -11,10 +11,13 @@ Web del **Almacén Popular Rosa Elena Morales** — proyecto comunitario sin fin
 lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran los
 sábados de apertura.
 
-- **Estado funcional:** FASE 2 de seguridad administrativa cerrada y validada.
-- **Próxima prioridad:** diagnóstico operativo de pedidos, pagos y stock (FASE 3A
-  en los informes v0.2).
-- **Rama documental actual:** `docs/piloto-informes-v02`.
+- **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
+  modo demo aislado y QA visual local aprobado.
+- **Producción:** los avances de Fase 3A no modificaron Google Sheets ni Apps
+  Script productivo; el backend real conserva el modelo anterior.
+- **Próxima prioridad:** crear un entorno TEST separado y validar allí el backend
+  atómico antes de planificar migración o producción.
+- **Rama técnica actual:** `feature/fase-3a-operativa`.
 
 ### Sistema documental
 
@@ -72,14 +75,23 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ **Panel `/admin` protegido** con login real, cookie `httpOnly`, middleware y
   rutas administrativas con autenticación de servidor.
 - ✅ **Flujo end-to-end** tienda → pedido → base operativa → admin → stock probado.
+- ✅ **Proxy admin Fase 3A** rechaza transiciones peligrosas antes de reenviar al
+  backend.
+- ✅ **UI admin Fase 3A** muestra todas las transiciones válidas y oculta las
+  inválidas o terminales.
+- ✅ **Modo demo local** validado visualmente sin llamadas a
+  `/api/admin/pedidos`, Google Sheets ni Apps Script.
 
 ---
 
 ## Pendientes principales
 
-- Revisar el flujo reversible de estados de pedido.
-- Separar estado de pago y método de pago si corresponde.
-- Revalidar stock al cancelar, corregir o reabrir pedidos.
+- Crear copias identificadas de Google Sheet y Apps Script para el entorno TEST.
+- Implementar y probar en TEST la creación en `recibido` sin descontar stock.
+- Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
+  reconciliación de fallos parciales.
+- Probar stock, concurrencia y rollback antes de definir cualquier migración.
+- Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
 
@@ -87,13 +99,13 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Diagnóstico operativo de pedidos, pagos y stock**:
+**Entorno TEST y backend atómico de Fase 3A**:
 
-1. Mapear el flujo actual desde el panel hasta Apps Script y Google Sheets.
-2. Confirmar transiciones válidas de `estado_pedido`.
-3. Determinar el origen y significado de valores combinados como `pagado_efectivo`.
-4. Probar cancelación, corrección, reapertura y movimientos de stock.
-5. Definir el modelo mínimo antes de implementar nuevas funciones.
+1. Aprobar el checklist y las decisiones técnicas pendientes.
+2. Preparar copias separadas de Sheet y Apps Script con conexión por ID explícito.
+3. Implementar el backend únicamente en TEST.
+4. Ejecutar pruebas de stock, concurrencia, idempotencia y rollback.
+5. Emitir criterio Go/No-Go antes de preparar una intervención productiva.
 
 ---
 

@@ -14,11 +14,11 @@ descuenta el stock no admite medias tintas.
 
 ```
 ETAPA 0  Modelo puro y tests            ✅ HECHO   riesgo nulo
-ETAPA 1  Mejoras sin tocar el backend   ⬜         riesgo bajo
+ETAPA 1  Mejoras sin tocar el backend   🔄 PARCIAL riesgo bajo
 ETAPA 2  Columnas nuevas en Sheets      ⬜         riesgo bajo (aditivo)
 ETAPA 3  Migración de datos             ⬜         riesgo ALTO
 ETAPA 4  Apps Script nuevo              ⬜         riesgo ALTO
-ETAPA 5  Panel admin conectado          ⬜         riesgo medio
+ETAPA 5  Panel admin Fase 3A             🔄 PARCIAL riesgo medio
 ETAPA 6  Aperturas y horarios           ⬜         bloqueado por P1/P2
 ```
 
@@ -36,9 +36,10 @@ ETAPA 6  Aperturas y horarios           ⬜         bloqueado por P1/P2
 | Motivos de cancelación | `src/lib/fase3a/cancelacion.ts` |
 | Producto, granel, imágenes | `src/lib/fase3a/productos.ts` |
 | Alertas del panel | `src/lib/fase3a/alertas.ts` |
-| 29 pruebas | `tests/*.test.mjs` |
+| 46 pruebas | `tests/*.test.mjs` |
 
-Verificado con `npm run lint`, `npm run build` y `npm test`.
+Última validación registrada: **46/46 tests**, lint sin advertencias y build
+correcto, usando `npm.cmd` en Windows.
 
 ---
 
@@ -68,7 +69,7 @@ búsqueda por nombre, teléfono y número de pedido.
 ⚠️ Los filtros por método y responsable **solo funcionan después de la ETAPA 3**;
 hasta entonces esas columnas están vacías.
 
-### 1.5 Validar transiciones en el proxy admin
+### 1.5 Validar transiciones en el proxy admin ✅ HECHO
 `src/app/api/admin/pedidos/[id]/route.ts` reenvía cualquier estado sin validar
 (hallazgos 3 y 4). Aplicar `evaluarTransicion()` **en el proxy** cierra el agujero
 por el lado de Next.js sin tocar Apps Script.
@@ -76,6 +77,10 @@ por el lado de Next.js sin tocar Apps Script.
 > Mitigación parcial, no solución: Apps Script sigue expuesto si alguien tuviera el
 > token. Pero elimina el camino realmente alcanzable (consola del navegador con
 > sesión admin) y es reversible en un commit.
+
+La validación quedó implementada con reglas puras y respuestas claras, incluido
+`409` para conflictos de transición. El backend real sigue siendo la autoridad
+pendiente y conserva la ventana leer-luego-escribir.
 
 ---
 
@@ -136,17 +141,23 @@ hallazgos 3, 4 y 5.
 
 ---
 
-## ETAPA 5 — Panel admin conectado ⬜
+## ETAPA 5 — Panel admin Fase 3A 🔄 PARCIAL
 
-Requiere ETAPA 4.
+Las funciones pendientes conectadas al backend real requieren ETAPA 4. Las
+acciones de estado, el modo demo y su QA local no dependieron de esa migración.
 
-- Desplegable de pago separado en estado + método (§4.1);
-- selector de responsable con la lista autorizada y la excepción “Otro” (§4.7);
-- diálogo de cancelación con motivo obligatorio (§3.8);
-- edición de cantidades en pedidos `recibido` (§3.6);
-- botones derivados de `transicionesPosibles()`, en vez de condiciones a mano;
-- panel de alertas con `alertasDePedido()` (§7.3);
-- filtro “Recibido” (se dejó fuera a propósito hasta que el backend lo emita).
+- ⬜ Desplegable de pago separado en estado + método (§4.1).
+- ⬜ Selector de responsable con la lista autorizada y la excepción “Otro” (§4.7).
+- ⬜ Diálogo de cancelación con motivo obligatorio (§3.8).
+- ⬜ Edición de cantidades en pedidos `recibido` (§3.6).
+- ✅ Botones derivados de `transicionesPosibles()`, sin ofrecer transiciones
+  inválidas o salidas desde estados terminales.
+- ✅ Cancelar usa POST; las demás transiciones usan PATCH.
+- ✅ Modo demo local aislado con seis estados representativos.
+- ✅ QA visual local aprobado sin solicitudes a `/api/admin/pedidos`.
+- ✅ Plan y decisiones del backend atómico documentados.
+- ⬜ Panel de alertas con `alertasDePedido()` (§7.3).
+- ⬜ Filtro “Recibido”, pendiente hasta que el backend real emita ese estado.
 
 ---
 
@@ -171,13 +182,13 @@ sistema avanzado de imágenes · gestión de proveedores.
 ```
 ETAPA 0 ✅
    │
-   ├──▶ ETAPA 1 (independiente, se puede hacer ya)
+   ├──▶ ETAPA 1 (proxy y UI admin hechos; catálogo y filtros pendientes)
    │
    └──▶ ETAPA 2 ──▶ ETAPA 3 ──▶ ETAPA 4 ──▶ ETAPA 5
 
 ETAPA 6 ◀── respuestas P1 y P2
 ```
 
-**La ETAPA 1 no depende de nada** y entrega valor visible (agotados, granel
-correcto, filtros, y el cierre del agujero de transiciones). Es el mejor punto de
-partida para la próxima sesión.
+**Próximo bloque recomendado:** crear el entorno TEST y validar allí el backend
+atómico, stock, concurrencia y rollback. ETAPAS 2–4 y cualquier cambio productivo
+continúan pendientes.

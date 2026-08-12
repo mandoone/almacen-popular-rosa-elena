@@ -118,6 +118,23 @@ ni secretos, revisados y commiteados en la rama de fase.
 
 ---
 
+## FASE 3A — Operación de pedidos y panel admin
+
+- ✅ Modelo puro de estados, transiciones, pagos, responsables y stock.
+- ✅ Validaciones de transiciones en el proxy admin.
+- ✅ Acciones visibles del panel alineadas con `transicionesPosibles()`.
+- ✅ Modo demo local aislado y QA visual aprobado sin llamadas al backend real.
+- ✅ Plan y decisiones técnicas del backend atómico documentados.
+- ⬜ Crear entorno TEST con copias separadas de Sheet y Apps Script.
+- ⬜ Implementar y validar el backend atómico exclusivamente en TEST.
+- ⬜ Migración y cambios productivos pendientes; producción no fue tocada por
+  estos avances de Fase 3A.
+
+**Siguiente bloque:** entorno TEST, pruebas de stock/concurrencia y backend
+atómico antes de cualquier cambio productivo.
+
+---
+
 ## FASE 2 — Panel vendedor
 
 - ⬜ Rol vendedor separado de administrador.
