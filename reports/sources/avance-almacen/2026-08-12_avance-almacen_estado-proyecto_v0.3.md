@@ -38,10 +38,11 @@ REFERENCIA_VISUAL_FUTURA: "2026-07-12_avance-almacen_estado-proyecto_v0.2.2.pdf"
 
 ## 1. Resumen ejecutivo
 
-Desde el informe anterior se avanzó en la seguridad y claridad del panel
-administrativo. El sistema ahora tiene un flujo de estados definido, muestra las
-acciones que corresponden a cada estado e impide ofrecer cambios que podrían ser
-incorrectos o peligrosos.
+Desde el informe anterior se avanzó en la claridad del panel administrativo y en
+las validaciones que evitan cambios de estado incorrectos. La nueva versión de la
+web presenta un flujo base propuesto y preparado para validación, muestra las
+acciones que corresponden a cada estado e impide ofrecer cambios que ese flujo no
+permite.
 
 También se creó un modo de demostración local para revisar el panel sin conectarlo
 a pedidos reales. Esta demostración fue revisada visualmente y aprobada. Permitió
@@ -95,18 +96,25 @@ el panel.
 
 ### 2.3 Validaciones para evitar errores
 
-El sistema revisa el estado actual antes de ofrecer o reenviar una acción. Esto
-reduce el riesgo de:
+La nueva versión de la web revisa el estado conocido antes de ofrecer o reenviar
+una acción desde el panel. Esto reduce el riesgo de:
 
 - cancelar dos veces un pedido;
 - cambiar un pedido ya entregado;
-- ofrecer una transición no acordada;
+- ofrecer una transición no permitida por el flujo base;
 - operar automáticamente un estado que el sistema no reconoce.
+
+Esta es una protección preventiva del panel y de su proxy administrativo, la capa
+intermedia de la web. La validación definitiva dentro del backend real de Apps
+Script y Sheets todavía no fue implementada y se probará primero en el entorno
+TEST.
 
 ### 2.4 Demostración local segura
 
-Se preparó un modo demo con pedidos simulados. El demo funciona solo para revisión
-local y vuelve a su estado inicial al recargar la página.
+Se preparó un modo demo con pedidos simulados. No es una URL pública productiva:
+Omar puede mostrar esta versión en una revisión local guiada. El demo no toca
+pedidos reales ni datos productivos y vuelve a su estado inicial al recargar la
+página.
 
 ### 2.5 QA visual aprobado
 
@@ -120,17 +128,19 @@ La revisión local confirmó que:
 
 ### 2.6 Preparación del siguiente bloque
 
-Se documentó el diseño del backend futuro y se creó un checklist interno para
-preparar un entorno TEST separado. Este trabajo permite avanzar con orden sin
-improvisar cambios en producción.
+Se documentó el futuro manejo seguro y coordinado de pedidos y stock —llamado
+internamente backend atómico— y se creó un checklist para preparar un entorno TEST
+separado. Este trabajo permite avanzar con orden sin improvisar cambios en
+producción.
 
 ---
 
 ## 3. Qué se puede revisar ya
 
-La versión actual puede revisarse localmente mediante el modo demo del panel
-administrativo. Esta revisión sirve para evaluar la claridad de los nombres, los
-botones y el orden del trabajo, no para operar pedidos reales.
+Omar puede mostrar la versión actual mediante una revisión local guiada del modo
+demo del panel administrativo. Esta revisión sirve para evaluar la claridad de los
+nombres, los botones y el orden del trabajo. No es una URL pública productiva, no
+permite operar pedidos reales y no toca datos productivos.
 
 ### 3.1 Estados visibles en la demostración
 
@@ -174,19 +184,22 @@ stock. Esa prueba corresponde al siguiente bloque técnico, sobre copias TEST.
 - Checklist interno del entorno TEST preparado.
 - Rama técnica preparada para respaldo y revisión mediante Git.
 
-### 4.2 Pendiente del Almacén
+### 4.2 Decisiones para personalizar con el Almacén
 
-Falta que Nadia y Carolina respondan algunas definiciones prácticas y validen las
-propuestas operativas. Estas respuestas permitirán personalizar el sistema; no se
-presentan como errores ni como retrasos del Almacén.
+Quedan algunas definiciones prácticas para responder junto con Nadia y Carolina,
+además de propuestas operativas que necesitan su validación. Estas respuestas
+permitirán personalizar el sistema; no se presentan como errores ni como retrasos
+del Almacén.
 
 ### 4.3 Pendiente técnico interno
 
 - Crear copias TEST de Google Sheets y Apps Script.
 - Conectar ambas copias sin usar recursos productivos.
 - Implementar en TEST el nuevo momento de descuento del stock.
-- Probar pedidos simultáneos, errores y recuperación.
-- Ensayar un rollback antes de considerar producción.
+- Probar concurrencia, es decir, dos acciones realizadas al mismo tiempo, además
+  de errores y recuperación.
+- Ensayar cómo volver de forma segura al estado anterior —rollback— antes de
+  considerar producción.
 
 ### 4.4 Próxima prioridad
 
@@ -201,14 +214,14 @@ problemas de conexión.
 ### 5.1 Avances realizados
 
 - [x] **[Realizado]** Proteger el panel administrativo.
-- [x] **[Realizado]** Definir el flujo de estados de los pedidos.
+- [x] **[Realizado]** Preparar el flujo base de estados para validación.
 - [x] **[Realizado]** Validar transiciones peligrosas antes de reenviarlas.
 - [x] **[Realizado]** Alinear los botones del panel administrativo.
 - [x] **[Realizado]** Agregar las acciones válidas que faltaban.
 - [x] **[Realizado]** Crear un modo demo local y aislado.
 - [x] **[Realizado]** Aprobar el QA visual local del modo demo.
 - [x] **[Realizado]** Confirmar que el demo no consulta `/api/admin/pedidos`.
-- [x] **[Realizado]** Documentar el diseño del backend atómico.
+- [x] **[Realizado]** Documentar el manejo seguro y coordinado de pedidos y stock.
 - [x] **[Realizado]** Crear el checklist interno del entorno TEST.
 - [x] **[Realizado]** Dejar la rama preparada para push y revisión.
 
@@ -234,11 +247,9 @@ problemas de conexión.
 
 ### 5.4 Próxima prioridad técnica
 
-- [ ] **[Próxima prioridad]** Preparar una copia de Google Sheet identificada como TEST.
-- [ ] **[Próxima prioridad]** Preparar una copia independiente de Apps Script identificada como TEST.
-- [ ] **[Próxima prioridad]** Conectar las copias y confirmar que no apuntan a producción.
-- [ ] **[Próxima prioridad]** Cargar datos mínimos y ejecutar pruebas de stock.
-- [ ] **[Próxima prioridad]** Emitir un resultado Go/No-Go antes de planificar cambios reales.
+- [ ] **[Próxima prioridad]** Preparar copias TEST separadas.
+- [ ] **[Próxima prioridad]** Probar el stock y dos acciones realizadas al mismo tiempo.
+- [ ] **[Próxima prioridad]** Definir la decisión de avanzar o detener —Go/No-Go— antes de planificar cambios reales.
 
 ### 5.5 Trabajo de uso interno técnico
 
@@ -246,11 +257,11 @@ problemas de conexión.
 - [ ] **[Uso interno técnico]** Crear la copia Apps Script TEST.
 - [ ] **[Uso interno técnico]** Conectar Apps Script a Sheet mediante un ID explícito.
 - [ ] **[Uso interno técnico]** Usar variables TEST únicamente en el entorno local.
-- [ ] **[Uso interno técnico]** Implementar `estado_esperado` e idempotencia en TEST.
+- [ ] **[Uso interno técnico]** Implementar `estado_esperado` e idempotencia —evitar descuentos repetidos— en TEST.
 - [ ] **[Uso interno técnico]** Probar descuentos y devoluciones de stock.
 - [ ] **[Uso interno técnico]** Probar acciones concurrentes.
 - [ ] **[Uso interno técnico]** Ensayar rollback y reconciliación.
-- [ ] **[Uso interno técnico]** Mantener producción intacta hasta contar con un resultado Go.
+- [ ] **[Uso interno técnico]** Mantener producción intacta hasta contar con una decisión de avanzar.
 
 ### 5.6 Pendientes posteriores
 
@@ -273,7 +284,7 @@ problemas de conexión.
 | Revisión demo de Fase 3A | **[Realizado]** localmente |
 | Reglas operativas del Almacén | **[Responde Almacén]** / **[Validar Almacén]** |
 | Entorno TEST y backend de stock | **[Próxima prioridad]** |
-| Migración y cambio productivo de stock | **[Pendiente]** después del Go/No-Go |
+| Migración y cambio productivo de stock | **[Pendiente]** después de decidir si se avanza o se detiene |
 | Productos, panel vendedor, caja y compras | **[Pendiente]** para etapas posteriores |
 
 ---
@@ -292,7 +303,7 @@ problemas de conexión.
 1. **[Próxima prioridad]** Subir la rama para respaldo y revisión, sin desplegarla automáticamente como cambio productivo.
 2. **[Uso interno técnico]** Preparar el entorno TEST separado.
 3. **[Uso interno técnico]** Probar el comportamiento del stock usando solo las copias.
-4. **[Uso interno técnico]** Documentar resultados y emitir criterio Go/No-Go.
+4. **[Uso interno técnico]** Documentar resultados y definir si corresponde avanzar o detenerse.
 5. **[Pendiente]** Generar HTML y PDF de este informe después de validar el Markdown.
 
 ### 7.3 Límites técnicos de esta etapa
@@ -307,8 +318,9 @@ problemas de conexión.
 ## 8. Síntesis final
 
 El proyecto avanzó desde el diagnóstico hacia una base administrativa más clara y
-controlada. El panel ya refleja el flujo de estados acordado, evita ofrecer
-acciones inválidas y cuenta con una demostración local revisada y aprobada.
+controlada. El panel ya refleja un flujo base propuesto y preparado para
+validación, evita ofrecer acciones inválidas y cuenta con una demostración local
+revisada y aprobada.
 
 El Almacén ya puede revisar la lógica general, los nombres y las decisiones de
 operación sin que esa revisión afecte pedidos o stock reales. Lo que falta por
@@ -318,7 +330,8 @@ contenido.
 
 El cambio del stock real todavía no fue aplicado. Antes de tocar producción se
 creará un entorno TEST con copias separadas, se probarán descuentos, devoluciones,
-concurrencia y rollback, y se decidirá con evidencia si corresponde avanzar.
+acciones simultáneas y la recuperación segura ante errores. Con esos resultados se
+decidirá si corresponde avanzar.
 
 > **Cierre:** la base administrativa de Fase 3A ya es revisable. El siguiente paso
 > combina dos trabajos coordinados: validación operativa del Almacén y pruebas
