@@ -3,13 +3,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import {
+  ETIQUETA_ESTADO,
+  esEstadoPedido,
+  transicionesPosibles,
+  type EstadoPedido,
+} from '@/lib/fase3a/estados';
 
 // 'recibido' aún NO lo emite el backend (Apps Script crea los pedidos en
 // 'pendiente'), pero se declara desde ya para que el panel no se rompa el día que
 // la migración de FASE 3A lo empiece a devolver.
 // Ver docs/fase-3a/DIAGNOSTICO_ACTUAL.md (hallazgo 11).
-type Estado = 'recibido' | 'pendiente' | 'listo' | 'entregado' | 'cancelado';
-type Filtro = 'todos' | Estado;
+type Filtro = 'todos' | EstadoPedido;
 
 interface Pedido {
   id_pedido: string;
@@ -17,7 +22,7 @@ interface Pedido {
   nombre_cliente: string;
   telefono: string;
   total: number;
-  estado_pedido: Estado;
+  estado_pedido: string;
   estado_pago: string;
   forma_pago: string;
 }
@@ -49,30 +54,22 @@ function formatFecha(valor: string) {
   });
 }
 
-const BADGE: Record<Estado, string> = {
+const BADGE: Record<EstadoPedido, string> = {
   recibido: 'bg-blue-100 text-blue-700',
   pendiente: 'bg-orange-100 text-orange-700',
   listo: 'bg-yellow-100 text-yellow-700',
   entregado: 'bg-green-100 text-green-700',
   cancelado: 'bg-gray-200 text-gray-600',
 };
-const LABEL: Record<Estado, string> = {
-  recibido: 'Recibido',
-  pendiente: 'Pendiente',
-  listo: 'Listo',
-  entregado: 'Entregado',
-  cancelado: 'Cancelado',
-};
-
 const BADGE_DESCONOCIDO = 'bg-gray-100 text-gray-500';
 
 // El estado llega como texto libre desde la hoja: si algún día trae un valor que
 // el panel no conoce, se muestra tal cual en vez de romper el badge.
 function badgeDe(estado: string) {
-  return BADGE[estado as Estado] ?? BADGE_DESCONOCIDO;
+  return esEstadoPedido(estado) ? BADGE[estado] : BADGE_DESCONOCIDO;
 }
 function labelDe(estado: string) {
-  return LABEL[estado as Estado] ?? estado ?? 'Sin estado';
+  return esEstadoPedido(estado) ? ETIQUETA_ESTADO[estado] : estado || 'Sin estado';
 }
 
 const ESTADO_PAGO_OPCIONES = [
@@ -109,7 +106,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
         nombre_cliente: String(p.nombre_cliente ?? ''),
         telefono: String(p.telefono ?? ''),
         total: num(p.total),
-        estado_pedido: (String(p.estado_pedido ?? 'pendiente') as Estado),
+        estado_pedido: String(p.estado_pedido ?? 'pendiente'),
         estado_pago: String(p.estado_pago ?? ''),
         forma_pago: String(p.forma_pago ?? ''),
       }));
@@ -145,7 +142,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const cambiarEstado = async (pedido: Pedido, estado: Estado) => {
+  const cambiarEstado = async (pedido: Pedido, estado: EstadoPedido) => {
     setAccionId(pedido.id_pedido);
     try {
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
@@ -298,6 +295,9 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                 const abierto = !!abiertos[pedido.id_pedido];
                 const ocupado = accionId === pedido.id_pedido;
                 const cancelado = pedido.estado_pedido === 'cancelado';
+                const transiciones = esEstadoPedido(pedido.estado_pedido)
+                  ? transicionesPosibles(pedido.estado_pedido)
+                  : [];
 
                 return (
                   <div key={pedido.id_pedido} className="bg-white rounded-xl shadow-sm p-6">
@@ -360,7 +360,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                           {abierto ? 'Ocultar detalle' : 'Ver detalle'}
                         </button>
 
-                        {pedido.estado_pedido === 'pendiente' && (
+                        {pedido.estado_pedido === 'pendiente' && transiciones.includes('listo') && (
                           <button
                             onClick={() => cambiarEstado(pedido, 'listo')}
                             disabled={ocupado}
@@ -369,7 +369,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                             Marcar listo
                           </button>
                         )}
-                        {(pedido.estado_pedido === 'pendiente' || pedido.estado_pedido === 'listo') && (
+                        {transiciones.includes('entregado') && (
                           <button
                             onClick={() => cambiarEstado(pedido, 'entregado')}
                             disabled={ocupado}
@@ -378,7 +378,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                             Entregado
                           </button>
                         )}
-                        {!cancelado && (
+                        {transiciones.includes('cancelado') && (
                           <button
                             onClick={() => cancelar(pedido)}
                             disabled={ocupado}
