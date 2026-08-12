@@ -249,6 +249,7 @@
       .note,
       .step,
       table { break-inside: avoid; page-break-inside: avoid; }
+      .section.keep-together { break-inside: avoid; page-break-inside: avoid; }
       .phase-header,
       .phase h3 { break-after: avoid-page; page-break-after: avoid; }
       .phase li { break-inside: avoid; page-break-inside: avoid; }
@@ -301,7 +302,7 @@
       </div>
       <div class="note success"><strong>Protección de esta etapa:</strong> no se modificó Google Sheets real, Apps Script productivo, Vercel ni la web en producción; tampoco se realizaron pruebas de stock sobre pedidos reales.</div>
       <p>El próximo paso técnico será crear copias separadas de Google Sheets y Apps Script para probar el nuevo manejo del stock de manera segura. En paralelo, Nadia y Carolina deben responder o validar algunas reglas operativas para personalizar el sistema según el funcionamiento real del Almacén.</p>
-      <div class="note"><strong>Idea central:</strong> el panel ya tiene una base más clara y revisable. El cambio del stock real se hará después, usando un entorno de prueba separado y con un criterio explícito para decidir si es seguro avanzar.</div>
+      <div class="note"><strong>Idea central:</strong> el panel ya tiene una base más clara y revisable. El cambio del stock real se hará después, usando un entorno de prueba separado y con un criterio explícito para validar si el nuevo manejo de stock está listo para implementarse en producción.</div>
     </section>
 
     <section class="phase">
@@ -338,8 +339,9 @@ Recibido / Pendiente / Listo → Cancelado</div>
 
         <div class="two-col">
           <div>
-            <h3>2.4 Demostración local segura</h3>
-            <p>Se preparó un modo demo con pedidos simulados. No es una URL pública productiva: Omar puede mostrar esta versión en una revisión local guiada. El demo no toca pedidos reales ni datos productivos y vuelve a su estado inicial al recargar la página.</p>
+            <h3>2.4 Revisión de prueba del panel</h3>
+            <p>Se preparó una versión de prueba del panel administrativo con pedidos ficticios. Esta versión no está publicada en la página real ni afecta los pedidos del Almacén.</p>
+            <p>Omar puede mostrarla en una revisión guiada para que Nadia y Carolina vean cómo funcionaría el nuevo flujo de pedidos, estados y acciones. Al recargar la página, los datos de prueba vuelven al estado inicial.</p>
           </div>
           <div>
             <h3>2.5 QA visual aprobado</h3>
@@ -485,7 +487,7 @@ Recibido / Pendiente / Listo → Cancelado</div>
         <ul class="checklist pending-list">
           <li><span class="status priority">Próxima prioridad</span>Preparar copias TEST separadas.</li>
           <li><span class="status priority">Próxima prioridad</span>Probar el stock y dos acciones realizadas al mismo tiempo.</li>
-          <li><span class="status priority">Próxima prioridad</span>Definir la decisión de avanzar o detener —Go/No-Go— antes de planificar cambios reales.</li>
+          <li><span class="status priority">Próxima prioridad</span>Validar si el nuevo manejo de stock está listo para implementarse en producción antes de planificar cambios reales.</li>
         </ul>
 
         <div class="two-col">
@@ -500,7 +502,7 @@ Recibido / Pendiente / Listo → Cancelado</div>
               <li><span class="status internal">Uso interno técnico</span>Probar descuentos y devoluciones de stock.</li>
               <li><span class="status internal">Uso interno técnico</span>Probar acciones concurrentes.</li>
               <li><span class="status internal">Uso interno técnico</span>Ensayar rollback y reconciliación.</li>
-              <li><span class="status internal">Uso interno técnico</span>Mantener producción intacta hasta contar con una decisión de avanzar.</li>
+              <li><span class="status internal">Uso interno técnico</span>Mantener producción intacta hasta validar si el nuevo manejo de stock está listo para implementarse en producción.</li>
             </ul>
           </div>
           <div>
@@ -517,7 +519,7 @@ Recibido / Pendiente / Listo → Cancelado</div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section keep-together">
       <p class="section-label">6 · Continuidad del plan general</p>
       <h2>Avance y próximos bloques</h2>
       <div class="table-scroll">
@@ -531,7 +533,7 @@ Recibido / Pendiente / Listo → Cancelado</div>
             <tr><td>Revisión demo de Fase 3A</td><td><span class="status done">Realizado</span> localmente</td></tr>
             <tr><td>Reglas operativas del Almacén</td><td><span class="status answer">Responde Almacén</span> <span class="status validate">Validar Almacén</span></td></tr>
             <tr><td>Entorno TEST y backend de stock</td><td><span class="status priority">Próxima prioridad</span></td></tr>
-            <tr><td>Migración y cambio productivo de stock</td><td><span class="status pending">Pendiente</span> después de decidir si se avanza o se detiene</td></tr>
+            <tr><td>Migración y cambio productivo de stock</td><td><span class="status pending">Pendiente</span> hasta validar si el nuevo manejo de stock está listo para implementarse en producción</td></tr>
             <tr><td>Productos, panel vendedor, caja y compras</td><td><span class="status pending">Pendiente</span> para etapas posteriores</td></tr>
           </tbody>
         </table>
@@ -551,7 +553,7 @@ Recibido / Pendiente / Listo → Cancelado</div>
           </article>
           <article class="step">
             <strong>Omar / desarrollo</strong>
-            <span>Subir la rama para respaldo y revisión sin desplegar; preparar el entorno TEST; probar stock solo en copias; documentar resultados y decidir si avanzar o detener.</span>
+            <span>Subir la rama para respaldo y revisión sin desplegar; preparar el entorno TEST; probar stock solo en copias; documentar resultados y validar si el nuevo manejo de stock está listo para implementarse en producción.</span>
           </article>
           <article class="step">
             <strong>Límites de esta etapa</strong>
@@ -574,8 +576,8 @@ Recibido / Pendiente / Listo → Cancelado</div>
               <li><span class="status priority">Próxima prioridad</span> Subir la rama para respaldo y revisión, sin desplegarla automáticamente como cambio productivo.</li>
               <li><span class="status internal">Uso interno técnico</span> Preparar el entorno TEST separado.</li>
               <li><span class="status internal">Uso interno técnico</span> Probar el comportamiento del stock usando solo las copias.</li>
-              <li><span class="status internal">Uso interno técnico</span> Documentar resultados y definir si corresponde avanzar o detenerse.</li>
-              <li><span class="status pending">Pendiente</span> Generar el PDF de este informe después de revisar el HTML.</li>
+              <li><span class="status internal">Uso interno técnico</span> Documentar resultados y validar si el nuevo manejo de stock está listo para implementarse en producción.</li>
+              <li><span class="status pending">Pendiente</span> Revisar y aprobar el PDF local antes de preparar una versión final.</li>
             </ol>
           </div>
         </div>
@@ -594,13 +596,13 @@ Recibido / Pendiente / Listo → Cancelado</div>
       <h2>Una base revisable antes de tocar el stock real</h2>
       <p>El proyecto avanzó desde el diagnóstico hacia una base administrativa más clara y controlada. El panel ya refleja un flujo base propuesto y preparado para validación, evita ofrecer acciones inválidas y cuenta con una demostración local revisada y aprobada.</p>
       <p>El Almacén ya puede revisar la lógica general, los nombres y las decisiones de operación sin que esa revisión afecte pedidos o stock reales. Lo que falta por parte de Nadia y Carolina es personalizar el sistema mediante respuestas y validaciones concretas sobre horarios, responsables, categorías, unidades y contenido.</p>
-      <p>El cambio del stock real todavía no fue aplicado. Antes de tocar producción se creará un entorno TEST con copias separadas, se probarán descuentos, devoluciones, acciones simultáneas y la recuperación segura ante errores. Con esos resultados se decidirá si corresponde avanzar.</p>
+      <p>El cambio del stock real todavía no fue aplicado. Antes de tocar producción se creará un entorno TEST con copias separadas, se probarán descuentos, devoluciones, acciones simultáneas y la recuperación segura ante errores. Con esos resultados se validará si el nuevo manejo de stock está listo para implementarse en producción.</p>
       <p><strong>Cierre:</strong> la base administrativa de Fase 3A ya es revisable. El siguiente paso combina dos trabajos coordinados: validación operativa del Almacén y pruebas técnicas seguras fuera de producción.</p>
     </section>
 
     <footer class="doc-footer">
       <p><strong>Corte técnico:</strong> 1adcbb6 docs: actualizar estado y checklist fase 3a · <strong>Rama:</strong> feature/fase-3a-operativa</p>
-      <p><strong>Fuente:</strong> 2026-08-12_avance-almacen_estado-proyecto_v0.3.md · <strong>Referencia visual:</strong> v0.2.2 · PDF aún no generado</p>
+      <p><strong>Fuente:</strong> 2026-08-12_avance-almacen_estado-proyecto_v0.3.md · <strong>Referencia visual:</strong> v0.2.2 · PDF local generado para revisión</p>
     </footer>
   </main>
 </body>

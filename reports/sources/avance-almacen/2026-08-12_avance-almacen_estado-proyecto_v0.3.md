@@ -64,7 +64,8 @@ sistema según el funcionamiento real del Almacén.
 
 > **Idea central:** el panel ya tiene una base más clara y revisable. El cambio del
 > stock real se hará después, usando un entorno de prueba separado y con un
-> criterio explícito para decidir si es seguro avanzar.
+> criterio explícito para validar si el nuevo manejo de stock está listo para
+> implementarse en producción.
 
 ---
 
@@ -109,12 +110,15 @@ intermedia de la web. La validación definitiva dentro del backend real de Apps
 Script y Sheets todavía no fue implementada y se probará primero en el entorno
 TEST.
 
-### 2.4 Demostración local segura
+### 2.4 Revisión de prueba del panel
 
-Se preparó un modo demo con pedidos simulados. No es una URL pública productiva:
-Omar puede mostrar esta versión en una revisión local guiada. El demo no toca
-pedidos reales ni datos productivos y vuelve a su estado inicial al recargar la
-página.
+Se preparó una versión de prueba del panel administrativo con pedidos ficticios.
+Esta versión no está publicada en la página real ni afecta los pedidos del
+Almacén.
+
+Omar puede mostrarla en una revisión guiada para que Nadia y Carolina vean cómo
+funcionaría el nuevo flujo de pedidos, estados y acciones. Al recargar la página,
+los datos de prueba vuelven al estado inicial.
 
 ### 2.5 QA visual aprobado
 
@@ -249,7 +253,7 @@ problemas de conexión.
 
 - [ ] **[Próxima prioridad]** Preparar copias TEST separadas.
 - [ ] **[Próxima prioridad]** Probar el stock y dos acciones realizadas al mismo tiempo.
-- [ ] **[Próxima prioridad]** Definir la decisión de avanzar o detener —Go/No-Go— antes de planificar cambios reales.
+- [ ] **[Próxima prioridad]** Validar si el nuevo manejo de stock está listo para implementarse en producción antes de planificar cambios reales.
 
 ### 5.5 Trabajo de uso interno técnico
 
@@ -261,7 +265,7 @@ problemas de conexión.
 - [ ] **[Uso interno técnico]** Probar descuentos y devoluciones de stock.
 - [ ] **[Uso interno técnico]** Probar acciones concurrentes.
 - [ ] **[Uso interno técnico]** Ensayar rollback y reconciliación.
-- [ ] **[Uso interno técnico]** Mantener producción intacta hasta contar con una decisión de avanzar.
+- [ ] **[Uso interno técnico]** Mantener producción intacta hasta validar si el nuevo manejo de stock está listo para implementarse en producción.
 
 ### 5.6 Pendientes posteriores
 
@@ -284,7 +288,7 @@ problemas de conexión.
 | Revisión demo de Fase 3A | **[Realizado]** localmente |
 | Reglas operativas del Almacén | **[Responde Almacén]** / **[Validar Almacén]** |
 | Entorno TEST y backend de stock | **[Próxima prioridad]** |
-| Migración y cambio productivo de stock | **[Pendiente]** después de decidir si se avanza o se detiene |
+| Migración y cambio productivo de stock | **[Pendiente]** hasta validar si el nuevo manejo de stock está listo para implementarse en producción |
 | Productos, panel vendedor, caja y compras | **[Pendiente]** para etapas posteriores |
 
 ---
@@ -303,8 +307,8 @@ problemas de conexión.
 1. **[Próxima prioridad]** Subir la rama para respaldo y revisión, sin desplegarla automáticamente como cambio productivo.
 2. **[Uso interno técnico]** Preparar el entorno TEST separado.
 3. **[Uso interno técnico]** Probar el comportamiento del stock usando solo las copias.
-4. **[Uso interno técnico]** Documentar resultados y definir si corresponde avanzar o detenerse.
-5. **[Pendiente]** Generar HTML y PDF de este informe después de validar el Markdown.
+4. **[Uso interno técnico]** Documentar resultados y validar si el nuevo manejo de stock está listo para implementarse en producción.
+5. **[Pendiente]** Revisar y aprobar el PDF local antes de preparar una versión final.
 
 ### 7.3 Límites técnicos de esta etapa
 
@@ -331,7 +335,7 @@ contenido.
 El cambio del stock real todavía no fue aplicado. Antes de tocar producción se
 creará un entorno TEST con copias separadas, se probarán descuentos, devoluciones,
 acciones simultáneas y la recuperación segura ante errores. Con esos resultados se
-decidirá si corresponde avanzar.
+validará si el nuevo manejo de stock está listo para implementarse en producción.
 
 > **Cierre:** la base administrativa de Fase 3A ya es revisable. El siguiente paso
 > combina dos trabajos coordinados: validación operativa del Almacén y pruebas
@@ -345,4 +349,4 @@ decidirá si corresponde avanzar.
 
 **Referencia visual para una salida posterior:** `2026-07-12_avance-almacen_estado-proyecto_v0.2.2.pdf`
 
-**Nota:** este archivo es la fuente Markdown. El HTML y el PDF se generarán solo después de revisar y aprobar su contenido.
+**Nota:** este archivo es la fuente Markdown. El HTML y el PDF local se generaron para revisión; no fueron publicados ni subidos a Drive.
