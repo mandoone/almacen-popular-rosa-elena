@@ -213,84 +213,349 @@ problemas de conexión.
 
 ---
 
-## 5. Checklist actualizado
+## 5. Checklist completo del proceso por fases
 
-### 5.1 Avances realizados
+Este checklist mantiene la continuidad del informe v0.2.2. Presenta el proceso
+completo, desde la organización inicial hasta la primera versión operativa, y
+actualiza la Fase 3 con los avances reales de Fase 3A. Cada tarea conserva su
+estado principal y, cuando corresponde, indica si requiere respuesta o validación
+del Almacén o si es trabajo técnico interno.
 
-- [x] **[Realizado]** Proteger el panel administrativo.
-- [x] **[Realizado]** Preparar el flujo base de estados para validación.
-- [x] **[Realizado]** Validar transiciones peligrosas antes de reenviarlas.
-- [x] **[Realizado]** Alinear los botones del panel administrativo.
-- [x] **[Realizado]** Agregar las acciones válidas que faltaban.
-- [x] **[Realizado]** Crear un modo demo local y aislado.
-- [x] **[Realizado]** Aprobar el QA visual local del modo demo.
-- [x] **[Realizado]** Confirmar que el demo no consulta `/api/admin/pedidos`.
-- [x] **[Realizado]** Documentar el manejo seguro y coordinado de pedidos y stock.
-- [x] **[Realizado]** Crear el checklist interno del entorno TEST.
-- [x] **[Realizado]** Dejar la rama preparada para push y revisión.
+### Fase 0 — Orden inicial del proyecto — **[Realizado]**
 
-### 5.2 Propuestas que debe validar el Almacén
+- [x] **[Realizado]** Revisar la página existente.
+- [x] **[Realizado]** Ordenar el trabajo por etapas.
+- [x] **[Realizado]** Definir un plan general de avance.
+- [x] **[Realizado]** Separar lo técnico de lo operativo y lo público.
+- [x] **[Realizado]** Empezar a organizar la información disponible.
+- [x] **[Realizado]** Revisar informe anterior de estado.
+- [x] **[Realizado]** Revisar Drive del almacén de forma preliminar.
+- [x] **[Realizado]** Identificar documentos útiles para el sistema.
 
-- [ ] **[Validar Almacén]** Confirmar el flujo `Recibido → Pendiente/Listo → Entregado`.
-- [ ] **[Validar Almacén]** Confirmar que no se entregue directamente desde `Pendiente`.
-- [ ] **[Validar Almacén]** Confirmar que `Entregado` y `Cancelado` sean estados finales.
-- [ ] **[Validar Almacén]** Confirmar que un pedido cancelado deba reemplazarse por uno nuevo si la persona vuelve a pedirlo.
-- [ ] **[Validar Almacén]** Confirmar que el stock se descuente al aceptar el pedido, no al recibirlo por la web.
-- [ ] **[Validar Almacén]** Confirmar las categorías iniciales propuestas: Granel, Alimentos, Limpieza, Higiene y Otros.
-- [ ] **[Validar Almacén]** Confirmar las unidades de venta propuestas: unidad, kilo, gramos, litro, mililitro y pack.
-- [ ] **[Validar Almacén]** Validar los textos públicos actuales como base preliminar.
+### Fase 1 — Base operativa y pedidos reales — **[Realizado]**
 
-### 5.3 Decisiones que debe responder el Almacén
 
-- [ ] **[Responde Almacén]** Definir el horario de apertura y retiro.
-- [ ] **[Responde Almacén]** Definir cuándo se cierran los pedidos online antes de cada apertura.
-- [ ] **[Responde Almacén]** Definir quiénes pueden confirmar pedidos.
-- [ ] **[Responde Almacén]** Definir quiénes pueden cancelar pedidos.
-- [ ] **[Responde Almacén]** Informar qué productos serán solo para venta presencial.
-- [ ] **[Responde Almacén]** Indicar cambios o aportes para los textos, historia, comunidad y participación.
+El modelo de stock vigente corresponde todavía a la versión anterior y será revisado en TEST.
+Los pedidos dejaron de depender del navegador de cada persona. La tienda, la base operativa y el panel admin trabajan sobre información compartida.
 
-### 5.4 Próxima prioridad técnica
+#### 1.1 Base operativa
 
-- [ ] **[Próxima prioridad]** Preparar copias TEST separadas.
-- [ ] **[Próxima prioridad]** Probar el stock y dos acciones realizadas al mismo tiempo.
-- [ ] **[Próxima prioridad]** Validar si el nuevo manejo de stock está listo para implementarse en producción antes de planificar cambios reales.
+- [x] **[Realizado]** Crear una base operativa para la web.
+- [x] **[Realizado]** Crear hojas principales para productos, pedidos, detalle de pedidos, clientes, ventas, compras, movimientos de stock y configuración.
+- [x] **[Realizado]** Cargar configuración temporal.
+- [x] **[Realizado]** Cargar productos iniciales.
 
-### 5.5 Trabajo de uso interno técnico
+#### 1.2 Productos iniciales
 
-- [ ] **[Uso interno técnico]** Crear la copia Sheet TEST.
-- [ ] **[Uso interno técnico]** Crear la copia Apps Script TEST.
-- [ ] **[Uso interno técnico]** Conectar Apps Script a Sheet mediante un ID explícito.
-- [ ] **[Uso interno técnico]** Usar variables TEST únicamente en el entorno local.
-- [ ] **[Uso interno técnico]** Implementar `estado_esperado` e idempotencia —evitar descuentos repetidos— en TEST.
-- [ ] **[Uso interno técnico]** Probar descuentos y devoluciones de stock.
-- [ ] **[Uso interno técnico]** Probar acciones concurrentes.
-- [ ] **[Uso interno técnico]** Ensayar rollback y reconciliación.
-- [ ] **[Uso interno técnico]** Mantener producción intacta hasta validar si el nuevo manejo de stock está listo para implementarse en producción.
+- [x] **[Realizado]** Cargar 53 productos reales.
+- [x] **[Realizado]** Crear códigos internos para los productos.
+- [x] **[Realizado]** Usar códigos tipo PROD-001 , PROD-002 , etc.
+- [x] **[Realizado]** Cargar precios iniciales.
+- [x] **[Realizado]** Usar stock temporal para pruebas.
 
-### 5.6 Pendientes posteriores
+#### 1.3 Pedidos reales
 
-- [ ] **[Pendiente]** Separar completamente estado de pago y método de pago.
-- [ ] **[Pendiente]** Agregar motivo y responsable en las cancelaciones reales.
-- [ ] **[Pendiente]** Permitir edición controlada de pedidos recibidos.
-- [ ] **[Pendiente]** Agregar filtros operativos pendientes al panel.
-- [ ] **[Pendiente]** Revisar productos, precios, categorías, unidades e imágenes después de estabilizar pedidos y stock.
+- [x] **[Realizado]** Crear backend con Apps Script.
+- [x] **[Realizado]** Permitir crear pedidos reales.
+- [x] **[Realizado]** Guardar pedidos en Google Sheets.
+- [x] **[Realizado]** Guardar detalle de productos pedidos.
+- [x] **[Realizado]** Descontar stock al crear pedido.
+- [x] **[Realizado]** Registrar movimientos de stock.
+- [x] **[Realizado]** Permitir cancelar pedidos.
+- [x] **[Realizado]** Devolver stock al cancelar.
+- [x] **[Realizado]** Permitir cambiar estado del pedido.
+- [x] **[Realizado]** Permitir cambiar estado de pago.
 
----
+#### 1.4 Conexión con la web
 
-## 6. Continuidad del plan general
+- [x] **[Realizado]** Conectar la tienda con la base operativa.
+- [x] **[Realizado]** Conectar el catálogo a productos reales.
+- [x] **[Realizado]** Conectar el panel admin a pedidos reales.
+- [x] **[Realizado]** Dejar de depender de localStorage como base real de pedidos.
+- [x] **[Realizado]** Probar el flujo completo: tienda, pedido, base operativa, panel admin y stock.
 
-| Bloque | Estado actualizado |
-|---|---|
-| Base de la página, catálogo y carrito | **[Realizado]** |
-| Pedidos reales y base operativa compartida | **[Realizado]** con modelo de stock anterior |
-| Seguridad del panel administrativo | **[Realizado]** |
-| UI y validaciones administrativas de Fase 3A | **[Realizado]** en la rama técnica |
-| Revisión demo de Fase 3A | **[Realizado]** localmente |
-| Reglas operativas del Almacén | **[Responde Almacén]** / **[Validar Almacén]** |
-| Entorno TEST y backend de stock | **[Próxima prioridad]** |
-| Migración y cambio productivo de stock | **[Pendiente]** hasta validar si el nuevo manejo de stock está listo para implementarse en producción |
-| Productos, panel vendedor, caja y compras | **[Pendiente]** para etapas posteriores |
+### Fase 2 — Seguridad del panel admin — **[Realizado]**
 
+La protección básica anterior fue reemplazada por un acceso administrativo real y probado. Se conserva completo el checklist de la v0.1 y se incorporan las validaciones realizadas después.
+
+- [x] **[Realizado]** Crear acceso seguro para administrador.
+- [x] **[Realizado]** Sacar clave hardcodeada del frontend.
+- [x] **[Realizado]** Crear inicio de sesión real.
+- [x] **[Realizado]** Crear cierre de sesión.
+- [x] **[Realizado]** Usar sesión segura con cookie httpOnly .
+- [x] **[Realizado]** Proteger el panel admin.
+- [x] **[Realizado]** Proteger rutas internas del admin.
+- [x] **[Realizado]** Evitar que cualquier persona con el link pueda ver pedidos.
+- [x] **[Realizado]** Mantener claves y datos sensibles fuera del código público.
+- [x] **[Realizado]** Probar acceso correcto.
+- [x] **[Realizado]** Probar acceso rechazado sin sesión.
+- [x] **[Realizado]** API admin sin sesión responde 401 (agregado v0.2.2) .
+- [x] **[Realizado]** Variables seguras configuradas (agregado v0.2.2) .
+- [x] **[Realizado]** Validación en producción (agregado v0.2.2) .
+- [x] **[Realizado]** Logout probado (agregado v0.2.2) .
+
+> **Seguridad:** el informe no incluye contraseñas. Cualquier clave compartida por
+> WhatsApp debe tratarse posteriormente por un canal seguro y no quedar en
+> documentos públicos.
+
+### Fase 3 — Configuración real del almacén — **[Próxima prioridad]**
+
+La fase está en curso. Ya se recibieron datos oficiales y Fase 3A avanzó en el
+panel administrativo; todavía faltan decisiones operativas del Almacén y pruebas
+técnicas sobre copias TEST.
+
+#### 3.1 Datos oficiales recibidos
+
+- [x] **[Realizado]** WhatsApp oficial para pedidos recibido.
+- [x] **[Realizado]** Contacto general recibido.
+- [x] **[Realizado]** Correo oficial recibido, sin incluir claves en este informe.
+- [x] **[Realizado]** Fechas preliminares de apertura recibidas.
+- [x] **[Realizado]** Listado preliminar de roles de administración, operación y venta recibido.
+- [x] **[Realizado]** Disponibilidad de fotos de productos en Drive informada.
+- [x] **[Realizado]** Documento de preguntas pendientes enviado el 29/7/2026.
+
+#### 3.2 Decisiones para personalizar con el Almacén
+
+- [ ] **[Pendiente]** **[Responde Almacén]** Definir horario de apertura y retiro.
+- [ ] **[Pendiente]** **[Responde Almacén]** Definir cierre de pedidos online.
+- [ ] **[Pendiente]** **[Responde Almacén]** Definir quiénes pueden confirmar pedidos.
+- [ ] **[Pendiente]** **[Responde Almacén]** Definir quiénes pueden cancelar pedidos.
+- [ ] **[Pendiente]** **[Validar Almacén]** Validar el flujo `Recibido → Pendiente/Listo → Entregado` y sus estados finales.
+- [ ] **[Pendiente]** **[Validar Almacén]** Validar categorías iniciales.
+- [ ] **[Pendiente]** **[Validar Almacén]** Validar unidades de venta.
+- [ ] **[Pendiente]** **[Responde Almacén]** Informar productos solo presenciales.
+- [ ] **[Pendiente]** **[Validar Almacén]** Validar textos públicos actuales.
+- [ ] **[Pendiente]** **[Responde Almacén]** Definir cambios en historia, comunidad y participación.
+
+#### 3.3 Avances técnicos de Fase 3A
+
+- [x] **[Realizado]** Implementar reglas visuales del panel admin.
+- [x] **[Realizado]** Validar transiciones peligrosas desde la web y su proxy administrativo.
+- [x] **[Realizado]** Alinear botones del panel con el flujo permitido.
+- [x] **[Realizado]** Agregar acciones válidas faltantes.
+- [x] **[Realizado]** Crear revisión de prueba del panel con pedidos ficticios.
+- [x] **[Realizado]** Aprobar QA visual local.
+- [x] **[Realizado]** Crear checklist interno del entorno TEST.
+- [x] **[Realizado]** Preparar rama para revisión y push.
+
+#### 3.4 Próxima prioridad técnica
+
+- [ ] **[Próxima prioridad]** **[Uso interno técnico]** Preparar copias TEST de Sheet y Apps Script y conectarlas por ID explícito.
+- [ ] **[Próxima prioridad]** **[Uso interno técnico]** Probar stock y dos acciones realizadas al mismo tiempo.
+- [ ] **[Próxima prioridad]** **[Uso interno técnico]** Validar si el nuevo manejo de stock está listo para implementarse en producción.
+
+### Fase 4 — Productos, stock, precios e imágenes — **[Pendiente]**
+
+Esta fase busca ordenar los productos y cómo se venderán.
+
+#### 4.1 Productos y categorías
+
+- [ ] **[Pendiente]** Revisar categorías reales.
+- [ ] **[Pendiente]** Ordenar productos por categoría: granel, alimentos, higiene, limpieza y otros.
+- [ ] **[Pendiente]** Revisar productos a granel.
+- [ ] **[Pendiente]** Permitir cantidades con decimales para productos a granel.
+- [ ] **[Pendiente]** Definir unidad de venta: unidad, kilo, gramos, litro y mililitros.
+- [ ] **[Pendiente]** Revisar stock real por producto.
+- [ ] **[Pendiente]** Definir stock mínimo por producto.
+- [ ] **[Pendiente]** Definir prioridad por producto: alta, media y baja.
+- [ ] **[Pendiente]** Mostrar alerta cuando un producto esté bajo stock.
+
+#### 4.2 Precios
+
+El sistema debe manejar tres valores: precio costo, precio sugerido y precio final de venta.
+
+- [ ] **[Pendiente]** Mantener precio costo por producto.
+- [ ] **[Pendiente]** Calcular precio sugerido.
+- [ ] **[Pendiente]** Mantener precio final de venta.
+- [ ] **[Pendiente]** Mostrar al comprador solo el precio final de venta.
+- [ ] **[Pendiente]** Mostrar al admin el precio costo y precio sugerido.
+- [ ] **[Pendiente]** Usar margen global inicial de 10%.
+- [ ] **[Pendiente]** Permitir cambiar el margen global.
+- [ ] **[Pendiente]** Permitir margen por categoría.
+- [ ] **[Pendiente]** Permitir margen específico por producto.
+- [ ] **[Pendiente]** Aplicar jerarquía de margen: por producto, por categoría y global.
+- [ ] **[Pendiente]** No cambiar automáticamente el precio publicado cuando cambie el costo.
+- [ ] **[Pendiente]** Dejar producto como “requiere revisión de precio” cuando cambie el costo.
+- [ ] **[Pendiente]** Permitir que el admin confirme o ajuste el precio final.
+- [ ] **[Pendiente]** Guardar historial de cambios de costo y precio.
+
+#### 4.3 Imágenes de productos
+
+- [ ] **[Pendiente]** Guardar originales sin editar.
+- [ ] **[Pendiente]** Guardar imágenes limpias aprobadas para web.
+- [ ] **[Pendiente]** Separar imágenes pendientes de revisión.
+- [ ] **[Pendiente]** Separar imágenes descartadas.
+- [ ] **[Pendiente]** Asociar cada imagen al código interno del producto.
+- [ ] **[Pendiente]** Agregar campo de imagen en la base operativa de productos.
+- [ ] **[Pendiente]** Definir si las imágenes finales se cargarán desde Drive, desde el proyecto web o desde otro sistema de almacenamiento.
+
+### Fase 5 — Panel vendedor y comandas — **[Pendiente]**
+
+Esta fase busca digitalizar la venta presencial, manteniendo la lógica de las comandas actuales.
+
+- [ ] **[Pendiente]** Crear panel vendedor.
+- [ ] **[Pendiente]** Registrar venta presencial.
+- [ ] **[Pendiente]** Buscar productos.
+- [ ] **[Pendiente]** Agregar productos a una venta.
+- [ ] **[Pendiente]** Ingresar cantidades.
+- [ ] **[Pendiente]** Permitir cantidades decimales para productos a granel.
+- [ ] **[Pendiente]** Calcular total automáticamente.
+- [ ] **[Pendiente]** Descontar stock al confirmar venta.
+- [ ] **[Pendiente]** Generar número de comanda.
+- [ ] **[Pendiente]** Generar comanda automática.
+- [ ] **[Pendiente]** Mantener formato similar al actual.
+- [ ] **[Pendiente]** Permitir imprimir comanda.
+- [ ] **[Pendiente]** Registrar nombre de vecina/o.
+- [ ] **[Pendiente]** Registrar teléfono si corresponde.
+- [ ] **[Pendiente]** Registrar integrante que atiende.
+- [ ] **[Pendiente]** Registrar modo de pago: efectivo, transferencia o pendiente.
+- [ ] **[Pendiente]** Registrar cuando alguien queda debiendo.
+- [ ] **[Pendiente]** Asociar pendientes al número de comanda.
+
+### Fase 6 — Caja, pendientes y cierre por apertura — **[Pendiente]**
+
+Esta fase busca ordenar ventas, dinero disponible, gastos y pendientes.
+
+#### 6.1 Caja por apertura
+
+- [ ] **[Pendiente]** Registrar fecha de apertura.
+- [ ] **[Pendiente]** Registrar ventas totales.
+- [ ] **[Pendiente]** Separar efectivo.
+- [ ] **[Pendiente]** Separar transferencias.
+- [ ] **[Pendiente]** Separar pendientes.
+- [ ] **[Pendiente]** Separar gastos extra.
+- [ ] **[Pendiente]** Registrar integrante responsable.
+- [ ] **[Pendiente]** Generar cierre por apertura.
+
+#### 6.2 Pendientes
+
+Los pendientes son ventas o comandas donde alguien quedó debiendo. Se tratan como cuentas por cobrar y no entran automáticamente como caja real.
+
+- [ ] **[Pendiente]** Registrar pendiente por cobrar.
+- [ ] **[Pendiente]** Asociar pendiente a número de comanda.
+- [ ] **[Pendiente]** Guardar nombre.
+- [ ] **[Pendiente]** Guardar teléfono si existe.
+- [ ] **[Pendiente]** Guardar monto.
+- [ ] **[Pendiente]** Guardar fecha.
+- [ ] **[Pendiente]** Guardar estado: pendiente o pagado.
+- [ ] **[Pendiente]** Permitir marcar pendiente como pagado.
+- [ ] **[Pendiente]** Registrar fecha de pago.
+- [ ] **[Pendiente]** Registrar modo de pago cuando se regulariza: efectivo o transferencia.
+- [ ] **[Pendiente]** Mostrar total de pendientes por cobrar.
+
+#### 6.3 Gastos extra
+
+- [ ] **[Pendiente]** Registrar gastos extra.
+- [ ] **[Pendiente]** Usar categorías iniciales: bencina, bolsas, propina, transporte, materiales y otros.
+- [ ] **[Pendiente]** Ver historial de gastos.
+- [ ] **[Pendiente]** Considerar estos gastos en la caja.
+
+### Fase 7 — Compras y abastecimiento — **[Pendiente]**
+
+Esta fase toma como referencia el documento de diseño de compra existente y busca automatizar parte del proceso.
+
+#### 7.1 Registro de compras
+
+- [ ] **[Pendiente]** Registrar compras de productos.
+- [ ] **[Pendiente]** Registrar fecha.
+- [ ] **[Pendiente]** Registrar responsable.
+- [ ] **[Pendiente]** Registrar productos comprados.
+- [ ] **[Pendiente]** Registrar cantidad.
+- [ ] **[Pendiente]** Registrar costo unitario.
+- [ ] **[Pendiente]** Registrar costo total.
+- [ ] **[Pendiente]** Actualizar stock.
+- [ ] **[Pendiente]** Registrar movimiento de stock.
+- [ ] **[Pendiente]** Actualizar precio costo.
+- [ ] **[Pendiente]** Guardar historial de precios.
+
+#### 7.2 Caja disponible para compra
+
+El sistema debe considerar saldo en cuenta, efectivo disponible, pendientes por cobrar como referencia, gastos extra y la caja final definida por el equipo.
+
+- [ ] **[Pendiente]** Registrar saldo en cuenta.
+- [ ] **[Pendiente]** Registrar efectivo disponible.
+- [ ] **[Pendiente]** Mostrar pendientes por cobrar como referencia.
+- [ ] **[Pendiente]** Registrar gastos extra estimados.
+- [ ] **[Pendiente]** Calcular caja disponible sugerida.
+- [ ] **[Pendiente]** Permitir editar manualmente la caja final para compra.
+- [ ] **[Pendiente]** Usar caja final confirmada para diseñar compra.
+
+#### 7.3 Diseño automático de compra
+
+- [ ] **[Pendiente]** Revisar stock actual.
+- [ ] **[Pendiente]** Revisar stock mínimo.
+- [ ] **[Pendiente]** Revisar prioridad de productos.
+- [ ] **[Pendiente]** Revisar costo actualizado.
+- [ ] **[Pendiente]** Revisar caja final disponible.
+- [ ] **[Pendiente]** Proponer productos a comprar.
+- [ ] **[Pendiente]** Priorizar productos críticos bajo stock.
+- [ ] **[Pendiente]** Permitir editar la propuesta antes de confirmar.
+- [ ] **[Pendiente]** Confirmar compra.
+- [ ] **[Pendiente]** Actualizar stock.
+- [ ] **[Pendiente]** Actualizar costos.
+- [ ] **[Pendiente]** Generar historial.
+
+### Fase 8 — Historial, reportes y administración avanzada — **[Pendiente]**
+
+- [ ] **[Pendiente]** Ver historial de pedidos online.
+- [ ] **[Pendiente]** Ver historial de ventas presenciales.
+- [ ] **[Pendiente]** Ver historial de compras.
+- [ ] **[Pendiente]** Ver historial de movimientos de stock.
+- [ ] **[Pendiente]** Ver historial de precios.
+- [ ] **[Pendiente]** Ver historial de pendientes.
+- [ ] **[Pendiente]** Ver ventas por apertura.
+- [ ] **[Pendiente]** Ver caja por apertura.
+- [ ] **[Pendiente]** Ver productos más vendidos.
+- [ ] **[Pendiente]** Ver productos bajo stock.
+- [ ] **[Pendiente]** Editar productos desde admin.
+- [ ] **[Pendiente]** Crear productos nuevos.
+- [ ] **[Pendiente]** Activar o desactivar productos.
+- [ ] **[Pendiente]** Editar stock con registro de motivo.
+- [ ] **[Pendiente]** Editar configuración del almacén desde admin.
+- [ ] **[Pendiente]** Mejorar control de roles: admin y vendedor.
+
+### Fase 9 — Contenido público, historia y comunidad — **[Pendiente]**
+
+Esta fase usa el material del Drive que sirve para mostrar la identidad del almacén.
+
+- [ ] **[Pendiente]** Revisar imágenes de Rosa Elena.
+- [ ] **[Pendiente]** Revisar logo.
+- [ ] **[Pendiente]** Revisar afiches.
+- [ ] **[Pendiente]** Revisar boletines.
+- [ ] **[Pendiente]** Revisar infografías.
+- [ ] **[Pendiente]** Revisar fotos y videos.
+- [ ] **[Pendiente]** Revisar calendario mensual.
+- [ ] **[Pendiente]** Revisar libro o material histórico.
+- [ ] **[Pendiente]** Definir si el libro se citará o enlazará desde la web.
+- [ ] **[Pendiente]** Definir qué contenido va en la web pública.
+- [ ] **[Pendiente]** Definir qué contenido queda como archivo interno.
+- [ ] **[Pendiente]** Mejorar la sección de historia.
+- [ ] **[Pendiente]** Explicar cómo funciona el almacén.
+- [ ] **[Pendiente]** Explicar cómo participar.
+- [ ] **[Pendiente]** Explicar cómo aportar.
+- [ ] **[Pendiente]** Mejorar diseño visual.
+- [ ] **[Pendiente]** Revisar versión móvil.
+
+### Fase 10 — Producción y versión operativa final — **[Pendiente]**
+
+Esta es la meta final de la primera versión completa del sistema.
+
+- [ ] **[Pendiente]** Definir hosting final.
+- [ ] **[Pendiente]** Configurar variables de producción.
+- [ ] **[Pendiente]** Configurar claves definitivas de forma segura.
+- [ ] **[Pendiente]** Configurar la credencial técnica definitiva sin exponer su valor.
+- [ ] **[Pendiente]** Probar tienda desde celular.
+- [ ] **[Pendiente]** Probar pedidos desde fuera de red local.
+- [ ] **[Pendiente]** Probar admin desde otro computador.
+- [ ] **[Pendiente]** Probar panel vendedor.
+- [ ] **[Pendiente]** Probar comanda imprimible.
+- [ ] **[Pendiente]** Probar cierre de apertura.
+- [ ] **[Pendiente]** Probar compra y actualización de stock.
+- [ ] **[Pendiente]** Probar pendientes.
+- [ ] **[Pendiente]** Validar flujo completo con el equipo del almacén.
+- [ ] **[Pendiente]** Capacitar uso básico.
+- [ ] **[Pendiente]** Dejar documentación mínima de uso.
+- [ ] **[Pendiente]** Cerrar primera versión operativa.
 ---
 
 ## 7. Próximos pasos por responsable

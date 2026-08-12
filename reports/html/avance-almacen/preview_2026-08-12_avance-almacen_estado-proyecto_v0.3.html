@@ -219,6 +219,17 @@
     .synthesis h2 { color: #fff; }
     .synthesis p { color: #eee6ff; }
     .doc-footer { padding: 16px 4px 0; color: var(--t500); font-size: 7.5px; text-align: center; }
+    .checklist-intro { border-left: 5px solid var(--c700); }
+    .phase-checklist .phase-body > p:first-child { color: var(--t700); }
+    .phase-task-list { display: grid; gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; }
+    .task-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; min-height: 20px; padding: 4px 0 4px 20px; border-bottom: 1px solid #eee8fa; color: var(--t700); font-size: 9.2px; }
+    .task-row:last-child { border-bottom: 0; }
+    .task-row::before { position: absolute; left: 1px; top: 6px; display: grid; place-items: center; width: 12px; height: 12px; border: 1.5px solid var(--c300); border-radius: 3px; color: #fff; font-size: 7px; font-weight: 700; line-height: 1; content: ""; }
+    .task-row.is-done::before { border-color: #2f8b4a; border-radius: 50%; background: #2f8b4a; content: "✓"; }
+    .task-row.is-priority::before { border-color: var(--priority-border); border-radius: 50%; background: var(--priority-bg); box-shadow: inset 0 0 0 3px var(--priority-text); }
+    .task-copy { min-width: 0; overflow-wrap: anywhere; }
+    .task-tags { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+    .task-tags .status { flex: 0 0 auto; }
 
     @media (max-width: 760px) {
       .page { padding: 14px 10px 28px; }
@@ -234,12 +245,15 @@
       .doc-meta-item:nth-child(2n) { border-right: 0; }
       .doc-meta-item:last-child { grid-column: 1 / -1; border-right: 0; border-bottom: 0; }
       .phase-header { align-items: flex-start; flex-direction: column; }
+      .task-row { grid-template-columns: 1fr; }
+      .task-tags { justify-content: flex-start; }
       .table-scroll { overflow-x: auto; }
     }
 
     @media print {
       body { background: #fff; font-size: 7.2pt; }
       .page { width: 100%; padding: 0; }
+      .phase-checklist .phase-header { break-inside: avoid; page-break-inside: avoid; }
       .hero,
       .section,
       .phase,
@@ -253,6 +267,7 @@
       .phase-header,
       .phase h3 { break-after: avoid-page; page-break-after: avoid; }
       .phase li { break-inside: avoid; page-break-inside: avoid; }
+      .task-row { break-inside: avoid; page-break-inside: avoid; }
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
   </style>
@@ -435,108 +450,398 @@ Recibido / Pendiente / Listo → Cancelado</div>
       </div>
     </section>
 
-    <section class="phase">
+    <section class="section checklist-intro">
+      <p class="section-label">5 · Continuidad documental</p>
+      <h2>Checklist completo del proceso por fases</h2>
+        <p>Este checklist mantiene la continuidad del informe v0.2.2. Presenta el proceso completo, desde la organización inicial hasta la primera versión operativa, y actualiza la Fase 3 con los avances reales de Fase 3A. Cada tarea conserva su estado principal y, cuando corresponde, indica si requiere respuesta o validación del Almacén o si es trabajo técnico interno.</p>
+    </section>
+    <section class="phase phase-checklist">
       <header class="phase-header">
-        <h2 class="phase-title">5 · Checklist actualizado</h2>
-        <span class="status done">Seguimiento</span>
+        <h2 class="phase-title">Fase 0 — Orden inicial del proyecto</h2>
+        <span class="status done">Realizado</span>
       </header>
       <div class="phase-body">
-        <h3>5.1 Avances realizados</h3>
-        <ul class="checklist done-list">
-          <li><span class="status done">Realizado</span>Proteger el panel administrativo.</li>
-          <li><span class="status done">Realizado</span>Preparar el flujo base de estados para validación.</li>
-          <li><span class="status done">Realizado</span>Validar transiciones peligrosas antes de reenviarlas.</li>
-          <li><span class="status done">Realizado</span>Alinear los botones del panel administrativo.</li>
-          <li><span class="status done">Realizado</span>Agregar las acciones válidas que faltaban.</li>
-          <li><span class="status done">Realizado</span>Crear un modo demo local y aislado.</li>
-          <li><span class="status done">Realizado</span>Aprobar el QA visual local del modo demo.</li>
-          <li><span class="status done">Realizado</span>Confirmar que el demo no consulta <code>/api/admin/pedidos</code>.</li>
-          <li><span class="status done">Realizado</span>Documentar el manejo seguro y coordinado de pedidos y stock.</li>
-          <li><span class="status done">Realizado</span>Crear el checklist interno del entorno TEST.</li>
-          <li><span class="status done">Realizado</span>Dejar la rama preparada para push y revisión.</li>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Revisar la página existente.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Ordenar el trabajo por etapas.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Definir un plan general de avance.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Separar lo técnico de lo operativo y lo público.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Empezar a organizar la información disponible.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Revisar informe anterior de estado.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Revisar Drive del almacén de forma preliminar.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Identificar documentos útiles para el sistema.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
         </ul>
-
-        <div class="two-col">
-          <div>
-            <h3>5.2 Propuestas que debe validar el Almacén</h3>
-            <ul class="checklist pending-list">
-              <li><span class="status validate">Validar Almacén</span>Confirmar el flujo Recibido → Pendiente/Listo → Entregado.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar que no se entregue directamente desde Pendiente.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar que Entregado y Cancelado sean estados finales.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar que un pedido cancelado deba reemplazarse por uno nuevo si la persona vuelve a pedirlo.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar que el stock se descuente al aceptar el pedido, no al recibirlo por la web.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar las categorías iniciales: Granel, Alimentos, Limpieza, Higiene y Otros.</li>
-              <li><span class="status validate">Validar Almacén</span>Confirmar las unidades de venta: unidad, kilo, gramos, litro, mililitro y pack.</li>
-              <li><span class="status validate">Validar Almacén</span>Validar los textos públicos actuales como base preliminar.</li>
-            </ul>
-          </div>
-          <div>
-            <h3>5.3 Decisiones que debe responder el Almacén</h3>
-            <ul class="checklist pending-list">
-              <li><span class="status answer">Responde Almacén</span>Definir el horario de apertura y retiro.</li>
-              <li><span class="status answer">Responde Almacén</span>Definir cuándo se cierran los pedidos online antes de cada apertura.</li>
-              <li><span class="status answer">Responde Almacén</span>Definir quiénes pueden confirmar pedidos.</li>
-              <li><span class="status answer">Responde Almacén</span>Definir quiénes pueden cancelar pedidos.</li>
-              <li><span class="status answer">Responde Almacén</span>Informar qué productos serán solo para venta presencial.</li>
-              <li><span class="status answer">Responde Almacén</span>Indicar cambios o aportes para los textos, historia, comunidad y participación.</li>
-            </ul>
-          </div>
-        </div>
-
-        <h3>5.4 Próxima prioridad técnica</h3>
-        <ul class="checklist pending-list">
-          <li><span class="status priority">Próxima prioridad</span>Preparar copias TEST separadas.</li>
-          <li><span class="status priority">Próxima prioridad</span>Probar el stock y dos acciones realizadas al mismo tiempo.</li>
-          <li><span class="status priority">Próxima prioridad</span>Validar si el nuevo manejo de stock está listo para implementarse en producción antes de planificar cambios reales.</li>
-        </ul>
-
-        <div class="two-col">
-          <div>
-            <h3>5.5 Trabajo de uso interno técnico</h3>
-            <ul class="checklist pending-list">
-              <li><span class="status internal">Uso interno técnico</span>Crear la copia Sheet TEST.</li>
-              <li><span class="status internal">Uso interno técnico</span>Crear la copia Apps Script TEST.</li>
-              <li><span class="status internal">Uso interno técnico</span>Conectar Apps Script a Sheet mediante un ID explícito.</li>
-              <li><span class="status internal">Uso interno técnico</span>Usar variables TEST únicamente en el entorno local.</li>
-              <li><span class="status internal">Uso interno técnico</span>Implementar estado esperado e idempotencia —evitar descuentos repetidos— en TEST.</li>
-              <li><span class="status internal">Uso interno técnico</span>Probar descuentos y devoluciones de stock.</li>
-              <li><span class="status internal">Uso interno técnico</span>Probar acciones concurrentes.</li>
-              <li><span class="status internal">Uso interno técnico</span>Ensayar rollback y reconciliación.</li>
-              <li><span class="status internal">Uso interno técnico</span>Mantener producción intacta hasta validar si el nuevo manejo de stock está listo para implementarse en producción.</li>
-            </ul>
-          </div>
-          <div>
-            <h3>5.6 Pendientes posteriores</h3>
-            <ul class="checklist pending-list">
-              <li><span class="status pending">Pendiente</span>Separar completamente estado de pago y método de pago.</li>
-              <li><span class="status pending">Pendiente</span>Agregar motivo y responsable en las cancelaciones reales.</li>
-              <li><span class="status pending">Pendiente</span>Permitir edición controlada de pedidos recibidos.</li>
-              <li><span class="status pending">Pendiente</span>Agregar filtros operativos pendientes al panel.</li>
-              <li><span class="status pending">Pendiente</span>Revisar productos, precios, categorías, unidades e imágenes después de estabilizar pedidos y stock.</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </section>
-
-    <section class="section keep-together">
-      <p class="section-label">6 · Continuidad del plan general</p>
-      <h2>Avance y próximos bloques</h2>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Bloque</th><th>Estado actualizado</th></tr></thead>
-          <tbody>
-            <tr><td>Base de la página, catálogo y carrito</td><td><span class="status done">Realizado</span></td></tr>
-            <tr><td>Pedidos reales y base operativa compartida</td><td><span class="status done">Realizado</span> con modelo de stock anterior</td></tr>
-            <tr><td>Seguridad del panel administrativo</td><td><span class="status done">Realizado</span></td></tr>
-            <tr><td>UI y validaciones administrativas de Fase 3A</td><td><span class="status done">Realizado</span> en la rama técnica</td></tr>
-            <tr><td>Revisión demo de Fase 3A</td><td><span class="status done">Realizado</span> localmente</td></tr>
-            <tr><td>Reglas operativas del Almacén</td><td><span class="status answer">Responde Almacén</span> <span class="status validate">Validar Almacén</span></td></tr>
-            <tr><td>Entorno TEST y backend de stock</td><td><span class="status priority">Próxima prioridad</span></td></tr>
-            <tr><td>Migración y cambio productivo de stock</td><td><span class="status pending">Pendiente</span> hasta validar si el nuevo manejo de stock está listo para implementarse en producción</td></tr>
-            <tr><td>Productos, panel vendedor, caja y compras</td><td><span class="status pending">Pendiente</span> para etapas posteriores</td></tr>
-          </tbody>
-        </table>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 1 — Base operativa y pedidos reales</h2>
+        <span class="status done">Realizado</span>
+      </header>
+      <div class="phase-body">
+        <p>El modelo de stock vigente corresponde todavía a la versión anterior y será revisado en TEST. Los pedidos dejaron de depender del navegador de cada persona. La tienda, la base operativa y el panel admin trabajan sobre información compartida.</p>
+        <h3>1.1 Base operativa</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Crear una base operativa para la web.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear hojas principales para productos, pedidos, detalle de pedidos, clientes, ventas, compras, movimientos de stock y configuración.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Cargar configuración temporal.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Cargar productos iniciales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <h3>1.2 Productos iniciales</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Cargar 53 productos reales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear códigos internos para los productos.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Usar códigos tipo PROD-001 , PROD-002 , etc.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Cargar precios iniciales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Usar stock temporal para pruebas.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <h3>1.3 Pedidos reales</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Crear backend con Apps Script.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Permitir crear pedidos reales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Guardar pedidos en Google Sheets.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Guardar detalle de productos pedidos.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Descontar stock al crear pedido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Registrar movimientos de stock.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Permitir cancelar pedidos.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Devolver stock al cancelar.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Permitir cambiar estado del pedido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Permitir cambiar estado de pago.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <h3>1.4 Conexión con la web</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Conectar la tienda con la base operativa.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Conectar el catálogo a productos reales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Conectar el panel admin a pedidos reales.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Dejar de depender de localStorage como base real de pedidos.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Probar el flujo completo: tienda, pedido, base operativa, panel admin y stock.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 2 — Seguridad del panel admin</h2>
+        <span class="status done">Realizado</span>
+      </header>
+      <div class="phase-body">
+        <p>La protección básica anterior fue reemplazada por un acceso administrativo real y probado. Se conserva completo el checklist de la v0.1 y se incorporan las validaciones realizadas después.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Crear acceso seguro para administrador.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Sacar clave hardcodeada del frontend.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear inicio de sesión real.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear cierre de sesión.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Usar sesión segura con cookie httpOnly .</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Proteger el panel admin.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Proteger rutas internas del admin.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Evitar que cualquier persona con el link pueda ver pedidos.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Mantener claves y datos sensibles fuera del código público.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Probar acceso correcto.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Probar acceso rechazado sin sesión.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">API admin sin sesión responde 401 (agregado v0.2.2) .</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Variables seguras configuradas (agregado v0.2.2) .</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Validación en producción (agregado v0.2.2) .</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Logout probado (agregado v0.2.2) .</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <div class="note"><strong>Seguridad:</strong> el informe no incluye contraseñas. Cualquier clave compartida por WhatsApp debe tratarse posteriormente por un canal seguro y no quedar en documentos públicos.</div>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 3 — Configuración real del almacén</h2>
+        <span class="status priority">Próxima prioridad</span>
+      </header>
+      <div class="phase-body">
+        <p>La fase está en curso. Ya se recibieron datos oficiales y Fase 3A avanzó en el panel administrativo; todavía faltan decisiones operativas del Almacén y pruebas técnicas sobre copias TEST.</p>
+        <h3>3.1 Datos oficiales recibidos</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">WhatsApp oficial para pedidos recibido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Contacto general recibido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Correo oficial recibido, sin incluir claves en este informe.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Fechas preliminares de apertura recibidas.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Listado preliminar de roles de administración, operación y venta recibido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Disponibilidad de fotos de productos en Drive informada.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Documento de preguntas pendientes enviado el 29/7/2026.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <h3>3.2 Decisiones para personalizar con el Almacén</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Definir horario de apertura y retiro.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir cierre de pedidos online.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir quiénes pueden confirmar pedidos.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir quiénes pueden cancelar pedidos.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Validar el flujo <code>Recibido → Pendiente/Listo → Entregado</code> y sus estados finales.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status validate">Validar Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Validar categorías iniciales.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status validate">Validar Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Validar unidades de venta.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status validate">Validar Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Informar productos solo presenciales.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Validar textos públicos actuales.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status validate">Validar Almacén</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir cambios en historia, comunidad y participación.</span><span class="task-tags"><span class="status pending">Pendiente</span><span class="status answer">Responde Almacén</span></span></li>
+        </ul>
+        <h3>3.3 Avances técnicos de Fase 3A</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-done"><span class="task-copy">Implementar reglas visuales del panel admin.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Validar transiciones peligrosas desde la web y su proxy administrativo.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Alinear botones del panel con el flujo permitido.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Agregar acciones válidas faltantes.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear revisión de prueba del panel con pedidos ficticios.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Aprobar QA visual local.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Crear checklist interno del entorno TEST.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+          <li class="task-row is-done"><span class="task-copy">Preparar rama para revisión y push.</span><span class="task-tags"><span class="status done">Realizado</span></span></li>
+        </ul>
+        <h3>3.4 Próxima prioridad técnica</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-priority"><span class="task-copy">Preparar copias TEST de Sheet y Apps Script y conectarlas por ID explícito.</span><span class="task-tags"><span class="status priority">Próxima prioridad</span><span class="status internal">Uso interno técnico</span></span></li>
+          <li class="task-row is-priority"><span class="task-copy">Probar stock y dos acciones realizadas al mismo tiempo.</span><span class="task-tags"><span class="status priority">Próxima prioridad</span><span class="status internal">Uso interno técnico</span></span></li>
+          <li class="task-row is-priority"><span class="task-copy">Validar si el nuevo manejo de stock está listo para implementarse en producción.</span><span class="task-tags"><span class="status priority">Próxima prioridad</span><span class="status internal">Uso interno técnico</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 4 — Productos, stock, precios e imágenes</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta fase busca ordenar los productos y cómo se venderán.</p>
+        <h3>4.1 Productos y categorías</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Revisar categorías reales.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ordenar productos por categoría: granel, alimentos, higiene, limpieza y otros.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar productos a granel.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir cantidades con decimales para productos a granel.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir unidad de venta: unidad, kilo, gramos, litro y mililitros.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar stock real por producto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir stock mínimo por producto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir prioridad por producto: alta, media y baja.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mostrar alerta cuando un producto esté bajo stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>4.2 Precios</h3>
+        <p>El sistema debe manejar tres valores: precio costo, precio sugerido y precio final de venta.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Mantener precio costo por producto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Calcular precio sugerido.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mantener precio final de venta.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mostrar al comprador solo el precio final de venta.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mostrar al admin el precio costo y precio sugerido.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Usar margen global inicial de 10%.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir cambiar el margen global.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir margen por categoría.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir margen específico por producto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Aplicar jerarquía de margen: por producto, por categoría y global.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">No cambiar automáticamente el precio publicado cuando cambie el costo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Dejar producto como “requiere revisión de precio” cuando cambie el costo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir que el admin confirme o ajuste el precio final.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar historial de cambios de costo y precio.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>4.3 Imágenes de productos</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Guardar originales sin editar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar imágenes limpias aprobadas para web.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar imágenes pendientes de revisión.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar imágenes descartadas.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Asociar cada imagen al código interno del producto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Agregar campo de imagen en la base operativa de productos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir si las imágenes finales se cargarán desde Drive, desde el proyecto web o desde otro sistema de almacenamiento.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 5 — Panel vendedor y comandas</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta fase busca digitalizar la venta presencial, manteniendo la lógica de las comandas actuales.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Crear panel vendedor.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar venta presencial.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Buscar productos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Agregar productos a una venta.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ingresar cantidades.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir cantidades decimales para productos a granel.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Calcular total automáticamente.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Descontar stock al confirmar venta.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Generar número de comanda.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Generar comanda automática.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mantener formato similar al actual.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir imprimir comanda.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar nombre de vecina/o.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar teléfono si corresponde.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar integrante que atiende.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar modo de pago: efectivo, transferencia o pendiente.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar cuando alguien queda debiendo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Asociar pendientes al número de comanda.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 6 — Caja, pendientes y cierre por apertura</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta fase busca ordenar ventas, dinero disponible, gastos y pendientes.</p>
+        <h3>6.1 Caja por apertura</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Registrar fecha de apertura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar ventas totales.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar efectivo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar transferencias.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar pendientes.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Separar gastos extra.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar integrante responsable.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Generar cierre por apertura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>6.2 Pendientes</h3>
+        <p>Los pendientes son ventas o comandas donde alguien quedó debiendo. Se tratan como cuentas por cobrar y no entran automáticamente como caja real.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Registrar pendiente por cobrar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Asociar pendiente a número de comanda.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar nombre.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar teléfono si existe.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar monto.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar fecha.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar estado: pendiente o pagado.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir marcar pendiente como pagado.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar fecha de pago.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar modo de pago cuando se regulariza: efectivo o transferencia.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mostrar total de pendientes por cobrar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>6.3 Gastos extra</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Registrar gastos extra.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Usar categorías iniciales: bencina, bolsas, propina, transporte, materiales y otros.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de gastos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Considerar estos gastos en la caja.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 7 — Compras y abastecimiento</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta fase toma como referencia el documento de diseño de compra existente y busca automatizar parte del proceso.</p>
+        <h3>7.1 Registro de compras</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Registrar compras de productos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar fecha.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar responsable.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar productos comprados.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar cantidad.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar costo unitario.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar costo total.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Actualizar stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar movimiento de stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Actualizar precio costo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Guardar historial de precios.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>7.2 Caja disponible para compra</h3>
+        <p>El sistema debe considerar saldo en cuenta, efectivo disponible, pendientes por cobrar como referencia, gastos extra y la caja final definida por el equipo.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Registrar saldo en cuenta.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar efectivo disponible.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mostrar pendientes por cobrar como referencia.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Registrar gastos extra estimados.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Calcular caja disponible sugerida.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir editar manualmente la caja final para compra.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Usar caja final confirmada para diseñar compra.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+        <h3>7.3 Diseño automático de compra</h3>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Revisar stock actual.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar stock mínimo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar prioridad de productos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar costo actualizado.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar caja final disponible.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Proponer productos a comprar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Priorizar productos críticos bajo stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Permitir editar la propuesta antes de confirmar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Confirmar compra.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Actualizar stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Actualizar costos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Generar historial.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 8 — Historial, reportes y administración avanzada</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de pedidos online.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de ventas presenciales.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de compras.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de movimientos de stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de precios.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver historial de pendientes.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver ventas por apertura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver caja por apertura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver productos más vendidos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Ver productos bajo stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Editar productos desde admin.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Crear productos nuevos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Activar o desactivar productos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Editar stock con registro de motivo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Editar configuración del almacén desde admin.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mejorar control de roles: admin y vendedor.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 9 — Contenido público, historia y comunidad</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta fase usa el material del Drive que sirve para mostrar la identidad del almacén.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Revisar imágenes de Rosa Elena.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar logo.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar afiches.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar boletines.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar infografías.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar fotos y videos.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar calendario mensual.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar libro o material histórico.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir si el libro se citará o enlazará desde la web.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir qué contenido va en la web pública.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Definir qué contenido queda como archivo interno.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mejorar la sección de historia.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Explicar cómo funciona el almacén.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Explicar cómo participar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Explicar cómo aportar.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Mejorar diseño visual.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Revisar versión móvil.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="phase phase-checklist">
+      <header class="phase-header">
+        <h2 class="phase-title">Fase 10 — Producción y versión operativa final</h2>
+        <span class="status pending">Pendiente</span>
+      </header>
+      <div class="phase-body">
+        <p>Esta es la meta final de la primera versión completa del sistema.</p>
+        <ul class="phase-task-list">
+          <li class="task-row is-pending"><span class="task-copy">Definir hosting final.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Configurar variables de producción.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Configurar claves definitivas de forma segura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Configurar la credencial técnica definitiva sin exponer su valor.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar tienda desde celular.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar pedidos desde fuera de red local.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar admin desde otro computador.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar panel vendedor.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar comanda imprimible.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar cierre de apertura.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar compra y actualización de stock.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Probar pendientes.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Validar flujo completo con el equipo del almacén.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Capacitar uso básico.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Dejar documentación mínima de uso.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+          <li class="task-row is-pending"><span class="task-copy">Cerrar primera versión operativa.</span><span class="task-tags"><span class="status pending">Pendiente</span></span></li>
+        </ul>
       </div>
     </section>
 
