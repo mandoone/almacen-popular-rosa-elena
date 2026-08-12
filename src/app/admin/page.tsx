@@ -9,6 +9,11 @@ import {
   transicionesPosibles,
   type EstadoPedido,
 } from '@/lib/fase3a/estados';
+import {
+  crearPedidosAdminDemo,
+  esModoDemoAdmin,
+  obtenerDetalleAdminDemo,
+} from '@/lib/fase3a/adminDemo';
 
 // 'recibido' aún NO lo emite el backend (Apps Script crea los pedidos en
 // 'pendiente'), pero se declara desde ya para que el panel no se rompa el día que
@@ -80,7 +85,13 @@ const ESTADO_PAGO_OPCIONES = [
 ];
 
 // ── PANEL ──────────────────────────────────────────────────────────────────────
-function AdminPanel({ onLogout }: { onLogout: () => void }) {
+function AdminPanel({
+  onLogout,
+  modoDemo,
+}: {
+  onLogout: () => void;
+  modoDemo: boolean;
+}) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [filtro, setFiltro] = useState<Filtro>('todos');
   const [cargando, setCargando] = useState(true);
@@ -95,6 +106,11 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     setCargando(true);
     setError(null);
     try {
+      if (modoDemo) {
+        setPedidos(crearPedidosAdminDemo());
+        return;
+      }
+
       const res = await fetch('/api/admin/pedidos', { cache: 'no-store' });
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.ok) {
@@ -116,7 +132,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [modoDemo]);
 
   useEffect(() => { cargarPedidos(); }, [cargarPedidos]);
 
@@ -124,6 +140,10 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     const abierto = !!abiertos[id];
     setAbiertos((prev) => ({ ...prev, [id]: !abierto }));
     if (abierto || detalles[id]) return; // ya cargado o se esta cerrando
+    if (modoDemo) {
+      setDetalles((prev) => ({ ...prev, [id]: obtenerDetalleAdminDemo(id) }));
+      return;
+    }
     try {
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(id)}`, { cache: 'no-store' });
       const json = await res.json().catch(() => null);
@@ -145,6 +165,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
   const cambiarEstado = async (pedido: Pedido, estado: EstadoPedido) => {
     setAccionId(pedido.id_pedido);
     try {
+      if (modoDemo) {
+        setPedidos((prev) => prev.map((p) =>
+          p.id_pedido === pedido.id_pedido ? { ...p, estado_pedido: estado } : p));
+        return;
+      }
+
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -164,6 +190,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
   const cambiarPago = async (pedido: Pedido, estadoPago: string) => {
     setAccionId(pedido.id_pedido);
     try {
+      if (modoDemo) {
+        setPedidos((prev) => prev.map((p) =>
+          p.id_pedido === pedido.id_pedido ? { ...p, estado_pago: estadoPago } : p));
+        return;
+      }
+
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -185,6 +217,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     if (!window.confirm('¿Cancelar este pedido? Se devolverá el stock de sus productos.')) return;
     setAccionId(pedido.id_pedido);
     try {
+      if (modoDemo) {
+        setPedidos((prev) => prev.map((p) =>
+          p.id_pedido === pedido.id_pedido ? { ...p, estado_pedido: 'cancelado' } : p));
+        return;
+      }
+
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'POST',
       });
@@ -231,6 +269,12 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
       </nav>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
+        {modoDemo && (
+          <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            Modo demo local: los datos son simulados, no se enviaran a Apps Script y se reinician al recargar.
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <h1 className="font-serif text-2xl font-bold text-primary-dark">Pedidos</h1>
@@ -413,11 +457,26 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
 // ── ROOT ───────────────────────────────────────────────────────────────────────
 export default function AdminPage() {
   const router = useRouter();
+  const [modoDemo, setModoDemo] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setModoDemo(esModoDemoAdmin(
+      process.env.NODE_ENV,
+      window.location.pathname,
+      new URLSearchParams(window.location.search).get('demo')
+    ));
+  }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/admin/auth/logout', { method: 'POST' });
+    if (!modoDemo) {
+      await fetch('/api/admin/auth/logout', { method: 'POST' });
+    }
     router.push('/admin/login');
   };
 
-  return <AdminPanel onLogout={handleLogout} />;
+  if (modoDemo === null) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  return <AdminPanel onLogout={handleLogout} modoDemo={modoDemo} />;
 }

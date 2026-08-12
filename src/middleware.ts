@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifySessionToken, COOKIE_NAME } from '@/lib/session';
+import { esModoDemoAdmin } from '@/lib/fase3a/adminDemo';
 
 /**
  * Middleware de autenticación admin.
@@ -20,6 +21,18 @@ import { verifySessionToken, COOKIE_NAME } from '@/lib/session';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const secret = process.env.ADMIN_SESSION_SECRET ?? '';
+
+  // Vista aislada para verificacion manual local. En produccion, `NODE_ENV`
+  // impide que el parametro por si solo omita la autenticacion.
+  if (
+    esModoDemoAdmin(
+      process.env.NODE_ENV,
+      pathname,
+      request.nextUrl.searchParams.get('demo')
+    )
+  ) {
+    return NextResponse.next();
+  }
 
   // ── Rutas de autenticación: siempre permitidas ────────────────────────────
   if (
