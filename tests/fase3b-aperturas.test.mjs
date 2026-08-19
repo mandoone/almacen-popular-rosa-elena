@@ -16,6 +16,7 @@ import {
   haTerminadoApertura,
   puedeRecibirPedidoAnticipado,
   puedeUsarModoPresencial,
+  seleccionarAperturaRelevante,
 } from '../src/lib/fase3b/aperturas.ts';
 
 function apertura(overrides = {}) {
@@ -148,4 +149,64 @@ test('puedeUsarModoPresencial: false si la apertura está cancelada o cerrada, a
     const a = apertura({ modo_presencial_estado: 'activo', estado_apertura });
     assert.equal(puedeUsarModoPresencial(a, '2026-08-15T12:00'), false);
   }
+});
+
+// --- seleccionarAperturaRelevante -----------------------------------------
+// Criterio aprobado en docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md §0/§2.1.
+
+test('seleccionarAperturaRelevante: sin aperturas es "ninguna"', () => {
+  assert.deepEqual(seleccionarAperturaRelevante([], '2026-08-15T12:00'), { tipo: 'ninguna' });
+});
+
+test('seleccionarAperturaRelevante: prioridad 1, modo presencial usable único', () => {
+  const conPresencial = apertura({ apertura_id: 'APE-A', modo_presencial_estado: 'activo' });
+  const otra = apertura({ apertura_id: 'APE-B', fecha_apertura: '2026-09-05', modo_presencial_estado: 'inactivo' });
+  const resultado = seleccionarAperturaRelevante([conPresencial, otra], '2026-08-15T12:00');
+  assert.deepEqual(resultado, { tipo: 'apertura', apertura: conPresencial });
+});
+
+test('seleccionarAperturaRelevante: prioridad 1, conflicto si dos tienen modo presencial usable a la vez', () => {
+  const a = apertura({ apertura_id: 'APE-A', fecha_apertura: '2026-08-15', modo_presencial_estado: 'activo' });
+  const b = apertura({ apertura_id: 'APE-B', fecha_apertura: '2026-08-15', modo_presencial_estado: 'activo' });
+  const resultado = seleccionarAperturaRelevante([a, b], '2026-08-15T12:00');
+  assert.equal(resultado.tipo, 'conflicto');
+  assert.equal(resultado.candidatas.length, 2);
+});
+
+test('seleccionarAperturaRelevante: prioridad 2, apertura activa de hoy sin modo presencial usable', () => {
+  const hoy = apertura({ apertura_id: 'APE-HOY', fecha_apertura: '2026-08-15', estado_apertura: 'activa' });
+  const futura = apertura({ apertura_id: 'APE-FUTURA', fecha_apertura: '2026-09-05', estado_apertura: 'programada' });
+  const resultado = seleccionarAperturaRelevante([hoy, futura], '2026-08-15T09:00');
+  assert.deepEqual(resultado, { tipo: 'apertura', apertura: hoy });
+});
+
+test('seleccionarAperturaRelevante: prioridad 2, conflicto si dos están activas hoy', () => {
+  const a = apertura({ apertura_id: 'APE-A', fecha_apertura: '2026-08-15', estado_apertura: 'activa' });
+  const b = apertura({ apertura_id: 'APE-B', fecha_apertura: '2026-08-15', estado_apertura: 'activa' });
+  const resultado = seleccionarAperturaRelevante([a, b], '2026-08-15T09:00');
+  assert.equal(resultado.tipo, 'conflicto');
+  assert.equal(resultado.candidatas.length, 2);
+});
+
+test('seleccionarAperturaRelevante: prioridad 3, la próxima programada por fecha más cercana', () => {
+  const cercana = apertura({ apertura_id: 'APE-CERCANA', fecha_apertura: '2026-08-22', estado_apertura: 'programada' });
+  const lejana = apertura({ apertura_id: 'APE-LEJANA', fecha_apertura: '2026-09-05', estado_apertura: 'programada' });
+  const resultado = seleccionarAperturaRelevante([lejana, cercana], '2026-08-10T09:00');
+  assert.deepEqual(resultado, { tipo: 'apertura', apertura: cercana });
+});
+
+test('seleccionarAperturaRelevante: prioridad 3, conflicto si dos programadas empatan en la fecha más próxima', () => {
+  const a = apertura({ apertura_id: 'APE-A', fecha_apertura: '2026-08-22', estado_apertura: 'programada' });
+  const b = apertura({ apertura_id: 'APE-B', fecha_apertura: '2026-08-22', estado_apertura: 'activa' });
+  const resultado = seleccionarAperturaRelevante([a, b], '2026-08-10T09:00');
+  assert.equal(resultado.tipo, 'conflicto');
+  assert.equal(resultado.candidatas.length, 2);
+});
+
+test('seleccionarAperturaRelevante: aperturas canceladas, cerradas o por_confirmar no cuentan como "próxima"', () => {
+  const cancelada = apertura({ apertura_id: 'APE-CANC', fecha_apertura: '2026-08-22', estado_apertura: 'cancelada' });
+  const cerrada = apertura({ apertura_id: 'APE-CERR', fecha_apertura: '2026-08-23', estado_apertura: 'cerrada' });
+  const porConfirmar = apertura({ apertura_id: 'APE-PC', fecha_apertura: '2026-08-24', estado_apertura: 'por_confirmar' });
+  const resultado = seleccionarAperturaRelevante([cancelada, cerrada, porConfirmar], '2026-08-10T09:00');
+  assert.deepEqual(resultado, { tipo: 'ninguna' });
 });
