@@ -170,7 +170,9 @@ atómico antes de cualquier cambio productivo.
   backend para F.1 y función de selección real para F.3).
 - ⬜ Definir el contrato del modo presencial QR (vista cliente, vista
   vendedor/admin) — Etapa 6.
-- ⬜ Probar calendario y modo presencial en modo demo local — Etapa 2.
+- ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
+  `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
+  en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
 - ⬜ Resolver entorno TEST de Fase 3A antes de probar Fase 3B sobre datos
   reales — Etapa 3.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,

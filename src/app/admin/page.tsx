@@ -14,6 +14,7 @@ import {
   esModoDemoAdmin,
   obtenerDetalleAdminDemo,
 } from '@/lib/fase3a/adminDemo';
+import CalendarioAperturasDemo from './components/CalendarioAperturasDemo';
 
 // 'recibido' aún NO lo emite el backend (Apps Script crea los pedidos en
 // 'pendiente'), pero se declara desde ya para que el panel no se rompa el día que
@@ -449,6 +450,8 @@ function AdminPanel({
             </div>
           )
         )}
+
+        {modoDemo && <CalendarioAperturasDemo />}
       </div>
     </div>
   );

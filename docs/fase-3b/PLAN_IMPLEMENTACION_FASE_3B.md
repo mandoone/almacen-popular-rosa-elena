@@ -70,8 +70,12 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   criterio que Fase 3A).
 - **Qué NO se debe tocar:** `/api/admin/pedidos`, `/api/pedidos`, variables de
   entorno reales.
-- **Estado:** ⬜ pendiente. Fuera del alcance de esta sesión salvo que Etapa 1
-  quede sólida con tiempo de sobra.
+- **Estado:** ✅ completada. Componente `CalendarioAperturasDemo` montado en
+  `/admin?demo=1` bajo el mismo guard `esModoDemoAdmin` existente, sin nueva
+  ruta ni componente compartido con las rutas reales. QA visual manual
+  aprobado en navegador (`get_page_text` + verificación de que `/admin` sin
+  `?demo=1` sigue exigiendo login). Cero llamadas de red observadas. Detalle
+  completo en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
 
 ---
 
@@ -225,7 +229,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ## Resumen de dependencias
 
 ```
-Etapa 0 (hecha) → Etapa 1 (esta sesión) → Etapa 2 (demo)
+Etapa 0 (hecha) → Etapa 1 (hecha) → Etapa 2 (hecha)
                                               │
 Etapa 3 (TEST, compartida con Fase 3A) ───────┘
         │

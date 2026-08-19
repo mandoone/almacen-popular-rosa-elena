@@ -162,6 +162,89 @@ export function estaDentroDeHorario(apertura: Apertura, fechaActual: string): bo
 }
 
 /**
+ * Resultado de `seleccionarAperturaRelevante`: o hay exactamente una apertura
+ * relevante, o no hay ninguna, o hay un conflicto que no se resuelve
+ * adivinando (docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md §0, F.3 aprobada).
+ */
+export type ResultadoSeleccionApertura =
+  | { tipo: 'ninguna' }
+  | { tipo: 'apertura'; apertura: Apertura }
+  | { tipo: 'conflicto'; motivo: string; candidatas: readonly Apertura[] };
+
+/**
+ * Elige "la" apertura relevante entre varias, según el criterio aprobado por
+ * coordinación (docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md §0, §2.1):
+ *
+ *   1. modo presencial usable ahora mismo;
+ *   2. apertura `activa` cuya fecha es hoy;
+ *   3. entre `activa`/`programada` con fecha >= hoy, la de fecha más próxima;
+ *   4. si ninguna califica, no hay apertura relevante.
+ *
+ * En cualquier paso, si más de una apertura empata en esa condición, NO se
+ * elige una al azar: se devuelve `{ tipo: 'conflicto' }` con las candidatas,
+ * para que quien llama lo muestre como alerta en vez de decidir en silencio.
+ *
+ * No implementa el matiz de "apertura cancelada visible hasta su propia
+ * fecha" que describe la recomendación original — se dejó fuera a propósito
+ * para no ampliar el criterio aprobado; queda documentado como pendiente para
+ * cuando se construya la Etapa 5 real.
+ */
+export function seleccionarAperturaRelevante(
+  aperturas: readonly Apertura[],
+  fechaActual: string
+): ResultadoSeleccionApertura {
+  const hoy = fechaActual.slice(0, 10);
+
+  const conPresencialUsable = aperturas.filter((a) => puedeUsarModoPresencial(a, fechaActual));
+  if (conPresencialUsable.length === 1) {
+    return { tipo: 'apertura', apertura: conPresencialUsable[0] };
+  }
+  if (conPresencialUsable.length > 1) {
+    return {
+      tipo: 'conflicto',
+      motivo: 'Más de una apertura tiene el modo presencial usable en este momento.',
+      candidatas: conPresencialUsable,
+    };
+  }
+
+  const activasHoy = aperturas.filter(
+    (a) => a.estado_apertura === 'activa' && a.fecha_apertura === hoy
+  );
+  if (activasHoy.length === 1) {
+    return { tipo: 'apertura', apertura: activasHoy[0] };
+  }
+  if (activasHoy.length > 1) {
+    return {
+      tipo: 'conflicto',
+      motivo: 'Más de una apertura está activa hoy.',
+      candidatas: activasHoy,
+    };
+  }
+
+  const proximas = aperturas
+    .filter(
+      (a) =>
+        (a.estado_apertura === 'activa' || a.estado_apertura === 'programada') &&
+        a.fecha_apertura >= hoy
+    )
+    .sort((a, b) => compararFechaHora(a.fecha_apertura, b.fecha_apertura));
+  if (proximas.length > 0) {
+    const fechaMin = proximas[0].fecha_apertura;
+    const empatadas = proximas.filter((a) => a.fecha_apertura === fechaMin);
+    if (empatadas.length > 1) {
+      return {
+        tipo: 'conflicto',
+        motivo: 'Hay más de una apertura programada para la misma fecha próxima.',
+        candidatas: empatadas,
+      };
+    }
+    return { tipo: 'apertura', apertura: empatadas[0] };
+  }
+
+  return { tipo: 'ninguna' };
+}
+
+/**
  * Compara dos fechas-hora ISO bien formadas (`yyyy-MM-dd`, `yyyy-MM-ddTHH:mm`
  * o `HH:mm`) por orden lexicográfico, que coincide con el orden cronológico
  * porque el formato usa ancho fijo y ceros a la izquierda.

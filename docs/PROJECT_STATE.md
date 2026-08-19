@@ -20,21 +20,22 @@ sábados de apertura.
   atómico antes de planificar migración o producción. El diseño de Fase 3B
   (calendario y modo presencial) se prueba sobre la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
-- **Fase 3B en diseño + lógica pura (sin integración real):** el informe v0.3
-  fue aprobado y subido a Drive; el Almacén respondió horario de
+- **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
+  informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
   apertura/retiro y criterio de cierre de pedidos. Se definieron las
   decisiones operativas, el modelo de datos de `APERTURAS`, el plan de
-  implementación en 10 etapas y el plan de pruebas. La Etapa 1 (lógica pura
-  del calendario, estado público de la web y origen de pedido) está
-  implementada en `src/lib/fase3b/` con 41 tests propios (87/87 en total, lint
-  y build verdes) — sin conexión a `/api/admin`, Apps Script ni Google Sheets.
-  Decisiones F.1 (venta asistida nace en `listo`) y F.3 (orden determinista de
-  selección de apertura) **aprobadas por coordinación** como criterio base;
-  habilita la Etapa 2 (demo local), no habilita integración real. Detalle en
-  `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
+  implementación en 10 etapas y el plan de pruebas. Decisiones F.1 (venta
+  asistida nace en `listo`) y F.3 (orden determinista de selección de
+  apertura) **aprobadas por coordinación** como criterio base. Etapas 1
+  (lógica pura del calendario, estado público de la web y origen de pedido) y
+  2 (demo local del calendario en `/admin?demo=1`, componente
+  `CalendarioAperturasDemo`) están completadas — 101/101 tests, lint y build
+  verdes, sin conexión a `/api/admin`, Apps Script ni Google Sheets. Detalle
+  en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
-  `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md` y
-  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`.
+  `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` y
+  `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
 
 ### Sistema documental
 

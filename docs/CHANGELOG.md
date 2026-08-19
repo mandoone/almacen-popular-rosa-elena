@@ -5,6 +5,44 @@
 
 ---
 
+## [FASE 3B — demo] — Calendario de aperturas en `/admin?demo=1`
+
+### Añadido
+- `src/lib/fase3b/aperturas.ts`: `seleccionarAperturaRelevante`, que
+  implementa el criterio F.3 aprobado (prioridad: modo presencial usable
+  ahora > apertura activa de hoy > próxima programada > ninguna; el
+  solapamiento se señala como conflicto explícito, nunca se adivina).
+- `src/lib/fase3b/aperturasDemoData.ts`: fixture fijo de 6 aperturas
+  (cerrada, activa con modo presencial activo, activa con pedidos
+  anticipados abiertos, cancelada, programada futura, pedidos anticipados
+  pausados manualmente), evaluado contra un instante de referencia fijo
+  (`AHORA_DEMO`), no la hora real.
+- `src/app/admin/components/CalendarioAperturasDemo.tsx`: sección de demo
+  montada en `/admin?demo=1`, bajo el mismo guard `esModoDemoAdmin` que ya
+  protegía el modo demo de pedidos de Fase 3A. Muestra la apertura relevante,
+  el estado público calculado, las 6 aperturas simuladas con todos sus campos
+  y una tabla de referencia `origen_pedido` → `canal`.
+- `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`: cómo acceder, qué
+  muestra, qué funciones reutiliza y verificación de las 10 reglas de
+  seguridad de la demo.
+- 15 tests nuevos (`tests/fase3b-aperturas.test.mjs`,
+  `tests/fase3b-demo-data.test.mjs`) — 101/101 en total.
+
+### Cambiado
+- `src/app/admin/page.tsx`: una línea (`{modoDemo && <CalendarioAperturasDemo />}`),
+  mismo patrón que el banner de modo demo existente. Sin cambios en
+  autenticación, rutas API ni en el flujo de pedidos reales.
+- `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`, `docs/TASKS.md`,
+  `docs/PROJECT_STATE.md`: Etapa 2 marcada como completada.
+
+### Estado
+- QA visual manual verificado en navegador: `/admin?demo=1` muestra el
+  calendario correctamente; `/admin` sin `?demo=1` sigue exigiendo login sin
+  cambios. Cero llamadas de red durante la demo. Lint y build verdes. No se
+  modificó Google Sheets, Apps Script productivo, Vercel ni `.env.local`.
+
+---
+
 ## [FASE 3B — decisiones] — F.1 y F.3 aprobadas como criterio base
 
 ### Cambiado
