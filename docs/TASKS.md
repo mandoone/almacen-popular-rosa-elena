@@ -148,19 +148,30 @@ atómico antes de cualquier cambio productivo.
   pedidos jueves anterior, confirmación y cancelación admin-only.
 - ✅ Decisiones operativas y técnicas de Fase 3B documentadas (calendario
   editable, modo presencial digital, orígenes de pedido).
-- ⬜ Diseñar el modelo de datos del calendario (`APERTURAS` ampliada) sin
-  tocar la Sheet real.
-- ⬜ Diseñar el campo de origen de pedido (`online_anticipado` /
-  `presencial_qr` / `presencial_vendedor` / `comanda_papel`).
-- ⬜ Definir la máquina de estados públicos de la web según calendario como
-  función pura (mismo patrón que `src/lib/fase3a/estados.ts`).
+- ✅ Modelo de datos del calendario (`APERTURAS` ampliada) diseñado —
+  `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`. No se tocó la
+  Sheet real.
+- ✅ Campo de origen de pedido (`online_anticipado` / `presencial_qr` /
+  `presencial_vendedor` / `comanda_papel`) diseñado y resuelto el solapamiento
+  con `canal` (`canal` se deriva de `origen_pedido`).
+- ✅ Máquina de estados públicos de la web definida como función pura, con
+  tests (`src/lib/fase3b/estadoPublicoWeb.ts`, 87/87 tests verdes en total).
+- ✅ Anexo `docs/fase-3b/COLUMNAS_PROPUESTAS_FASE_3B.md` con el diseño
+  ampliado de `APERTURAS`, en vez de reescribir
+  `docs/fase-3a/COLUMNAS_SHEETS_PROPUESTAS.md` §6 directamente (queda listo
+  para reemplazarlo cuando se apruebe).
+- ✅ Plan de implementación en 10 etapas y plan de pruebas —
+  `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
+  `docs/fase-3b/PLAN_PRUEBAS_FASE_3B.md`.
+- ✅ Decisiones pendientes F.1 (venta presencial asistida) y F.3 (selección de
+  apertura relevante) auditadas y con recomendación técnica documentada —
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`. Pendiente de aprobación
+  explícita antes de implementar.
 - ⬜ Definir el contrato del modo presencial QR (vista cliente, vista
-  vendedor/admin).
-- ⬜ Probar calendario y modo presencial en modo demo local.
+  vendedor/admin) — Etapa 6.
+- ⬜ Probar calendario y modo presencial en modo demo local — Etapa 2.
 - ⬜ Resolver entorno TEST de Fase 3A antes de probar Fase 3B sobre datos
-  reales.
-- ⬜ Actualizar `docs/fase-3a/COLUMNAS_SHEETS_PROPUESTAS.md` §6 con el diseño
-  ampliado de `APERTURAS`.
+  reales — Etapa 3.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 

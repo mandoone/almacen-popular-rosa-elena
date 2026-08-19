@@ -256,6 +256,9 @@ pasos para una sola persona). Pero saltarse `recibido` rompe la regla actual de
 que todo pedido nuevo nace sin comprometer stock. Se necesita una decisión
 explícita, no un valor por defecto inventado aquí.
 
+**Recomendación técnica registrada, pendiente de aprobación:**
+`docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §1.
+
 ### F.2 Pedidos sin `apertura_id`
 Todo pedido histórico (Fase 3A y anteriores) no tiene `apertura_id`. Se
 recomienda que el campo sea opcional y que la ausencia se interprete como "sin
@@ -269,6 +272,9 @@ Cuando el calendario tiene más de una apertura `programada`/`activa` a la vez
 para elegir cuál le muestra la web pública como *la* apertura relevante. No se
 inventa un criterio en este documento — es información que puede depender de
 cómo el Almacén quiera anunciar aperturas dobles o consecutivas.
+
+**Recomendación técnica registrada, pendiente de aprobación:**
+`docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §2.
 
 ### F.4 Horario único vs. horario por apertura
 `DECISIONES_OPERATIVAS_FASE_3B.md` §1.1 registra 11:00–15:00 como el horario

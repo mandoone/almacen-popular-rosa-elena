@@ -86,9 +86,10 @@
 
 ## Resumen
 
-- Las secciones 1, 2, 4 (parcial) y 7 (parcial) son las que corresponden a la
-  lógica pura de la Etapa 1 y se cubren con tests automatizados en esta
-  sesión, si el Bloque 6 se implementa.
+- Las secciones 1, 2, 4 (parcial) y 7 (parcial) corresponden a la lógica pura
+  de la Etapa 1 y ya están cubiertas con tests automatizados
+  (`tests/fase3b-aperturas.test.mjs`, `tests/fase3b-estado-publico-web.test.mjs`,
+  `tests/fase3b-origen-pedido.test.mjs`, commit `165f761`; 87/87 tests verdes).
 - Las secciones 3, 5.1–5.2 y 4.3 dependen de esa misma lógica pura pero
   descritas desde la perspectiva de la acción del usuario; se verifican con
   los mismos tests de estado, sin necesidad de casos adicionales.

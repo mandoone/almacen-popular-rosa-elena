@@ -48,8 +48,8 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Criterios de aceptación:** `npm test` verde, sin cambios en `src/app/` ni
   en `scripts/*.gs`.
 - **Qué NO se debe tocar:** UI, rutas API, Apps Script, Sheets.
-- **Estado:** ver `PLAN_PRUEBAS_FASE_3B.md` y el resultado reportado al final
-  de esta sesión.
+- **Estado:** ✅ completada (commit `165f761`). 87/87 tests, lint y build
+  verdes. Sin cambios en `src/app/` ni en `scripts/*.gs`, verificado.
 
 ---
 
