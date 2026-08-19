@@ -18,7 +18,10 @@ sábados de apertura.
   anterior.
 - **Próxima prioridad:** crear un entorno TEST separado y validar allí el backend
   atómico antes de planificar migración o producción. El diseño de Fase 3B
-  (calendario y modo presencial) se prueba sobre la misma base TEST.
+  (calendario y modo presencial) se prueba sobre la misma base TEST. La
+  estrategia y el plan operativo de 15 pasos ya están documentados
+  (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md`); falta la ejecución manual — hoy
+  no existe ningún Sheet, Apps Script ni deployment TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
   informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
@@ -29,13 +32,19 @@ sábados de apertura.
   apertura) **aprobadas por coordinación** como criterio base. Etapas 1
   (lógica pura del calendario, estado público de la web y origen de pedido) y
   2 (demo local del calendario en `/admin?demo=1`, componente
-  `CalendarioAperturasDemo`) están completadas — 101/101 tests, lint y build
-  verdes, sin conexión a `/api/admin`, Apps Script ni Google Sheets. Detalle
-  en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
+  `CalendarioAperturasDemo`) están completadas. Etapa 3 (entorno TEST
+  compartido con Fase 3A) tiene estrategia y guardrails listos —
+  diagnóstico de riesgo (hoy `.env.local` solo puede apuntar a producción,
+  sin ningún guardrail de código), variables `_TEST` propuestas, datos
+  semilla y plan operativo de 15 pasos — pero el entorno real todavía no
+  existe. 116/116 tests, lint y build verdes; sin conexión a `/api/admin`,
+  Apps Script ni Google Sheets. Detalle en
+  `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
-  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` y
-  `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`,
+  `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md` y
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`.
 
 ### Sistema documental
 
@@ -124,7 +133,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Entorno TEST y backend atómico de Fase 3A**:
+**Entorno TEST y backend atómico de Fase 3A** (plan operativo detallado en
+`docs/fase-3b/ENTORNO_TEST_FASE_3B.md`):
 
 1. Aprobar el checklist y las decisiones técnicas pendientes.
 2. Preparar copias separadas de Sheet y Apps Script con conexión por ID explícito.

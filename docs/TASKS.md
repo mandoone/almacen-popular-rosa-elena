@@ -173,8 +173,12 @@ atómico antes de cualquier cambio productivo.
 - ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
   `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
   en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
-- ⬜ Resolver entorno TEST de Fase 3A antes de probar Fase 3B sobre datos
-  reales — Etapa 3.
+- 🔄 Entorno TEST compartido Fase 3A/3B — Etapa 3. Estrategia documentada,
+  diagnóstico de riesgo, guardrails de código puro (`src/lib/env.ts`, sin
+  conectar) y plan operativo de 15 pasos listos —
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`. Falta la ejecución manual (crear
+  Sheet TEST, Apps Script TEST, deployment, tokens); sigue bloqueando
+  cualquier integración real de Fase 3A y Fase 3B.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 

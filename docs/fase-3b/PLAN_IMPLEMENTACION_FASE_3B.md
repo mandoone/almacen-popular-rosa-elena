@@ -85,14 +85,22 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   igual que exige el backend atómico de Fase 3A, para poder probar
   `APERTURAS` y los campos nuevos de `PEDIDOS` contra datos reales sin tocar
   producción.
-- **Archivos/módulos probables:** ninguno de código; ejecución manual del
-  checklist ya existente.
+- **Archivos/módulos probables:** ninguno de código productivo; se agregó
+  `src/lib/env.ts` (guardrails puros de entorno, sin conectar) como
+  preparación. La ejecución en sí es manual, siguiendo el checklist ya
+  existente.
 - **Riesgos:** confundir TEST con producción si no se siguen las salvaguardas
   de `DECISIONES_BACKEND_ATOMICO_FASE_3A.md` §2.6.
 - **Criterios de aceptación:** los mismos del Go/No-Go de
   `docs/fase-3a/CHECKLIST_ENTORNO_TEST_FASE_3A.md` §6, más columnas de
   `APERTURAS` y `PEDIDOS` de Fase 3B agregadas a la copia TEST.
 - **Qué NO se debe tocar:** Sheet productivo, Apps Script productivo.
+- **Estado:** 🔄 en curso. Estrategia documentada, diagnóstico de riesgo
+  completo, guardrails de código puro agregados y sin conectar, plan
+  operativo de 15 pasos listo para ejecutar — ver
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`. El entorno TEST real (Sheet, Apps
+  Script, deployment, tokens) **no existe todavía**; su creación sigue siendo
+  un paso manual pendiente de Omar.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -231,7 +239,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ```
 Etapa 0 (hecha) → Etapa 1 (hecha) → Etapa 2 (hecha)
                                               │
-Etapa 3 (TEST, compartida con Fase 3A) ───────┘
+Etapa 3 (TEST, compartida con Fase 3A; estrategia lista, ejecución manual pendiente) ───────┘
         │
         ▼
 Etapa 4 (admin) → Etapa 5 (web pública) → Etapa 6 (QR) → Etapa 7 (asistida)

@@ -5,6 +5,35 @@
 
 ---
 
+## [FASE 3B — entorno TEST] — Estrategia y guardrails, sin conectar
+
+### Añadido
+- `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`: estrategia de entorno TEST
+  compartida entre Fase 3A y Fase 3B. Diagnóstico de riesgo actual (hoy
+  `.env.local` solo puede apuntar a producción; crear un pedido real en
+  local desde `/tienda` escribe en la Sheet productiva, sin ningún guardrail
+  de código), principio de seguridad, componentes necesarios, variables de
+  entorno `_TEST` propuestas (solo nombres), datos semilla (productos,
+  pedidos por estado, las 6 aperturas ya usadas en la demo local), riesgos, y
+  plan operativo de 15 pasos manuales para Omar.
+- `src/lib/env.ts`: guardrails puros de entorno —
+  `obtenerEntornoAplicacion`, `esEntornoSeguroParaPruebas`,
+  `requiereConfigTest`, `validarConfigEntornoTest`,
+  `assertNoProduccionParaEscritura`, `ETIQUETA_ENTORNO`. Por defecto nada es
+  seguro: un entorno ausente o desconocido nunca se trata como `test` ni
+  como autorizado a escribir.
+- 23 tests nuevos (`tests/entorno-test.test.mjs`) — 116/116 en total.
+
+### Estado
+- Documental y de guardrails puros únicamente. `src/lib/env.ts` **no está
+  conectado** a `appsScriptPedidos.ts` ni a ninguna ruta de `src/app/api/`:
+  no existen las variables `_TEST` todavía, así que no había nada real que
+  conectar. No se creó ningún recurso TEST (Sheet, Apps Script, deployment,
+  token). No se modificó `.env.local` ni `.env.example`. No se tocó
+  producción.
+
+---
+
 ## [FASE 3B — demo] — Calendario de aperturas en `/admin?demo=1`
 
 ### Añadido
