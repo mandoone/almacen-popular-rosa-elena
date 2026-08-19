@@ -85,10 +85,10 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   igual que exige el backend atómico de Fase 3A, para poder probar
   `APERTURAS` y los campos nuevos de `PEDIDOS` contra datos reales sin tocar
   producción.
-- **Archivos/módulos probables:** ninguno de código productivo; se agregó
-  `src/lib/env.ts` (guardrails puros de entorno, sin conectar) como
-  preparación. La ejecución en sí es manual, siguiendo el checklist ya
-  existente.
+- **Archivos/módulos probables:** `src/lib/env.ts` (guardrails puros) y
+  `src/lib/appsScriptPedidos.ts` (selección de URL/token según entorno) ya
+  implementados. La ejecución del entorno TEST en sí (Sheet, Apps Script) es
+  manual, siguiendo el checklist ya existente.
 - **Riesgos:** confundir TEST con producción si no se siguen las salvaguardas
   de `DECISIONES_BACKEND_ATOMICO_FASE_3A.md` §2.6.
 - **Criterios de aceptación:** los mismos del Go/No-Go de
@@ -99,11 +99,13 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
   cancelación e idempotencia verificadas contra la Web App TEST el
   2026-08-19 (producción no fue tocada) — ver
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. Falta: hoja `APERTURAS` en la
-  Sheet TEST, datos semilla completos, pruebas de calendario/modo presencial,
-  y sobre todo **conectar Next.js local al entorno TEST** (variables `_TEST`
-  en `.env.local`, todavía sin configurar) — sin eso, la app sigue sin poder
-  probar contra TEST desde `/tienda` o `/admin`.
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. `appsScriptPedidos.ts` ya sabe
+  usar el backend TEST cuando `NEXT_PUBLIC_APP_ENV=test`, con bloqueo
+  explícito si falta configuración o si coincide con producción — 10 tests
+  nuevos, 126/126 en total. Falta: hoja `APERTURAS` en la Sheet TEST, datos
+  semilla completos, pruebas de calendario/modo presencial, y que alguien
+  configure `NEXT_PUBLIC_APP_ENV=test` con valores reales en su propio
+  `.env.local` — sin eso, la app sigue usando producción por defecto.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -242,7 +244,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ```
 Etapa 0 (hecha) → Etapa 1 (hecha) → Etapa 2 (hecha)
                                               │
-Etapa 3 (TEST, compartida con Fase 3A; Sheet+Apps Script TEST verificados, falta conectar Next.js) ───────┘
+Etapa 3 (TEST, compartida con Fase 3A; Sheet+Apps Script TEST verificados, código de conexión listo, falta config local) ───────┘
         │
         ▼
 Etapa 4 (admin) → Etapa 5 (web pública) → Etapa 6 (QR) → Etapa 7 (asistida)

@@ -5,6 +5,44 @@
 
 ---
 
+## [FASE 3B — entorno TEST] — Next.js local conectado al entorno TEST
+
+### Añadido
+- `src/lib/env.ts`: `resolverConfigPorEntorno(entorno, config)`, función pura
+  que compone los guardrails existentes (`requiereConfigTest`,
+  `assertNoProduccionParaEscritura`, `validarConfigEntornoTest`) para decidir
+  qué valor de configuración usar (URL de backend, token admin) según el
+  entorno declarado. Bloquea con error explícito si falta la configuración
+  TEST, y bloquea también si el valor TEST coincide con el productivo.
+- `src/lib/appsScriptPedidos.ts`: `baseUrl()` y `adminToken()` ahora usan
+  `resolverConfigPorEntorno()`. Con `NEXT_PUBLIC_APP_ENV=test`, usan
+  `GOOGLE_SCRIPT_PEDIDOS_URL_TEST` / `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST`; con
+  cualquier otro valor (incluido ausente, que es el caso de producción hoy),
+  usan las variables productivas exactamente igual que antes.
+- `.env.example`: agregadas las claves `NEXT_PUBLIC_APP_ENV`,
+  `GOOGLE_SCRIPT_PEDIDOS_URL_TEST` y `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST`, con
+  valores vacíos.
+- 10 tests nuevos (`tests/entorno-test.test.mjs`) — 126/126 en total. Ninguno
+  llama a Apps Script real: todos usan strings de ejemplo.
+
+### Cambiado
+- `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`: sección de guardrails actualizada
+  para reflejar la conexión real; plan operativo (paso 9) y resumen final
+  actualizados.
+- `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`, `docs/TASKS.md`,
+  `docs/PROJECT_STATE.md`: Etapa 3 actualizada — el código de conexión ya
+  existe; solo falta que alguien configure valores reales en su propio
+  `.env.local`.
+
+### Estado
+- Comportamiento productivo sin cambios: verificado que, sin
+  `NEXT_PUBLIC_APP_ENV` configurada (el caso real de producción hoy), la
+  selección de configuración sigue exactamente igual que antes de este
+  cambio. Ningún token, URL real ni secreto se registró en el repo — solo
+  nombres de variables. `.env.local` no se leyó ni se modificó.
+
+---
+
 ## [FASE 3B — entorno TEST] — Sheet y Apps Script TEST verificados (2026-08-19)
 
 ### Añadido

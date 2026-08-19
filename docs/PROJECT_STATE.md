@@ -16,12 +16,13 @@ sábados de apertura.
 - **Producción:** los avances de Fase 3A y el diseño de Fase 3B no modificaron
   Google Sheets ni Apps Script productivo; el backend real conserva el modelo
   anterior.
-- **Próxima prioridad:** conectar Next.js local al entorno TEST ya creado
-  (Sheet TEST + Apps Script TEST verificados con pruebas manuales el
-  2026-08-19, sin tocar producción — `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`
-  §G) mediante variables `_TEST` en `.env.local`, antes de planificar
-  migración o producción. El diseño de Fase 3B (calendario y modo
-  presencial) se prueba sobre la misma base TEST.
+- **Próxima prioridad:** `src/lib/appsScriptPedidos.ts` ya sabe usar el
+  entorno TEST cuando `NEXT_PUBLIC_APP_ENV=test` (Sheet TEST + Apps Script
+  TEST verificados con pruebas manuales el 2026-08-19, sin tocar producción —
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G); falta que alguien configure los
+  valores reales en su propio `.env.local` para probar de punta a punta,
+  antes de planificar migración o producción. El diseño de Fase 3B
+  (calendario y modo presencial) se prueba sobre la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
   informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
@@ -36,10 +37,13 @@ sábados de apertura.
   compartido con Fase 3A) en curso: Sheet TEST y Apps Script TEST creados,
   autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
   cancelación e idempotencia verificadas el 2026-08-19 directamente contra la
-  Web App TEST, sin tocar producción. Falta la hoja `APERTURAS` en TEST,
-  datos semilla completos y — el paso siguiente — conectar Next.js local al
-  entorno TEST. 116/116 tests, lint y build verdes; sin conexión a
-  `/api/admin`, Apps Script ni Google Sheets desde el código de este repo.
+  Web App TEST, sin tocar producción. `appsScriptPedidos.ts` ya selecciona
+  entre variables productivas y `_TEST` según `NEXT_PUBLIC_APP_ENV`, con
+  bloqueo explícito si falta configuración TEST o si coincide con
+  producción. Falta la hoja `APERTURAS` en TEST, datos semilla completos, y
+  que alguien configure los valores reales en su propio `.env.local` para
+  probar desde la app. 126/126 tests, lint y build verdes; el calendario de
+  Fase 3B sigue sin conexión a `/api/admin`, Apps Script ni Google Sheets.
   Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
@@ -116,8 +120,9 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Pendientes principales
 
-- ✅ Sheet y Apps Script TEST creados; conectar Next.js local al entorno TEST
-  (variables `_TEST` en `.env.local`) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G.
+- ✅ Sheet y Apps Script TEST creados; ✅ Next.js sabe usarlos vía
+  `NEXT_PUBLIC_APP_ENV=test`; falta configurar valores reales en
+  `.env.local` local — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G.
 - Implementar y probar en TEST la creación en `recibido` sin descontar stock.
 - Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
   reconciliación de fallos parciales.

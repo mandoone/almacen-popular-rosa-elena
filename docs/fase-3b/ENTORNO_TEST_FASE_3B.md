@@ -2,8 +2,11 @@
 
 > Estado: **entorno TEST de Apps Script + Google Sheet creado y verificado
 > con pruebas manuales (2026-08-19) — ver §G.** Producción no fue tocada en
-> ningún momento. Next.js local todavía **no** está conectado al entorno
-> TEST: sigue siendo el próximo paso (§G.3).
+> ningún momento. `src/lib/appsScriptPedidos.ts` ya sabe elegir entre
+> variables productivas y `_TEST` según `NEXT_PUBLIC_APP_ENV` (§ Guardrails de
+> código); lo que falta es que alguien configure esas variables `_TEST` con
+> valores reales en su propio `.env.local` — nadie lo hizo todavía, así que
+> hoy la app sigue usando producción por defecto (comportamiento sin cambios).
 >
 > ⚠️ **Ningún token, URL real de Web App TEST ni ID de Sheet se registra en
 > este documento ni en ningún otro archivo versionado.** La URL TEST vive
@@ -132,10 +135,15 @@ producción, no se tocan).
 | `ADMIN_PANEL_PASSWORD_TEST` | Contraseña del panel admin cuando se prueba contra TEST. Puede ser distinta de la productiva para no acostumbrarse a escribir la real por reflejo. |
 | `ADMIN_SESSION_SECRET_TEST` | Secreto de firma de sesión para pruebas. No reutilizar el productivo. |
 
-**No se modifica `.env.local` real ni se escribe ningún valor** en esta
-sesión. Cuando exista el entorno TEST real, `.env.example` debe actualizarse
-para documentar estas claves (con valores vacíos, igual que las actuales) —
-queda como paso manual del plan operativo (§ Bloque 4), no hecho aquí.
+**`NEXT_PUBLIC_APP_ENV`, `GOOGLE_SCRIPT_PEDIDOS_URL_TEST` y
+`GOOGLE_SCRIPT_ADMIN_TOKEN_TEST` ya están en `.env.example`**, con valores
+vacíos — es lo único que este documento cambió en `.env.example`.
+`ADMIN_PANEL_PASSWORD_TEST` y `ADMIN_SESSION_SECRET_TEST` siguen siendo
+propuesta sin implementar: el login del panel admin no forma parte de esta
+conexión, sigue usando `ADMIN_PANEL_PASSWORD`/`ADMIN_SESSION_SECRET`
+productivos incluso en `NEXT_PUBLIC_APP_ENV=test`. **`.env.local` real nunca
+se leyó ni se modificó** en ninguna sesión — configurarlo con valores TEST
+reales sigue siendo un paso manual de quien vaya a probar localmente.
 
 ## E. Datos semilla TEST propuestos
 
@@ -226,22 +234,20 @@ El entorno TEST de Apps Script y Google Sheet quedó **operativo** para
 pruebas controladas de lectura, escritura, descuento de stock, cancelación y
 devolución idempotente de stock, sin tocar producción.
 
-**Próximo paso: conectar Next.js local al entorno TEST mediante variables
-locales seguras** (paso 9 del plan operativo — `.env.local` local, nunca
-commiteado; `.env.example` actualizado solo con las claves vacías de §D).
-Hasta que eso ocurra, la aplicación Next.js sigue sin ninguna vía de probar
-contra TEST desde la UI: las pruebas de esta ronda fueron directas contra el
+**Próximo paso: el código de conexión ya existe** (`resolverConfigPorEntorno`
+en `src/lib/appsScriptPedidos.ts`, ver "Guardrails de código" más abajo) —
+falta que alguien configure `NEXT_PUBLIC_APP_ENV=test` y las variables
+`_TEST` con valores reales en su propio `.env.local` (paso 9 del plan
+operativo, local, nunca commiteado). Hasta que eso ocurra, la aplicación
+Next.js sigue usando producción por defecto y sin ninguna vía de probar
+contra TEST desde la UI — las pruebas de esta ronda fueron directas contra el
 backend, no a través de `/tienda` ni `/admin`.
 
 ---
 
 ## Guardrails de código agregados en esta sesión
 
-Se agregó `src/lib/env.ts` — módulo puro, sin conexión a nada real todavía
-(ver cabecera del archivo). No se conectó a `appsScriptPedidos.ts` ni a
-ninguna ruta de `src/app/api/`: conectar estos guardrails a un flujo real es
-un paso posterior explícito, que requiere que las variables `_TEST` de §D ya
-existan. Funciones:
+`src/lib/env.ts` — módulo puro. Funciones:
 
 - `obtenerEntornoAplicacion(valor)` — normaliza el valor crudo de
   `NEXT_PUBLIC_APP_ENV` a `'production' | 'test' | 'demo' | 'local' | 'desconocido'`.
@@ -259,9 +265,45 @@ existan. Funciones:
   de cualquier función futura que escriba contra un backend TEST.
 - `ETIQUETA_ENTORNO` — etiquetas legibles (`'TEST'`, `'Producción'`, etc.)
   para un futuro banner de UI.
+- **`resolverConfigPorEntorno(entorno, config)`** — nueva en esta sesión.
+  Compone las cuatro funciones anteriores para decidir, de forma pura, qué
+  valor de configuración usar (URL de backend o token admin) según el
+  entorno: si no es `test`, usa el valor productivo sin cambios; si es
+  `test`, exige el valor `_TEST` y bloquea si coincide con el productivo.
+  Es la pieza que **conecta** este módulo con `appsScriptPedidos.ts` (ver
+  abajo).
 
-23 tests nuevos en `tests/entorno-test.test.mjs` — 116/116 en total (con los
-93 ya existentes de Fase 3A/3B).
+### Conexión real: `src/lib/appsScriptPedidos.ts`
+
+`baseUrl()` y `adminToken()` ahora llaman a `resolverConfigPorEntorno()` en
+vez de leer `GOOGLE_SCRIPT_PEDIDOS_URL`/`GOOGLE_SCRIPT_ADMIN_TOKEN`
+directamente:
+
+- Si `NEXT_PUBLIC_APP_ENV` no es `test` (incluido ausente/desconocido, que es
+  el caso de producción hoy): usa las variables productivas, **exactamente
+  igual que antes** — mismo texto de error si faltan
+  (`"Falta GOOGLE_SCRIPT_PEDIDOS_URL en el entorno del servidor."`), mismo
+  comportamiento en todo lo demás.
+- Si `NEXT_PUBLIC_APP_ENV=test`: usa `GOOGLE_SCRIPT_PEDIDOS_URL_TEST` /
+  `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST`. Si faltan, lanza `AppsScriptError` con un
+  mensaje explícito indicando qué variable falta. Si el valor TEST coincide
+  con el productivo (ambos configurados), también bloquea con un mensaje
+  explícito — nunca deja que TEST y producción apunten al mismo backend.
+
+Se agregaron también las claves `NEXT_PUBLIC_APP_ENV`,
+`GOOGLE_SCRIPT_PEDIDOS_URL_TEST` y `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST` a
+`.env.example`, con valores vacíos — ningún valor real.
+
+**Lo que falta para que esto funcione de punta a punta:** que alguien
+configure `NEXT_PUBLIC_APP_ENV=test` y las dos variables `_TEST` con los
+valores reales en su propio `.env.local` (nunca commiteado). Sin eso, la app
+sigue usando producción exactamente como hasta ahora — el cambio de esta
+sesión es aditivo y no requiere que nadie toque nada para seguir funcionando
+igual que hoy.
+
+33 tests nuevos en total sobre `src/lib/env.ts` en `tests/entorno-test.test.mjs`
+(23 de la sesión anterior + 10 de `resolverConfigPorEntorno` en esta) —
+126/126 en total.
 
 **Por qué no se conectó todavía:** conectar `env.ts` a
 `appsScriptPedidos.ts` sin que existan las variables `_TEST` reales no
@@ -302,11 +344,13 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
 8. ✅ Crear un token admin nuevo, exclusivo de TEST (no reutilizar el
    productivo). Guardado solo localmente, fuera del repo (ver advertencia al
    inicio del documento).
-9. ⬜ Configurar las variables `_TEST` de §D en `.env.local` **local**, sin
-   commitear nada, y actualizar `.env.example` con las claves vacías. **Este
-   es el próximo paso** — Next.js local todavía no habla con el entorno
-   TEST; las pruebas de §G se hicieron directamente contra la Web App TEST,
-   sin pasar por la aplicación.
+9. 🔄 Configurar las variables `_TEST` de §D en `.env.local` **local**, sin
+   commitear nada. `.env.example` ya tiene las claves vacías
+   (`NEXT_PUBLIC_APP_ENV`, `GOOGLE_SCRIPT_PEDIDOS_URL_TEST`,
+   `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST`) y `appsScriptPedidos.ts` ya sabe
+   usarlas. **Falta solo que alguien ponga los valores reales en su propio
+   `.env.local`** — las pruebas de §G se hicieron directamente contra la Web
+   App TEST, sin pasar por la aplicación Next.js todavía.
 10. ✅ Probar lectura: `listarProductos` (53 productos) y `listarPedidos`
     (4 pedidos) contra el deployment TEST — §G.1, §G.2.
 11. ✅ Probar escritura controlada: crear un pedido de prueba — §G.3.
@@ -326,15 +370,20 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
 ## Resumen para decidir rápido
 
 **Hecho:** diagnóstico de riesgo, estrategia documentada, guardrails de
-código puro sin conectar (`src/lib/env.ts`), Sheet TEST creada, Apps Script
-TEST creado/autorizado/desplegado, token TEST generado (guardado solo
-localmente), y pruebas manuales de lectura, escritura, stock, cancelación e
-idempotencia verificadas directamente contra la Web App TEST (2026-08-19,
-§G). Producción no fue tocada en ningún momento.
+código puro (`src/lib/env.ts`), Sheet TEST creada, Apps Script TEST
+creado/autorizado/desplegado, token TEST generado (guardado solo localmente),
+pruebas manuales de lectura, escritura, stock, cancelación e idempotencia
+verificadas directamente contra la Web App TEST (2026-08-19, §G), y **la
+conexión de código entre Next.js y el entorno TEST**
+(`resolverConfigPorEntorno` en `appsScriptPedidos.ts`, con bloqueo explícito
+si falta configuración TEST o si coincide con producción, más las claves
+nuevas en `.env.example`). Producción no fue tocada en ningún momento; el
+comportamiento productivo actual no cambió.
 
 **No hecho:** hoja `APERTURAS` en la Sheet TEST, datos semilla completos de
-§E, pruebas de calendario y modo presencial, y — el más importante — **la
-conexión de Next.js local al entorno TEST** (variables `_TEST` en
-`.env.local`, todavía sin configurar). Sin esa conexión, la aplicación sigue
-sin ninguna vía de probar contra TEST desde `/tienda` o `/admin`.
+§E, pruebas de calendario y modo presencial, y — lo único que falta para
+probar de punta a punta — **que alguien configure `NEXT_PUBLIC_APP_ENV=test`
+y las variables `_TEST` con valores reales en su propio `.env.local`**. Sin
+eso, la aplicación sigue sin ninguna vía de probar contra TEST desde
+`/tienda` o `/admin` (usa producción por defecto, como siempre).
 

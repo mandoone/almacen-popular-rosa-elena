@@ -177,10 +177,13 @@ atómico antes de cualquier cambio productivo.
   TEST creados, autorizados y desplegados; pruebas manuales de lectura,
   escritura, stock, cancelación e idempotencia verificadas el 2026-08-19
   contra la Web App TEST, sin tocar producción —
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. Falta hoja `APERTURAS` en TEST,
-  datos semilla completos, pruebas de calendario/modo presencial y, sobre
-  todo, conectar Next.js local al entorno TEST (variables `_TEST` en
-  `.env.local`) — próximo paso.
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. `src/lib/appsScriptPedidos.ts`
+  ya usa el backend TEST cuando `NEXT_PUBLIC_APP_ENV=test`, con bloqueo
+  explícito si falta configuración o si TEST coincide con producción
+  (`src/lib/env.ts`, `resolverConfigPorEntorno`, 126/126 tests). Falta hoja
+  `APERTURAS` en TEST, datos semilla completos, pruebas de calendario/modo
+  presencial y que alguien configure los valores reales en su propio
+  `.env.local` — próximo paso.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
