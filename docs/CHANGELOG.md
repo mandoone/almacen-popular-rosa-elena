@@ -5,6 +5,42 @@
 
 ---
 
+## [FASE 3B — entorno TEST] — Prueba punta a punta Next.js ↔ TEST (2026-08-19)
+
+### Añadido
+- `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H: resultado de la prueba punta a
+  punta con Next.js corriendo localmente (`npm run dev`) contra el entorno
+  TEST. Confirmado: lectura de catálogo (`/api/productos`), creación de
+  pedido (`/api/pedidos`), descuento de stock, cancelación desde `/admin`
+  real (sesión de navegador, sin `?demo=1`) y devolución de stock. Como
+  efecto colateral, se confirmó que `/api/admin/*` sigue devolviendo `401`
+  sin cookie de sesión válida, incluso apuntando a TEST — el guardrail de
+  autenticación no se debilitó.
+
+### Cambiado
+- `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`, `docs/TASKS.md`,
+  `docs/PROJECT_STATE.md`: Etapa 3 actualizada — el entorno TEST y su
+  conexión desde Next.js quedan verificados de punta a punta; paso 9 del
+  plan operativo marcado como completado.
+
+### Pendiente (explícito, no cerrado por esta prueba)
+- Hoja `APERTURAS` en la Sheet TEST.
+- Datos semilla completos (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §E).
+- Pruebas de calendario y modo presencial.
+- Banner visual de entorno en la UI — decisión pendiente, no aprobada.
+- Revisión de codificación de acentos en nombres de producto: la prueba usó
+  "Arroz" (sin tildes ni eñes); no verificado con nombres acentuados, y ya
+  hubo un incidente de codificación previo en esta misma fase (commit
+  `ef9667a`).
+
+### Estado
+- Documental únicamente. No se tocó código, no se modificó `.env.local`
+  (ni se leyó ni se imprimió su contenido), no se tocó producción. Ningún
+  token, URL real de Web App TEST ni ID de Sheet quedó registrado en el
+  repo.
+
+---
+
 ## [FASE 3B — entorno TEST] — Next.js local conectado al entorno TEST
 
 ### Añadido

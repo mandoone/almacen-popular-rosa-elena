@@ -173,17 +173,22 @@ atómico antes de cualquier cambio productivo.
 - ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
   `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
   en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
-- 🔄 Entorno TEST compartido Fase 3A/3B — Etapa 3. Sheet TEST y Apps Script
-  TEST creados, autorizados y desplegados; pruebas manuales de lectura,
-  escritura, stock, cancelación e idempotencia verificadas el 2026-08-19
-  contra la Web App TEST, sin tocar producción —
+- ✅ Entorno TEST compartido Fase 3A/3B verificado de punta a punta — Etapa
+  3. Sheet TEST y Apps Script TEST creados, autorizados y desplegados;
+  pruebas directas contra la Web App TEST (lectura, escritura, stock,
+  cancelación, idempotencia) el 2026-08-19 —
   `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. `src/lib/appsScriptPedidos.ts`
-  ya usa el backend TEST cuando `NEXT_PUBLIC_APP_ENV=test`, con bloqueo
+  usa el backend TEST cuando `NEXT_PUBLIC_APP_ENV=test`, con bloqueo
   explícito si falta configuración o si TEST coincide con producción
-  (`src/lib/env.ts`, `resolverConfigPorEntorno`, 126/126 tests). Falta hoja
-  `APERTURAS` en TEST, datos semilla completos, pruebas de calendario/modo
-  presencial y que alguien configure los valores reales en su propio
-  `.env.local` — próximo paso.
+  (126/126 tests). **Prueba punta a punta con Next.js local (`npm run dev`)
+  el 2026-08-19: lectura de catálogo, creación de pedido, descuento de
+  stock, cancelación desde `/admin` real y devolución de stock — todo OK**
+  (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H).
+- ⬜ Pendientes de Fase 3B sobre TEST: hoja `APERTURAS`, datos semilla
+  completos (§E), pruebas de calendario/modo presencial, banner visual de
+  entorno (decisión pendiente, no aprobada) y revisión de codificación de
+  acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni
+  eñes) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H.4.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 

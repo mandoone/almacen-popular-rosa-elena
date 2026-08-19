@@ -101,11 +101,14 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   2026-08-19 (producción no fue tocada) — ver
   `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. `appsScriptPedidos.ts` ya sabe
   usar el backend TEST cuando `NEXT_PUBLIC_APP_ENV=test`, con bloqueo
-  explícito si falta configuración o si coincide con producción — 10 tests
-  nuevos, 126/126 en total. Falta: hoja `APERTURAS` en la Sheet TEST, datos
-  semilla completos, pruebas de calendario/modo presencial, y que alguien
-  configure `NEXT_PUBLIC_APP_ENV=test` con valores reales en su propio
-  `.env.local` — sin eso, la app sigue usando producción por defecto.
+  explícito si falta configuración o si coincide con producción — 126/126
+  tests. **Verificado de punta a punta con Next.js local (`npm run dev`) el
+  2026-08-19**: lectura de catálogo, creación de pedido, descuento de stock,
+  cancelación desde `/admin` real y devolución de stock — ver
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H. Falta: hoja `APERTURAS` en la
+  Sheet TEST, datos semilla completos, pruebas de calendario/modo presencial,
+  banner visual de entorno (decisión pendiente) y revisión de codificación de
+  acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni eñes).
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -244,7 +247,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ```
 Etapa 0 (hecha) → Etapa 1 (hecha) → Etapa 2 (hecha)
                                               │
-Etapa 3 (TEST, compartida con Fase 3A; Sheet+Apps Script TEST verificados, código de conexión listo, falta config local) ───────┘
+Etapa 3 (TEST, compartida con Fase 3A; verificado punta a punta con Next.js local el 2026-08-19) ───────┘
         │
         ▼
 Etapa 4 (admin) → Etapa 5 (web pública) → Etapa 6 (QR) → Etapa 7 (asistida)

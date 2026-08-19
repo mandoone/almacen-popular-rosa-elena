@@ -1,12 +1,14 @@
 # ENTORNO_TEST_FASE_3B.md — Estrategia de entorno TEST (compartido Fase 3A + 3B)
 
-> Estado: **entorno TEST de Apps Script + Google Sheet creado y verificado
-> con pruebas manuales (2026-08-19) — ver §G.** Producción no fue tocada en
-> ningún momento. `src/lib/appsScriptPedidos.ts` ya sabe elegir entre
-> variables productivas y `_TEST` según `NEXT_PUBLIC_APP_ENV` (§ Guardrails de
-> código); lo que falta es que alguien configure esas variables `_TEST` con
-> valores reales en su propio `.env.local` — nadie lo hizo todavía, así que
-> hoy la app sigue usando producción por defecto (comportamiento sin cambios).
+> Estado: **entorno TEST verificado de punta a punta, incluyendo Next.js
+> local (2026-08-19) — ver §G y §H.** Producción no fue tocada en ningún
+> momento. `src/lib/appsScriptPedidos.ts` elige entre variables productivas y
+> `_TEST` según `NEXT_PUBLIC_APP_ENV`; con las variables `_TEST` configuradas
+> en `.env.local` local (no leído ni modificado desde este repo), la app ya
+> lee y escribe contra el backend TEST — lectura de catálogo, creación de
+> pedido, descuento de stock, cancelación desde `/admin` real y devolución de
+> stock, todo confirmado funcionando (§H). Sin esa configuración local, el
+> comportamiento sigue siendo producción por defecto, sin cambios.
 >
 > ⚠️ **Ningún token, URL real de Web App TEST ni ID de Sheet se registra en
 > este documento ni en ningún otro archivo versionado.** La URL TEST vive
@@ -234,14 +236,76 @@ El entorno TEST de Apps Script y Google Sheet quedó **operativo** para
 pruebas controladas de lectura, escritura, descuento de stock, cancelación y
 devolución idempotente de stock, sin tocar producción.
 
-**Próximo paso: el código de conexión ya existe** (`resolverConfigPorEntorno`
-en `src/lib/appsScriptPedidos.ts`, ver "Guardrails de código" más abajo) —
-falta que alguien configure `NEXT_PUBLIC_APP_ENV=test` y las variables
-`_TEST` con valores reales en su propio `.env.local` (paso 9 del plan
-operativo, local, nunca commiteado). Hasta que eso ocurra, la aplicación
-Next.js sigue usando producción por defecto y sin ninguna vía de probar
-contra TEST desde la UI — las pruebas de esta ronda fueron directas contra el
-backend, no a través de `/tienda` ni `/admin`.
+**El código de conexión existía desde la sesión anterior**
+(`resolverConfigPorEntorno` en `src/lib/appsScriptPedidos.ts`, ver
+"Guardrails de código" más abajo); esta ronda de pruebas era directa contra
+el backend, no a través de `/tienda` ni `/admin`. §H registra la prueba
+posterior que sí pasó por la aplicación Next.js.
+
+---
+
+## H. Resultado de prueba punta a punta — Next.js local (2026-08-19)
+
+Con la aplicación levantada localmente (`npm run dev`) y `.env.local`
+cargando las variables `_TEST` ya configuradas por quien probó — **no leídas
+ni impresas en esta sesión de documentación, y no modificadas** —, se
+confirmó que el código de conexión de §G funciona de punta a punta, no solo
+en teoría.
+
+⚠️ Mismo criterio que §G: **ningún valor real se registra aquí.** `.env.local`
+está ignorado por git y no se tocó.
+
+### H.1 Resultados
+
+| # | Prueba | Resultado |
+|---|---|---|
+| 1 | `GET /api/productos` (local, vía Next.js) | OK — 53 productos leídos desde el entorno TEST |
+| 2 | Creación de pedido desde Next.js local (`POST /api/pedidos`) | OK — `PED-20260819-171715`, cliente "TEST NEXT LOCAL - Omar", `PROD-001` (Arroz) × 1, total `1320`, estado inicial `pendiente` |
+| 3 | Descuento de stock | OK — stock de `PROD-001` pasó de 99 a 98 |
+| 4 | Cancelación desde `/admin` local (sesión de navegador real, **sin** `?demo=1`) | OK |
+| 5 | Devolución de stock | OK — stock volvió a 99 |
+| 6 | Estado final del pedido | OK — `PED-20260819-171715` quedó `cancelado` |
+
+### H.2 Nota sobre la sesión admin
+
+Durante la prueba se confirmó, como efecto colateral útil, que una llamada a
+`/api/admin/*` sin la cookie de sesión del navegador (probada desde
+PowerShell, fuera del navegador) responde `401` correctamente. La conexión al
+entorno TEST no debilitó ni sorteó el guardrail de autenticación existente
+(`src/middleware.ts`): sigue exigiendo sesión real de `/admin/login`, sin
+importar si el backend detrás es productivo o TEST.
+
+### H.3 Conclusión
+
+Next.js local queda validado de punta a punta contra Apps Script TEST + Sheet
+TEST: lectura pública, creación de pedido, descuento de stock, cancelación
+desde el panel admin real (con sesión de navegador, no modo demo) y
+devolución de stock. Producción no fue tocada en ningún momento.
+
+Con esto, el **paso 9 del plan operativo queda completo**: el código
+(sesión anterior) y la configuración local (fuera de este repo) ya funcionan
+juntos.
+
+### H.4 Pendientes explícitos (no cerrados por esta prueba)
+
+- **Hoja `APERTURAS` en la Sheet TEST** — no existe todavía (pasos 3 y 13 del
+  plan operativo). El calendario de Fase 3B sigue sin poder probarse contra
+  TEST.
+- **Datos semilla completos de §E** — no confirmados como cargados (stock
+  bajo, agotado, granel, un pedido por cada estado, las 6 aperturas).
+- **Pruebas de calendario y modo presencial** — no realizadas (pasos 13 y 14
+  del plan operativo); dependen de que exista la hoja `APERTURAS`.
+- **Banner visual de entorno en la UI** — `ETIQUETA_ENTORNO`
+  (`src/lib/env.ts`) ya existe para esto, pero no se conectó a ningún
+  componente. Queda como decisión pendiente, no como tarea aprobada: falta
+  decidir si vale la pena antes de tener más funcionalidad conectada a TEST.
+- **Revisión de codificación de acentos en nombres de productos** — esta
+  ronda probó con "Arroz" (sin tildes ni eñes), así que no ejerció ningún
+  caso con acentos. Dado que ya hubo un incidente de codificación en la
+  documentación de esta misma fase (commit `ef9667a`), conviene repetir una
+  prueba de creación de pedido con un producto cuyo nombre tenga tilde o eñe
+  (por ejemplo, "azúcar" o "piñones") antes de dar por cerrada la
+  compatibilidad de codificación end-to-end. No verificado en esta sesión.
 
 ---
 
@@ -294,12 +358,12 @@ Se agregaron también las claves `NEXT_PUBLIC_APP_ENV`,
 `GOOGLE_SCRIPT_PEDIDOS_URL_TEST` y `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST` a
 `.env.example`, con valores vacíos — ningún valor real.
 
-**Lo que falta para que esto funcione de punta a punta:** que alguien
-configure `NEXT_PUBLIC_APP_ENV=test` y las dos variables `_TEST` con los
-valores reales en su propio `.env.local` (nunca commiteado). Sin eso, la app
-sigue usando producción exactamente como hasta ahora — el cambio de esta
-sesión es aditivo y no requiere que nadie toque nada para seguir funcionando
-igual que hoy.
+**Confirmado funcionando de punta a punta el 2026-08-19** con
+`NEXT_PUBLIC_APP_ENV=test` y las dos variables `_TEST` configuradas en un
+`.env.local` local (nunca commiteado) — ver §H. Sin esa configuración local,
+la app sigue usando producción exactamente como hasta ahora: el cambio de
+esta sesión es aditivo y no requiere que nadie toque nada para seguir
+funcionando igual que hoy.
 
 33 tests nuevos en total sobre `src/lib/env.ts` en `tests/entorno-test.test.mjs`
 (23 de la sesión anterior + 10 de `resolverConfigPorEntorno` en esta) —
@@ -344,13 +408,9 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
 8. ✅ Crear un token admin nuevo, exclusivo de TEST (no reutilizar el
    productivo). Guardado solo localmente, fuera del repo (ver advertencia al
    inicio del documento).
-9. 🔄 Configurar las variables `_TEST` de §D en `.env.local` **local**, sin
-   commitear nada. `.env.example` ya tiene las claves vacías
-   (`NEXT_PUBLIC_APP_ENV`, `GOOGLE_SCRIPT_PEDIDOS_URL_TEST`,
-   `GOOGLE_SCRIPT_ADMIN_TOKEN_TEST`) y `appsScriptPedidos.ts` ya sabe
-   usarlas. **Falta solo que alguien ponga los valores reales en su propio
-   `.env.local`** — las pruebas de §G se hicieron directamente contra la Web
-   App TEST, sin pasar por la aplicación Next.js todavía.
+9. ✅ Configurar las variables `_TEST` de §D en `.env.local` **local**, sin
+   commitear nada. Confirmado funcionando con `npm run dev` el 2026-08-19 —
+   ver §H.
 10. ✅ Probar lectura: `listarProductos` (53 productos) y `listarPedidos`
     (4 pedidos) contra el deployment TEST — §G.1, §G.2.
 11. ✅ Probar escritura controlada: crear un pedido de prueba — §G.3.
@@ -373,17 +433,20 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
 código puro (`src/lib/env.ts`), Sheet TEST creada, Apps Script TEST
 creado/autorizado/desplegado, token TEST generado (guardado solo localmente),
 pruebas manuales de lectura, escritura, stock, cancelación e idempotencia
-verificadas directamente contra la Web App TEST (2026-08-19, §G), y **la
-conexión de código entre Next.js y el entorno TEST**
+verificadas directamente contra la Web App TEST (2026-08-19, §G), la
+conexión de código entre Next.js y el entorno TEST
 (`resolverConfigPorEntorno` en `appsScriptPedidos.ts`, con bloqueo explícito
 si falta configuración TEST o si coincide con producción, más las claves
-nuevas en `.env.example`). Producción no fue tocada en ningún momento; el
-comportamiento productivo actual no cambió.
+nuevas en `.env.example`), y **la prueba punta a punta con Next.js local
+corriendo (`npm run dev`)** contra ese mismo entorno TEST: lectura de
+catálogo, creación de pedido, descuento de stock, cancelación desde `/admin`
+real (con sesión de navegador, no demo) y devolución de stock (2026-08-19,
+§H). Producción no fue tocada en ningún momento; el comportamiento
+productivo actual no cambió.
 
 **No hecho:** hoja `APERTURAS` en la Sheet TEST, datos semilla completos de
-§E, pruebas de calendario y modo presencial, y — lo único que falta para
-probar de punta a punta — **que alguien configure `NEXT_PUBLIC_APP_ENV=test`
-y las variables `_TEST` con valores reales en su propio `.env.local`**. Sin
-eso, la aplicación sigue sin ninguna vía de probar contra TEST desde
-`/tienda` o `/admin` (usa producción por defecto, como siempre).
+§E, pruebas de calendario y modo presencial, banner visual de entorno en la
+UI (decisión pendiente, no tarea aprobada), y revisión de codificación de
+acentos en nombres de producto (la prueba de §H usó "Arroz", sin tildes ni
+eñes — ver §H.4).
 
