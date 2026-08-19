@@ -5,6 +5,34 @@
 
 ---
 
+## [FASE 3B — entorno TEST] — Sheet y Apps Script TEST verificados (2026-08-19)
+
+### Añadido
+- `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G: resultado de las pruebas
+  manuales del entorno TEST realizadas el 2026-08-19. Sheet TEST y Apps
+  Script TEST creados, autorizados y desplegados como Web App independiente
+  de producción. Verificado directamente contra la Web App TEST (lectura
+  pública de 53 productos, lectura admin de 4 pedidos, creación de pedido,
+  descuento de stock, cancelación con devolución de stock, e idempotencia de
+  cancelación sin doble devolución). Producción no fue tocada en ningún
+  momento; ningún token, URL real ni ID sensible quedó registrado en el
+  repo.
+
+### Cambiado
+- `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`, `docs/TASKS.md`,
+  `docs/PROJECT_STATE.md`: Etapa 3 actualizada para reflejar que el entorno
+  TEST de Apps Script + Sheet ya existe y fue verificado; el próximo paso es
+  conectar Next.js local mediante variables `_TEST` en `.env.local` (todavía
+  sin configurar) — la aplicación sigue sin ninguna vía de probar contra
+  TEST desde `/tienda` o `/admin`.
+
+### Estado
+- Documental únicamente en este repo. La creación real del entorno TEST
+  ocurrió fuera del repositorio (Google Sheets, Apps Script); aquí solo se
+  registra el resultado, sin secretos.
+
+---
+
 ## [FASE 3B — entorno TEST] — Estrategia y guardrails, sin conectar
 
 ### Añadido

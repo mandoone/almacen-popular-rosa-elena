@@ -95,12 +95,15 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   `docs/fase-3a/CHECKLIST_ENTORNO_TEST_FASE_3A.md` §6, más columnas de
   `APERTURAS` y `PEDIDOS` de Fase 3B agregadas a la copia TEST.
 - **Qué NO se debe tocar:** Sheet productivo, Apps Script productivo.
-- **Estado:** 🔄 en curso. Estrategia documentada, diagnóstico de riesgo
-  completo, guardrails de código puro agregados y sin conectar, plan
-  operativo de 15 pasos listo para ejecutar — ver
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`. El entorno TEST real (Sheet, Apps
-  Script, deployment, tokens) **no existe todavía**; su creación sigue siendo
-  un paso manual pendiente de Omar.
+- **Estado:** 🔄 en curso. Sheet TEST y Apps Script TEST creados,
+  autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
+  cancelación e idempotencia verificadas contra la Web App TEST el
+  2026-08-19 (producción no fue tocada) — ver
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. Falta: hoja `APERTURAS` en la
+  Sheet TEST, datos semilla completos, pruebas de calendario/modo presencial,
+  y sobre todo **conectar Next.js local al entorno TEST** (variables `_TEST`
+  en `.env.local`, todavía sin configurar) — sin eso, la app sigue sin poder
+  probar contra TEST desde `/tienda` o `/admin`.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -239,7 +242,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ```
 Etapa 0 (hecha) → Etapa 1 (hecha) → Etapa 2 (hecha)
                                               │
-Etapa 3 (TEST, compartida con Fase 3A; estrategia lista, ejecución manual pendiente) ───────┘
+Etapa 3 (TEST, compartida con Fase 3A; Sheet+Apps Script TEST verificados, falta conectar Next.js) ───────┘
         │
         ▼
 Etapa 4 (admin) → Etapa 5 (web pública) → Etapa 6 (QR) → Etapa 7 (asistida)

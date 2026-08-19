@@ -173,12 +173,14 @@ atómico antes de cualquier cambio productivo.
 - ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
   `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
   en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
-- 🔄 Entorno TEST compartido Fase 3A/3B — Etapa 3. Estrategia documentada,
-  diagnóstico de riesgo, guardrails de código puro (`src/lib/env.ts`, sin
-  conectar) y plan operativo de 15 pasos listos —
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`. Falta la ejecución manual (crear
-  Sheet TEST, Apps Script TEST, deployment, tokens); sigue bloqueando
-  cualquier integración real de Fase 3A y Fase 3B.
+- 🔄 Entorno TEST compartido Fase 3A/3B — Etapa 3. Sheet TEST y Apps Script
+  TEST creados, autorizados y desplegados; pruebas manuales de lectura,
+  escritura, stock, cancelación e idempotencia verificadas el 2026-08-19
+  contra la Web App TEST, sin tocar producción —
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G. Falta hoja `APERTURAS` en TEST,
+  datos semilla completos, pruebas de calendario/modo presencial y, sobre
+  todo, conectar Next.js local al entorno TEST (variables `_TEST` en
+  `.env.local`) — próximo paso.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 

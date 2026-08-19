@@ -16,12 +16,12 @@ sábados de apertura.
 - **Producción:** los avances de Fase 3A y el diseño de Fase 3B no modificaron
   Google Sheets ni Apps Script productivo; el backend real conserva el modelo
   anterior.
-- **Próxima prioridad:** crear un entorno TEST separado y validar allí el backend
-  atómico antes de planificar migración o producción. El diseño de Fase 3B
-  (calendario y modo presencial) se prueba sobre la misma base TEST. La
-  estrategia y el plan operativo de 15 pasos ya están documentados
-  (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md`); falta la ejecución manual — hoy
-  no existe ningún Sheet, Apps Script ni deployment TEST.
+- **Próxima prioridad:** conectar Next.js local al entorno TEST ya creado
+  (Sheet TEST + Apps Script TEST verificados con pruebas manuales el
+  2026-08-19, sin tocar producción — `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`
+  §G) mediante variables `_TEST` en `.env.local`, antes de planificar
+  migración o producción. El diseño de Fase 3B (calendario y modo
+  presencial) se prueba sobre la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
   informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
@@ -33,12 +33,14 @@ sábados de apertura.
   (lógica pura del calendario, estado público de la web y origen de pedido) y
   2 (demo local del calendario en `/admin?demo=1`, componente
   `CalendarioAperturasDemo`) están completadas. Etapa 3 (entorno TEST
-  compartido con Fase 3A) tiene estrategia y guardrails listos —
-  diagnóstico de riesgo (hoy `.env.local` solo puede apuntar a producción,
-  sin ningún guardrail de código), variables `_TEST` propuestas, datos
-  semilla y plan operativo de 15 pasos — pero el entorno real todavía no
-  existe. 116/116 tests, lint y build verdes; sin conexión a `/api/admin`,
-  Apps Script ni Google Sheets. Detalle en
+  compartido con Fase 3A) en curso: Sheet TEST y Apps Script TEST creados,
+  autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
+  cancelación e idempotencia verificadas el 2026-08-19 directamente contra la
+  Web App TEST, sin tocar producción. Falta la hoja `APERTURAS` en TEST,
+  datos semilla completos y — el paso siguiente — conectar Next.js local al
+  entorno TEST. 116/116 tests, lint y build verdes; sin conexión a
+  `/api/admin`, Apps Script ni Google Sheets desde el código de este repo.
+  Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
@@ -114,7 +116,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Pendientes principales
 
-- Crear copias identificadas de Google Sheet y Apps Script para el entorno TEST.
+- ✅ Sheet y Apps Script TEST creados; conectar Next.js local al entorno TEST
+  (variables `_TEST` en `.env.local`) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G.
 - Implementar y probar en TEST la creación en `recibido` sin descontar stock.
 - Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
   reconciliación de fallos parciales.
@@ -137,9 +140,13 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`):
 
 1. Aprobar el checklist y las decisiones técnicas pendientes.
-2. Preparar copias separadas de Sheet y Apps Script con conexión por ID explícito.
+2. ✅ Preparar copias separadas de Sheet y Apps Script con conexión por ID
+   explícito — creado, autorizado y desplegado; verificado con pruebas
+   manuales el 2026-08-19 (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G).
 3. Implementar el backend únicamente en TEST.
-4. Ejecutar pruebas de stock, concurrencia, idempotencia y rollback.
+4. Ejecutar pruebas de stock, concurrencia, idempotencia y rollback —
+   stock e idempotencia de cancelación ya verificados manualmente (§G);
+   concurrencia y rollback, pendientes.
 5. Emitir criterio Go/No-Go antes de preparar una intervención productiva.
 
 ---
