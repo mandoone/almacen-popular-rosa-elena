@@ -16,8 +16,14 @@ import {
   esEntornoSeguroParaPruebas,
   obtenerEntornoAplicacion,
   requiereConfigTest,
+  resolverConfigPorEntorno,
   validarConfigEntornoTest,
 } from '../src/lib/env.ts';
+
+const NOMBRES_URL = {
+  nombreVariableProduccion: 'GOOGLE_SCRIPT_PEDIDOS_URL',
+  nombreVariableTest: 'GOOGLE_SCRIPT_PEDIDOS_URL_TEST',
+};
 
 // --- obtenerEntornoAplicacion ---------------------------------------------
 
@@ -123,5 +129,129 @@ test('ETIQUETA_ENTORNO tiene una etiqueta legible para cada entorno conocido', (
   for (const entorno of ENTORNOS_APLICACION) {
     assert.equal(typeof ETIQUETA_ENTORNO[entorno], 'string');
     assert.ok(ETIQUETA_ENTORNO[entorno].length > 0);
+  }
+});
+
+// --- resolverConfigPorEntorno -----------------------------------------------
+// Selección de URL/token de backend de pedidos según entorno. Pura: strings
+// de ejemplo, nunca valores reales ni llamadas de red.
+// Ver docs/fase-3b/ENTORNO_TEST_FASE_3B.md.
+
+test('resolverConfigPorEntorno: production con valor productivo presente -> usa el productivo', () => {
+  const resultado = resolverConfigPorEntorno('production', {
+    valorProduccion: 'https://ejemplo-prod.invalido/exec',
+    valorTest: undefined,
+    ...NOMBRES_URL,
+  });
+  assert.deepEqual(resultado, { ok: true, valor: 'https://ejemplo-prod.invalido/exec' });
+});
+
+test('resolverConfigPorEntorno: production sin valor productivo -> bloquea con error explícito', () => {
+  const resultado = resolverConfigPorEntorno('production', {
+    valorProduccion: undefined,
+    valorTest: 'https://ejemplo-test.invalido/exec',
+    ...NOMBRES_URL,
+  });
+  assert.equal(resultado.ok, false);
+  assert.match(resultado.error, /GOOGLE_SCRIPT_PEDIDOS_URL/);
+});
+
+test('resolverConfigPorEntorno: entorno desconocido (NEXT_PUBLIC_APP_ENV sin configurar) se comporta como production, sin romper nada', () => {
+  const entornoSinDeclarar = obtenerEntornoAplicacion(undefined);
+  assert.equal(entornoSinDeclarar, 'desconocido');
+  const resultado = resolverConfigPorEntorno(entornoSinDeclarar, {
+    valorProduccion: 'https://ejemplo-prod.invalido/exec',
+    valorTest: undefined,
+    ...NOMBRES_URL,
+  });
+  assert.deepEqual(resultado, { ok: true, valor: 'https://ejemplo-prod.invalido/exec' });
+});
+
+test('resolverConfigPorEntorno: test sin valor TEST configurado -> bloquea con error explícito', () => {
+  const resultado = resolverConfigPorEntorno('test', {
+    valorProduccion: 'https://ejemplo-prod.invalido/exec',
+    valorTest: undefined,
+    ...NOMBRES_URL,
+  });
+  assert.equal(resultado.ok, false);
+  assert.match(resultado.error, /GOOGLE_SCRIPT_PEDIDOS_URL_TEST/);
+});
+
+test('resolverConfigPorEntorno: test con valor TEST vacío (solo espacios) también bloquea', () => {
+  const resultado = resolverConfigPorEntorno('test', {
+    valorProduccion: undefined,
+    valorTest: '   ',
+    ...NOMBRES_URL,
+  });
+  assert.equal(resultado.ok, false);
+  assert.match(resultado.error, /GOOGLE_SCRIPT_PEDIDOS_URL_TEST/);
+});
+
+test('resolverConfigPorEntorno: test con valor TEST distinto del productivo -> usa el de TEST', () => {
+  const resultado = resolverConfigPorEntorno('test', {
+    valorProduccion: 'https://ejemplo-prod.invalido/exec',
+    valorTest: 'https://ejemplo-test.invalido/exec',
+    ...NOMBRES_URL,
+  });
+  assert.deepEqual(resultado, { ok: true, valor: 'https://ejemplo-test.invalido/exec' });
+});
+
+test('resolverConfigPorEntorno: test sin valor productivo configurado (caso normal en TEST) -> igual usa el de TEST', () => {
+  const resultado = resolverConfigPorEntorno('test', {
+    valorProduccion: undefined,
+    valorTest: 'https://ejemplo-test.invalido/exec',
+    ...NOMBRES_URL,
+  });
+  assert.deepEqual(resultado, { ok: true, valor: 'https://ejemplo-test.invalido/exec' });
+});
+
+test('resolverConfigPorEntorno: test con el mismo valor que producción -> bloquea, nunca deja que coincidan', () => {
+  const resultado = resolverConfigPorEntorno('test', {
+    valorProduccion: 'https://mismo-backend.invalido/exec',
+    valorTest: 'https://mismo-backend.invalido/exec',
+    ...NOMBRES_URL,
+  });
+  assert.equal(resultado.ok, false);
+  assert.match(resultado.error, /no puede ser igual/);
+});
+
+test('resolverConfigPorEntorno: aplica igual para el token admin (otro par de nombres de variable)', () => {
+  const nombresToken = {
+    nombreVariableProduccion: 'GOOGLE_SCRIPT_ADMIN_TOKEN',
+    nombreVariableTest: 'GOOGLE_SCRIPT_ADMIN_TOKEN_TEST',
+  };
+
+  const sinTokenTest = resolverConfigPorEntorno('test', {
+    valorProduccion: 'token-prod-ejemplo',
+    valorTest: undefined,
+    ...nombresToken,
+  });
+  assert.equal(sinTokenTest.ok, false);
+  assert.match(sinTokenTest.error, /GOOGLE_SCRIPT_ADMIN_TOKEN_TEST/);
+
+  const tokenTestOk = resolverConfigPorEntorno('test', {
+    valorProduccion: 'token-prod-ejemplo',
+    valorTest: 'token-test-ejemplo',
+    ...nombresToken,
+  });
+  assert.deepEqual(tokenTestOk, { ok: true, valor: 'token-test-ejemplo' });
+
+  const tokenIgualAlProductivo = resolverConfigPorEntorno('test', {
+    valorProduccion: 'token-compartido-por-error',
+    valorTest: 'token-compartido-por-error',
+    ...nombresToken,
+  });
+  assert.equal(tokenIgualAlProductivo.ok, false);
+  assert.match(tokenIgualAlProductivo.error, /GOOGLE_SCRIPT_ADMIN_TOKEN_TEST no puede ser igual/);
+});
+
+test('resolverConfigPorEntorno: demo y local se comportan como production (no requieren config TEST)', () => {
+  for (const entorno of ['demo', 'local']) {
+    const resultado = resolverConfigPorEntorno(entorno, {
+      valorProduccion: 'https://ejemplo-prod.invalido/exec',
+      valorTest: undefined,
+      ...NOMBRES_URL,
+    });
+    assert.deepEqual(resultado, { ok: true, valor: 'https://ejemplo-prod.invalido/exec' });
   }
 });

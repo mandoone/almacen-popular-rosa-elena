@@ -1,6 +1,7 @@
 /**
  * appsScriptPedidos.ts — Helper de SERVIDOR para hablar con la Web App de Apps
- * Script (backend de pedidos reales).
+ * Script (backend de pedidos reales o, si `NEXT_PUBLIC_APP_ENV=test`, backend
+ * de pruebas — ver docs/fase-3b/ENTORNO_TEST_FASE_3B.md).
  *
  * IMPORTANTE:
  *   - Solo debe usarse desde route handlers / código de servidor. NUNCA importar
@@ -8,9 +9,24 @@
  *   - No imprime la URL ni el token en consola.
  *
  * Variables de entorno:
- *   GOOGLE_SCRIPT_PEDIDOS_URL  -> URL .../exec de la Web App.
- *   GOOGLE_SCRIPT_ADMIN_TOKEN  -> token admin (solo para acciones de administración).
+ *   NEXT_PUBLIC_APP_ENV        -> 'test' usa las variables _TEST de abajo;
+ *                                 cualquier otro valor (incluido ausente) usa
+ *                                 las variables productivas, sin cambios de
+ *                                 comportamiento respecto de antes de que
+ *                                 existiera esta variable.
+ *   GOOGLE_SCRIPT_PEDIDOS_URL       -> URL .../exec de la Web App productiva.
+ *   GOOGLE_SCRIPT_ADMIN_TOKEN       -> token admin productivo.
+ *   GOOGLE_SCRIPT_PEDIDOS_URL_TEST  -> URL .../exec de la Web App TEST.
+ *   GOOGLE_SCRIPT_ADMIN_TOKEN_TEST  -> token admin TEST.
+ *
+ * La selección entre productivo y TEST, y los guardrails que la acompañan
+ * (bloquear si falta configuración TEST, bloquear si TEST coincide con
+ * producción), viven en `src/lib/env.ts` (`resolverConfigPorEntorno`) como
+ * lógica pura y testeada — este archivo solo lee `process.env` y le pasa los
+ * valores.
  */
+
+import { obtenerEntornoAplicacion, resolverConfigPorEntorno } from './env';
 
 export interface CarritoItem {
   id_producto: string;
@@ -88,26 +104,34 @@ interface ScriptResponse<T> {
   codigo?: number;
 }
 
+function entornoActual() {
+  return obtenerEntornoAplicacion(process.env.NEXT_PUBLIC_APP_ENV);
+}
+
 function baseUrl(): string {
-  const url = process.env.GOOGLE_SCRIPT_PEDIDOS_URL;
-  if (!url) {
-    throw new AppsScriptError(
-      'Falta GOOGLE_SCRIPT_PEDIDOS_URL en el entorno del servidor.',
-      500
-    );
+  const resolucion = resolverConfigPorEntorno(entornoActual(), {
+    valorProduccion: process.env.GOOGLE_SCRIPT_PEDIDOS_URL,
+    valorTest: process.env.GOOGLE_SCRIPT_PEDIDOS_URL_TEST,
+    nombreVariableProduccion: 'GOOGLE_SCRIPT_PEDIDOS_URL',
+    nombreVariableTest: 'GOOGLE_SCRIPT_PEDIDOS_URL_TEST',
+  });
+  if (!resolucion.ok) {
+    throw new AppsScriptError(resolucion.error, 500);
   }
-  return url;
+  return resolucion.valor;
 }
 
 function adminToken(): string {
-  const token = process.env.GOOGLE_SCRIPT_ADMIN_TOKEN;
-  if (!token) {
-    throw new AppsScriptError(
-      'Falta GOOGLE_SCRIPT_ADMIN_TOKEN en el entorno del servidor.',
-      500
-    );
+  const resolucion = resolverConfigPorEntorno(entornoActual(), {
+    valorProduccion: process.env.GOOGLE_SCRIPT_ADMIN_TOKEN,
+    valorTest: process.env.GOOGLE_SCRIPT_ADMIN_TOKEN_TEST,
+    nombreVariableProduccion: 'GOOGLE_SCRIPT_ADMIN_TOKEN',
+    nombreVariableTest: 'GOOGLE_SCRIPT_ADMIN_TOKEN_TEST',
+  });
+  if (!resolucion.ok) {
+    throw new AppsScriptError(resolucion.error, 500);
   }
-  return token;
+  return resolucion.valor;
 }
 
 async function leerRespuesta<T>(res: Response): Promise<T> {

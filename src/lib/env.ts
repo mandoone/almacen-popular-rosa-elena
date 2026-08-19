@@ -4,14 +4,15 @@
  *
  * Fuente de verdad operativa: docs/fase-3b/ENTORNO_TEST_FASE_3B.md
  *
- * IMPORTANTE — este módulo es PURO y NO está conectado a ningún flujo real
- * todavía. No lee `process.env` por sí mismo (mismo criterio que
- * `esModoDemoAdmin` en `src/lib/fase3a/adminDemo.ts`): quien lo llame le pasa
- * el valor ya leído, para que sea 100% testeable sin variables de entorno
- * reales. Nada en `src/lib/appsScriptPedidos.ts` ni en ninguna ruta de
- * `src/app/api/` usa este módulo todavía — no existe `NEXT_PUBLIC_APP_ENV`
- * en `.env.example` ni en `.env.local`. Conectar esto a un flujo real es un
- * paso posterior, explícito, que requiere que el entorno TEST ya exista.
+ * IMPORTANTE — este módulo es PURO. No lee `process.env` por sí mismo (mismo
+ * criterio que `esModoDemoAdmin` en `src/lib/fase3a/adminDemo.ts`): quien lo
+ * llame le pasa el valor ya leído, para que sea 100% testeable sin variables
+ * de entorno reales y sin llamadas de red.
+ *
+ * Usado por `src/lib/appsScriptPedidos.ts` (`resolverConfigPorEntorno`) para
+ * elegir entre las variables productivas y las `_TEST` según
+ * `NEXT_PUBLIC_APP_ENV`. Ese archivo es el único punto de integración real;
+ * ninguna ruta de `src/app/api/` importa este módulo directamente.
  *
  * Principio de diseño: por defecto, NADA es seguro. Un valor vacío,
  * desconocido o mal escrito nunca se trata como "test" ni como "seguro para
@@ -120,4 +121,72 @@ export function assertNoProduccionParaEscritura(entorno: EntornoAplicacion): voi
       'Solo "test" o "local" pueden escribir aquí. "production" nunca; "demo" no debería alcanzar ' +
       'este punto porque el modo demo no llama a ningún backend.'
   );
+}
+
+export type ResolucionValorPorEntorno =
+  | { ok: true; valor: string }
+  | { ok: false; error: string };
+
+/**
+ * Resuelve qué valor de configuración usar (URL de backend, token admin,
+ * etc.) según el entorno declarado. Pura: no lee `process.env`, no hace
+ * llamadas de red — recibe los valores ya leídos por quien llama
+ * (`src/lib/appsScriptPedidos.ts`).
+ *
+ * Compone los guardrails ya definidos arriba en vez de duplicar su lógica:
+ *
+ * - Si `!requiereConfigTest(entorno)` (production, desconocido, demo, local):
+ *   usa `valorProduccion` tal cual, **sin ningún cambio de comportamiento**.
+ *   Si falta, error explícito con el nombre de la variable — mismo
+ *   comportamiento que existía antes de que este módulo existiera.
+ * - Si `entorno === 'test'`: pasa por `assertNoProduccionParaEscritura`
+ *   (defensa en profundidad: si algún día se llama a esta función fuera de
+ *   la rama `test`, falla ruidosamente en vez de filtrar configuración de
+ *   prueba) y por `validarConfigEntornoTest` para exigir `valorTest`. Si
+ *   `valorTest` coincide con `valorProduccion` (ambos presentes y no
+ *   vacíos), error explícito: TEST nunca puede apuntar al mismo backend que
+ *   producción, aunque alguien haya configurado mal las variables.
+ */
+export function resolverConfigPorEntorno(
+  entorno: EntornoAplicacion,
+  config: {
+    valorProduccion: string | undefined;
+    valorTest: string | undefined;
+    nombreVariableProduccion: string;
+    nombreVariableTest: string;
+  }
+): ResolucionValorPorEntorno {
+  const { valorProduccion, valorTest, nombreVariableProduccion, nombreVariableTest } = config;
+
+  if (!requiereConfigTest(entorno)) {
+    if (!valorProduccion) {
+      return { ok: false, error: `Falta ${nombreVariableProduccion} en el entorno del servidor.` };
+    }
+    return { ok: true, valor: valorProduccion };
+  }
+
+  assertNoProduccionParaEscritura(entorno);
+
+  const { valido, faltantes } = validarConfigEntornoTest({ [nombreVariableTest]: valorTest }, [
+    nombreVariableTest,
+  ]);
+  if (!valido) {
+    return {
+      ok: false,
+      error:
+        `Entorno TEST (NEXT_PUBLIC_APP_ENV=test) sin ${faltantes.join(', ')} configurada. ` +
+        'Agrega esa variable a tu .env.local antes de usar este entorno.',
+    };
+  }
+
+  if (valorProduccion && valorTest === valorProduccion) {
+    return {
+      ok: false,
+      error:
+        `${nombreVariableTest} no puede ser igual a ${nombreVariableProduccion}. ` +
+        'TEST y producción no pueden apuntar al mismo backend.',
+    };
+  }
+
+  return { ok: true, valor: valorTest as string };
 }
