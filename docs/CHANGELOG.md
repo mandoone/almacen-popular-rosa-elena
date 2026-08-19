@@ -5,6 +5,26 @@
 
 ---
 
+## [FASE 3B — decisiones] — F.1 y F.3 aprobadas como criterio base
+
+### Cambiado
+- `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`: F.1 (venta presencial
+  asistida nace en `listo`, no en `recibido` ni `entregado`) y F.3 (orden de
+  prioridad determinista para elegir la apertura relevante; el solapamiento
+  se trata como conflicto explícito, nunca se adivina) pasan de recomendación
+  a **aprobadas por coordinación** como criterio base.
+- `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
+  `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`, `docs/TASKS.md` y
+  `docs/PROJECT_STATE.md`: referencias actualizadas para reflejar la
+  aprobación.
+
+### Estado
+- Documental únicamente. La aprobación habilita construir la Etapa 2 (demo
+  local); no habilita integración real, TEST ni producción — sigue faltando
+  el contrato de backend para F.1 y la función de selección real para F.3.
+
+---
+
 ## [FASE 3B — diseño] — Calendario de aperturas y modo presencial (2026-08-19)
 
 ### Añadido

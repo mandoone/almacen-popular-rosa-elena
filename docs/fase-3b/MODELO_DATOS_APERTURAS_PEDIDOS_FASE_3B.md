@@ -249,15 +249,18 @@ cuenta mientras no exista el rol vendedor de FASE 2 con permisos propios.
 No se decidieron por cuenta propia; quedan registradas para resolver antes de
 implementar código conectado:
 
-### F.1 ¿Venta asistida entra en `recibido` o ya confirmada?
+### F.1 ¿Venta asistida entra en `recibido` o ya confirmada? — ✅ Aprobada
 Si un vendedor arma la venta y la cobra en el momento, exigir que pase por
 `recibido → pendiente/listo` como un pedido web es una fricción operativa (dos
 pasos para una sola persona). Pero saltarse `recibido` rompe la regla actual de
 que todo pedido nuevo nace sin comprometer stock. Se necesita una decisión
 explícita, no un valor por defecto inventado aquí.
 
-**Recomendación técnica registrada, pendiente de aprobación:**
-`docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §1.
+**Aprobado por coordinación como criterio base:** la venta presencial asistida
+nace directamente en `listo` (no `recibido`, no `entregado`). Detalle y
+justificación en `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0 y §1.
+Habilita la Etapa 2 (demo local); la Etapa 7 (venta asistida real) sigue
+bloqueada hasta diseñar el contrato de backend correspondiente.
 
 ### F.2 Pedidos sin `apertura_id`
 Todo pedido histórico (Fase 3A y anteriores) no tiene `apertura_id`. Se
@@ -266,15 +269,20 @@ calendario asignado", no como error. Falta decidir si vale la pena
 retro-poblarlo para pedidos históricos o si se deja vacío indefinidamente (bajo
 impacto: no se usa para stock ni pagos).
 
-### F.3 Selección de "la apertura vigente" entre varias
+### F.3 Selección de "la apertura vigente" entre varias — ✅ Aprobada
 Cuando el calendario tiene más de una apertura `programada`/`activa` a la vez
 (por ejemplo, la próxima y la siguiente ya cargada), falta definir el criterio
 para elegir cuál le muestra la web pública como *la* apertura relevante. No se
 inventa un criterio en este documento — es información que puede depender de
 cómo el Almacén quiera anunciar aperturas dobles o consecutivas.
 
-**Recomendación técnica registrada, pendiente de aprobación:**
-`docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §2.
+**Aprobado por coordinación como criterio base:** orden de prioridad
+determinista — (1) modo presencial usable ahora, (2) apertura activa de hoy,
+(3) próxima apertura programada, (4) `null` si no hay apertura clara. El
+solapamiento o conflicto no se adivina: se trata como conflicto explícito.
+Detalle en `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0 y §2. Habilita
+la Etapa 2 (demo local, con una sola apertura de ejemplo a la vez); la
+función real de selección para la Etapa 5 sigue sin implementarse.
 
 ### F.4 Horario único vs. horario por apertura
 `DECISIONES_OPERATIVAS_FASE_3B.md` §1.1 registra 11:00–15:00 como el horario

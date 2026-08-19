@@ -1,12 +1,39 @@
 # DECISIONES_PENDIENTES_FASE_3B.md — F.1 y F.3, con recomendación
 
-> Estado: **recomendación técnica documentada, sin aprobar y sin implementar.**
-> No cambia código ni comportamiento. Cierra (con una propuesta, no con una
-> decisión final) las dos preguntas abiertas más relevantes de
+> Estado: **✅ APROBADAS por coordinación** como criterio base para avanzar a
+> demo local (Etapa 2). Ver §0. La recomendación técnica original de este
+> documento (§1–§2) se mantiene sin cambios: coordinación aprobó exactamente lo
+> recomendado, sin modificaciones. Esto **no autoriza** integración real,
+> Sheets, Apps Script ni producción — sigue siendo diseño y, desde ahora,
+> también demo local (Etapa 2).
+> Cierra las dos preguntas abiertas más relevantes de
 > `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F: F.1 (venta
 > presencial asistida) y F.3 (selección de apertura relevante). F.2 y F.4 no
 > se tocan aquí — siguen tal como quedaron documentadas, porque son de bajo
 > impacto y no bloquean ninguna etapa próxima.
+
+## 0. Aprobación
+
+Coordinación aprobó ambas recomendaciones tal como quedaron documentadas en
+§1 y §2, sin modificaciones:
+
+- **F.1:** la venta presencial asistida nace en `listo` (no `recibido`, no
+  `entregado`). Motivo confirmado por coordinación: evita la ventana ciega de
+  caja, mantiene trazabilidad, no usa `entregado` como estado inicial
+  terminal, permite corregir antes de finalizar la entrega, es compatible con
+  Fase 3A. Coincide punto por punto con el análisis de §1.3.
+- **F.3:** orden de prioridad determinista — (1) modo presencial usable ahora,
+  (2) apertura activa de hoy, (3) próxima apertura programada, (4) `null` si
+  no hay apertura clara. El solapamiento o conflicto **no se adivina**: se
+  trata como conflicto explícito. Coincide con §2.1.
+
+**Alcance de esta aprobación:** habilita construir la Etapa 2 (demo local del
+calendario en `/admin?demo=1`) usando estos criterios como base de los datos
+simulados. **No** habilita la Etapa 4 (integración admin real), la Etapa 6
+(modo presencial QR real) ni la Etapa 7 (venta asistida real): esas etapas
+siguen requiriendo, además de esta aprobación de criterio, el entorno TEST
+(Etapa 3) y el diseño del contrato de backend correspondiente, ninguno de los
+cuales existe todavía.
 >
 > Producto de una auditoría de coherencia entre
 > `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
@@ -56,7 +83,7 @@ documento deja como pendiente sin resolver todavía.
 | **Compatibilidad con Fase 3A** | Total — cero superficie nueva. | Parcial — un nuevo camino de creación, pero reutiliza `estados.ts` sin modificarlo. | Parcial — mismo nuevo camino que B, más una dependencia de un procedimiento de reversión de entrega que **no está diseñado** todavía en ningún documento de Fase 3A. |
 | **Uso real del Almacén** (operación voluntaria, probablemente apurada en horario de apertura) | No calza con el momento: revisar después algo que ya se cobró es trabajo extra sin beneficio real. | Calza con el momento: un solo gesto para una sola acción física. | Calza con el momento, pero sin margen de error para un volunariado sin caja registradora profesional. |
 
-### 1.3 Recomendación
+### 1.3 Recomendación (✅ Aprobada por coordinación, ver §0)
 
 **Opción B, con un matiz:** que la venta asistida nazca directamente en
 **`listo`** (no en `pendiente`), con el pago registrado como parte de la misma
@@ -130,7 +157,7 @@ Cuando `APERTURAS` tiene más de un registro, ¿cuál le muestra la web pública
 `obtenerEstadoPublicoWeb()`? Hoy esa función recibe una apertura ya elegida (o
 `null`); falta la función que elige.
 
-### 2.1 Recomendación: orden de prioridad determinista
+### 2.1 Recomendación: orden de prioridad determinista (✅ Aprobada por coordinación, ver §0)
 
 1. **Si existe exactamente una apertura con modo presencial usable ahora mismo**
    (`puedeUsarModoPresencial` verdadero) → esa es la relevante. Máxima
@@ -253,7 +280,9 @@ etapa que integre la UI.
 
 **Sobre F.1 y F.3:** no eran contradicciones — eran decisiones pendientes ya
 señaladas explícitamente como tales desde la sesión anterior (§F del modelo de
-datos). Esta sesión las analiza y deja una recomendación (§1 y §2 de este
-documento), pero **no las aprueba ni las implementa**: la Etapa 7 sigue
-bloqueada por F.1 y la Etapa 5 seguirá bloqueada por F.3 hasta que alguien
-(Omar) apruebe explícitamente estas recomendaciones o las corrija.
+datos). Esa sesión dejó una recomendación (§1 y §2 de este documento); esta
+sesión registra su **aprobación por coordinación** (§0), sin cambios sobre lo
+recomendado. Eso habilita la Etapa 2 (demo local). La Etapa 7 sigue bloqueada
+por la falta del contrato de backend para F.1, y la Etapa 5 sigue bloqueada
+por la falta de la función de selección real para F.3 — la aprobación fija el
+criterio, no construye todavía ninguna de las dos.

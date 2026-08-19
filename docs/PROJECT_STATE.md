@@ -28,8 +28,10 @@ sábados de apertura.
   del calendario, estado público de la web y origen de pedido) está
   implementada en `src/lib/fase3b/` con 41 tests propios (87/87 en total, lint
   y build verdes) — sin conexión a `/api/admin`, Apps Script ni Google Sheets.
-  Decisiones pendientes F.1 y F.3 auditadas con recomendación técnica, aún sin
-  aprobación explícita. Detalle en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
+  Decisiones F.1 (venta asistida nace en `listo`) y F.3 (orden determinista de
+  selección de apertura) **aprobadas por coordinación** como criterio base;
+  habilita la Etapa 2 (demo local), no habilita integración real. Detalle en
+  `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md` y
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`.
@@ -110,9 +112,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
-- Aprobar las decisiones pendientes F.1 y F.3 de Fase 3B (ver
-  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`) antes de conectar la lógica
-  pura del calendario a UI, demo o backend real.
+- F.1 y F.3 de Fase 3B ya aprobadas como criterio base (ver
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); falta diseñar el
+  contrato de backend real antes de conectar la lógica pura del calendario a
+  producción o TEST.
 - Pendientes reales del Almacén (catálogo, contenido, fotos, nómina de
   usuarios) — ver `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
 

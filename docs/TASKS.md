@@ -163,10 +163,11 @@ atómico antes de cualquier cambio productivo.
 - ✅ Plan de implementación en 10 etapas y plan de pruebas —
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
   `docs/fase-3b/PLAN_PRUEBAS_FASE_3B.md`.
-- ✅ Decisiones pendientes F.1 (venta presencial asistida) y F.3 (selección de
-  apertura relevante) auditadas y con recomendación técnica documentada —
-  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`. Pendiente de aprobación
-  explícita antes de implementar.
+- ✅ Decisiones F.1 (venta presencial asistida nace en `listo`) y F.3 (orden de
+  prioridad determinista para la apertura relevante) **aprobadas por
+  coordinación** como criterio base — `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`
+  §0. Habilita demo local; no habilita integración real (falta contrato de
+  backend para F.1 y función de selección real para F.3).
 - ⬜ Definir el contrato del modo presencial QR (vista cliente, vista
   vendedor/admin) — Etapa 6.
 - ⬜ Probar calendario y modo presencial en modo demo local — Etapa 2.

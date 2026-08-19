@@ -170,10 +170,11 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Archivos/módulos probables:** pantalla simplificada dentro de `/admin`
   para "ingresar venta presencial", reutilizando la validación de
   `src/lib/fase3a/productos.ts`.
-- **Riesgos:** la decisión pendiente F.1 del modelo de datos (si la venta
-  asistida entra en `recibido` o se confirma directamente) debe resolverse
-  **antes** de esta etapa, no durante. Implementar sin resolverla obliga a
-  adivinar y luego migrar.
+- **Riesgos:** F.1 ya está aprobada como criterio (nace en `listo`,
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0), pero esta etapa sigue
+  bloqueada por la falta del contrato de backend que la implemente: crear un
+  pedido que compromete stock en el mismo paso es una operación atómica nueva,
+  no una variante de `crearPedido_` (ver §1.4 de esa misma decisión).
 - **Criterios de aceptación:** una venta asistida queda registrada con
   `origen_pedido` correcto, `responsable_entrega`/`responsable_pago`
   completos y sin pasar por dos confirmaciones redundantes de la misma
@@ -181,7 +182,8 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Qué NO se debe tocar:** el rol vendedor con login propio sigue siendo
   FASE 2 (`docs/TASKS.md`); esta etapa no le da permisos nuevos, solo usa la
   sesión admin compartida existente.
-- **Estado:** ⬜ pendiente, bloqueada por F.1.
+- **Estado:** ⬜ pendiente. Criterio F.1 aprobado; falta diseñar el contrato de
+  backend antes de implementar.
 
 ---
 
