@@ -14,6 +14,8 @@
 - ✅ Crear templates para `AVANCE_ALMACEN` y `TECNICO_INTERNO`.
 - ✅ Crear estructura `reports/sources`, `reports/html` y `reports/pdf` por tipo.
 - ✅ Documentar convención de nombres y relación repo/Drive.
+- 🔄 Validar iteración v0.2.1 compacta con checklist completo Fases 0–6.
+- ✅ Incorporar perfil `.report-density-compact` y roadmap completo en templates.
 - ⬜ Elegir herramienta para automatizar Markdown → HTML sin acoplarla a Next.js.
 - ⬜ Implementar validación automática de metadata, rutas y placeholders.
 - ⬜ Implementar generación PDF solo después de aprobar el flujo HTML.
@@ -132,6 +134,38 @@ ni secretos, revisados y commiteados en la rama de fase.
 
 **Siguiente bloque:** entorno TEST, pruebas de stock/concurrencia y backend
 atómico antes de cualquier cambio productivo.
+
+---
+
+## FASE 3B — Calendario de aperturas, pedidos anticipados y modo presencial
+
+> Objetivo: diseñar la operación flexible de aperturas y separar el pedido
+> anticipado de la venta presencial. Detalle completo en
+> `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` y
+> `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
+
+- ✅ Respuestas del Almacén registradas: horario 11:00–15:00, cierre de
+  pedidos jueves anterior, confirmación y cancelación admin-only.
+- ✅ Decisiones operativas y técnicas de Fase 3B documentadas (calendario
+  editable, modo presencial digital, orígenes de pedido).
+- ⬜ Diseñar el modelo de datos del calendario (`APERTURAS` ampliada) sin
+  tocar la Sheet real.
+- ⬜ Diseñar el campo de origen de pedido (`online_anticipado` /
+  `presencial_qr` / `presencial_vendedor` / `comanda_papel`).
+- ⬜ Definir la máquina de estados públicos de la web según calendario como
+  función pura (mismo patrón que `src/lib/fase3a/estados.ts`).
+- ⬜ Definir el contrato del modo presencial QR (vista cliente, vista
+  vendedor/admin).
+- ⬜ Probar calendario y modo presencial en modo demo local.
+- ⬜ Resolver entorno TEST de Fase 3A antes de probar Fase 3B sobre datos
+  reales.
+- ⬜ Actualizar `docs/fase-3a/COLUMNAS_SHEETS_PROPUESTAS.md` §6 con el diseño
+  ampliado de `APERTURAS`.
+- ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
+  asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
+
+**No implementar código de Fase 3B hasta cerrar el diseño y tener entorno
+TEST disponible.**
 
 ---
 

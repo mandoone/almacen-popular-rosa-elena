@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-08-12.
+> tarea que cambie el estado. Última actualización: 2026-08-19.
 
 ---
 
@@ -13,11 +13,19 @@ sábados de apertura.
 
 - **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
   modo demo aislado y QA visual local aprobado.
-- **Producción:** los avances de Fase 3A no modificaron Google Sheets ni Apps
-  Script productivo; el backend real conserva el modelo anterior.
+- **Producción:** los avances de Fase 3A y el diseño de Fase 3B no modificaron
+  Google Sheets ni Apps Script productivo; el backend real conserva el modelo
+  anterior.
 - **Próxima prioridad:** crear un entorno TEST separado y validar allí el backend
-  atómico antes de planificar migración o producción.
+  atómico antes de planificar migración o producción. El diseño de Fase 3B
+  (calendario y modo presencial) se prueba sobre la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
+- **Fase 3B iniciada (diseño, sin código):** el informe v0.3 fue aprobado y
+  subido a Drive; el Almacén respondió horario de apertura/retiro y criterio de
+  cierre de pedidos. Se definieron las decisiones operativas y técnicas de la
+  siguiente etapa — calendario editable de aperturas y modo presencial digital.
+  Detalle en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` y
+  `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
 
 ### Sistema documental
 
@@ -25,8 +33,9 @@ sábados de apertura.
 - ✅ Dos tipos oficiales: informe de avance para el Almacén e informe técnico interno.
 - ✅ Dos pilotos HTML v0.2 aprobados como referencias visuales.
 - ✅ Fuentes Markdown, templates y CSS documental separados.
+- 🔄 Iteración v0.2.1 en revisión: escala compacta al 70 % y roadmap Fases 0–6.
 - ⬜ Automatización Markdown → HTML → PDF pendiente; no se instalaron dependencias.
-- ⬜ PDF finales pendientes de una tarea posterior.
+- ⬜ PDF v0.2.1 pendiente de aprobación humana.
 
 ---
 
@@ -94,6 +103,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
+- Diseñar y validar el calendario editable de aperturas y el modo presencial
+  digital (Fase 3B) antes de tocar código — ver
+  `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`.
+- Pendientes reales del Almacén (catálogo, contenido, fotos, nómina de
+  usuarios) — ver `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
 
 ---
 
@@ -114,5 +128,7 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - Número WhatsApp `56950807172` (tienda, participar, footer).
 - URL del CSV de Google Sheets (en `src/app/api/productos/route.ts`).
 - Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
-- Fechas de apertura en el Home (desactualizadas).
+- Fechas de apertura en el Home (desactualizadas). Horario confirmado por el
+  Almacén: 11:00–15:00 hrs (ver `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`
+  §1.1); las fechas vigentes siguen sin confirmar.
 - Dirección: Gamero 2670, Independencia.

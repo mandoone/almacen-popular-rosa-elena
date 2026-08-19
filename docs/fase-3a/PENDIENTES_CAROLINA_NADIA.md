@@ -22,25 +22,35 @@
 
 ## 2. Las 11 preguntas
 
-### P1 — Horario de apertura/retiro (§2.1) · 🔴 Bloqueado
+### P1 — Horario de apertura/retiro (§2.1) · 🟢 Respondido (2026-08-19)
 **Pregunta:** ¿Qué horario tendrán las próximas fechas? ¿Es el mismo para todas?
 **Fechas informadas:** 18 jul · 1 ago · 15 ago · 5 sep · 19 sep (a evaluar).
-**Manejo:** la hoja `APERTURAS` se diseña con `hora_inicio` / `hora_fin` por fecha
-(soporta horarios distintos, que es el caso general). **No se inventa un horario
-por defecto**: una hora equivocada publicada en la web es peor que ninguna.
+**Respuesta del Almacén:** apertura y retiro de 11:00 a 15:00 hrs. Sigue sin
+confirmar si aplica igual a todas las aperturas futuras (ver pendiente #6 en
+`docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`).
+**Manejo:** pasa a diseño de calendario en
+`docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §3, que amplía la hoja
+`APERTURAS` (`hora_inicio` / `hora_fin` editables por fecha, valor por
+defecto 11:00–15:00).
 **Impacto si cambia:** ninguno en código; es dato.
 
-### P2 — Cierre de pedidos online (§2.2) · 🔴 Bloqueado
+### P2 — Cierre de pedidos online (§2.2) · 🟢 Respondido (2026-08-19)
 **Pregunta:** ¿Cuándo deja de recibirse pedidos antes de cada apertura?
-**Manejo:** el modelo ya acepta pedidos sin apertura activa (§3.3), así que
-**no aplicar ningún cierre es el comportamiento correcto por ahora**. La columna
-`cierre_pedidos_online` queda diseñada.
+**Respuesta del Almacén:** "jueves anterior a la apertura".
+**Decisión técnica:** jueves anterior a la apertura, 23:59 hrs, como regla base
+editable por administrador. Detalle en
+`docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §1.2 y §3.
+**Manejo:** el modelo seguía aceptando pedidos sin apertura activa (§3.3) como
+comportamiento transitorio; ahora se reemplaza por el calendario editable de
+Fase 3B, que sí aplica el cierre configurado por apertura.
 **Impacto si cambia:** medio — agrega una validación al crear el pedido y un aviso
-en la tienda.
+en la tienda. Queda como paso técnico pendiente antes de implementar (ver
+`docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §6).
 
-### P3 — Quién confirma pedidos y descuenta stock (§2.3) · 🟡 Pendiente controlado
+### P3 — Quién confirma pedidos y descuenta stock (§2.3) · 🟢 Respondido (2026-08-19)
 **Propuesta del levantamiento:** administración (Carolina/Nadia) y operación
 (Lucía/Seba); venta solo si ellas quieren.
+**Respuesta del Almacén:** solo administradores confirman pedidos.
 **Manejo:** en primera versión **cualquier sesión admin puede confirmar**, y queda
 registrado **quién** en `responsable_confirmacion` + historial. Auditoría en vez de
 permiso.
@@ -48,11 +58,13 @@ permiso.
 control real de permisos exige usuarios individuales, que §9.2 deja fuera de
 alcance. Fingir permisos sobre una contraseña compartida da falsa seguridad.
 **Impacto si cambia:** alto — implicaría usuarios individuales (fase posterior).
+Detalle en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §1.3.
 
-### P4 — Quién cancela pedidos (§2.4) · 🟡 Pendiente controlado
+### P4 — Quién cancela pedidos (§2.4) · 🟢 Respondido (2026-08-19)
 **Propuesta:** administración y operación; venta no cancela en v1.
+**Respuesta del Almacén:** solo administradores cancelan pedidos.
 **Manejo:** igual que P3 — se permite y se audita con responsable y motivo
-obligatorios.
+obligatorios. Detalle en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §1.4.
 **Impacto si cambia:** alto (mismo motivo que P3).
 
 ### P5 — Validación del flujo general (§2.5) · 🟡 Pendiente controlado
@@ -133,10 +145,10 @@ Se reemplazan por `metodo_pago` y `responsable_pago`. **No se borran** de la hoj
 
 | # | Pregunta | Estado | ¿Bloquea? |
 |---|---|---|---|
-| P1 | Horario de apertura | 🔴 Bloqueado | Solo publicar horarios |
-| P2 | Cierre de pedidos online | 🔴 Bloqueado | Solo aplicar el cierre |
-| P3 | Quién confirma | 🟡 Controlado | No |
-| P4 | Quién cancela | 🟡 Controlado | No |
+| P1 | Horario de apertura | 🟢 Respondido | No |
+| P2 | Cierre de pedidos online | 🟢 Respondido | No |
+| P3 | Quién confirma | 🟢 Respondido (admin-only) | No |
+| P4 | Quién cancela | 🟢 Respondido (admin-only) | No |
 | P5 | Validación del flujo | 🟡 Controlado | No |
 | P6 | Categorías | 🟢 Editable | No |
 | P7 | Orden de categorías | 🟢 Editable | No |
@@ -145,7 +157,8 @@ Se reemplazan por `metodo_pago` y `responsable_pago`. **No se borran** de la hoj
 | P10 | Textos públicos | 🟢 Sin bloqueo | No |
 | P11 | Historia/comunidad | 🟢 Sin bloqueo | No |
 
-**Ninguna de las 11 bloquea la implementación de FASE 3A.** Solo P1 y P2 bloquean
-publicar horarios y aplicar el cierre de pedidos.
+**Ninguna de las 11 bloquea la implementación de FASE 3A.** P1, P2, P3 y P4 ya
+fueron respondidas por el Almacén (2026-08-19); detalle y decisiones técnicas
+derivadas en `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`.
 
 El texto listo para enviar por WhatsApp está en §11 del levantamiento consolidado.

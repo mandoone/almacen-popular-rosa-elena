@@ -5,6 +5,47 @@
 
 ---
 
+## [FASE 3B — diseño] — Calendario de aperturas y modo presencial (2026-08-19)
+
+### Añadido
+- `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`: respuestas del Almacén
+  (horario 11:00–15:00, cierre de pedidos jueves anterior 23:59, confirmación
+  y cancelación admin-only), decisiones técnicas propias, diseño del
+  calendario editable de aperturas y del modo presencial digital, y alcance
+  de Fase 3B.
+- `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`: 17 pendientes reales del
+  Almacén (catálogo, calendario, contenido público, fotos de productos,
+  nómina de usuarios) y el procedimiento pendiente para las fotos de
+  productos encontradas en Drive (carpeta "Productos del almacén").
+
+### Cambiado
+- `docs/PROJECT_STATE.md`: registra el inicio del diseño de Fase 3B y el
+  horario confirmado por el Almacén.
+- `docs/TASKS.md`: agrega bloque FASE 3B con las tareas de diseño pendientes.
+
+### Estado
+- Documental y de diseño técnico únicamente. No se modificó Google Sheets,
+  Apps Script productivo, Vercel ni `.env.local`. Sin código nuevo.
+
+---
+
+## [DS 0.1 — iteración] — Informes compactos v0.2.1 (2026-07-11)
+
+### Cambiado
+- Escala tipográfica y espaciados reducidos aproximadamente al 70 % para A4.
+- Templates oficiales usan `.report-density-compact` con base de 7–7,2 pt al imprimir.
+- Ambos informes incorporan checklist completo de Fases 0–6.
+
+### Añadido
+- HTML y PDF v0.2.1 separados de los v0.2 preliminares.
+- Roadmap simple para el Almacén y roadmap técnico con riesgos/dependencias.
+- Prueba manual TD6 para densidad y cobertura completa de fases.
+
+### Estado
+- Iteración v0.2.1 pendiente de aprobación humana; no publicada en Drive.
+
+---
+
 ## [DS 0.1] — Sistema documental consolidado (2026-07-11)
 
 ### Añadido
