@@ -109,10 +109,12 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   Sheet TEST, datos semilla completos, pruebas de calendario/modo presencial,
   banner visual de entorno (decisión pendiente) y revisión de codificación de
   acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni eñes).
+- La estructura oficial propuesta, validaciones y las siete semillas 2026 ya
+  están documentadas en `COLUMNAS_PROPUESTAS_FASE_3B.md` §1; aún no se han
+  cargado en TEST.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
-- **Estado:** ⬜ pendiente, bloqueada por Fase 3A (`CHECKLIST_ENTORNO_TEST_FASE_3A.md`).
 
 ---
 
@@ -135,6 +137,8 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   cuándo.
 - **Qué NO se debe tocar:** Apps Script productivo, Sheet productivo.
 - **Estado:** ⬜ pendiente.
+- **Contrato previo listo:** funciones Apps Script, rutas Next.js, pruebas y
+  aceptación definidos en `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §G.
 
 ---
 
@@ -179,6 +183,8 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   modificarse para acomodar este modo; deben compartir el núcleo de estados,
   no la ruta completa.
 - **Estado:** ⬜ pendiente.
+- **Contrato previo listo:** reglas por origen, stock, idempotencia y rutas
+  futuras definidos en `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §H.
 
 ---
 
@@ -202,8 +208,10 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Qué NO se debe tocar:** el rol vendedor con login propio sigue siendo
   FASE 2 (`docs/TASKS.md`); esta etapa no le da permisos nuevos, solo usa la
   sesión admin compartida existente.
-- **Estado:** ⬜ pendiente. Criterio F.1 aprobado; falta diseñar el contrato de
-  backend antes de implementar.
+- **Estado:** ⬜ pendiente. Criterio F.1 aprobado y contrato de backend
+  diseñado; falta implementarlo.
+- **Contrato previo listo:** la operación atómica propuesta ya está definida en
+  el Modelo §H; falta implementarla y probarla exclusivamente en TEST.
 
 ---
 

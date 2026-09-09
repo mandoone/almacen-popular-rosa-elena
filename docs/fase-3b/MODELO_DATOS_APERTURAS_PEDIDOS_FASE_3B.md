@@ -291,3 +291,109 @@ informado, pero no confirma si es el mismo para *todas* las aperturas futuras
 horarios distintos por apertura (`hora_inicio`/`hora_termino` son campos por
 registro), así que esta pregunta no bloquea el diseño, solo el valor por
 defecto que se precargue.
+
+---
+
+## G. Contrato técnico propuesto: calendario admin (siguiente pasada)
+
+**No implementado.** Nombres descriptivos sujetos a revisión al programar.
+
+### G.1 Funciones necesarias en Apps Script TEST
+
+| Función/acción | Responsabilidad |
+|---|---|
+| `listarAperturas` | Leer todas o filtrar por rango/estado; no devolver `observaciones_internas` en variante pública |
+| `obtenerApertura` | Obtener por `apertura_id`; error explícito si no existe o está duplicada |
+| `crearApertura` | Validar estructura, enums, fechas, solapamiento e ID único; escribir auditoría |
+| `actualizarApertura` | Actualización completa con `version_esperada` o `actualizado_en_esperado` para evitar sobrescrituras |
+| `cambiarEstadoApertura` | Cancelar/cerrar/reactivar con transición validada y auditoría |
+| `cambiarEstadoPedidosAnticipados` | Pausar, cerrar o reabrir sin modificar silenciosamente la fecha normal de cierre |
+| `cambiarModoPresencial` | Activar/pausar/cerrar con validación de fecha y estado de apertura |
+| `obtenerAperturaPublicaRelevante` | Aplicar selección F.3 y devolver conflicto explícito si hay empate/solapamiento |
+
+Todas las mutaciones deben usar autenticación admin, `LockService`, clave de
+idempotencia y una respuesta uniforme `{ ok, data?, error? }`. La lectura
+pública debe excluir auditoría y observaciones internas.
+
+### G.2 Rutas Next.js necesarias
+
+- `GET/POST /api/admin/aperturas`
+- `GET/PATCH /api/admin/aperturas/[id]`
+- `POST /api/admin/aperturas/[id]/estado`
+- `POST /api/admin/aperturas/[id]/pedidos-anticipados`
+- `POST /api/admin/aperturas/[id]/modo-presencial`
+- `GET /api/aperturas/relevante` (respuesta pública saneada)
+
+Las rutas admin reutilizan la sesión existente; ningún token de Apps Script
+llega al cliente. La implementación debe ocurrir primero contra TEST y no
+requiere registrar URLs o IDs reales en el repositorio.
+
+### G.3 Pruebas y aceptación
+
+- Unitarias: validación de campos/enums, jueves anterior, transiciones y
+  selección relevante, incluidos empates.
+- Integración TEST: crear → listar → editar → pausar/reabrir → activar modo
+  presencial → cancelar, verificando auditoría e idempotencia.
+- Seguridad: 401 sin sesión admin, secretos ausentes de respuestas/logs y
+  `observaciones_internas` ausente de la ruta pública.
+- Concurrencia: dos ediciones con la misma versión; solo una puede ganar.
+- Compatibilidad: pedidos existentes y catálogo siguen funcionando sin cambio.
+
+Aceptación: ciclo administrativo completo en TEST, mensajes de error
+deterministas, cero escritura en producción y ninguna ruta pública capaz de
+mutar `APERTURAS`.
+
+---
+
+## H. Contrato técnico propuesto: pedidos anticipados y presencial
+
+**No implementado.** Reutiliza la máquina de Fase 3A; no agrega estados.
+
+### H.1 Entrada por origen, estado inicial y stock
+
+| origen_pedido | Estado inicial | Cuándo descuenta | Cuándo devuelve |
+|---|---|---|---|
+| `online_anticipado` | `recibido` | Al confirmar a `pendiente` o `listo` | Al cancelar desde un estado que comprometía stock |
+| `presencial_qr` | `recibido` | Al confirmar a `pendiente` o `listo` | Igual que anticipado |
+| `presencial_vendedor` | `listo` | Atómicamente durante la creación | Al cancelar desde `listo` |
+| `comanda_papel` | `listo` | Atómicamente durante la creación/transcripción | Al cancelar desde `listo` |
+
+`entregado` y `cancelado` siguen terminales. `listo → entregado` no vuelve a
+tocar stock. Una falla parcial debe dejar el pedido y el inventario sin cambios
+o registrar una operación recuperable; nunca aceptar un pedido parcialmente.
+
+### H.2 Operaciones necesarias
+
+- Apps Script TEST: extender creación anticipada con `apertura_id`,
+  `origen_pedido` e `idempotency_key`; crear una operación separada
+  `crearVentaPresencialConfirmada` para crear cabecera, detalle, pago,
+  movimiento y descuento de stock en una transacción lógica; reutilizar el
+  cambio atómico de estado y cancelación de Fase 3A.
+- Next.js: extender `POST /api/pedidos` para anticipado; preparar
+  `POST /api/pedidos/presencial` para QR y
+  `POST /api/admin/ventas-presenciales` para vendedor/comanda papel.
+- No crear estas rutas en esta pasada.
+
+### H.3 Idempotencia y derivaciones
+
+- Cada creación y mutación lleva una clave estable generada por el cliente; el
+  reintento con la misma clave y mismo payload devuelve el resultado previo.
+- Misma clave con payload distinto se rechaza como conflicto.
+- El backend deriva `canal`, `modo_operacion` y `es_presencial` desde
+  `origen_pedido`; no confía en valores derivados enviados por el cliente.
+- `apertura_id` debe existir y admitir el origen/horario solicitado. Para
+  históricos puede seguir vacío, pero no para pedidos nuevos vinculados al
+  calendario.
+- La comprobación de stock y su movimiento ocurren bajo el mismo lock que la
+  escritura del pedido.
+
+### H.4 Pruebas y aceptación
+
+Cubrir por cada origen: creación, stock insuficiente, doble clic/reintento,
+cancelación repetida, conflicto de idempotencia, derivación de canal, apertura
+cerrada/cancelada y concurrencia entre web y presencial por la última unidad.
+
+Aceptación: ningún descuento en `recibido`; un único descuento al comprometer;
+una única devolución al cancelar; nunca stock negativo; trazabilidad completa
+de apertura, origen, responsable y pago; y catálogo/stock únicos para ambos
+canales.

@@ -146,6 +146,9 @@ atómico antes de cualquier cambio productivo.
 
 - ✅ Respuestas del Almacén registradas: horario 11:00–15:00, cierre de
   pedidos jueves anterior, confirmación y cancelación admin-only.
+- ✅ Avances del Almacén 2026-09-09 consolidados parcialmente: categorías,
+  formatos/unidades, catálogo común web/presencial y siete aperturas vigentes.
+  Nombres inconsistentes y contenido faltante siguen abiertos sin inventar.
 - ✅ Decisiones operativas y técnicas de Fase 3B documentadas (calendario
   editable, modo presencial digital, orígenes de pedido).
 - ✅ Modelo de datos del calendario (`APERTURAS` ampliada) diseñado —
@@ -166,10 +169,11 @@ atómico antes de cualquier cambio productivo.
 - ✅ Decisiones F.1 (venta presencial asistida nace en `listo`) y F.3 (orden de
   prioridad determinista para la apertura relevante) **aprobadas por
   coordinación** como criterio base — `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`
-  §0. Habilita demo local; no habilita integración real (falta contrato de
-  backend para F.1 y función de selección real para F.3).
-- ⬜ Definir el contrato del modo presencial QR (vista cliente, vista
-  vendedor/admin) — Etapa 6.
+  §0. Habilita demo local; no habilita integración real (contrato documental
+  listo, implementación backend y conexión real todavía pendientes).
+- ✅ Contratos técnicos documentales preparados para calendario admin y
+  pedidos anticipados/presenciales: funciones Apps Script, rutas Next.js,
+  stock, idempotencia, pruebas y aceptación. No implementados.
 - ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
   `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
   en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
@@ -184,8 +188,9 @@ atómico antes de cualquier cambio productivo.
   el 2026-08-19: lectura de catálogo, creación de pedido, descuento de
   stock, cancelación desde `/admin` real y devolución de stock — todo OK**
   (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H).
-- ⬜ Pendientes de Fase 3B sobre TEST: hoja `APERTURAS`, datos semilla
-  completos (§E), pruebas de calendario/modo presencial, banner visual de
+- 🔄 Pendientes de Fase 3B sobre TEST: estructura y siete semillas 2026 ya
+  diseñadas; falta crear/cargar la hoja `APERTURAS`, completar lugar y
+  auditoría, ejecutar pruebas de calendario/modo presencial, banner visual de
   entorno (decisión pendiente, no aprobada) y revisión de codificación de
   acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni
   eñes) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H.4.

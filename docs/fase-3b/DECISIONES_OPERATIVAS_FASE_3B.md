@@ -50,6 +50,30 @@ Responden y cierran (parcialmente) **P1** y **P2** de
 
 ## 2. Decisiones técnicas nuestras (no dependen del Almacén)
 
+### 2.0 Avances de catálogo recibidos el 2026-09-09
+
+Quedaron confirmadas las categorías visibles `Granel`, `Alimento` e `Higiene`,
+los formatos/unidades enviados para los productos listados y que no habría un
+catálogo exclusivo presencial: web y local venderían lo mismo según
+disponibilidad. El detalle textual y las inconsistencias de nombres que siguen
+abiertas están centralizados en `PENDIENTES_ALMACEN_FASE_3B.md` §§1–2.
+
+También quedaron confirmadas siete próximas aperturas de 2026, desde
+`2026-09-19` hasta `2026-12-19`. Esto permite preparar semillas TEST, pero no
+autoriza cargarlas todavía. Se mantienen como pendientes el lugar por apertura
+y los criterios para aperturas especiales.
+
+**Separación de estatus:**
+
+- **Confirmado por el Almacén:** categorías visibles, formatos/unidades
+  informados, catálogo común web/presencial y siete fechas vigentes.
+- **Supuesto operativo:** orden `Granel → Alimento → Higiene`; primera fecha
+  `activa` y siguientes `programada` en las semillas TEST.
+- **Pendiente:** nombres inconsistentes, lugar, contenido público, fotos,
+  usuarios y aperturas especiales.
+- **Riesgo:** catálogo común significa stock común; no se debe crear una lógica
+  paralela para presencial.
+
 Estos puntos **no se bloquean** esperando respuesta del Almacén: se definen,
 se prueban en TEST y luego se muestran ya funcionando.
 

@@ -53,9 +53,59 @@ completas y su origen en el modelo de datos:
 | `creado_en` | fecha-hora | Modelo §A |
 | `actualizado_en` | fecha-hora | Modelo §A |
 
-Fechas ya informadas por el Almacén como referencia (no confirmadas como
-vigentes todavía, pendiente #6 de `PENDIENTES_ALMACEN_FASE_3B.md`): 18 de
-julio, 1 de agosto, 15 de agosto, 5 de septiembre, 19 de septiembre.
+### 1.1 Significado y validaciones mínimas
+
+| Columna | Validación mínima propuesta en TEST |
+|---|---|
+| `apertura_id` | Obligatorio, único, patrón `APE-yyyyMMdd`; no reutilizar IDs |
+| `fecha_apertura` | Fecha válida y coherente con el ID |
+| `hora_inicio`, `hora_termino` | `HH:mm`; inicio estrictamente anterior a término |
+| `lugar` | Obligatorio antes de publicar; puede quedar vacío durante preparación |
+| `cierre_pedidos_anticipados` | Fecha-hora válida, anterior al inicio de la apertura |
+| Los tres estados | Lista cerrada con los enum de §1; rechazar otros valores |
+| `mensaje_publico` | Opcional; nunca completar con texto inventado |
+| `observaciones_internas` | Opcional; no exponer en respuestas públicas |
+| Auditoría | `creada_por` y `creado_en` obligatorios al insertar; actualización en pareja |
+
+Validaciones cruzadas adicionales: impedir dos aperturas públicas con la misma
+fecha/horario sin alerta explícita; no borrar una apertura con pedidos asociados;
+y no habilitar `modo_presencial_estado = activo` en una apertura cancelada o
+cerrada.
+
+### 1.2 Estados posibles
+
+Los valores oficiales propuestos son:
+
+- `estado_apertura`: `programada`, `activa`, `cerrada`, `cancelada`,
+  `por_confirmar`.
+- `pedidos_anticipados_estado`: `activo`, `cerrado`, `reabierto_manual`,
+  `pausado`.
+- `modo_presencial_estado`: `inactivo`, `activo`, `pausado`, `cerrado`.
+
+Su semántica y precedencia están definidas únicamente en
+`MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §§A–B.
+
+### 1.3 Datos semilla propuestos para TEST — aperturas 2026
+
+Estas fechas fueron informadas como vigentes por el Almacén. La primera se
+propone `activa` y las demás `programada` para que la selección pública sea
+determinista. Todas parten con pedidos anticipados `activo` y modo presencial
+`inactivo`. Es una **propuesta para la siguiente pasada**, no una carga
+ejecutada.
+
+| apertura_id | fecha_apertura | hora_inicio | hora_termino | cierre_pedidos_anticipados | estado_apertura | pedidos_anticipados_estado | modo_presencial_estado |
+|---|---|---|---|---|---|---|---|
+| `APE-20260919` | `2026-09-19` | `11:00` | `15:00` | `2026-09-17T23:59` | `activa` | `activo` | `inactivo` |
+| `APE-20261003` | `2026-10-03` | `11:00` | `15:00` | `2026-10-01T23:59` | `programada` | `activo` | `inactivo` |
+| `APE-20261017` | `2026-10-17` | `11:00` | `15:00` | `2026-10-15T23:59` | `programada` | `activo` | `inactivo` |
+| `APE-20261107` | `2026-11-07` | `11:00` | `15:00` | `2026-11-05T23:59` | `programada` | `activo` | `inactivo` |
+| `APE-20261121` | `2026-11-21` | `11:00` | `15:00` | `2026-11-19T23:59` | `programada` | `activo` | `inactivo` |
+| `APE-20261205` | `2026-12-05` | `11:00` | `15:00` | `2026-12-03T23:59` | `programada` | `activo` | `inactivo` |
+| `APE-20261219` | `2026-12-19` | `11:00` | `15:00` | `2026-12-17T23:59` | `programada` | `activo` | `inactivo` |
+
+Campos deliberadamente no inventados: `lugar`, `mensaje_publico`, responsables
+y marcas de auditoría. Deben completarse al momento de la carga por la persona
+que la ejecute. Ninguna fila debe publicarse mientras falte `lugar`.
 
 ---
 

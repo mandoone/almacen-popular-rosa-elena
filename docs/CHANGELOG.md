@@ -5,6 +5,30 @@
 
 ---
 
+## [FASE 3B — consolidación documental] — Avances del Almacén (2026-09-09)
+
+### Cambiado
+
+- Se consolidaron como respuestas parciales las categorías visibles, formatos
+  y unidades informadas, catálogo común para web/presencial y siete próximas
+  aperturas 2026.
+- Se separaron decisiones confirmadas, supuestos, pendientes y riesgos, sin
+  normalizar nombres inconsistentes ni inventar contenido público.
+- `COLUMNAS_PROPUESTAS_FASE_3B.md` deja lista la estructura propuesta de
+  `APERTURAS`, validaciones mínimas y siete semillas con horario 11:00–15:00 y
+  cierre el jueves anterior 23:59.
+- `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` incorpora los contratos futuros
+  para calendario admin y pedidos anticipados/presenciales: funciones Apps
+  Script, rutas Next.js, stock, idempotencia, pruebas y aceptación.
+
+### Estado
+
+- Documentación únicamente. No se creó la hoja `APERTURAS`, no se cargaron
+  semillas, no se implementaron rutas, no se modificó Apps Script, producción
+  ni `.env.local`.
+
+---
+
 ## [FASE 3B — entorno TEST] — Prueba punta a punta Next.js ↔ TEST (2026-08-19)
 
 ### Añadido

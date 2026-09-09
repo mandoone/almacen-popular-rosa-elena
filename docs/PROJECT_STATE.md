@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-08-19.
+> tarea que cambie el estado. Última actualización: 2026-09-09.
 
 ---
 
@@ -20,8 +20,9 @@ sábados de apertura.
   de Next.js local quedaron verificados de punta a punta el 2026-08-19,
   incluyendo lectura, creación de pedido, stock y cancelación desde `/admin`
   real, sin tocar producción — `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G y
-  §H. Antes de planificar migración o producción falta: hoja `APERTURAS` en
-  TEST, datos semilla completos y pruebas de calendario/modo presencial. El
+  §H. La estructura de `APERTURAS`, sus validaciones y siete semillas 2026
+  están preparadas documentalmente; falta cargarlas en TEST, completar lugar
+  y auditoría, y ejecutar pruebas de calendario/modo presencial. El
   diseño de Fase 3B se prueba sobre la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
@@ -44,9 +45,14 @@ sábados de apertura.
   2026-08-19: lectura de catálogo, creación de pedido, descuento de stock,
   cancelación desde `/admin` real (sesión de navegador, no demo) y devolución
   de stock, todo OK (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H). Falta la
-  hoja `APERTURAS` en TEST, datos semilla completos y pruebas de
+  hoja `APERTURAS` en TEST, carga de semillas y pruebas de
   calendario/modo presencial — el calendario de Fase 3B en sí sigue sin
-  conexión a ningún backend. 126/126 tests, lint y build verdes. Detalle en
+  conexión a ningún backend. Los contratos de calendario admin y pedidos
+  anticipados/presenciales quedaron preparados, sin implementar. El Almacén
+  confirmó categorías visibles, formatos/unidades, catálogo común para web y
+  presencial y siete aperturas vigentes; persisten pendientes de nombres,
+  contenido, fotos, usuarios, lugar y aperturas especiales. 126/126 tests,
+  lint y build verdes del último hito de código. Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
@@ -133,10 +139,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
 - F.1 y F.3 de Fase 3B ya aprobadas como criterio base (ver
-  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); falta diseñar el
-  contrato de backend real antes de conectar la lógica pura del calendario a
-  producción o TEST.
-- Pendientes reales del Almacén (catálogo, contenido, fotos, nómina de
+  `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); el contrato de backend
+  real ya está diseñado en el modelo §G–§H; falta
+  implementarlo y probarlo exclusivamente en TEST.
+- Pendientes reales del Almacén (normalización de nombres, contenido, fotos,
+  lugar, aperturas especiales y nómina de
   usuarios) — ver `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
 
 ---
@@ -163,7 +170,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - Número WhatsApp `56950807172` (tienda, participar, footer).
 - URL del CSV de Google Sheets (en `src/app/api/productos/route.ts`).
 - Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
-- Fechas de apertura en el Home (desactualizadas). Horario confirmado por el
-  Almacén: 11:00–15:00 hrs (ver `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`
-  §1.1); las fechas vigentes siguen sin confirmar.
+- Fechas de apertura en el Home (desactualizadas). El Almacén confirmó siete
+  fechas vigentes entre 2026-09-19 y 2026-12-19 y horario 11:00–15:00 hrs
+  (ver `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §1.1); todavía no se
+  implementan ni publican.
 - Dirección: Gamero 2670, Independencia.
