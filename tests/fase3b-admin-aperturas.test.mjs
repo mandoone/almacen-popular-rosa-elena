@@ -5,7 +5,15 @@ import vm from 'node:vm';
 
 import {
   crearBorradorApertura,
+  formatearCierreApertura,
+  formatearFechaApertura,
+  formatearHorarioApertura,
   idAperturaDesdeFecha,
+  normalizarAperturaAdmin,
+  normalizarAperturaAdminRespuesta,
+  normalizarCierreApertura,
+  normalizarFechaApertura,
+  normalizarHoraApertura,
   validarAperturaEditable,
 } from '../src/lib/fase3b/adminAperturas.ts';
 import { assertCalendarioSoloTest } from '../src/lib/env.ts';
@@ -85,6 +93,34 @@ test('validarAperturaEditable rechaza horarios, cierres y enums invalidos', () =
     cierre_pedidos_anticipados: '2026-09-19T11:00',
   }).ok, false);
   assert.equal(validarAperturaEditable({ ...APERTURA_VALIDA, estado_apertura: 'publicada' }).ok, false);
+});
+
+test('normaliza fechas y horas ISO de Google Sheets sin desplazarlas por zona horaria', () => {
+  const respuesta = normalizarAperturaAdminRespuesta({
+    ...APERTURA_VALIDA,
+    fecha_apertura: '2026-09-19T00:00:00.000',
+    hora_inicio: '1899-12-30T11:00:00.000',
+    hora_termino: '1899-12-30T15:00:00.000',
+    cierre_pedidos_anticipados: '2026-09-17T23:59:00.000',
+  });
+
+  assert.equal(respuesta.fecha_apertura, '2026-09-19');
+  assert.equal(respuesta.hora_inicio, '11:00');
+  assert.equal(respuesta.hora_termino, '15:00');
+  assert.equal(respuesta.cierre_pedidos_anticipados, '2026-09-17T23:59');
+  assert.equal(normalizarAperturaAdmin(respuesta).fecha_apertura, '2026-09-19');
+  assert.equal(formatearFechaApertura('2026-09-19T00:00:00.000'), '19-09-2026');
+  assert.equal(
+    formatearHorarioApertura('1899-12-30T11:00:00.000', '1899-12-30T15:00:00.000'),
+    '11:00–15:00'
+  );
+  assert.equal(formatearCierreApertura('2026-09-17T23:59:00.000'), '17-09-2026 23:59');
+});
+
+test('mantiene los formatos canonicos de validacion existentes', () => {
+  assert.equal(normalizarFechaApertura('2026-09-19'), '2026-09-19');
+  assert.equal(normalizarHoraApertura('11:00'), '11:00');
+  assert.equal(normalizarCierreApertura('2026-09-17T23:59'), '2026-09-17T23:59');
 });
 
 test('el guardrail Next habilita calendario solo en TEST', () => {

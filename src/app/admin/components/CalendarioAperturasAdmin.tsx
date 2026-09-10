@@ -9,7 +9,11 @@ import {
 } from '@/lib/fase3b/aperturas';
 import {
   crearBorradorApertura,
+  formatearCierreApertura,
+  formatearFechaApertura,
+  formatearHorarioApertura,
   idAperturaDesdeFecha,
+  normalizarAperturaAdminRespuesta,
   validarAperturaEditable,
   type AperturaAdmin,
   type AperturaEditable,
@@ -25,13 +29,6 @@ const ETIQUETA_ESTADO: Record<AperturaEditable['estado_apertura'], string> = {
 
 function nuevaClaveIdempotencia() {
   return `ape_${crypto.randomUUID().replace(/-/g, '')}`;
-}
-
-function fechaLegible(fecha: string) {
-  const valor = new Date(`${fecha}T00:00:00`);
-  return Number.isNaN(valor.getTime())
-    ? fecha
-    : valor.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 async function respuestaJson(res: Response) {
@@ -192,7 +189,7 @@ export default function CalendarioAperturasAdmin() {
     try {
       const res = await fetch('/api/admin/aperturas', { cache: 'no-store' });
       const data = await respuestaJson(res);
-      setAperturas(Array.isArray(data) ? data : []);
+      setAperturas(Array.isArray(data) ? data.map(normalizarAperturaAdminRespuesta) : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cargar el calendario.');
     } finally {
@@ -313,15 +310,15 @@ export default function CalendarioAperturasAdmin() {
             <article key={apertura.apertura_id} className="rounded-xl bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold text-primary-dark">{fechaLegible(apertura.fecha_apertura)}</h3>
+                  <h3 className="font-semibold text-primary-dark">{formatearFechaApertura(apertura.fecha_apertura)}</h3>
                   <p className="text-xs text-gray-400">{apertura.apertura_id}</p>
                 </div>
                 <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">{ETIQUETA_ESTADO[apertura.estado_apertura]}</span>
               </div>
               <dl className="mt-4 space-y-1.5 text-sm text-gray-600">
-                <div className="flex justify-between gap-3"><dt>Horario</dt><dd>{apertura.hora_inicio}–{apertura.hora_termino}</dd></div>
+                <div className="flex justify-between gap-3"><dt>Horario</dt><dd>{formatearHorarioApertura(apertura.hora_inicio, apertura.hora_termino)}</dd></div>
                 <div className="flex justify-between gap-3"><dt>Lugar</dt><dd className="text-right">{apertura.lugar || 'Pendiente'}</dd></div>
-                <div className="flex justify-between gap-3"><dt>Cierre pedidos</dt><dd>{apertura.cierre_pedidos_anticipados}</dd></div>
+                <div className="flex justify-between gap-3"><dt>Cierre pedidos</dt><dd>{formatearCierreApertura(apertura.cierre_pedidos_anticipados)}</dd></div>
                 <div className="flex justify-between gap-3"><dt>Pedidos anticipados</dt><dd>{apertura.pedidos_anticipados_estado}</dd></div>
                 <div className="flex justify-between gap-3"><dt>Modo presencial</dt><dd>{apertura.modo_presencial_estado}</dd></div>
               </dl>

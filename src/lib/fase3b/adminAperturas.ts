@@ -36,6 +36,8 @@ export type ResultadoValidacionApertura =
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const HORA_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const FECHA_HORA_RE = /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/;
+const FECHA_ISO_CON_HORA_RE = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
+const HORA_ISO_RE = /^(?:\d{4}-\d{2}-\d{2}T)?([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
 
 function texto(valor: unknown): string {
   return String(valor ?? '').trim();
@@ -52,6 +54,50 @@ function esFechaIsoValida(fecha: string): boolean {
   return valor.getUTCFullYear() === anio &&
     valor.getUTCMonth() === mes - 1 &&
     valor.getUTCDate() === dia;
+}
+
+/** Convierte una fecha ISO serializada por Apps Script al formato que valida la UI. */
+export function normalizarFechaApertura(valor: unknown): string {
+  const fecha = texto(valor);
+  const coincidencia = FECHA_ISO_CON_HORA_RE.exec(fecha);
+  return coincidencia ? coincidencia[1] : fecha;
+}
+
+/** Extrae HH:mm sin usar Date, para no desplazar la hora por zona horaria. */
+export function normalizarHoraApertura(valor: unknown): string {
+  const hora = texto(valor);
+  const coincidencia = HORA_ISO_RE.exec(hora);
+  return coincidencia ? `${coincidencia[1]}:${coincidencia[2]}` : hora;
+}
+
+/** Convierte yyyy-MM-ddTHH:mm:ss(.sss) de Sheets al contrato yyyy-MM-ddTHH:mm. */
+export function normalizarCierreApertura(valor: unknown): string {
+  const cierre = texto(valor);
+  const coincidencia = FECHA_ISO_CON_HORA_RE.exec(cierre);
+  return coincidencia ? `${coincidencia[1]}T${coincidencia[2]}:${coincidencia[3]}` : cierre;
+}
+
+export function formatearFechaApertura(valor: unknown): string {
+  const fecha = normalizarFechaApertura(valor);
+  if (!esFechaIsoValida(fecha)) return 'Fecha no disponible';
+  const [anio, mes, dia] = fecha.split('-');
+  return `${dia}-${mes}-${anio}`;
+}
+
+export function formatearHorarioApertura(inicio: unknown, termino: unknown): string {
+  const horaInicio = normalizarHoraApertura(inicio);
+  const horaTermino = normalizarHoraApertura(termino);
+  return HORA_RE.test(horaInicio) && HORA_RE.test(horaTermino)
+    ? `${horaInicio}–${horaTermino}`
+    : 'Horario no disponible';
+}
+
+export function formatearCierreApertura(valor: unknown): string {
+  const cierre = normalizarCierreApertura(valor);
+  if (!FECHA_HORA_RE.test(cierre)) return 'Cierre no disponible';
+  const [fecha, hora] = cierre.split('T');
+  const [anio, mes, dia] = fecha.split('-');
+  return `${dia}-${mes}-${anio} ${hora}`;
 }
 
 export function idAperturaDesdeFecha(fecha: string): string {
@@ -137,15 +183,37 @@ export function validarAperturaEditable(entrada: unknown): ResultadoValidacionAp
   return { ok: true, apertura };
 }
 
-export function normalizarAperturaAdmin(entrada: unknown): AperturaAdmin {
+/** Normaliza la respuesta de Apps Script antes de poblar tarjetas y formularios. */
+export function normalizarAperturaAdminRespuesta(entrada: unknown): AperturaAdmin {
   const raw = (entrada && typeof entrada === 'object' ? entrada : {}) as Record<string, unknown>;
-  const validacion = validarAperturaEditable(raw);
-  if (!validacion.ok) throw new Error(validacion.error);
   return {
-    ...validacion.apertura,
+    apertura_id: texto(raw.apertura_id),
+    fecha_apertura: normalizarFechaApertura(raw.fecha_apertura),
+    hora_inicio: normalizarHoraApertura(raw.hora_inicio),
+    hora_termino: normalizarHoraApertura(raw.hora_termino),
+    lugar: texto(raw.lugar),
+    cierre_pedidos_anticipados: normalizarCierreApertura(raw.cierre_pedidos_anticipados),
+    estado_apertura: texto(raw.estado_apertura) as EstadoApertura,
+    pedidos_anticipados_estado: texto(raw.pedidos_anticipados_estado) as EstadoPedidosAnticipados,
+    modo_presencial_estado: texto(raw.modo_presencial_estado) as EstadoModoPresencial,
+    mensaje_publico: texto(raw.mensaje_publico),
+    observaciones_internas: texto(raw.observaciones_internas),
     creada_por: texto(raw.creada_por),
     actualizada_por: texto(raw.actualizada_por),
     creado_en: texto(raw.creado_en),
     actualizado_en: texto(raw.actualizado_en),
+  };
+}
+
+export function normalizarAperturaAdmin(entrada: unknown): AperturaAdmin {
+  const apertura = normalizarAperturaAdminRespuesta(entrada);
+  const validacion = validarAperturaEditable(apertura);
+  if (!validacion.ok) throw new Error(validacion.error);
+  return {
+    ...validacion.apertura,
+    creada_por: apertura.creada_por,
+    actualizada_por: apertura.actualizada_por,
+    creado_en: apertura.creado_en,
+    actualizado_en: apertura.actualizado_en,
   };
 }
