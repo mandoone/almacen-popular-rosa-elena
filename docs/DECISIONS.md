@@ -73,3 +73,14 @@ Formato: **contexto → decisión → consecuencias**.
   Drive conserva copias aprobadas y versiones enviadas.
 - **Consecuencias:** toda corrección parte en el repo y genera una salida nueva. El
   sistema documental se rige por `design-system/docs/ADS-002_sistema_documental.md`.
+
+## D8 — Calendario de Fase 3B conectado solo a TEST
+
+- **Contexto:** el calendario admin necesita escrituras reales para validarse,
+  pero producción no está autorizada en esta fase.
+- **Decisión:** exigir dos marcas independientes para cualquier acceso a
+  `APERTURAS`: `NEXT_PUBLIC_APP_ENV=test` en Next.js y `APP_ENV=TEST` como
+  propiedad del Apps Script. Cualquier otro entorno se bloquea.
+- **Consecuencias:** el código puede probarse localmente contra la copia TEST
+  sin abrir un camino accidental hacia producción; preparar la hoja y desplegar
+  la Web App TEST siguen siendo pasos manuales explícitos.

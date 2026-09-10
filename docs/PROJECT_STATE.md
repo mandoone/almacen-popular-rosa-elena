@@ -21,11 +21,13 @@ sábados de apertura.
   incluyendo lectura, creación de pedido, stock y cancelación desde `/admin`
   real, sin tocar producción — `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G y
   §H. La estructura de `APERTURAS`, sus validaciones y siete semillas 2026
-  están preparadas documentalmente; falta cargarlas en TEST, completar lugar
-  y auditoría, y ejecutar pruebas de calendario/modo presencial. El
-  diseño de Fase 3B se prueba sobre la misma base TEST.
+  quedaron implementadas en código con preparación idempotente, rutas y UI
+  admin exclusivas para TEST. Falta ejecutar la creación/carga en TEST,
+  desplegar la nueva versión de Apps Script TEST, completar lugar y ejecutar
+  la prueba autenticada del calendario. El diseño de Fase 3B se prueba sobre
+  la misma base TEST.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
-- **Fase 3B: diseño, lógica pura y demo local (sin integración real):** el
+- **Fase 3B: calendario admin implementado en repo, pendiente en TEST:** el
   informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
   apertura/retiro y criterio de cierre de pedidos. Se definieron las
   decisiones operativas, el modelo de datos de `APERTURAS`, el plan de
@@ -45,20 +47,21 @@ sábados de apertura.
   2026-08-19: lectura de catálogo, creación de pedido, descuento de stock,
   cancelación desde `/admin` real (sesión de navegador, no demo) y devolución
   de stock, todo OK (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H). Falta la
-  hoja `APERTURAS` en TEST, carga de semillas y pruebas de
-  calendario/modo presencial — el calendario de Fase 3B en sí sigue sin
-  conexión a ningún backend. Los contratos de calendario admin y pedidos
-  anticipados/presenciales quedaron preparados, sin implementar. El Almacén
+  hoja `APERTURAS` en TEST, carga de semillas, despliegue del Apps Script TEST
+  y prueba autenticada. El calendario admin ya tiene funciones Apps Script,
+  rutas Next.js y UI con doble guardrail TEST; el contrato de pedidos
+  anticipados/presenciales sigue sin implementar. El Almacén
   confirmó categorías visibles, formatos/unidades, catálogo común para web y
   presencial y siete aperturas vigentes; persisten pendientes de nombres,
-  contenido, fotos, usuarios, lugar y aperturas especiales. 126/126 tests,
-  lint y build verdes del último hito de código. Detalle en
+  contenido, fotos, usuarios, lugar y aperturas especiales. 135/135 tests,
+  lint y build verdes. Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md`,
   `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md` y
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`.
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` y
+  `docs/fase-3b/IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md`.
 
 ### Sistema documental
 

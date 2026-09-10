@@ -393,7 +393,8 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
    `PEDIDOS`, `DETALLE_PEDIDOS`, `MOVIMIENTOS_STOCK` ya confirmadas
    funcionales (lectura y escritura probadas, §G). Las hojas nuevas de Fase
    3B (`APERTURAS`, `HISTORIAL_PEDIDOS`, `OPERACIONES_PEDIDOS`) **no** se
-   agregaron todavía.
+   agregaron todavía. Para `APERTURAS` ya existe la preparación manual
+   `prepararHojaAperturasTest`; aún no fue ejecutada.
 4. ⬜ Vaciar los pedidos reales copiados. No confirmado en esta ronda de
    pruebas — la copia TEST ya tenía 4 pedidos al momento de probar (§G.2);
    no está registrado si son datos reales copiados o semilla ya cargada.
@@ -420,10 +421,13 @@ generaron ni se registraron IDs, URLs ni tokens en el repo.
 13. ⬜ Probar calendario: crear/editar/cancelar una apertura TEST, verificar
     que `obtenerEstadoPublicoWeb` calculado coincide con lo esperado. No
     probado — la hoja `APERTURAS` no existe aún en la Sheet TEST (paso 3).
+    Las funciones, rutas y UI admin para listar/crear/editar/cerrar ya están
+    implementadas en el repo; falta preparación, despliegue y prueba autenticada.
 14. ⬜ Probar modo presencial: activar `modo_presencial_estado` en una
     apertura TEST y verificar el flujo. No probado, depende del paso 13.
-15. ⬜ Solo después de 9–14 aprobados, evaluar cualquier integración
-    adicional (panel admin real, tienda en modo presencial) — nunca antes.
+15. ⬜ Solo después de validar el calendario admin de 13, evaluar integración
+    pública o de modo presencial. El panel admin mínimo fue autorizado e
+    implementado en esta pasada; tienda pública y presencial siguen fuera.
 
 ---
 
@@ -444,9 +448,13 @@ real (con sesión de navegador, no demo) y devolución de stock (2026-08-19,
 §H). Producción no fue tocada en ningún momento; el comportamiento
 productivo actual no cambió.
 
+**Preparado en repo, pendiente de ejecución:** función idempotente para crear
+`APERTURAS` y cargar las siete semillas, acciones Apps Script, rutas protegidas
+y UI admin para listar/crear/editar/cerrar, con doble guardrail TEST.
+
 **No hecho:** hoja `APERTURAS` en la Sheet TEST, datos semilla completos de
-§E, pruebas de calendario y modo presencial, banner visual de entorno en la
+§E, despliegue actualizado del Apps Script TEST, pruebas autenticadas de
+calendario y modo presencial, banner visual de entorno en la
 UI (decisión pendiente, no tarea aprobada), y revisión de codificación de
 acentos en nombres de producto (la prueba de §H usó "Arroz", sin tildes ni
 eñes — ver §H.4).
-

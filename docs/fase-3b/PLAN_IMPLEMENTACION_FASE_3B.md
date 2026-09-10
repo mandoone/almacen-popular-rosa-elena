@@ -110,8 +110,9 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   banner visual de entorno (decisión pendiente) y revisión de codificación de
   acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni eñes).
 - La estructura oficial propuesta, validaciones y las siete semillas 2026 ya
-  están documentadas en `COLUMNAS_PROPUESTAS_FASE_3B.md` §1; aún no se han
-  cargado en TEST.
+  están documentadas en `COLUMNAS_PROPUESTAS_FASE_3B.md` §1. La función manual
+  e idempotente `prepararHojaAperturasTest` quedó implementada con guard
+  `APP_ENV=TEST`; aún no se ejecutó ni se cargaron las semillas en TEST.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -136,7 +137,10 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   crear → editar → cancelar una apertura en TEST, con auditoría de quién y
   cuándo.
 - **Qué NO se debe tocar:** Apps Script productivo, Sheet productivo.
-- **Estado:** ⬜ pendiente.
+- **Estado:** 🔄 implementada en el repositorio, pendiente de despliegue y
+  prueba autenticada en TEST. Incluye rutas de listar/crear/obtener/editar/
+  cerrar, UI admin, idempotencia, bloqueo optimista y doble guardrail TEST.
+  Procedimiento manual en `IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md`.
 - **Contrato previo listo:** funciones Apps Script, rutas Next.js, pruebas y
   aceptación definidos en `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §G.
 

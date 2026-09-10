@@ -123,6 +123,19 @@ export function assertNoProduccionParaEscritura(entorno: EntornoAplicacion): voi
   );
 }
 
+/**
+ * Guardrail mas estricto para el bloque conectado de calendario Fase 3B.
+ * A diferencia de otras escrituras historicas, este bloque no acepta `local`:
+ * el servidor local debe declarar `NEXT_PUBLIC_APP_ENV=test` para seleccionar
+ * de forma inequívoca la URL y el token TEST.
+ */
+export function assertCalendarioSoloTest(entorno: EntornoAplicacion): void {
+  if (entorno === 'test') return;
+  throw new Error(
+    'Calendario de aperturas bloqueado: esta integracion solo esta habilitada en TEST.'
+  );
+}
+
 export type ResolucionValorPorEntorno =
   | { ok: true; valor: string }
   | { ok: false; error: string };

@@ -1,7 +1,10 @@
 # MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md — Modelo de datos
 
-> Estado: **diseño documental, no implementado.** No se creó ninguna hoja, no se
-> tocó Google Sheets ni Apps Script real.
+> Estado: **implementación parcial preparada exclusivamente para TEST.** El
+> contrato de calendario admin de §G está implementado en el repositorio, pero
+> aún no se creó físicamente `APERTURAS` ni se desplegó esta versión en Apps
+> Script TEST. El contrato de pedidos/presencial de §H sigue sin implementar.
+> Producción no fue tocada.
 > Fuente: `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` (calendario editable y
 > modo presencial, ya aprobados a nivel de decisión operativa). Este documento
 > baja esas decisiones a campos, tipos y una máquina de estados concreta.
@@ -294,11 +297,18 @@ defecto que se precargue.
 
 ---
 
-## G. Contrato técnico propuesto: calendario admin (siguiente pasada)
+## G. Contrato técnico: calendario admin TEST
 
-**No implementado.** Nombres descriptivos sujetos a revisión al programar.
+**Implementado en el repositorio; preparación de hoja y despliegue TEST
+pendientes.** Procedimiento exacto en
+`docs/fase-3b/IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md`.
 
 ### G.1 Funciones necesarias en Apps Script TEST
+
+En esta pasada se implementaron `listarAperturas`, `obtenerApertura`,
+`crearApertura`, `actualizarApertura` y `cambiarEstadoApertura`. Los cambios
+independientes de pedidos anticipados/modo presencial y la selección pública
+quedan diferidos junto con sus flujos completos.
 
 | Función/acción | Responsabilidad |
 |---|---|
@@ -323,6 +333,11 @@ pública debe excluir auditoría y observaciones internas.
 - `POST /api/admin/aperturas/[id]/pedidos-anticipados`
 - `POST /api/admin/aperturas/[id]/modo-presencial`
 - `GET /api/aperturas/relevante` (respuesta pública saneada)
+
+Implementadas ahora: `GET/POST /api/admin/aperturas`, `GET/PATCH
+/api/admin/aperturas/[id]` y `POST /api/admin/aperturas/[id]/estado` (este
+último restringido a cierre). Las otras tres rutas permanecen pendientes para
+no adelantar pedidos anticipados completos, modo presencial ni web pública.
 
 Las rutas admin reutilizan la sesión existente; ningún token de Apps Script
 llega al cliente. La implementación debe ocurrir primero contra TEST y no

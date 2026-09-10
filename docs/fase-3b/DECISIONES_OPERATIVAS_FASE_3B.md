@@ -1,8 +1,10 @@
 # DECISIONES_OPERATIVAS_FASE_3B.md — Calendario, pedidos anticipados y modo presencial
 
-> Documento de decisiones aprobadas para **FASE 3B**. Es diseño técnico y
-> documental: **nada de lo aquí descrito está implementado**. No se tocó
-> Google Sheets, Apps Script, Vercel ni `.env.local`.
+> Documento de decisiones aprobadas para **FASE 3B**. Actualización
+> 2026-09-09: el bloque de calendario admin quedó implementado en el
+> repositorio exclusivamente para TEST; la creación de `APERTURAS` y el
+> despliegue Apps Script TEST siguen pendientes y producción no fue tocada.
+> Pedidos anticipados completos y modo presencial siguen en diseño.
 > Fuente: respuestas del Almacén por WhatsApp (agosto 2026) + decisiones
 > técnicas definidas por Omar a partir de esas respuestas.
 > Relacionado: `docs/fase-3a/PENDIENTES_CAROLINA_NADIA.md` (P1 y P2, ahora

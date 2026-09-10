@@ -6,13 +6,18 @@
  *
  * Acciones:
  *   POST publico:        crearPedido
- *   GET  con token:      listarPedidos, obtenerPedido
- *   POST con token:      actualizarEstadoPedido, cancelarPedido
+ *   GET  con token:      listarPedidos, obtenerPedido, listarAperturas,
+ *                        obtenerApertura
+ *   POST con token:      actualizarEstadoPedido, cancelarPedido,
+ *                        crearApertura, actualizarApertura,
+ *                        cambiarEstadoApertura
  *
  * IMPORTANTE:
  *   - SPREADSHEET_ID y ADMIN_TOKEN se editan a mano en Apps Script antes de
  *     desplegar. NO commitear valores reales.
  *   - La URL de la Web App y el token NO se guardan en el repo.
+ *   - Las acciones de APERTURAS solo funcionan si la propiedad de script
+ *     APP_ENV tiene exactamente el valor TEST. Produccion queda bloqueada.
  *
  * USO / DESPLIEGUE: ver docs/APPS_SCRIPT_PEDIDOS.md
  * ------------------------------------------------------------------------------
@@ -27,8 +32,27 @@ var HOJAS = {
   PRODUCTOS: 'PRODUCTOS',
   PEDIDOS: 'PEDIDOS',
   DETALLE_PEDIDOS: 'DETALLE_PEDIDOS',
-  MOVIMIENTOS_STOCK: 'MOVIMIENTOS_STOCK'
+  MOVIMIENTOS_STOCK: 'MOVIMIENTOS_STOCK',
+  APERTURAS: 'APERTURAS'
 };
+
+var COLUMNAS_APERTURAS = [
+  'apertura_id',
+  'fecha_apertura',
+  'hora_inicio',
+  'hora_termino',
+  'lugar',
+  'cierre_pedidos_anticipados',
+  'estado_apertura',
+  'pedidos_anticipados_estado',
+  'modo_presencial_estado',
+  'mensaje_publico',
+  'observaciones_internas',
+  'creada_por',
+  'actualizada_por',
+  'creado_en',
+  'actualizado_en'
+];
 
 var CANAL_WEB = 'web';
 
@@ -55,6 +79,14 @@ function doGet(e) {
       case 'obtenerPedido':
         exigirToken_(params.token);
         return jsonOk_(obtenerPedido_(params.id_pedido));
+      case 'listarAperturas':
+        exigirToken_(params.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_({ aperturas: listarAperturas_() });
+      case 'obtenerApertura':
+        exigirToken_(params.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_(obtenerApertura_(params.apertura_id));
       default:
         return jsonError_('Accion GET no reconocida: "' + action + '".', 400);
     }
@@ -82,6 +114,18 @@ function doPost(e) {
       case 'cancelarPedido':
         exigirToken_(body.token);
         return jsonOk_(cancelarPedido_(body));
+      case 'crearApertura':
+        exigirToken_(body.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_(crearApertura_(body));
+      case 'actualizarApertura':
+        exigirToken_(body.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_(actualizarApertura_(body));
+      case 'cambiarEstadoApertura':
+        exigirToken_(body.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_(cambiarEstadoApertura_(body));
       default:
         return jsonError_('Accion POST no reconocida: "' + action + '".', 400);
     }
@@ -466,6 +510,448 @@ function cancelarPedido_(body) {
   }
 }
 
+// ============================== APERTURAS TEST ================================
+
+/**
+ * Preparacion MANUAL e idempotente de APERTURAS en la Sheet TEST.
+ *
+ * Ejecutar desde el editor del proyecto Apps Script TEST despues de definir la
+ * propiedad de script APP_ENV=TEST. Si la hoja no existe, crea los encabezados;
+ * si existe, exige que coincidan exactamente. Agrega solo semillas ausentes.
+ * Nunca borra ni reemplaza filas existentes.
+ */
+function prepararHojaAperturasTest() {
+  validarConfig_();
+  validarEntornoTestCalendario_();
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(HOJAS.APERTURAS);
+    var creada = false;
+    if (!sheet) {
+      sheet = ss.insertSheet(HOJAS.APERTURAS);
+      creada = true;
+    }
+    var encabezadosPreparados = false;
+    if (sheet.getLastRow() === 0 || sheet.getLastColumn() === 0) {
+      sheet.getRange(1, 1, 1, COLUMNAS_APERTURAS.length).setValues([COLUMNAS_APERTURAS]);
+      sheet.getRange(1, 1, sheet.getMaxRows(), COLUMNAS_APERTURAS.length).setNumberFormat('@');
+      sheet.getRange(1, 1, 1, COLUMNAS_APERTURAS.length).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+      encabezadosPreparados = true;
+    }
+
+    var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
+    validarEncabezadosAperturas_(aperturas);
+    var cId = col_(aperturas, 'apertura_id');
+    var ids = {};
+    for (var i = 0; i < aperturas.filas.length; i++) {
+      var id = limpiar_(aperturas.filas[i][cId]);
+      if (id) ids[id] = true;
+    }
+
+    var ahora = marcaIso_(new Date());
+    var semillas = semillasAperturasTest_();
+    var agregadas = [];
+    for (var s = 0; s < semillas.length; s++) {
+      var semilla = semillas[s];
+      if (ids[semilla.apertura_id]) continue;
+      semilla.creada_por = 'setup_test';
+      semilla.actualizada_por = 'setup_test';
+      semilla.creado_en = ahora;
+      semilla.actualizado_en = ahora;
+      agregarFila_(aperturas, semilla);
+      agregadas.push(semilla.apertura_id);
+    }
+
+    SpreadsheetApp.flush();
+    return {
+      hoja_creada: creada,
+      encabezados_preparados: encabezadosPreparados,
+      semillas_agregadas: agregadas,
+      semillas_omitidas: semillas.length - agregadas.length
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function semillasAperturasTest_() {
+  var fechas = [
+    ['APE-20260919', '2026-09-19', '2026-09-17T23:59', 'activa'],
+    ['APE-20261003', '2026-10-03', '2026-10-01T23:59', 'programada'],
+    ['APE-20261017', '2026-10-17', '2026-10-15T23:59', 'programada'],
+    ['APE-20261107', '2026-11-07', '2026-11-05T23:59', 'programada'],
+    ['APE-20261121', '2026-11-21', '2026-11-19T23:59', 'programada'],
+    ['APE-20261205', '2026-12-05', '2026-12-03T23:59', 'programada'],
+    ['APE-20261219', '2026-12-19', '2026-12-17T23:59', 'programada']
+  ];
+  return fechas.map(function (fila) {
+    return {
+      apertura_id: fila[0],
+      fecha_apertura: fila[1],
+      hora_inicio: '11:00',
+      hora_termino: '15:00',
+      lugar: '',
+      cierre_pedidos_anticipados: fila[2],
+      estado_apertura: fila[3],
+      pedidos_anticipados_estado: 'activo',
+      modo_presencial_estado: 'inactivo',
+      mensaje_publico: '',
+      observaciones_internas: 'Semilla TEST; lugar pendiente de confirmacion.'
+    };
+  });
+}
+
+function listarAperturas_() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
+  validarEncabezadosAperturas_(aperturas);
+  var resultado = [];
+  for (var i = 0; i < aperturas.filas.length; i++) {
+    var apertura = serializarApertura_(filaAObjeto_(aperturas, aperturas.filas[i]));
+    if (apertura.apertura_id) resultado.push(apertura);
+  }
+  resultado.sort(function (a, b) {
+    return String(a.fecha_apertura).localeCompare(String(b.fecha_apertura));
+  });
+  return resultado;
+}
+
+function obtenerApertura_(idApertura) {
+  idApertura = limpiar_(idApertura);
+  if (!idApertura) lanzar_('Falta apertura_id.', 400);
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
+  validarEncabezadosAperturas_(aperturas);
+  return obtenerAperturaEnHoja_(aperturas, idApertura).apertura;
+}
+
+function crearApertura_(body) {
+  exigirIdempotencyKey_(body.idempotency_key);
+  var apertura = validarYNormalizarApertura_(body.apertura || body);
+  var actor = limpiar_(body.actor) || 'admin_web';
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    return ejecutarIdempotenteBajoLock_(
+      'crearApertura',
+      body.idempotency_key,
+      apertura,
+      function () {
+        var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        var hoja = leerHoja_(ss, HOJAS.APERTURAS);
+        validarEncabezadosAperturas_(hoja);
+        exigirIdUnico_(hoja, apertura.apertura_id);
+        exigirSinSolapamiento_(hoja, apertura, -1);
+        var ahora = marcaIso_(new Date());
+        apertura.creada_por = actor;
+        apertura.actualizada_por = actor;
+        apertura.creado_en = ahora;
+        apertura.actualizado_en = ahora;
+        agregarFila_(hoja, apertura);
+        SpreadsheetApp.flush();
+        return apertura;
+      }
+    );
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function actualizarApertura_(body) {
+  exigirIdempotencyKey_(body.idempotency_key);
+  var idApertura = limpiar_(body.apertura_id);
+  var esperado = limpiar_(body.actualizado_en_esperado);
+  if (!idApertura) lanzar_('Falta apertura_id.', 400);
+  if (!esperado) lanzar_('Falta actualizado_en_esperado.', 400);
+  var apertura = validarYNormalizarApertura_(body.apertura || body);
+  if (apertura.apertura_id !== idApertura) {
+    lanzar_('apertura_id no puede cambiar durante una actualizacion.', 400);
+  }
+  var actor = limpiar_(body.actor) || 'admin_web';
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    return ejecutarIdempotenteBajoLock_(
+      'actualizarApertura',
+      body.idempotency_key,
+      { apertura_id: idApertura, actualizado_en_esperado: esperado, apertura: apertura },
+      function () {
+        var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        var hoja = leerHoja_(ss, HOJAS.APERTURAS);
+        validarEncabezadosAperturas_(hoja);
+        var encontrada = obtenerAperturaEnHoja_(hoja, idApertura);
+        if (limpiar_(encontrada.apertura.actualizado_en) !== esperado) {
+          lanzar_('La apertura fue modificada por otra sesion. Recarga antes de guardar.', 409);
+        }
+        exigirSinSolapamiento_(hoja, apertura, encontrada.indice);
+        apertura.creada_por = encontrada.apertura.creada_por;
+        apertura.creado_en = encontrada.apertura.creado_en;
+        apertura.actualizada_por = actor;
+        apertura.actualizado_en = marcaIso_(new Date());
+        escribirObjetoEnFila_(hoja, encontrada.indice, apertura);
+        SpreadsheetApp.flush();
+        return apertura;
+      }
+    );
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function cambiarEstadoApertura_(body) {
+  exigirIdempotencyKey_(body.idempotency_key);
+  var idApertura = limpiar_(body.apertura_id);
+  var nuevoEstado = limpiar_(body.estado_apertura);
+  var esperado = limpiar_(body.actualizado_en_esperado);
+  if (!idApertura) lanzar_('Falta apertura_id.', 400);
+  if (!esperado) lanzar_('Falta actualizado_en_esperado.', 400);
+  if (['programada', 'activa', 'cerrada', 'cancelada', 'por_confirmar'].indexOf(nuevoEstado) === -1) {
+    lanzar_('estado_apertura invalido: "' + nuevoEstado + '".', 400);
+  }
+  var actor = limpiar_(body.actor) || 'admin_web';
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    return ejecutarIdempotenteBajoLock_(
+      'cambiarEstadoApertura',
+      body.idempotency_key,
+      { apertura_id: idApertura, estado_apertura: nuevoEstado, actualizado_en_esperado: esperado },
+      function () {
+        var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        var hoja = leerHoja_(ss, HOJAS.APERTURAS);
+        validarEncabezadosAperturas_(hoja);
+        var encontrada = obtenerAperturaEnHoja_(hoja, idApertura);
+        var actual = encontrada.apertura;
+        if (limpiar_(actual.actualizado_en) !== esperado) {
+          lanzar_('La apertura fue modificada por otra sesion. Recarga antes de guardar.', 409);
+        }
+        exigirTransicionApertura_(actual.estado_apertura, nuevoEstado);
+        actual.estado_apertura = nuevoEstado;
+        actual.actualizada_por = actor;
+        actual.actualizado_en = marcaIso_(new Date());
+        escribirObjetoEnFila_(hoja, encontrada.indice, actual);
+        SpreadsheetApp.flush();
+        return actual;
+      }
+    );
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function validarYNormalizarApertura_(entrada) {
+  entrada = entrada || {};
+  var apertura = {
+    apertura_id: limpiar_(entrada.apertura_id),
+    fecha_apertura: limpiar_(entrada.fecha_apertura),
+    hora_inicio: limpiar_(entrada.hora_inicio),
+    hora_termino: limpiar_(entrada.hora_termino),
+    lugar: limpiar_(entrada.lugar),
+    cierre_pedidos_anticipados: limpiar_(entrada.cierre_pedidos_anticipados),
+    estado_apertura: limpiar_(entrada.estado_apertura),
+    pedidos_anticipados_estado: limpiar_(entrada.pedidos_anticipados_estado),
+    modo_presencial_estado: limpiar_(entrada.modo_presencial_estado),
+    mensaje_publico: limpiar_(entrada.mensaje_publico),
+    observaciones_internas: limpiar_(entrada.observaciones_internas)
+  };
+
+  if (!/^APE-[0-9]{8}$/.test(apertura.apertura_id)) {
+    lanzar_('apertura_id debe usar el formato APE-yyyyMMdd.', 400);
+  }
+  if (!esFechaIsoValida_(apertura.fecha_apertura)) {
+    lanzar_('fecha_apertura debe ser una fecha valida yyyy-MM-dd.', 400);
+  }
+  if (apertura.apertura_id !== 'APE-' + apertura.fecha_apertura.replace(/-/g, '')) {
+    lanzar_('apertura_id no coincide con fecha_apertura.', 400);
+  }
+  if (!/^[0-2][0-9]:[0-5][0-9]$/.test(apertura.hora_inicio) ||
+      Number(apertura.hora_inicio.slice(0, 2)) > 23) {
+    lanzar_('hora_inicio debe usar HH:mm.', 400);
+  }
+  if (!/^[0-2][0-9]:[0-5][0-9]$/.test(apertura.hora_termino) ||
+      Number(apertura.hora_termino.slice(0, 2)) > 23) {
+    lanzar_('hora_termino debe usar HH:mm.', 400);
+  }
+  if (apertura.hora_inicio >= apertura.hora_termino) {
+    lanzar_('hora_inicio debe ser anterior a hora_termino.', 400);
+  }
+  if (!esFechaHoraIsoValida_(apertura.cierre_pedidos_anticipados)) {
+    lanzar_('cierre_pedidos_anticipados debe usar yyyy-MM-ddTHH:mm.', 400);
+  }
+  if (apertura.cierre_pedidos_anticipados >=
+      apertura.fecha_apertura + 'T' + apertura.hora_inicio) {
+    lanzar_('El cierre de pedidos debe ser anterior al inicio de la apertura.', 400);
+  }
+  if (['programada', 'activa', 'cerrada', 'cancelada', 'por_confirmar'].indexOf(apertura.estado_apertura) === -1) {
+    lanzar_('estado_apertura invalido.', 400);
+  }
+  if (['activo', 'cerrado', 'reabierto_manual', 'pausado'].indexOf(apertura.pedidos_anticipados_estado) === -1) {
+    lanzar_('pedidos_anticipados_estado invalido.', 400);
+  }
+  if (['inactivo', 'activo', 'pausado', 'cerrado'].indexOf(apertura.modo_presencial_estado) === -1) {
+    lanzar_('modo_presencial_estado invalido.', 400);
+  }
+  if (!apertura.lugar &&
+      (apertura.estado_apertura === 'programada' || apertura.estado_apertura === 'activa')) {
+    lanzar_('lugar es obligatorio antes de programar o activar una apertura.', 400);
+  }
+  if (apertura.modo_presencial_estado === 'activo' &&
+      (apertura.estado_apertura === 'cancelada' || apertura.estado_apertura === 'cerrada')) {
+    lanzar_('No se puede activar modo presencial en una apertura cerrada o cancelada.', 400);
+  }
+  return apertura;
+}
+
+function obtenerAperturaEnHoja_(hoja, idApertura) {
+  var cId = col_(hoja, 'apertura_id');
+  var coincidencias = [];
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cId]) === idApertura) coincidencias.push(i);
+  }
+  if (!coincidencias.length) lanzar_('Apertura no encontrada: "' + idApertura + '".', 404);
+  if (coincidencias.length > 1) lanzar_('Apertura duplicada: "' + idApertura + '".', 409);
+  return {
+    indice: coincidencias[0],
+    apertura: serializarApertura_(filaAObjeto_(hoja, hoja.filas[coincidencias[0]]))
+  };
+}
+
+function exigirIdUnico_(hoja, idApertura) {
+  var cId = col_(hoja, 'apertura_id');
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cId]) === idApertura) {
+      lanzar_('Ya existe la apertura "' + idApertura + '".', 409);
+    }
+  }
+}
+
+function exigirSinSolapamiento_(hoja, apertura, indiceIgnorado) {
+  if (apertura.estado_apertura === 'cerrada' || apertura.estado_apertura === 'cancelada') return;
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (i === indiceIgnorado) continue;
+    var otra = serializarApertura_(filaAObjeto_(hoja, hoja.filas[i]));
+    if (!otra.apertura_id || otra.estado_apertura === 'cerrada' || otra.estado_apertura === 'cancelada') continue;
+    if (otra.fecha_apertura === apertura.fecha_apertura &&
+        otra.hora_inicio === apertura.hora_inicio &&
+        otra.hora_termino === apertura.hora_termino) {
+      lanzar_('Ya existe una apertura publica con la misma fecha y horario.', 409);
+    }
+  }
+}
+
+function exigirTransicionApertura_(actual, siguiente) {
+  if (actual === siguiente) return;
+  var permitidas = {
+    programada: ['activa', 'cerrada', 'cancelada', 'por_confirmar'],
+    activa: ['programada', 'cerrada', 'cancelada'],
+    por_confirmar: ['programada', 'activa', 'cerrada', 'cancelada'],
+    cerrada: ['programada'],
+    cancelada: ['programada']
+  };
+  if (!permitidas[actual] || permitidas[actual].indexOf(siguiente) === -1) {
+    lanzar_('Transicion de apertura no permitida: ' + actual + ' -> ' + siguiente + '.', 409);
+  }
+}
+
+function validarEncabezadosAperturas_(hoja) {
+  if (hoja.headers.length !== COLUMNAS_APERTURAS.length) {
+    lanzar_('APERTURAS no tiene la cantidad esperada de columnas.', 500);
+  }
+  for (var i = 0; i < COLUMNAS_APERTURAS.length; i++) {
+    if (hoja.headers[i] !== COLUMNAS_APERTURAS[i]) {
+      lanzar_('Encabezados de APERTURAS no coinciden con el contrato de Fase 3B.', 500);
+    }
+  }
+}
+
+function serializarApertura_(obj) {
+  var salida = {};
+  for (var i = 0; i < COLUMNAS_APERTURAS.length; i++) {
+    var campo = COLUMNAS_APERTURAS[i];
+    salida[campo] = valorTextoApertura_(obj[campo]);
+  }
+  return salida;
+}
+
+function valorTextoApertura_(valor) {
+  if (Object.prototype.toString.call(valor) === '[object Date]') {
+    return marcaIso_(valor);
+  }
+  return limpiar_(valor);
+}
+
+function escribirObjetoEnFila_(hoja, indiceDatos, obj) {
+  var fila = hoja.headers.map(function (nombre) {
+    return obj[nombre] !== undefined ? obj[nombre] : '';
+  });
+  hoja.sheet.getRange(indiceDatos + 2, 1, 1, hoja.headers.length).setValues([fila]);
+}
+
+function exigirIdempotencyKey_(key) {
+  key = limpiar_(key);
+  if (!/^[A-Za-z0-9_-]{8,100}$/.test(key)) {
+    lanzar_('idempotency_key invalida o ausente.', 400);
+  }
+}
+
+function ejecutarIdempotenteBajoLock_(accion, key, payload, ejecutar) {
+  key = limpiar_(key);
+  var props = PropertiesService.getScriptProperties();
+  var nombre = 'FASE3B_IDEM_' + accion + '_' + key;
+  var hash = hashPayload_(payload);
+  var guardado = props.getProperty(nombre);
+  if (guardado) {
+    var previo = JSON.parse(guardado);
+    if (previo.hash !== hash) {
+      lanzar_('La clave de idempotencia ya fue usada con otro contenido.', 409);
+    }
+    return previo.resultado;
+  }
+  var resultado = ejecutar();
+  props.setProperty(nombre, JSON.stringify({ hash: hash, resultado: resultado }));
+  return resultado;
+}
+
+function hashPayload_(payload) {
+  var bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    JSON.stringify(payload),
+    Utilities.Charset.UTF_8
+  );
+  return bytes.map(function (b) {
+    var n = b < 0 ? b + 256 : b;
+    return ('0' + n.toString(16)).slice(-2);
+  }).join('');
+}
+
+function validarEntornoTestCalendario_() {
+  var entorno = limpiar_(PropertiesService.getScriptProperties().getProperty('APP_ENV'));
+  if (entorno !== 'TEST') {
+    lanzar_('Operacion APERTURAS bloqueada: este Apps Script no esta marcado como TEST.', 403);
+  }
+}
+
+function esFechaIsoValida_(valor) {
+  var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(valor);
+  if (!match) return false;
+  var fecha = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return fecha.getUTCFullYear() === Number(match[1]) &&
+    fecha.getUTCMonth() === Number(match[2]) - 1 &&
+    fecha.getUTCDate() === Number(match[3]);
+}
+
+function esFechaHoraIsoValida_(valor) {
+  var match = /^(\d{4}-\d{2}-\d{2})T([0-2]\d):([0-5]\d)$/.exec(valor);
+  return !!match && esFechaIsoValida_(match[1]) && Number(match[2]) <= 23;
+}
+
 // ============================== HELPERS ========================================
 
 /**
@@ -634,6 +1120,12 @@ function generarId_(prefijo, fecha) {
 function marca_(fecha) {
   var tz = Session.getScriptTimeZone() || 'America/Santiago';
   return Utilities.formatDate(fecha, tz, 'yyyy-MM-dd HH:mm:ss');
+}
+
+/** Marca ISO de auditoria para bloqueo optimista de APERTURAS. */
+function marcaIso_(fecha) {
+  var tz = Session.getScriptTimeZone() || 'America/Santiago';
+  return Utilities.formatDate(fecha, tz, "yyyy-MM-dd'T'HH:mm:ss.SSS");
 }
 
 /**

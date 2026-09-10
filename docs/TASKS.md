@@ -173,7 +173,7 @@ atómico antes de cualquier cambio productivo.
   listo, implementación backend y conexión real todavía pendientes).
 - ✅ Contratos técnicos documentales preparados para calendario admin y
   pedidos anticipados/presenciales: funciones Apps Script, rutas Next.js,
-  stock, idempotencia, pruebas y aceptación. No implementados.
+  stock, idempotencia, pruebas y aceptación.
 - ✅ Demo local del calendario en `/admin?demo=1` — Etapa 2. Componente
   `CalendarioAperturasDemo`, fixture de 6 aperturas, 15 tests nuevos (101/101
   en total). Detalle en `docs/fase-3b/DEMO_LOCAL_CALENDARIO_ADMIN_FASE_3B.md`.
@@ -188,17 +188,21 @@ atómico antes de cualquier cambio productivo.
   el 2026-08-19: lectura de catálogo, creación de pedido, descuento de
   stock, cancelación desde `/admin` real y devolución de stock — todo OK**
   (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H).
-- 🔄 Pendientes de Fase 3B sobre TEST: estructura y siete semillas 2026 ya
-  diseñadas; falta crear/cargar la hoja `APERTURAS`, completar lugar y
-  auditoría, ejecutar pruebas de calendario/modo presencial, banner visual de
+- ✅ Calendario admin implementado en el repositorio exclusivamente para TEST:
+  preparación idempotente de `APERTURAS` y siete semillas, rutas protegidas,
+  UI listar/crear/editar/cerrar, doble guardrail TEST, idempotencia y
+  concurrencia optimista (135/135 tests). No desplegado todavía.
+- 🔄 Pendientes de Fase 3B sobre TEST: ejecutar la preparación de `APERTURAS`,
+  desplegar Apps Script TEST, completar lugar y auditoría, ejecutar pruebas
+  autenticadas de calendario, banner visual de
   entorno (decisión pendiente, no aprobada) y revisión de codificación de
   acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni
   eñes) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H.4.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
-**No implementar código de Fase 3B hasta cerrar el diseño y tener entorno
-TEST disponible.**
+**No avanzar pedidos anticipados completos ni modo presencial hasta validar
+este calendario en TEST.**
 
 ---
 

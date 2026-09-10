@@ -5,6 +5,31 @@
 
 ---
 
+## [FASE 3B — calendario admin TEST] — Implementación preparada (2026-09-09)
+
+### Añadido
+
+- Preparación idempotente de `APERTURAS` y siete semillas 2026 en Apps Script,
+  bloqueada salvo `APP_ENV=TEST`.
+- Acciones Apps Script y rutas admin protegidas para listar, crear, obtener,
+  editar y cerrar aperturas, con lock, idempotencia, auditoría y concurrencia
+  optimista.
+- UI real de calendario en `/admin`, identificada como TEST; `/admin?demo=1`
+  conserva el calendario simulado aislado.
+- Nueve pruebas de validación, guardrails, sintaxis Apps Script, semillas y
+  cobertura de autenticación; 135/135 pruebas totales.
+- Instructivo `IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md` para crear la hoja y
+  desplegar manualmente el Apps Script TEST sin registrar secretos.
+
+### Estado
+
+- Implementado y validado localmente en el repositorio. La hoja `APERTURAS` no
+  fue creada físicamente y la nueva versión no fue desplegada en Apps Script
+  TEST; ambos pasos quedan manuales. Producción, variables productivas,
+  `.env.local`, pedidos y lógica de stock no fueron modificados.
+
+---
+
 ## [FASE 3B — consolidación documental] — Avances del Almacén (2026-09-09)
 
 ### Cambiado

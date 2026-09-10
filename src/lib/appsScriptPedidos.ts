@@ -26,7 +26,11 @@
  * valores.
  */
 
-import { obtenerEntornoAplicacion, resolverConfigPorEntorno } from './env';
+import {
+  assertCalendarioSoloTest,
+  obtenerEntornoAplicacion,
+  resolverConfigPorEntorno,
+} from './env';
 
 export interface CarritoItem {
   id_producto: string;
@@ -87,6 +91,27 @@ export interface PedidoConDetalle {
   detalle: LineaDetalle[];
 }
 
+export interface AperturaInput {
+  apertura_id: string;
+  fecha_apertura: string;
+  hora_inicio: string;
+  hora_termino: string;
+  lugar: string;
+  cierre_pedidos_anticipados: string;
+  estado_apertura: string;
+  pedidos_anticipados_estado: string;
+  modo_presencial_estado: string;
+  mensaje_publico: string;
+  observaciones_internas: string;
+}
+
+export interface AperturaAdmin extends AperturaInput {
+  creada_por: string;
+  actualizada_por: string;
+  creado_en: string;
+  actualizado_en: string;
+}
+
 /** Error con código HTTP propagable hacia el route handler. */
 export class AppsScriptError extends Error {
   status: number;
@@ -106,6 +131,14 @@ interface ScriptResponse<T> {
 
 function entornoActual() {
   return obtenerEntornoAplicacion(process.env.NEXT_PUBLIC_APP_ENV);
+}
+
+function exigirEntornoTestParaCalendario(): void {
+  try {
+    assertCalendarioSoloTest(entornoActual());
+  } catch (err) {
+    throw new AppsScriptError(err instanceof Error ? err.message : 'Calendario bloqueado.', 403);
+  }
 }
 
 function baseUrl(): string {
@@ -233,5 +266,67 @@ export function cancelarPedido(idPedido: string): Promise<unknown> {
     action: 'cancelarPedido',
     token: adminToken(),
     id_pedido: idPedido,
+  });
+}
+
+// ── Calendario admin (FASE 3B, exclusivamente TEST) ──────────────────────────
+
+export function listarAperturas(): Promise<AperturaAdmin[]> {
+  exigirEntornoTestParaCalendario();
+  return getScript<{ aperturas: AperturaAdmin[] }>({
+    action: 'listarAperturas',
+    token: adminToken(),
+  }).then((d) => d.aperturas);
+}
+
+export function obtenerApertura(idApertura: string): Promise<AperturaAdmin> {
+  exigirEntornoTestParaCalendario();
+  return getScript<AperturaAdmin>({
+    action: 'obtenerApertura',
+    apertura_id: idApertura,
+    token: adminToken(),
+  });
+}
+
+export function crearApertura(args: {
+  apertura: AperturaInput;
+  idempotency_key: string;
+}): Promise<AperturaAdmin> {
+  exigirEntornoTestParaCalendario();
+  return postScript<AperturaAdmin>({
+    action: 'crearApertura',
+    token: adminToken(),
+    actor: 'admin_web',
+    ...args,
+  });
+}
+
+export function actualizarApertura(args: {
+  apertura_id: string;
+  apertura: AperturaInput;
+  actualizado_en_esperado: string;
+  idempotency_key: string;
+}): Promise<AperturaAdmin> {
+  exigirEntornoTestParaCalendario();
+  return postScript<AperturaAdmin>({
+    action: 'actualizarApertura',
+    token: adminToken(),
+    actor: 'admin_web',
+    ...args,
+  });
+}
+
+export function cambiarEstadoApertura(args: {
+  apertura_id: string;
+  estado_apertura: string;
+  actualizado_en_esperado: string;
+  idempotency_key: string;
+}): Promise<AperturaAdmin> {
+  exigirEntornoTestParaCalendario();
+  return postScript<AperturaAdmin>({
+    action: 'cambiarEstadoApertura',
+    token: adminToken(),
+    actor: 'admin_web',
+    ...args,
   });
 }
