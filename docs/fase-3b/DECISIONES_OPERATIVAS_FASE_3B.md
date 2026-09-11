@@ -1,10 +1,10 @@
 # DECISIONES_OPERATIVAS_FASE_3B.md — Calendario, pedidos anticipados y modo presencial
 
 > Documento de decisiones aprobadas para **FASE 3B**. Actualización
-> 2026-09-09: el bloque de calendario admin quedó implementado en el
-> repositorio exclusivamente para TEST; la creación de `APERTURAS` y el
-> despliegue Apps Script TEST siguen pendientes y producción no fue tocada.
-> Pedidos anticipados completos y modo presencial siguen en diseño.
+> 2026-09-10: calendario admin validado en TEST y primer bloque público de
+> pedidos anticipados preparado en el repositorio. Su activación requiere una
+> actualización manual posterior de Sheet y Apps Script TEST. Producción no
+> fue tocada; modo presencial sigue en diseño.
 > Fuente: respuestas del Almacén por WhatsApp (agosto 2026) + decisiones
 > técnicas definidas por Omar a partir de esas respuestas.
 > Relacionado: `docs/fase-3a/PENDIENTES_CAROLINA_NADIA.md` (P1 y P2, ahora
@@ -157,6 +157,18 @@ válida; el calendario de Fase 3B la **amplía** con `lugar`,
 `estado_apertura`, `modo_presencial_qr`, `mensaje_publico` y
 `observaciones_internas`. Actualizar esa sección de columnas propuestas
 queda como paso técnico pendiente (ver §6).
+
+### 3.5 Primer bloque público conectado en TEST
+
+La tienda puede mostrar y usar una apertura solamente cuando existe una única
+fila con `estado_apertura = activa`, `pedidos_anticipados_estado = activo` y el
+cierre aún no ha vencido. La comparación usa strings normalizados como hora de
+pared de Santiago; no convierte las horas de Sheets a `Date`.
+
+Next.js consulta el calendario con credenciales solo en servidor y publica un
+DTO mínimo, sin auditoría ni observaciones internas. Antes de crear un pedido
+TEST vuelve a resolver la apertura y Apps Script la valida nuevamente bajo el
+lock de creación. Fuera de TEST se conserva el comportamiento anterior.
 
 ---
 

@@ -22,8 +22,8 @@
   de script `APP_ENV` sea exactamente `TEST`.
 - `/admin?demo=1` conserva su componente aislado y no llama a estas rutas.
 
-No se agregaron rutas públicas de calendario, pedidos anticipados completos ni
-modo presencial. La lógica de stock y pedidos existentes no cambió.
+El primer bloque público de pedidos anticipados se preparó después de este
+hito. No incluye modo presencial ni modifica la lógica actual de stock.
 
 ## Validación final local + TEST (hito completado)
 
@@ -138,8 +138,33 @@ npm.cmd run build
 
 ## 5. Límites de esta pasada
 
-- No se implementó el endpoint público de apertura relevante.
 - No se implementaron cambios completos de pedidos anticipados, modo
   presencial, QR ni venta asistida.
 - No se modificó ninguna variable de entorno ni la lógica actual de stock.
 - No se realizó ni se autoriza ninguna intervención productiva.
+
+## 6. Activar pedidos anticipados públicos en TEST
+
+El código de este bloque requiere actualizar únicamente TEST. Hasta completar
+estos pasos, Apps Script v2 será rechazado por la verificación de capacidades y
+Next.js no creará pedidos sin asociación.
+
+1. Abrir el proyecto Apps Script TEST y confirmar `APP_ENV=TEST`.
+2. Pegar allí el contenido actualizado de `scripts/apps-script-pedidos.gs`,
+   conservando los valores TEST ya configurados y sin registrarlos en salidas.
+3. Ejecutar manualmente la función idempotente:
+
+   ```text
+   prepararColumnasPedidosAnticipadosTest
+   ```
+
+4. Confirmar que agregó al final de `PEDIDOS` solo `apertura_id` y
+   `origen_pedido`. Si ya existen, la función no las duplica.
+5. Desplegar una nueva versión de la Web App TEST. No editar ni desplegar el
+   proyecto productivo.
+6. Probar `GET /api/aperturas/relevante` y un pedido local con
+   `NEXT_PUBLIC_APP_ENV=test`; verificar que la fila nueva tenga la apertura
+   activa y `origen_pedido = online_anticipado`.
+
+No se requieren nuevas variables. Las demás columnas propuestas para pedidos
+presenciales permanecen pendientes.

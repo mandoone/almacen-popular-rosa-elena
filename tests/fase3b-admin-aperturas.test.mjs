@@ -136,7 +136,9 @@ test('Apps Script compila como JavaScript y contiene las siete semillas sin secr
   vm.runInNewContext(fuente, contexto, { filename: 'apps-script-pedidos.gs' });
 
   assert.equal(typeof contexto.prepararHojaAperturasTest, 'function');
+  assert.equal(typeof contexto.prepararColumnasPedidosAnticipadosTest, 'function');
   assert.equal(typeof contexto.validarYNormalizarApertura_, 'function');
+  assert.equal(typeof contexto.seleccionarAperturaActivaPedidoTest_, 'function');
   assert.equal(fuente.includes("var SPREADSHEET_ID = 'PEGAR_ID_BASE_OPERATIVA_AQUI'"), true);
   assert.equal(fuente.includes("var ADMIN_TOKEN = 'PEGAR_TOKEN_ADMIN_AQUI'"), true);
   assert.equal((fuente.match(/\['APE-2026\d{4}'/g) ?? []).length, 7);
@@ -162,6 +164,32 @@ test('Apps Script compila como JavaScript y contiene las siete semillas sin secr
   assert.throws(
     () => contexto.validarYNormalizarApertura_({ ...APERTURA_VALIDA, hora_termino: '09:00' }),
     /hora_inicio debe ser anterior/
+  );
+
+  const activa = contexto.seleccionarAperturaActivaPedidoTest_([
+    {
+      ...APERTURA_VALIDA,
+      fecha_apertura: '2026-09-19T00:00:00.000',
+      hora_inicio: '1899-12-30T11:00:00.000',
+      hora_termino: '1899-12-30T15:00:00.000',
+      cierre_pedidos_anticipados: '2026-09-17T23:59:00.000',
+    },
+  ], '2026-09-10T12:00');
+  assert.equal(activa.apertura_id, 'APE-20260919');
+  assert.equal(
+    contexto.seleccionarAperturaActivaPedidoTest_([APERTURA_VALIDA], '2026-09-18T00:00'),
+    null
+  );
+  assert.throws(
+    () => contexto.seleccionarAperturaActivaPedidoTest_([
+      APERTURA_VALIDA,
+      {
+        ...APERTURA_VALIDA,
+        apertura_id: 'APE-20260920',
+        fecha_apertura: '2026-09-20',
+      },
+    ], '2026-09-10T12:00'),
+    /mas de una apertura activa/
   );
 });
 

@@ -194,16 +194,21 @@ atómico antes de cualquier cambio productivo.
   `APE-20261226` fue eliminada; `/admin` volvió a mostrar solo las siete
   oficiales. El formato visual de fechas/horas quedó corregido en `dad9542` sin
   requerir un nuevo cambio de Apps Script.
-- ⬜ Conectar la apertura activa con el flujo público de pedidos anticipados,
-  exclusivamente sobre TEST y sin modificar la lógica actual de stock.
+- ✅ Conectar en código la apertura activa con el flujo público de pedidos
+  anticipados exclusivamente para TEST: DTO público saneado, selector por
+  cierre, UI de tienda, bloqueo servidor y asociación con `apertura_id`/
+  `origen_pedido`, sin modificar la lógica actual de stock.
+- ⬜ Ejecutar `prepararColumnasPedidosAnticipadosTest`, desplegar una nueva
+  versión del Apps Script TEST y validar el flujo E2E. Apps Script v2 queda
+  bloqueado de forma segura para esta creación.
 - ⬜ Mantener pendientes y sujetos a decisión separada todos los pasos
   productivos: variables, Apps Script, Sheet y despliegue.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
-**El calendario ya está validado en TEST; el siguiente bloque es pedidos
-anticipados ligados a la apertura activa. Modo presencial y cualquier paso
-productivo continúan pendientes.**
+**El calendario ya está validado en TEST; la conexión pública está preparada
+en repo y pendiente de activación/validación manual solo en TEST. Modo
+presencial y cualquier paso productivo continúan pendientes.**
 
 ---
 

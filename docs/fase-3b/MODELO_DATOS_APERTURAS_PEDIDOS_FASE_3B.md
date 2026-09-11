@@ -1,10 +1,9 @@
 # MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md — Modelo de datos
 
-> Estado: **implementación parcial preparada exclusivamente para TEST.** El
-> contrato de calendario admin de §G está implementado en el repositorio, pero
-> aún no se creó físicamente `APERTURAS` ni se desplegó esta versión en Apps
-> Script TEST. El contrato de pedidos/presencial de §H sigue sin implementar.
-> Producción no fue tocada.
+> Estado: **implementación parcial exclusiva para TEST.** El calendario admin
+> de §G está validado contra TEST. El primer bloque público de pedidos
+> anticipados de §H está preparado en el repositorio y pendiente de actualizar
+> manualmente Sheet y Apps Script TEST. Producción no fue tocada.
 > Fuente: `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` (calendario editable y
 > modo presencial, ya aprobados a nivel de decisión operativa). Este documento
 > baja esas decisiones a campos, tipos y una máquina de estados concreta.
@@ -299,8 +298,7 @@ defecto que se precargue.
 
 ## G. Contrato técnico: calendario admin TEST
 
-**Implementado en el repositorio; preparación de hoja y despliegue TEST
-pendientes.** Procedimiento exacto en
+**Implementado y validado contra TEST.** Procedimiento exacto en
 `docs/fase-3b/IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md`.
 
 ### G.1 Funciones necesarias en Apps Script TEST
@@ -334,10 +332,12 @@ pública debe excluir auditoría y observaciones internas.
 - `POST /api/admin/aperturas/[id]/modo-presencial`
 - `GET /api/aperturas/relevante` (respuesta pública saneada)
 
-Implementadas ahora: `GET/POST /api/admin/aperturas`, `GET/PATCH
+Implementadas: `GET/POST /api/admin/aperturas`, `GET/PATCH
 /api/admin/aperturas/[id]` y `POST /api/admin/aperturas/[id]/estado` (este
-último restringido a cierre). Las otras tres rutas permanecen pendientes para
-no adelantar pedidos anticipados completos, modo presencial ni web pública.
+último restringido a cierre), además de `GET /api/aperturas/relevante` como
+lectura pública saneada exclusiva de TEST. Las dos rutas de control manual
+permanecen pendientes para no adelantar modo presencial ni la administración
+completa de pedidos anticipados.
 
 Las rutas admin reutilizan la sesión existente; ningún token de Apps Script
 llega al cliente. La implementación debe ocurrir primero contra TEST y no
@@ -362,7 +362,10 @@ mutar `APERTURAS`.
 
 ## H. Contrato técnico propuesto: pedidos anticipados y presencial
 
-**No implementado.** Reutiliza la máquina de Fase 3A; no agrega estados.
+**Implementación parcial:** lectura pública, bloqueo por apertura activa y
+asociación mínima de pedidos anticipados preparados solo para TEST. El cambio
+de estado inicial/stock atómico y todos los orígenes presenciales siguen sin
+implementar. Se reutiliza la máquina de Fase 3A; no agrega estados.
 
 ### H.1 Entrada por origen, estado inicial y stock
 
@@ -388,6 +391,23 @@ o registrar una operación recuperable; nunca aceptar un pedido parcialmente.
   `POST /api/pedidos/presencial` para QR y
   `POST /api/admin/ventas-presenciales` para vendedor/comanda papel.
 - No crear estas rutas en esta pasada.
+
+### H.2.1 Subconjunto implementado para TEST
+
+- `GET /api/aperturas/relevante` expone solo `apertura_id`, fecha, horario,
+  lugar, cierre, estado de pedidos anticipados y `mensaje_publico` opcional.
+- `POST /api/pedidos` exige en TEST una única apertura `activa`, con
+  `pedidos_anticipados_estado = activo` y cierre vigente; en otros entornos no
+  aplica este bloqueo.
+- Next.js deriva `apertura_id` y `origen_pedido = online_anticipado`; no confía
+  en valores enviados por el navegador.
+- Apps Script TEST vuelve a validar la apertura bajo lock y guarda ambos campos
+  sin cambiar el descuento de stock ni el estado inicial histórico.
+- La capacidad `pedidos_anticipados_publicos = v1` debe estar disponible antes
+  de crear. Apps Script v2 falla de forma segura antes de escribir.
+
+Este subconjunto requiere agregar a `PEDIDOS` únicamente las columnas aditivas
+`apertura_id` y `origen_pedido`. Las demás columnas de §D siguen pendientes.
 
 ### H.3 Idempotencia y derivaciones
 

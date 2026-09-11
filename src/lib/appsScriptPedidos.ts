@@ -44,6 +44,8 @@ export interface CrearPedidoInput {
   forma_pago: string;
   observaciones?: string;
   carrito: CarritoItem[];
+  apertura_id?: string;
+  origen_pedido?: 'online_anticipado';
 }
 
 export interface CrearPedidoResult {
@@ -51,6 +53,8 @@ export interface CrearPedidoResult {
   total: number;
   estado_pedido: string;
   items: number;
+  apertura_id?: string;
+  origen_pedido?: string;
   resumen: Array<{
     id_producto: string;
     nombre_producto: string;
@@ -230,6 +234,24 @@ export function listarProductos(): Promise<ProductoCatalogo[]> {
 
 export function crearPedido(input: CrearPedidoInput): Promise<CrearPedidoResult> {
   return postScript<CrearPedidoResult>({ action: 'crearPedido', ...input });
+}
+
+export async function verificarContratoPedidosAnticipadosTest(): Promise<void> {
+  exigirEntornoTestParaCalendario();
+  try {
+    const capacidad = await getScript<{ pedidos_anticipados_publicos: string }>({
+      action: 'obtenerCapacidadesFase3b',
+      token: adminToken(),
+    });
+    if (capacidad.pedidos_anticipados_publicos !== 'v1') {
+      throw new Error('Capacidad no disponible.');
+    }
+  } catch {
+    throw new AppsScriptError(
+      'El backend TEST todavía no tiene habilitado el contrato de pedidos anticipados.',
+      503
+    );
+  }
 }
 
 // ── Acciones admin (usan token de servidor) ─────────────────────────────────

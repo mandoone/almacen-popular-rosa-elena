@@ -5,6 +5,27 @@
 
 ---
 
+## [FASE 3B — pedidos anticipados TEST] — Conexión preparada (2026-09-10)
+
+### Añadido
+
+- Lectura pública saneada de la única apertura activa con cierre vigente,
+  calculada en hora de Santiago sin desplazar fechas/horas de Sheets.
+- Bloque informativo en la tienda TEST y bloqueo de creación cuando no existe
+  una apertura válida.
+- Asociación servidor-side de `apertura_id` y `origen_pedido =
+  online_anticipado`, con revalidación bajo lock en Apps Script TEST.
+- Verificación de capacidad previa a la escritura: Apps Script v2 bloquea de
+  forma segura hasta que TEST se actualice.
+
+### Pendiente manual
+
+- Ejecutar `prepararColumnasPedidosAnticipadosTest` para agregar las columnas
+  aditivas `apertura_id` y `origen_pedido` a `PEDIDOS`, desplegar una nueva
+  versión de Apps Script TEST y validar el ciclo local. Producción no se toca.
+
+---
+
 ## [FASE 3B — calendario admin TEST] — Hito validado (2026-09-10)
 
 ### Validado

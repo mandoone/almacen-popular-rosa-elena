@@ -95,7 +95,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   `docs/fase-3a/CHECKLIST_ENTORNO_TEST_FASE_3A.md` §6, más columnas de
   `APERTURAS` y `PEDIDOS` de Fase 3B agregadas a la copia TEST.
 - **Qué NO se debe tocar:** Sheet productivo, Apps Script productivo.
-- **Estado:** 🔄 en curso. Sheet TEST y Apps Script TEST creados,
+- **Estado:** ✅ entorno base completado. Sheet TEST y Apps Script TEST creados,
   autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
   cancelación e idempotencia verificadas contra la Web App TEST el
   2026-08-19 (producción no fue tocada) — ver
@@ -105,14 +105,14 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   tests. **Verificado de punta a punta con Next.js local (`npm run dev`) el
   2026-08-19**: lectura de catálogo, creación de pedido, descuento de stock,
   cancelación desde `/admin` real y devolución de stock — ver
-  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H. Falta: hoja `APERTURAS` en la
-  Sheet TEST, datos semilla completos, pruebas de calendario/modo presencial,
-  banner visual de entorno (decisión pendiente) y revisión de codificación de
-  acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni eñes).
+  `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H. La hoja `APERTURAS`, sus siete
+  aperturas y el calendario admin quedaron validados posteriormente. Siguen
+  pendientes las columnas mínimas del pedido anticipado público, modo
+  presencial, banner visual opcional y revisión de codificación de acentos.
 - La estructura oficial propuesta, validaciones y las siete semillas 2026 ya
   están documentadas en `COLUMNAS_PROPUESTAS_FASE_3B.md` §1. La función manual
-  e idempotente `prepararHojaAperturasTest` quedó implementada con guard
-  `APP_ENV=TEST`; aún no se ejecutó ni se cargaron las semillas en TEST.
+  e idempotente `prepararHojaAperturasTest` se ejecutó con guard
+  `APP_ENV=TEST` y las siete aperturas oficiales quedaron operativas.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
   atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
@@ -137,10 +137,10 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   crear → editar → cancelar una apertura en TEST, con auditoría de quién y
   cuándo.
 - **Qué NO se debe tocar:** Apps Script productivo, Sheet productivo.
-- **Estado:** 🔄 implementada en el repositorio, pendiente de despliegue y
-  prueba autenticada en TEST. Incluye rutas de listar/crear/obtener/editar/
-  cerrar, UI admin, idempotencia, bloqueo optimista y doble guardrail TEST.
-  Procedimiento manual en `IMPLEMENTACION_CALENDARIO_ADMIN_TEST.md`.
+- **Estado:** ✅ completada y validada en TEST. Incluye rutas de listar/crear/
+  obtener/editar/cerrar, UI admin, idempotencia, bloqueo optimista y doble
+  guardrail TEST. Se verificó el ciclo crear → editar → cerrar y se eliminó la
+  apertura temporal usada en la prueba.
 - **Contrato previo listo:** funciones Apps Script, rutas Next.js, pruebas y
   aceptación definidos en `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §G.
 
@@ -163,7 +163,12 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   la web contra datos de TEST, incluyendo el mensaje público de cada uno.
 - **Qué NO se debe tocar:** checkout/creación de pedido real hasta que Etapa 4
   esté probada.
-- **Estado:** ⬜ pendiente.
+- **Estado:** 🔄 primer bloque preparado en repo exclusivamente para TEST:
+  lectura pública saneada de una única apertura activa, bloque visual y
+  bloqueo/asociación de nuevos pedidos anticipados. Pendiente ejecutar la
+  preparación de dos columnas en `PEDIDOS`, desplegar una nueva versión de
+  Apps Script TEST y validar el flujo local contra TEST. La integración amplia
+  de los seis estados públicos y Home sigue pendiente.
 
 ---
 

@@ -4,6 +4,8 @@ import {
   AppsScriptError,
   type CarritoItem,
 } from '@/lib/appsScriptPedidos';
+import { exigirAperturaActivaParaCrearPedidoTest } from '@/lib/fase3b/aperturaActivaServer';
+import { pedidosAnticipadosConCalendarioHabilitados } from '@/lib/fase3b/pedidosAnticipados';
 
 // Proxy publico: la tienda llama aqui; el servidor reenvia a Apps Script.
 // No requiere token (crearPedido es publico). El token admin nunca toca esta ruta.
@@ -33,6 +35,12 @@ export async function POST(req: Request) {
       );
     }
 
+    const apertura = pedidosAnticipadosConCalendarioHabilitados(
+      process.env.NEXT_PUBLIC_APP_ENV
+    )
+      ? await exigirAperturaActivaParaCrearPedidoTest()
+      : null;
+
     const result = await crearPedido({
       nombre_cliente: String(body.nombre_cliente),
       telefono: String(body.telefono),
@@ -43,6 +51,9 @@ export async function POST(req: Request) {
         cantidad: Number(i.cantidad),
         nombre: i.nombre,
       })),
+      ...(apertura
+        ? { apertura_id: apertura.apertura_id, origen_pedido: 'online_anticipado' as const }
+        : {}),
     });
 
     return NextResponse.json({ ok: true, data: result });

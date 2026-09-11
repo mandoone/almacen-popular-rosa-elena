@@ -15,8 +15,8 @@ sábados de apertura.
   modo demo aislado y calendario de aperturas Fase 3B validado en TEST.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Próxima prioridad:** conectar la apertura activa al flujo público de pedidos
-  anticipados, exclusivamente sobre TEST y sin alterar la lógica vigente de stock.
+- **Próxima prioridad:** ejecutar la preparación manual de dos columnas y el
+  despliegue del Apps Script TEST para validar el flujo público ya preparado.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B: calendario admin TEST validado:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -26,7 +26,10 @@ sábados de apertura.
   ajuste visual de fechas/horas fue entregado en `dad9542`, sin modificar Apps
   Script. Vercel completó ambos checks correctamente. Persisten los doble
   guardrails TEST y `/admin?demo=1` aislado; pedidos anticipados y modo
-  presencial completos siguen sin implementar. Detalle en
+  presencial completos siguen sin implementar. El primer bloque público ya
+  está preparado en repo: DTO saneado, selector activo, UI TEST y bloqueo/
+  asociación de pedidos. Requiere agregar `apertura_id` y `origen_pedido` a
+  `PEDIDOS` y desplegar el Apps Script TEST actualizado. Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
@@ -105,8 +108,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 - ✅ Calendario admin Fase 3B validado sobre TEST: Sheet `APERTURAS`, Apps
   Script TEST v2, siete aperturas oficiales y ciclo admin autenticado.
-- ⬜ Conectar la apertura activa con el flujo público de pedidos anticipados,
-  exclusivamente sobre TEST.
+- 🔄 Apertura activa conectada en código al flujo público TEST: falta preparar
+  las columnas mínimas de `PEDIDOS`, desplegar Apps Script TEST y validar E2E.
 - Implementar y probar en TEST la creación en `recibido` sin descontar stock.
 - Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
   reconciliación de fallos parciales.
@@ -126,10 +129,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Fase 3B — apertura activa y pedidos anticipados sobre TEST.** Diseñar e
-implementar la conexión pública sin habilitar producción, modificar sus
-variables ni cambiar la lógica actual de stock. Cualquier preparación o
-intervención productiva continúa pendiente de una decisión Go/No-Go separada.
+**Fase 3B — validar en TEST la apertura activa y pedidos anticipados.** Ejecutar
+la migración aditiva mínima y el despliegue TEST documentados, luego probar la
+lectura pública y creación asociada. Cualquier intervención productiva continúa
+pendiente de una decisión Go/No-Go separada.
 
 ---
 

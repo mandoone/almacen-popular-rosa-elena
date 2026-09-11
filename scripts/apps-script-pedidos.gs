@@ -7,7 +7,7 @@
  * Acciones:
  *   POST publico:        crearPedido
  *   GET  con token:      listarPedidos, obtenerPedido, listarAperturas,
- *                        obtenerApertura
+ *                        obtenerApertura, obtenerCapacidadesFase3b
  *   POST con token:      actualizarEstadoPedido, cancelarPedido,
  *                        crearApertura, actualizarApertura,
  *                        cambiarEstadoApertura
@@ -87,6 +87,10 @@ function doGet(e) {
         exigirToken_(params.token);
         validarEntornoTestCalendario_();
         return jsonOk_(obtenerApertura_(params.apertura_id));
+      case 'obtenerCapacidadesFase3b':
+        exigirToken_(params.token);
+        validarEntornoTestCalendario_();
+        return jsonOk_(obtenerCapacidadesFase3b_());
       default:
         return jsonError_('Accion GET no reconocida: "' + action + '".', 400);
     }
@@ -156,6 +160,8 @@ function crearPedido_(body) {
   lock.waitLock(30000); // hasta 30s esperando el turno
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var ahora = new Date();
+    var contextoApertura = validarPedidoAnticipadoTest_(ss, body, ahora);
     var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
 
     var cId = col_(prod, 'id_producto');
@@ -221,7 +227,6 @@ function crearPedido_(body) {
     }
     total = redondear2_(total);
 
-    var ahora = new Date();
     var idPedido = generarId_('PED', ahora);
 
     // 1) Escribir cabecera en PEDIDOS.
@@ -239,7 +244,9 @@ function crearPedido_(body) {
       forma_pago: formaPago,
       observaciones: observaciones,
       vendedor_admin: '',
-      fecha_entrega: ''
+      fecha_entrega: '',
+      apertura_id: contextoApertura.apertura_id,
+      origen_pedido: contextoApertura.origen_pedido
     });
 
     // 2) Escribir lineas en DETALLE_PEDIDOS.
@@ -284,6 +291,8 @@ function crearPedido_(body) {
       total: total,
       estado_pedido: 'pendiente',
       items: lineas.length,
+      apertura_id: contextoApertura.apertura_id || undefined,
+      origen_pedido: contextoApertura.origen_pedido || undefined,
       resumen: lineas.map(function (l) {
         return {
           id_producto: l.id_producto,
@@ -576,6 +585,131 @@ function prepararHojaAperturasTest() {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Agrega de forma idempotente las dos columnas de PEDIDOS necesarias para el
+ * primer bloque público de pedidos anticipados. Solo se permite en TEST.
+ */
+function prepararColumnasPedidosAnticipadosTest() {
+  validarConfig_();
+  validarEntornoTestCalendario_();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  var requeridas = ['apertura_id', 'origen_pedido'];
+  var agregadas = [];
+  for (var i = 0; i < requeridas.length; i++) {
+    var nombre = requeridas[i];
+    if (pedidos.mapa[nombre] !== undefined) continue;
+    var columna = pedidos.sheet.getLastColumn() + 1;
+    pedidos.sheet.getRange(1, columna).setValue(nombre).setFontWeight('bold');
+    agregadas.push(nombre);
+    pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  }
+  SpreadsheetApp.flush();
+  validarColumnasPedidosAnticipados_(pedidos);
+  return { columnas_agregadas: agregadas, contrato: 'pedidos_anticipados_publicos_v1' };
+}
+
+function obtenerCapacidadesFase3b_() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  validarColumnasPedidosAnticipados_(leerHoja_(ss, HOJAS.PEDIDOS));
+  return { pedidos_anticipados_publicos: 'v1' };
+}
+
+function validarColumnasPedidosAnticipados_(pedidos) {
+  col_(pedidos, 'apertura_id');
+  col_(pedidos, 'origen_pedido');
+}
+
+/**
+ * En TEST, valida por segunda vez bajo lock que el pedido sigue asociado a la
+ * única apertura activa y que el cierre no ha vencido. Fuera de TEST conserva
+ * exactamente el comportamiento productivo anterior.
+ */
+function validarPedidoAnticipadoTest_(ss, body, ahora) {
+  var entorno = limpiar_(PropertiesService.getScriptProperties().getProperty('APP_ENV'));
+  if (entorno !== 'TEST') return { apertura_id: '', origen_pedido: '' };
+
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  validarColumnasPedidosAnticipados_(pedidos);
+  var hojaAperturas = leerHoja_(ss, HOJAS.APERTURAS);
+  validarEncabezadosAperturas_(hojaAperturas);
+  var aperturas = [];
+  for (var i = 0; i < hojaAperturas.filas.length; i++) {
+    var apertura = serializarApertura_(filaAObjeto_(hojaAperturas, hojaAperturas.filas[i]));
+    if (apertura.apertura_id) aperturas.push(apertura);
+  }
+
+  var fechaActual = Utilities.formatDate(
+    ahora,
+    'America/Santiago',
+    "yyyy-MM-dd'T'HH:mm"
+  );
+  var activa = seleccionarAperturaActivaPedidoTest_(aperturas, fechaActual);
+  if (!activa) {
+    lanzar_('No hay una apertura activa con pedidos anticipados disponibles.', 409);
+  }
+
+  var aperturaId = limpiar_(body.apertura_id);
+  var origen = limpiar_(body.origen_pedido);
+  if (aperturaId !== activa.apertura_id) {
+    lanzar_('La apertura activa cambio. Recarga la tienda antes de enviar el pedido.', 409);
+  }
+  if (origen !== 'online_anticipado') {
+    lanzar_('origen_pedido invalido para este flujo.', 400);
+  }
+  return { apertura_id: aperturaId, origen_pedido: origen };
+}
+
+function seleccionarAperturaActivaPedidoTest_(entradas, fechaActual) {
+  var candidatas = [];
+  for (var i = 0; i < entradas.length; i++) {
+    var entrada = entradas[i] || {};
+    var fecha = normalizarFechaPedido_(entrada.fecha_apertura);
+    var inicio = normalizarHoraPedido_(entrada.hora_inicio);
+    var termino = normalizarHoraPedido_(entrada.hora_termino);
+    var cierre = normalizarCierrePedido_(entrada.cierre_pedidos_anticipados);
+    if (!/^APE-\d{8}$/.test(limpiar_(entrada.apertura_id)) ||
+        !esFechaIsoValida_(fecha) ||
+        !/^([01]\d|2[0-3]):[0-5]\d$/.test(inicio) ||
+        !/^([01]\d|2[0-3]):[0-5]\d$/.test(termino) ||
+        !esFechaHoraIsoValida_(cierre)) continue;
+    if (limpiar_(entrada.estado_apertura) !== 'activa') continue;
+    if (limpiar_(entrada.pedidos_anticipados_estado) !== 'activo') continue;
+    if (fechaActual > cierre) continue;
+    candidatas.push({
+      apertura_id: limpiar_(entrada.apertura_id),
+      fecha_apertura: fecha,
+      hora_inicio: inicio,
+      hora_termino: termino,
+      cierre_pedidos_anticipados: cierre
+    });
+  }
+  if (candidatas.length > 1) {
+    lanzar_('Hay mas de una apertura activa disponible para pedidos anticipados.', 409);
+  }
+  return candidatas.length === 1 ? candidatas[0] : null;
+}
+
+function normalizarFechaPedido_(valor) {
+  var texto = limpiar_(valor);
+  var match = /^(\d{4}-\d{2}-\d{2})(?:T.*)?$/.exec(texto);
+  return match ? match[1] : texto;
+}
+
+function normalizarHoraPedido_(valor) {
+  var texto = limpiar_(valor);
+  var match = /^(?:\d{4}-\d{2}-\d{2}T)?([0-2]\d):([0-5]\d)/.exec(texto);
+  return match && Number(match[1]) <= 23 ? match[1] + ':' + match[2] : texto;
+}
+
+function normalizarCierrePedido_(valor) {
+  var texto = limpiar_(valor);
+  var match = /^(\d{4}-\d{2}-\d{2})T([0-2]\d):([0-5]\d)/.exec(texto);
+  return match && Number(match[2]) <= 23
+    ? match[1] + 'T' + match[2] + ':' + match[3]
+    : texto;
 }
 
 function semillasAperturasTest_() {
