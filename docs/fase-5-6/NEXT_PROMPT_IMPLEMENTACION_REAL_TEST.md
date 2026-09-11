@@ -1,8 +1,8 @@
 # Próximo bloque — implementación real TEST de Fase 5 + Fase 6
 
-**Estado:** guía de preparación. No autoriza producción, ni despliegue, ni
-escrituras hasta que se revise el schema TEST y el Almacén confirme las
-decisiones operativas pendientes.
+**Estado:** implementación ejecutada en el repositorio. Esta guía queda
+reemplazada para la operación inmediata por `VALIDACION_FASE_5_6_TEST.md`.
+No autoriza producción ni despliegue productivo.
 
 ## Objetivo
 

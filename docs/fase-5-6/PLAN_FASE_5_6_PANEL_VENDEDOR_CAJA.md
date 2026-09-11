@@ -1,8 +1,8 @@
 # Fase 5 + Fase 6 — preparación técnica: panel vendedor, comandas y caja
 
-**Estado:** preparación local; no implementada en TEST ni en producción.
-**Alcance:** define el siguiente bloque técnico sin crear escrituras, rutas ni
-acciones de Apps Script.
+**Estado:** implementada en código; pendiente despliegue y validación manual en
+TEST. No implementada ni autorizada en producción.
+**Alcance:** venta presencial, comanda y resumen/cierre de lectura por apertura.
 
 ## Diagnóstico de partida
 
@@ -11,11 +11,11 @@ de pedidos anticipados, catálogo con reglas de stock y cantidad, y calendario
 `APERTURAS` validado exclusivamente en TEST. El modelo histórico además
 contempla `VENTAS`, `DETALLE_VENTAS` y `MOVIMIENTOS_STOCK`.
 
-No existe aún un rol/sesión de vendedor separado, una pantalla de venta
-presencial, una escritura real en `VENTAS` o `DETALLE_VENTAS`, ni un resumen o
-cierre persistente de caja. La existencia y encabezados operativos de esas
-hojas deben verificarse en la Sheet TEST antes de la siguiente implementación;
-este plan no los da por creados ni los modifica.
+El código ya incluye una pantalla protegida por la sesión admin existente,
+escritura TEST en `VENTAS`, `DETALLE_VENTAS`, `MOVIMIENTOS_STOCK` y `PRODUCTOS`,
+comanda, y resumen de caja. No existe todavía un rol vendedor separado ni un
+cierre persistente. La preparación aditiva y el flujo E2E deben ejecutarse y
+verificarse manualmente en la Sheet TEST antes de considerar cerradas las fases.
 
 ## Fase 5 — panel vendedor y comandas
 
@@ -52,19 +52,19 @@ declarado, diferencia y observaciones.
 La primera versión será de lectura/preparación. Una diferencia de caja genera
 revisión humana, no bloquea ni aprueba automáticamente el cierre.
 
-## Acciones Apps Script que requiere una tarea futura
+## Acciones Apps Script implementadas en el repositorio
 
-Ninguna de estas acciones existe por este cambio. En TEST, y tras verificar el
-schema, la implementación futura debe incorporar:
+El archivo `scripts/apps-script-pedidos.gs` incorpora, siempre bajo
+`APP_ENV=TEST` y token administrativo:
 
-1. lectura de productos vendibles para venta presencial;
+1. preparación aditiva e idempotente de columnas mínimas;
 2. `crearVentaPresencial`: bajo `LockService`, validar apertura habilitada,
    catálogo, stock y precios de servidor; escribir `VENTAS`, `DETALLE_VENTAS`
    y `MOVIMIENTOS_STOCK` de manera coherente;
-3. lectura de resumen por `apertura_id`, incluyendo pedidos anticipados;
-4. borrador/revisión de cierre de solo lectura;
-5. solo después de validar el contrato, una acción explícita de cierre con
-   responsable, efectivo declarado, observaciones y auditoría.
+3. `obtenerVentaPresencial` y `listarVentasPorApertura`;
+4. `obtenerResumenApertura`, incluyendo pedidos anticipados, pendientes y
+   cancelados separados;
+5. UI de cierre de lectura/borrador, sin mutar `estado_apertura`.
 
 La acción final debe rechazar producción mientras no exista autorización Go/No-Go
 separada y conservar los guardrails TEST ya establecidos.
@@ -82,7 +82,7 @@ separada y conservar los guardrails TEST ya establecidos.
 
 1. Revisar hojas y encabezados reales, sin inferir datos faltantes.
 2. Acordar contrato, permisos y estados con el Almacén.
-3. Implementar Apps Script TEST y migración aditiva, con prueba controlada.
-4. Conectar UI protegida y probar venta, cancelación, stock y comanda.
-5. Implementar resumen de lectura y validar caja con una apertura real.
+3. Pegar/desplegar Apps Script TEST y ejecutar la preparación aditiva.
+4. Probar venta, stock, comanda, concurrencia e idempotencia.
+5. Validar el resumen de lectura con una apertura TEST controlada.
 6. Evaluar cierre persistente solo después de auditoría operativa.

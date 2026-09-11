@@ -209,10 +209,9 @@ atómico antes de cualquier cambio productivo.
   precios e imágenes pendiente con el Almacén.
 - 🔄 Fase 9: contenido público preparado; revisión editorial e imágenes
   definitivas pendientes con el Almacén.
-- ✅ Fase 5 + 6 preparadas técnicamente en local: contrato, lógica pura y
-  pruebas para venta presencial, comanda y resumen por apertura. No hay UI
-  operativa, escritura ni Apps Script nuevo; el siguiente bloque es la
-  implementación real exclusivamente en TEST con schema y permisos verificados.
+- 🔄 Fase 5 + 6 implementadas en código para TEST: Apps Script, rutas admin,
+  panel vendedor, comanda y resumen de caja. Pendiente pegar/desplegar el
+  script y validar el flujo E2E en la Sheet TEST; producción no fue tocada.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
@@ -225,10 +224,13 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 - ✅ Contrato preparatorio para venta presencial/comanda y validaciones puras
   (`docs/fase-5-6/`, `src/lib/fase5/`).
+- ✅ Implementar en código Apps Script TEST con token, `APP_ENV=TEST`, lock,
+  idempotencia, cálculo de servidor y rollback compensatorio.
+- ✅ Crear rutas admin protegidas, panel `/admin/vendedor` y comanda imprimible.
+- ⬜ Ejecutar preparación aditiva, desplegar Apps Script TEST y validar venta
+  real por unidad y decimal, stock, errores y reintento idempotente.
 - ⬜ Rol vendedor separado de administrador.
-- ⬜ Vista de pedidos del día operable durante la apertura.
-- ⬜ Implementar y probar Apps Script TEST para ventas, detalle y movimiento de
-  stock; no autorizado todavía en producción.
+- ⬜ Política segura e idempotente para anular/devolver una venta presencial.
 
 ---
 
@@ -255,7 +257,10 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 - ✅ Contrato y resumen/cierre de solo lectura preparados en lógica pura
   (`docs/fase-5-6/`, `src/lib/fase6/`).
-- ⬜ Registro de ventas y caja (VENTAS / DETALLE_VENTAS).
+- ✅ Implementar en código lectura consolidada por apertura y vista
+  `/admin/caja`, con ventas/pedidos, pendientes, pagos y cancelados separados.
+- ⬜ Validar el resumen contra datos reales controlados de la Sheet TEST.
+- ⬜ Registro persistente de cierre; esta entrega es solo lectura/borrador.
 - ⬜ Reportes básicos (ventas, pedidos, stock).
 - ⬜ Validar con el Almacén responsables, diferencias, pago al retirar y regla
   de cierre antes de implementar una escritura en TEST.

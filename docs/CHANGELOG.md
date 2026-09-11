@@ -5,6 +5,28 @@
 
 ---
 
+## [FASE 5 + FASE 6] — Implementación preparada para validación TEST (2026-09-11)
+
+### Añadido
+
+- Backend Apps Script exclusivo de TEST para preparar columnas, crear y leer
+  ventas presenciales y consolidar el resumen por apertura.
+- Escritura bajo lock e idempotencia, con precios/totales recalculados desde el
+  catálogo y reversión compensatoria ante fallos intermedios.
+- Rutas admin protegidas, panel `/admin/vendedor`, comanda imprimible y vista
+  `/admin/caja` de lectura/borrador.
+- Guardrails y pruebas adicionales para bloquear Fase 5/6 fuera de TEST y no
+  exponer configuración del backend al navegador.
+
+### Estado
+
+- Implementado en el repositorio; pendiente que Omar pegue/despliegue el script,
+  prepare columnas y ejecute la validación E2E sobre Apps Script/Sheet TEST.
+- No se implementaron anulación de venta ni cierre persistente. Producción,
+  Apps Script productivo y Sheet productiva no fueron tocados.
+
+---
+
 ## [FASE 5 + FASE 6] — Preparación técnica local de venta presencial y caja (2026-09-11)
 
 ### Añadido

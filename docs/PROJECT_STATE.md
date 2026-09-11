@@ -13,12 +13,13 @@ sábados de apertura.
 
 - **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
   Fase 3B validada en TEST, Fase 4 + Fase 9 preparadas para revisión del
-  Almacén y Fase 5 + Fase 6 con diseño técnico y lógica pura local.
+  Almacén y Fase 5 + Fase 6 implementadas en código, pendientes de despliegue
+  y validación manual contra Apps Script/Sheet TEST.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Próxima prioridad:** validar con el Almacén Fase 4 (productos, stock,
-  precios e imágenes) y Fase 9 (contenido público, historia y comunidad), y
-  luego implementar Fase 5 + Fase 6 exclusivamente en TEST.
+- **Próxima prioridad:** pegar/desplegar manualmente el backend en Apps Script
+  TEST, ejecutar la preparación aditiva y validar ventas presenciales, stock,
+  comanda y resumen por apertura. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -129,10 +130,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); el contrato de backend
   real ya está diseñado en el modelo §G–§H; falta
   implementarlo y probarlo exclusivamente en TEST.
-- ✅ Fase 5 + Fase 6 en preparación técnica local: contratos de venta
-  presencial/comanda/caja y helpers puros con pruebas. No se agregaron rutas,
-  hojas, acciones Apps Script ni escrituras; faltan decisiones operativas,
-  verificación de schema y una implementación TEST separada.
+- 🔄 Fase 5 + Fase 6 implementadas en código para TEST: backend Apps Script con
+  lock/idempotencia/rollback compensatorio, rutas admin, panel vendedor,
+  comanda y resumen de caja de lectura. Falta despliegue manual, preparación
+  aditiva de columnas y validación E2E sobre la Sheet TEST.
 - Validar nombres y variantes de productos, fotos finales, categorías, unidades,
   stock, precios y textos públicos — ver
   `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
@@ -141,11 +142,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Validar con el Almacén el bloque Fase 4 + Fase 9 preparado.** Resolver nombres,
-categorías, imágenes y textos pendientes sin cambiar stock ni precios hasta su
-confirmación. Después, implementar en TEST la base ya preparada de Fase 5 + 6:
-panel vendedor, comandas, caja y cierre por apertura. Cualquier intervención
-productiva continúa pendiente de una decisión Go/No-Go separada.
+**Validar manualmente Fase 5 + 6 en TEST.** Primero preparar las columnas de las
+hojas TEST y desplegar el script actualizado; luego comprobar una venta por
+unidad, una decimal, stock, reintentos, comanda y resumen de caja. El cierre
+persistente, la anulación de ventas y cualquier intervención productiva siguen
+pendientes de decisiones y autorización separadas.
 
 ---
 

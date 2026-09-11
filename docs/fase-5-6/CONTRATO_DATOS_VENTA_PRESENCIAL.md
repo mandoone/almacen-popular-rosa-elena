@@ -1,7 +1,7 @@
 # Contrato de datos propuesto — venta presencial, comandas y caja
 
-**Estado:** contrato preparatorio local. No crea columnas, hojas, rutas ni
-escrituras. La migración aditiva debe revisarse y ejecutarse primero en TEST.
+**Estado:** contrato implementado en código, pendiente preparación de columnas,
+despliegue y validación manual en TEST. Producción permanece fuera de alcance.
 
 ## Relación con APERTURAS
 
@@ -29,15 +29,15 @@ de apertura. Los calcula o verifica el backend con lock de concurrencia.
 
 ### VENTAS
 
-Campos mínimos por confirmar antes de crear o migrar la hoja: `venta_id`,
+Campos mínimos agregados de forma aditiva por la preparación TEST: `venta_id`,
 `fecha_hora`, `apertura_id`, `origen_venta` (`presencial`), `total`,
 `estado_venta`, `estado_pago`, `forma_pago`, `vendedor`, `observaciones` y
-auditoría técnica. `estado_venta` y la política de anulación siguen pendientes
-de confirmación del Almacén.
+auditoría técnica. La implementación usa `vigente`; la política de anulación
+sigue pendiente de confirmación del Almacén y no está implementada.
 
 ### DETALLE_VENTAS
 
-Cada fila: `detalle_venta_id`, `venta_id`, `producto_id`, nombre de referencia
+Cada fila: `detalle_id`, `venta_id`, `producto_id`, nombre de referencia
 si se necesita para lectura, `cantidad`, `precio_unitario` calculado y
 `subtotal` calculado. El detalle no acepta precio desde navegador.
 
