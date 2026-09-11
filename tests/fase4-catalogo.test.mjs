@@ -83,3 +83,14 @@ test('el endpoint público agrega metadatos de presentación sin campos internos
   }
   assert.doesNotMatch(ruta, /precio_costo|margen_pct/);
 });
+
+test('el aviso TEST de apertura en tienda es compacto y no expone el lugar', async () => {
+  const tienda = await readFile(
+    new URL('../src/app/tienda/page.tsx', import.meta.url),
+    'utf8'
+  );
+  assert.match(tienda, /Próxima apertura: \{formatearFechaApertura/);
+  assert.match(tienda, /Pedidos hasta/);
+  assert.match(tienda, /flex flex-wrap items-center justify-center/);
+  assert.doesNotMatch(tienda, /apertura\.lugar|apertura\.mensaje_publico/);
+});

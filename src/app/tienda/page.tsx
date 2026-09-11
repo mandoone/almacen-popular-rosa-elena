@@ -389,44 +389,41 @@ export default function TiendaPage() {
 
       {/* AVISO */}
       <section className="bg-primary-light py-4 px-4 text-center">
-        <p className="text-primary-dark font-medium">
-          🗓 Los productos se actualizan cada sábado de apertura. Haz tu pedido
-          online y retíralo en el almacén.
-        </p>
-      </section>
-
-      {usaCalendarioTest && (
-        <section className="bg-white px-4 py-5">
-          <div className="mx-auto max-w-3xl rounded-xl border border-primary-light bg-background p-4 text-center text-sm text-primary-dark">
+        <div className="mx-auto max-w-6xl text-primary-dark">
+          <p className="font-medium">
+            🗓 Los productos se actualizan cada sábado de apertura. Haz tu pedido
+            online y retíralo en el almacén.
+          </p>
+          {usaCalendarioTest && (
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
             {cargandoApertura ? (
-              <p>Consultando la apertura activa TEST...</p>
+              <span>Consultando próxima apertura...</span>
             ) : apertura ? (
               <>
-                <p className="font-semibold">Próxima apertura activa</p>
-                <p className="mt-1">
-                  {formatearFechaApertura(apertura.fecha_apertura)} ·{' '}
-                  {formatearHorarioApertura(
-                    apertura.horario.inicio,
-                    apertura.horario.termino
-                  )}
-                </p>
-                <p>{apertura.lugar || 'Lugar por confirmar'}</p>
-                <p>
+                <span className="font-semibold">
+                  Próxima apertura: {formatearFechaApertura(apertura.fecha_apertura)}
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {formatearHorarioApertura(apertura.horario.inicio, apertura.horario.termino)}
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>
                   Pedidos hasta{' '}
                   {formatearCierreApertura(apertura.cierre_pedidos_anticipados)}
-                </p>
-                {apertura.mensaje_publico && <p className="mt-2">{apertura.mensaje_publico}</p>}
+                </span>
               </>
             ) : (
-              <p>
+              <span>
                 {errorApertura
-                  ? `Pedidos anticipados no disponibles: ${errorApertura}`
+                  ? 'Pedidos anticipados no disponibles.'
                   : 'No hay una apertura activa con pedidos anticipados disponibles.'}
-              </p>
+              </span>
             )}
-          </div>
-        </section>
-      )}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* CATÁLOGO + CARRITO */}
       <section className="bg-background py-12 px-4 sm:px-6 lg:px-8 flex-1">

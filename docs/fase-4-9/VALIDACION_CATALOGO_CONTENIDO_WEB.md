@@ -52,6 +52,9 @@ No normalizar ni fusionar estos nombres hasta recibir una respuesta:
 - [ ] Confirmar si después conviene abreviarlos a `Granel`, `Abarrotes` e
   `Higiene`.
 - [ ] Confirmar el orden definitivo de las categorías.
+- [ ] Normalizar la convivencia entre `limpieza` y `Productos de higiene` si
+  representan la misma categoría. La web conserva hoy ambas etiquetas tal como
+  llegan desde la Sheet.
 - [ ] Revisar la unidad o formato mostrado en cada producto.
 - [ ] Confirmar cuáles productos permiten cantidades decimales y su paso de
   venta antes de cambiar los controles del carrito.
