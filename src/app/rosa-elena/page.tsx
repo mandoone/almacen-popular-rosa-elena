@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const fotos = [
-  { src: "/images/rosa-elena-1.jpg", caption: "Rosa Elena Morales Morales" },
+  { src: "/images/rosa-elena-1.jpg", caption: "Rosa Elena Morales" },
   { src: "/images/rosa-elena-2.jpg", caption: "Junto a la comunidad" },
   { src: "/images/rosa-elena-3.jpg", caption: "Trabajo organizativo" },
   { src: "/images/rosa-elena-4.jpg", caption: "Memoria presente" },
@@ -28,7 +28,7 @@ export default function RosaElenaPage() {
       {/* 1. HERO */}
       <section className="bg-primary-dark text-white py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
         <h1 className="font-serif font-bold text-white text-4xl sm:text-5xl mb-4">
-          Rosa Elena Morales Morales
+          Rosa Elena Morales
         </h1>
         <p className="text-xl sm:text-2xl font-medium mb-6">
           Dirigenta vecinal • Luchadora popular • Detenida desaparecida
@@ -73,7 +73,7 @@ export default function RosaElenaPage() {
           </h2>
           <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
             <p>
-              Rosa Elena Morales Morales fue una destacada dirigenta vecinal de la Población Juan Antonio Ríos, en Santiago de Chile. Militante del Partido Comunista, ocupó el cargo de Secretaria del Comité local Juan Antonio Ríos de dicha organización.
+              Rosa Elena Morales fue una destacada dirigenta vecinal de la Población Juan Antonio Ríos, en Santiago de Chile. Militante del Partido Comunista, ocupó el cargo de Secretaria del Comité local Juan Antonio Ríos de dicha organización.
             </p>
             <p>
               Durante el gobierno del Presidente Salvador Allende, Rosa Elena asumió un rol fundamental en el abastecimiento popular: fue Secretaria del Ministro del Trabajo y dirigenta de la Junta de Abastecimiento y Control de Precios (JAP), organismos creados para garantizar el acceso a productos básicos a precios justos para el pueblo.
@@ -112,7 +112,7 @@ export default function RosaElenaPage() {
             &ldquo;En su figura homenajeamos a las mujeres de nuestra población, quienes históricamente han asumido la tarea de cuidados y abastecimiento del hogar.&rdquo;
           </blockquote>
           <p className="text-primary-light text-lg font-medium tracking-wide">
-            — Almacén Popular Rosa Elena Morales Morales, agosto 2020
+            — Almacén Popular Rosa Elena Morales, agosto 2020
           </p>
         </div>
       </section>

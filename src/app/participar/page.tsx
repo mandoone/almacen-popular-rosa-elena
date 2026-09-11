@@ -1,3 +1,9 @@
+import {
+  APERTURAS_PUBLICAS_2026,
+  HORARIO_APERTURAS,
+  LUGAR_APERTURAS,
+} from '@/lib/fase9/contenidoPublico';
+
 const formas = [
   {
     title: "Turnos de atención",
@@ -73,18 +79,26 @@ export default function ParticiparPage() {
         </div>
       </section>
 
-      {/* 4. PRÓXIMA APERTURA */}
+      {/* 4. PRÓXIMAS APERTURAS */}
       <section className="bg-primary-light py-16 px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h2 className="font-serif text-primary-dark text-2xl sm:text-3xl font-bold mb-4">
             Próximos sábados de apertura
           </h2>
           <p className="text-primary-dark font-medium text-lg mb-3">
-            Abrimos 2 sábados al mes • 11:00 AM • Gamero 2670, Independencia
+            {HORARIO_APERTURAS} • {LUGAR_APERTURAS}
           </p>
-          <p className="text-primary-dark/70">
-            Recuerda traer tu bolsita 💜
-          </p>
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {APERTURAS_PUBLICAS_2026.map((apertura) => (
+              <time
+                key={apertura.fechaIso}
+                dateTime={apertura.fechaIso}
+                className="rounded-lg bg-white/70 px-3 py-3 text-sm font-semibold text-primary-dark"
+              >
+                {apertura.fechaVisible}
+              </time>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -131,7 +145,7 @@ export default function ParticiparPage() {
             Juntos construimos una comunidad más justa
           </h2>
           <p className="text-primary-light text-lg">
-            Almacén Popular Rosa Elena Morales Morales • Población Juan Antonio Ríos • Independencia
+            Almacén Popular Rosa Elena Morales • Población Juan Antonio Ríos • Independencia
           </p>
         </div>
       </section>

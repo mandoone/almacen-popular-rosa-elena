@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="relative w-20 h-20 mb-4">
           <Image
             src="/images/logo.png"
-            alt="Logo Almacén Popular Rosa Elena Morales Morales"
+            alt="Logo Almacén Popular Rosa Elena Morales"
             fill
             className="object-contain"
             sizes="80px"
@@ -19,7 +19,7 @@ export default function Footer() {
 
         {/* Name */}
         <h3 className="font-serif text-2xl text-center font-bold mb-6">
-          Almacén Popular<br className="md:hidden" /> Rosa Elena Morales Morales
+          Almacén Popular<br className="md:hidden" /> Rosa Elena Morales
         </h3>
 
         {/* Contact Info */}
@@ -79,7 +79,7 @@ export default function Footer() {
         {/* Footer phrase & Copyright */}
         <div className="text-center text-sm text-primary-light flex flex-col gap-2">
           <p>Proyecto comunitario sin fines de lucro • Población Juan Antonio Ríos</p>
-          <p>&copy; {currentYear} Almacén Popular Rosa Elena Morales Morales. Todos los derechos reservados.</p>
+          <p>&copy; {currentYear} Almacén Popular Rosa Elena Morales. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

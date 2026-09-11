@@ -1,5 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import {
+  APERTURAS_PUBLICAS_2026,
+  FORMAS_DE_PARTICIPAR,
+  HORARIO_APERTURAS,
+  LUGAR_APERTURAS,
+  PASOS_COMO_FUNCIONA,
+} from "@/lib/fase9/contenidoPublico";
 
 export default function Home() {
   return (
@@ -9,7 +16,7 @@ export default function Home() {
         <div className="relative w-40 h-40 mb-8">
           <Image
             src="/images/logo.png"
-            alt="Logo Almacén Popular Rosa Elena Morales Morales"
+            alt="Logo Almacén Popular Rosa Elena Morales"
             fill
             className="object-contain"
             sizes="160px"
@@ -17,7 +24,7 @@ export default function Home() {
           />
         </div>
         <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold max-w-4xl mb-6 leading-tight">
-          Almacén Popular <br className="hidden sm:block" /> Rosa Elena Morales Morales
+          Almacén Popular <br className="hidden sm:block" /> Rosa Elena Morales
         </h1>
         <p className="text-primary-light text-lg sm:text-xl max-w-2xl mb-10">
           Proyecto comunitario sin fines de lucro • Población Juan Antonio Ríos
@@ -40,8 +47,8 @@ export default function Home() {
 
       {/* 2. PRÓXIMA APERTURA */}
       <section className="bg-primary-light py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div className="flex flex-col sm:flex-row items-center gap-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
             <div className="bg-white p-4 rounded-full text-primary-dark shrink-0">
               {/* Calendar Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
@@ -53,23 +60,62 @@ export default function Home() {
                 Próximos sábados de apertura
               </h2>
               <p className="text-primary-dark/80 font-medium text-lg">
-                Abrimos 2 sábados al mes • 11:00 AM • Gamero 2670, Independencia
+                Horario {HORARIO_APERTURAS}
               </p>
-              <p className="font-medium text-primary-dark/70">
-                Próximas fechas: 9 y 23 de mayo
+              <p className="mt-1 text-primary-dark/70">
+                {LUGAR_APERTURAS}
               </p>
             </div>
           </div>
-          <Link
-            href="/participar"
-            className="shrink-0 bg-primary-dark text-white font-medium px-6 py-3 rounded-md hover:bg-primary transition-colors"
-          >
-            ¿Cómo funciona?
-          </Link>
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {APERTURAS_PUBLICAS_2026.map((apertura) => (
+              <time
+                key={apertura.fechaIso}
+                dateTime={apertura.fechaIso}
+                className="rounded-lg border border-primary-dark/10 bg-white/70 px-3 py-3 text-center text-sm font-semibold text-primary-dark"
+              >
+                {apertura.fechaVisible}
+              </time>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 3. QUÉ SOMOS */}
+      {/* 3. CÓMO FUNCIONA */}
+      <section className="bg-background px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <h2 className="font-serif text-3xl font-bold text-primary-dark sm:text-4xl">
+              Cómo funciona el Almacén
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-gray-600">
+              El catálogo es común para la venta web y presencial, siempre según
+              la disponibilidad informada para cada apertura.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {PASOS_COMO_FUNCIONA.map((paso) => (
+              <article key={paso.numero} className="rounded-xl bg-white p-7 shadow-sm">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+                  {paso.numero}
+                </span>
+                <h3 className="mt-5 text-xl font-bold text-primary-dark">{paso.titulo}</h3>
+                <p className="mt-3 leading-relaxed text-gray-600">{paso.descripcion}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link
+              href="/tienda"
+              className="inline-block rounded-md bg-primary px-7 py-3 font-semibold text-white transition-colors hover:bg-primary-dark"
+            >
+              Revisar productos
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. QUÉ SOMOS */}
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div>
@@ -127,14 +173,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. NUESTRA INSPIRACIÓN */}
+      {/* 5. NUESTRA INSPIRACIÓN */}
       <section className="bg-background py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           <div className="w-full lg:w-1/3 shrink-0 flex justify-center">
             <div className="relative w-full max-w-[300px] aspect-[3/4]">
               <Image
                 src="/images/rosa-elena-1.jpg"
-                alt="Retrato de Rosa Elena Morales Morales"
+                alt="Retrato de Rosa Elena Morales"
                 fill
                 className="object-cover rounded-lg grayscale shadow-xl"
                 sizes="(max-width: 768px) 100vw, 300px"
@@ -146,7 +192,7 @@ export default function Home() {
               Nuestra Inspiración
             </h2>
             <h3 className="font-serif text-3xl sm:text-4xl font-bold text-primary-dark mb-2">
-              Rosa Elena Morales Morales
+              Rosa Elena Morales
             </h3>
             <p className="text-gray-500 font-medium mb-6">1930 — 18 de agosto de 1976</p>
             <p className="text-gray-700 text-lg leading-relaxed mb-8">
@@ -162,20 +208,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. SÚMATE */}
+      {/* 6. COMUNIDAD, PARTICIPACIÓN Y APORTES */}
       <section className="bg-primary py-24 px-4 sm:px-6 lg:px-8 text-center text-white">
-        <div className="max-w-3xl mx-auto">
+        <div className="mx-auto max-w-6xl">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            ¿Quieres ser parte de este proyecto?
+            Comunidad, participación y aportes
           </h2>
-          <p className="text-primary-light text-lg sm:text-xl mb-10 leading-relaxed">
-            Buscamos vecinas y vecinos que quieran participar en turnos rotativos y ayudar a que este proyecto llegue a más personas.
+          <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-primary-light sm:text-xl">
+            El Almacén se construye con participación comunitaria. Estas son
+            algunas formas de acercarse al proyecto.
           </p>
+          <div className="mb-10 grid gap-5 text-left md:grid-cols-3">
+            {FORMAS_DE_PARTICIPAR.map((forma) => (
+              <article key={forma.titulo} className="rounded-xl bg-white/10 p-6">
+                <h3 className="text-lg font-bold text-white">{forma.titulo}</h3>
+                <p className="mt-3 leading-relaxed text-primary-light">{forma.descripcion}</p>
+              </article>
+            ))}
+          </div>
           <Link
             href="/participar"
             className="inline-block bg-white text-primary font-bold px-8 py-4 rounded-md hover:bg-gray-100 transition-colors text-lg"
           >
-            Quiero participar
+            Ver cómo participar y contactar
           </Link>
         </div>
       </section>
