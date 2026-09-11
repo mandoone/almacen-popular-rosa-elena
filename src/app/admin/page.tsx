@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ETIQUETA_ESTADO,
@@ -260,6 +261,16 @@ function AdminPanel({
             <span className="font-serif text-primary-dark font-bold text-lg">Panel Admin</span>
           </div>
           <div className="flex items-center gap-4">
+            {!modoDemo && (
+              <>
+                <Link href="/admin/vendedor" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Vendedor
+                </Link>
+                <Link href="/admin/caja" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Caja
+                </Link>
+              </>
+            )}
             <button onClick={cargarPedidos} className="text-sm text-primary hover:text-primary-dark transition-colors">
               Actualizar
             </button>
