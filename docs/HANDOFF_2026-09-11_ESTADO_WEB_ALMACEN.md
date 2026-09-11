@@ -1,7 +1,8 @@
 # Handoff — Estado web Almacén Popular Rosa Elena Morales
 
-**Fecha:** 2026-09-11  
-**Rama de continuidad:** `feature/fase-3a-operativa`  
+**Fecha:** 2026-09-11
+
+**Rama de continuidad:** `feature/fase-3a-operativa`
 **Regla principal:** producción permanece fuera de alcance hasta una decisión
 Go/No-Go explícita y separada.
 
