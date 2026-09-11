@@ -145,9 +145,8 @@ npm.cmd run build
 
 ## 6. Activar pedidos anticipados públicos en TEST
 
-El código de este bloque requiere actualizar únicamente TEST. Hasta completar
-estos pasos, Apps Script v2 será rechazado por la verificación de capacidades y
-Next.js no creará pedidos sin asociación.
+La activación se completó exclusivamente en TEST. Se conserva el procedimiento
+como referencia para una copia TEST nueva.
 
 1. Abrir el proyecto Apps Script TEST y confirmar `APP_ENV=TEST`.
 2. Pegar allí el contenido actualizado de `scripts/apps-script-pedidos.gs`,
@@ -168,3 +167,26 @@ Next.js no creará pedidos sin asociación.
 
 No se requieren nuevas variables. Las demás columnas propuestas para pedidos
 presenciales permanecen pendientes.
+
+## 7. Validación final de pedido anticipado TEST (hito completado)
+
+- Apps Script TEST se actualizó manualmente desde
+  `scripts/apps-script-pedidos.gs`, se ejecutó
+  `prepararColumnasPedidosAnticipadosTest` y se desplegó una versión posterior
+  a la v2. No se modificó el proyecto Apps Script productivo.
+- La preparación agregó de forma aditiva las columnas `apertura_id` y
+  `origen_pedido` a la hoja `PEDIDOS` de TEST. No fueron necesarias variables
+  nuevas.
+- La verificación de capacidades respondió correctamente para Fase 3B y la
+  lectura pública relevante habilitó la apertura activa `APE-20260919`.
+- Se creó un pedido anticipado real de prueba (`PED-20260910-223156`), asociado
+  a `APE-20260919` y con origen `online_anticipado`. El detalle autenticado en
+  admin confirmó primero el estado `pendiente`; la cancelación posterior fue
+  exitosa y el detalle final quedó en estado `cancelado`.
+- La comprobación directa posterior en la Sheet TEST confirmó el pedido de
+  prueba con total `1320`, estado `cancelado`, `apertura_id = APE-20260919` y
+  `origen_pedido = online_anticipado`.
+- Los dos checks de Vercel finalizaron correctamente para el commit `87d7c37`.
+
+La Fase 3B queda validada en TEST. Producción, variables, secretos y datos
+productivos permanecen fuera de alcance.

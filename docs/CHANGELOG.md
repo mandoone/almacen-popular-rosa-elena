@@ -5,6 +5,30 @@
 
 ---
 
+## [FASE 3B — pedidos anticipados TEST] — Validación real cerrada (2026-09-10)
+
+### Validado
+
+- Apps Script TEST se actualizó desde `scripts/apps-script-pedidos.gs`; se
+  ejecutó `prepararColumnasPedidosAnticipadosTest`, que agregó
+  `apertura_id` y `origen_pedido` a `PEDIDOS`, y se desplegó una versión
+  posterior a v2.
+- La verificación de capacidades Fase 3B y la lectura pública de la apertura
+  relevante respondieron correctamente; se habilitó la apertura activa para
+  pedidos anticipados.
+- Se creó un pedido anticipado real de prueba, asociado a la apertura activa
+  con origen `online_anticipado`; el detalle admin confirmó su estado inicial,
+  la cancelación fue exitosa y la Sheet TEST confirmó el estado final
+  `cancelado` junto con los campos de asociación.
+- Los dos checks de Vercel finalizaron correctamente para el commit `87d7c37`.
+
+### Estado
+
+- Fase 3B queda validada exclusivamente en TEST. Producción, variables,
+  secretos, Sheets y Apps Script productivos permanecen sin cambios.
+
+---
+
 ## [FASE 3B — pedidos anticipados TEST] — Conexión preparada (2026-09-10)
 
 ### Añadido
@@ -18,11 +42,10 @@
 - Verificación de capacidad previa a la escritura: Apps Script v2 bloquea de
   forma segura hasta que TEST se actualice.
 
-### Pendiente manual
+### Activación posterior
 
-- Ejecutar `prepararColumnasPedidosAnticipadosTest` para agregar las columnas
-  aditivas `apertura_id` y `origen_pedido` a `PEDIDOS`, desplegar una nueva
-  versión de Apps Script TEST y validar el ciclo local. Producción no se toca.
+- La preparación de columnas, el despliegue TEST y la validación del ciclo local
+  fueron completados posteriormente; ver el hito de validación real anterior.
 
 ---
 

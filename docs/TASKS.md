@@ -198,17 +198,21 @@ atómico antes de cualquier cambio productivo.
   anticipados exclusivamente para TEST: DTO público saneado, selector por
   cierre, UI de tienda, bloqueo servidor y asociación con `apertura_id`/
   `origen_pedido`, sin modificar la lógica actual de stock.
-- ⬜ Ejecutar `prepararColumnasPedidosAnticipadosTest`, desplegar una nueva
-  versión del Apps Script TEST y validar el flujo E2E. Apps Script v2 queda
-  bloqueado de forma segura para esta creación.
+- ✅ Fase 3B TEST cerrada y validada: se ejecutó
+  `prepararColumnasPedidosAnticipadosTest`, `PEDIDOS` recibió las columnas
+  aditivas `apertura_id` y `origen_pedido`, Apps Script TEST se desplegó en una
+  versión posterior a v2 y el flujo E2E creó, verificó y canceló un pedido
+  anticipado real de prueba asociado a la apertura activa.
 - ⬜ Mantener pendientes y sujetos a decisión separada todos los pasos
   productivos: variables, Apps Script, Sheet y despliegue.
+- ⬜ Fase 4: productos, stock, precios e imágenes.
+- ⬜ Fase 9: contenido público, historia y comunidad.
+- ⬜ Luego Fase 5 + 6: panel vendedor, comandas, caja y cierre por apertura.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
-**El calendario ya está validado en TEST; la conexión pública está preparada
-en repo y pendiente de activación/validación manual solo en TEST. Modo
-presencial y cualquier paso productivo continúan pendientes.**
+**Calendario, apertura activa y pedidos anticipados quedan validados en TEST.
+Modo presencial y cualquier paso productivo continúan pendientes.**
 
 ---
 
