@@ -5,6 +5,31 @@
 
 ---
 
+## [FASE 3B — calendario admin TEST] — Hito validado (2026-09-10)
+
+### Validado
+
+- Calendario admin Fase 3B validado localmente contra TEST: Apps Script TEST
+  versión 2 respondió `listarAperturas`; la hoja `APERTURAS` quedó operativa
+  con siete aperturas oficiales; login admin y `/api/admin/aperturas` locales
+  funcionaron correctamente.
+- El ciclo crear → editar → cerrar se comprobó con `APE-20261226`; la apertura
+  temporal fue eliminada posteriormente de la Sheet TEST y `/admin` volvió a
+  mostrar solo las siete oficiales.
+- El commit `dad9542` corrigió el formato visual de fechas y horas en las
+  tarjetas: fecha legible, horario `11:00–15:00` y cierre legible, sin fecha
+  base `1899-12-30` ni marcas ISO largas. Este ajuste no requirió modificar ni
+  volver a desplegar Apps Script TEST.
+- Los dos checks de Vercel finalizaron correctamente.
+
+### Estado
+
+- Hito validado exclusivamente en TEST. Producción, sus variables, su Sheet y
+  su Apps Script no se tocaron. El siguiente bloque será conectar la apertura
+  activa con los pedidos anticipados públicos, aún solo sobre TEST.
+
+---
+
 ## [FASE 3B — calendario admin TEST] — Implementación preparada (2026-09-09)
 
 ### Añadido

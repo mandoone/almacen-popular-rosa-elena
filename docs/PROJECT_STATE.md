@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-09.
+> tarea que cambie el estado. Última actualización: 2026-09-10.
 
 ---
 
@@ -12,49 +12,21 @@ lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran lo
 sábados de apertura.
 
 - **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
-  modo demo aislado y QA visual local aprobado.
-- **Producción:** los avances de Fase 3A y el diseño de Fase 3B no modificaron
-  Google Sheets ni Apps Script productivo; el backend real conserva el modelo
-  anterior.
-- **Próxima prioridad:** el entorno TEST (Sheet + Apps Script) y la conexión
-  de Next.js local quedaron verificados de punta a punta el 2026-08-19,
-  incluyendo lectura, creación de pedido, stock y cancelación desde `/admin`
-  real, sin tocar producción — `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G y
-  §H. La estructura de `APERTURAS`, sus validaciones y siete semillas 2026
-  quedaron implementadas en código con preparación idempotente, rutas y UI
-  admin exclusivas para TEST. Falta ejecutar la creación/carga en TEST,
-  desplegar la nueva versión de Apps Script TEST, completar lugar y ejecutar
-  la prueba autenticada del calendario. El diseño de Fase 3B se prueba sobre
-  la misma base TEST.
+  modo demo aislado y calendario de aperturas Fase 3B validado en TEST.
+- **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
+  comportamiento productivos permanecen sin cambios.
+- **Próxima prioridad:** conectar la apertura activa al flujo público de pedidos
+  anticipados, exclusivamente sobre TEST y sin alterar la lógica vigente de stock.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
-- **Fase 3B: calendario admin implementado en repo, pendiente en TEST:** el
-  informe v0.3 fue aprobado y subido a Drive; el Almacén respondió horario de
-  apertura/retiro y criterio de cierre de pedidos. Se definieron las
-  decisiones operativas, el modelo de datos de `APERTURAS`, el plan de
-  implementación en 10 etapas y el plan de pruebas. Decisiones F.1 (venta
-  asistida nace en `listo`) y F.3 (orden determinista de selección de
-  apertura) **aprobadas por coordinación** como criterio base. Etapas 1
-  (lógica pura del calendario, estado público de la web y origen de pedido) y
-  2 (demo local del calendario en `/admin?demo=1`, componente
-  `CalendarioAperturasDemo`) están completadas. Etapa 3 (entorno TEST
-  compartido con Fase 3A) en curso: Sheet TEST y Apps Script TEST creados,
-  autorizados y desplegados; pruebas manuales de lectura, escritura, stock,
-  cancelación e idempotencia verificadas el 2026-08-19 directamente contra la
-  Web App TEST, sin tocar producción. `appsScriptPedidos.ts` selecciona entre
-  variables productivas y `_TEST` según `NEXT_PUBLIC_APP_ENV`, con bloqueo
-  explícito si falta configuración TEST o si coincide con producción — y esa
-  conexión quedó **verificada de punta a punta con Next.js local** el mismo
-  2026-08-19: lectura de catálogo, creación de pedido, descuento de stock,
-  cancelación desde `/admin` real (sesión de navegador, no demo) y devolución
-  de stock, todo OK (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H). Falta la
-  hoja `APERTURAS` en TEST, carga de semillas, despliegue del Apps Script TEST
-  y prueba autenticada. El calendario admin ya tiene funciones Apps Script,
-  rutas Next.js y UI con doble guardrail TEST; el contrato de pedidos
-  anticipados/presenciales sigue sin implementar. El Almacén
-  confirmó categorías visibles, formatos/unidades, catálogo común para web y
-  presencial y siete aperturas vigentes; persisten pendientes de nombres,
-  contenido, fotos, usuarios, lugar y aperturas especiales. 135/135 tests,
-  lint y build verdes. Detalle en
+- **Fase 3B: calendario admin TEST validado:** la hoja `APERTURAS` existe y
+  opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
+  `listarAperturas` correctamente; Next.js local validó login admin, listado y
+  el ciclo crear → editar → cerrar. La apertura temporal `APE-20261226` fue
+  eliminada y el panel `/admin` volvió a quedar con las siete oficiales. El
+  ajuste visual de fechas/horas fue entregado en `dad9542`, sin modificar Apps
+  Script. Vercel completó ambos checks correctamente. Persisten los doble
+  guardrails TEST y `/admin?demo=1` aislado; pedidos anticipados y modo
+  presencial completos siguen sin implementar. Detalle en
   `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md`,
   `docs/fase-3b/MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md`,
   `docs/fase-3b/PLAN_IMPLEMENTACION_FASE_3B.md`,
@@ -131,9 +103,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Pendientes principales
 
-- ✅ Sheet y Apps Script TEST creados; ✅ Next.js conectado y verificado de
-  punta a punta (2026-08-19) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md`
-  §G y §H.
+- ✅ Calendario admin Fase 3B validado sobre TEST: Sheet `APERTURAS`, Apps
+  Script TEST v2, siete aperturas oficiales y ciclo admin autenticado.
+- ⬜ Conectar la apertura activa con el flujo público de pedidos anticipados,
+  exclusivamente sobre TEST.
 - Implementar y probar en TEST la creación en `recibido` sin descontar stock.
 - Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
   reconciliación de fallos parciales.
@@ -153,18 +126,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Entorno TEST y backend atómico de Fase 3A** (plan operativo detallado en
-`docs/fase-3b/ENTORNO_TEST_FASE_3B.md`):
-
-1. Aprobar el checklist y las decisiones técnicas pendientes.
-2. ✅ Preparar copias separadas de Sheet y Apps Script con conexión por ID
-   explícito — creado, autorizado y desplegado; verificado con pruebas
-   manuales el 2026-08-19 (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §G).
-3. Implementar el backend únicamente en TEST.
-4. Ejecutar pruebas de stock, concurrencia, idempotencia y rollback —
-   stock e idempotencia de cancelación ya verificados manualmente (§G);
-   concurrencia y rollback, pendientes.
-5. Emitir criterio Go/No-Go antes de preparar una intervención productiva.
+**Fase 3B — apertura activa y pedidos anticipados sobre TEST.** Diseñar e
+implementar la conexión pública sin habilitar producción, modificar sus
+variables ni cambiar la lógica actual de stock. Cualquier preparación o
+intervención productiva continúa pendiente de una decisión Go/No-Go separada.
 
 ---
 

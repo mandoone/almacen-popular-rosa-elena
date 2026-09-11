@@ -188,21 +188,22 @@ atómico antes de cualquier cambio productivo.
   el 2026-08-19: lectura de catálogo, creación de pedido, descuento de
   stock, cancelación desde `/admin` real y devolución de stock — todo OK**
   (`docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H).
-- ✅ Calendario admin implementado en el repositorio exclusivamente para TEST:
-  preparación idempotente de `APERTURAS` y siete semillas, rutas protegidas,
-  UI listar/crear/editar/cerrar, doble guardrail TEST, idempotencia y
-  concurrencia optimista (135/135 tests). No desplegado todavía.
-- 🔄 Pendientes de Fase 3B sobre TEST: ejecutar la preparación de `APERTURAS`,
-  desplegar Apps Script TEST, completar lugar y auditoría, ejecutar pruebas
-  autenticadas de calendario, banner visual de
-  entorno (decisión pendiente, no aprobada) y revisión de codificación de
-  acentos en nombres de producto (la prueba usó "Arroz", sin tildes ni
-  eñes) — ver `docs/fase-3b/ENTORNO_TEST_FASE_3B.md` §H.4.
+- ✅ Calendario admin TEST validado: hoja `APERTURAS` creada, siete aperturas
+  oficiales cargadas, Apps Script TEST versión 2 operativa, listado autenticado
+  y ciclo crear → editar → cerrar comprobados. La apertura temporal
+  `APE-20261226` fue eliminada; `/admin` volvió a mostrar solo las siete
+  oficiales. El formato visual de fechas/horas quedó corregido en `dad9542` sin
+  requerir un nuevo cambio de Apps Script.
+- ⬜ Conectar la apertura activa con el flujo público de pedidos anticipados,
+  exclusivamente sobre TEST y sin modificar la lógica actual de stock.
+- ⬜ Mantener pendientes y sujetos a decisión separada todos los pasos
+  productivos: variables, Apps Script, Sheet y despliegue.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
-**No avanzar pedidos anticipados completos ni modo presencial hasta validar
-este calendario en TEST.**
+**El calendario ya está validado en TEST; el siguiente bloque es pedidos
+anticipados ligados a la apertura activa. Modo presencial y cualquier paso
+productivo continúan pendientes.**
 
 ---
 

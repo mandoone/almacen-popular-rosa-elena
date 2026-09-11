@@ -25,9 +25,33 @@
 No se agregaron rutas públicas de calendario, pedidos anticipados completos ni
 modo presencial. La lógica de stock y pedidos existentes no cambió.
 
+## Validación final local + TEST (hito completado)
+
+La integración quedó validada exclusivamente sobre TEST:
+
+- La hoja TEST `APERTURAS` fue creada y quedó operativa con las siete aperturas
+  oficiales.
+- Apps Script TEST quedó desplegado como versión 2 y `listarAperturas` respondió
+  `ok: true`.
+- Next.js local se validó con `NEXT_PUBLIC_APP_ENV=test`: login admin y
+  `/api/admin/aperturas` funcionaron correctamente.
+- Se comprobó el ciclo autenticado crear → editar → cerrar con la apertura
+  temporal `APE-20261226`. La fila temporal fue eliminada después desde la
+  Sheet TEST; el panel `/admin` volvió a mostrar solo las siete aperturas
+  oficiales.
+- El ajuste visual posterior de fechas y horas quedó incorporado en el commit
+  `dad9542`; no requirió modificar ni volver a desplegar Apps Script TEST.
+  `/admin` local muestra fecha `19-09-2026`, horario `11:00–15:00` y cierre
+  `17-09-2026 23:59`, sin fechas base `1899-12-30` ni marcas ISO largas en las
+  tarjetas.
+- Los dos checks de Vercel finalizaron correctamente para este hito.
+
+Producción, sus variables y su Apps Script permanecen fuera de alcance.
+
 ## 2. Preparar físicamente `APERTURAS` en la Sheet TEST
 
-Esta acción es manual y todavía debe ejecutarse en el proyecto Apps Script TEST.
+Esta acción manual ya fue ejecutada en el proyecto Apps Script TEST. Se conserva
+el procedimiento como referencia de preparación para una copia TEST nueva.
 
 1. Abrir exclusivamente el proyecto Apps Script asociado a la copia TEST.
 2. Confirmar visualmente que no es el proyecto productivo.
@@ -63,7 +87,8 @@ un modo equivalente para producción.
 
 ## 3. Desplegar el Apps Script TEST
 
-Después de preparar la hoja:
+El despliegue TEST fue actualizado y quedó funcionando como versión 2. Se
+conserva el procedimiento de referencia para cambios futuros del script:
 
 1. En el proyecto Apps Script TEST, abrir **Implementar → Administrar
    implementaciones**.
@@ -79,7 +104,8 @@ o “no existe la hoja APERTURAS”; eso no debe resolverse apuntando a producci
 
 ## 4. Prueba local contra TEST
 
-Con el entorno local TEST ya configurado, sin abrir ni imprimir `.env.local`:
+La prueba local autenticada contra TEST se completó correctamente, sin abrir ni
+imprimir `.env.local`. Los pasos siguientes quedan como checklist reproducible:
 
 ```powershell
 npm.cmd run dev
@@ -112,11 +138,8 @@ npm.cmd run build
 
 ## 5. Límites de esta pasada
 
-- No se creó ni se verificó físicamente `APERTURAS` desde este repositorio.
-- No se actualizó la implementación Web App TEST desde este repositorio.
-- No se probó el ciclo autenticado contra Apps Script TEST hasta completar los
-  dos pasos manuales anteriores.
 - No se implementó el endpoint público de apertura relevante.
 - No se implementaron cambios completos de pedidos anticipados, modo
   presencial, QR ni venta asistida.
 - No se modificó ninguna variable de entorno ni la lógica actual de stock.
+- No se realizó ni se autoriza ninguna intervención productiva.
