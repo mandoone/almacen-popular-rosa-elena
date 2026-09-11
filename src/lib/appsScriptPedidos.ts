@@ -28,9 +28,11 @@
 
 import {
   assertCalendarioSoloTest,
+  assertFase56SoloTest,
   obtenerEntornoAplicacion,
   resolverConfigPorEntorno,
 } from './env';
+import type { VentaPresencialInput } from './fase5/ventaPresencial';
 
 export interface CarritoItem {
   id_producto: string;
@@ -145,6 +147,30 @@ function exigirEntornoTestParaCalendario(): void {
   }
 }
 
+function exigirEntornoTestParaFase56(): void {
+  try {
+    assertFase56SoloTest(entornoActual());
+  } catch (err) {
+    throw new AppsScriptError(
+      err instanceof Error ? err.message : 'Ventas y caja bloqueadas.',
+      403
+    );
+  }
+}
+
+function relanzarErrorFase56(err: unknown): never {
+  if (
+    err instanceof AppsScriptError &&
+    /Accion (GET|POST) no reconocida/.test(err.message)
+  ) {
+    throw new AppsScriptError(
+      'Apps Script TEST todavía no está desplegado con las acciones de Fase 5/6.',
+      503
+    );
+  }
+  throw err;
+}
+
 function baseUrl(): string {
   const resolucion = resolverConfigPorEntorno(entornoActual(), {
     valorProduccion: process.env.GOOGLE_SCRIPT_PEDIDOS_URL,
@@ -234,6 +260,64 @@ export function listarProductos(): Promise<ProductoCatalogo[]> {
 
 export function crearPedido(input: CrearPedidoInput): Promise<CrearPedidoResult> {
   return postScript<CrearPedidoResult>({ action: 'crearPedido', ...input });
+}
+
+export interface VentaPresencialCabecera {
+  venta_id: string;
+  fecha_hora: string;
+  apertura_id: string;
+  origen_venta: 'presencial';
+  vendedor: string;
+  total: number;
+  estado_venta: 'vigente';
+  estado_pago: 'pagado' | 'pendiente_de_pago';
+  forma_pago: 'efectivo' | 'transferencia' | 'pendiente';
+  observaciones?: string;
+  creado_en: string;
+  actualizado_en: string;
+}
+
+export interface DetalleVentaPresencial {
+  detalle_id: string;
+  venta_id: string;
+  producto_id: string;
+  nombre_producto: string;
+  cantidad: number;
+  unidad_medida: string;
+  precio_unitario: number;
+  subtotal: number;
+}
+
+export interface VentaPresencialRegistrada {
+  venta: VentaPresencialCabecera;
+  detalle: DetalleVentaPresencial[];
+  comanda: {
+    venta_id: string;
+    fecha_hora: string;
+    apertura_id: string;
+    detalle: DetalleVentaPresencial[];
+    total: number;
+    estado_pago: VentaPresencialCabecera['estado_pago'];
+    estado_impresion: 'pendiente_de_impresion';
+  };
+}
+
+export interface ResumenAperturaBackend {
+  apertura_id: string;
+  total_pedidos_anticipados: number;
+  total_ventas_presenciales: number;
+  total_general: number;
+  cantidad_pedidos_anticipados: number;
+  cantidad_ventas_presenciales: number;
+  total_pendiente_pago: number;
+  cantidad_pendientes_pago: number;
+  total_cancelado: number;
+  cantidad_cancelados: number;
+  total_cobrado: number;
+  total_efectivo_esperado: number;
+  total_transferencia: number;
+  total_efectivo_al_retirar: number;
+  advertencias: string[];
 }
 
 export async function verificarContratoPedidosAnticipadosTest(): Promise<void> {
@@ -351,4 +435,57 @@ export function cambiarEstadoApertura(args: {
     actor: 'admin_web',
     ...args,
   });
+}
+
+// ── Fase 5 + Fase 6 (exclusivamente TEST) ─────────────────────────────────
+
+export function listarCatalogoVentaPresencial(): Promise<ProductoCatalogo[]> {
+  exigirEntornoTestParaFase56();
+  return listarProductos();
+}
+
+export function crearVentaPresencial(
+  venta: VentaPresencialInput,
+  idempotencyKey: string
+): Promise<VentaPresencialRegistrada> {
+  exigirEntornoTestParaFase56();
+  return postScript<VentaPresencialRegistrada>({
+    action: 'crearVentaPresencial',
+    token: adminToken(),
+    idempotency_key: idempotencyKey,
+    ...venta,
+  }).catch(relanzarErrorFase56);
+}
+
+export function obtenerVentaPresencial(
+  ventaId: string
+): Promise<VentaPresencialRegistrada> {
+  exigirEntornoTestParaFase56();
+  return getScript<VentaPresencialRegistrada>({
+    action: 'obtenerVentaPresencial',
+    token: adminToken(),
+    venta_id: ventaId,
+  }).catch(relanzarErrorFase56);
+}
+
+export function listarVentasPorApertura(
+  aperturaId: string
+): Promise<VentaPresencialCabecera[]> {
+  exigirEntornoTestParaFase56();
+  return getScript<{ ventas: VentaPresencialCabecera[] }>({
+    action: 'listarVentasPorApertura',
+    token: adminToken(),
+    apertura_id: aperturaId,
+  }).then((data) => data.ventas).catch(relanzarErrorFase56);
+}
+
+export function obtenerResumenApertura(
+  aperturaId: string
+): Promise<ResumenAperturaBackend> {
+  exigirEntornoTestParaFase56();
+  return getScript<ResumenAperturaBackend>({
+    action: 'obtenerResumenApertura',
+    token: adminToken(),
+    apertura_id: aperturaId,
+  }).catch(relanzarErrorFase56);
 }

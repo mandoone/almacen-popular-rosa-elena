@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   esAperturaIdValido,
   prepararComanda,
+  validarSolicitudVentaPresencial,
   validarYCalcularVentaPresencial,
 } from '../src/lib/fase5/ventaPresencial.ts';
 
@@ -112,4 +113,35 @@ test('Fase 5: prepara una comanda sin asignar ni escribir la venta', () => {
     estado_pago: 'pendiente_de_pago',
     estado_impresion: 'pendiente_de_impresion',
   });
+});
+
+test('Fase 5: valida y normaliza la solicitud que recibe la ruta admin', () => {
+  const resultado = validarSolicitudVentaPresencial({
+    ...entrada([{ producto_id: 'PROD-UNIDAD', cantidad: 2 }]),
+    observaciones: '  Entregar comanda  ',
+  });
+
+  assert.equal(resultado.ok, true);
+  assert.equal(resultado.venta.observaciones, 'Entregar comanda');
+});
+
+test('Fase 5: rechaza formas de pago, líneas e identificadores inválidos antes del backend', () => {
+  const forma = validarSolicitudVentaPresencial({
+    ...entrada([{ producto_id: 'PROD-UNIDAD', cantidad: 1 }]),
+    forma_pago: 'tarjeta',
+  });
+  const repetido = validarSolicitudVentaPresencial(entrada([
+    { producto_id: 'PROD-UNIDAD', cantidad: 1 },
+    { producto_id: 'PROD-UNIDAD', cantidad: 1 },
+  ]));
+  const sinApertura = validarSolicitudVentaPresencial({
+    ...entrada([{ producto_id: 'PROD-UNIDAD', cantidad: 1 }]),
+    apertura_id: '',
+  });
+
+  assert.deepEqual(forma, { ok: false, error: 'La forma de pago no es válida.' });
+  assert.equal(repetido.ok, false);
+  assert.match(repetido.error, /repetido/);
+  assert.equal(sinApertura.ok, false);
+  assert.match(sinApertura.error, /apertura_id válida/);
 });

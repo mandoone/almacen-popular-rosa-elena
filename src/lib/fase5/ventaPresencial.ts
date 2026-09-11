@@ -73,6 +73,10 @@ export interface ResultadoValidacionVentaPresencial {
   venta?: VentaPresencialCalculada;
 }
 
+export type ResultadoSolicitudVentaPresencial =
+  | { ok: true; venta: VentaPresencialInput }
+  | { ok: false; error: string };
+
 /** APERTURAS utiliza este formato de identificador desde Fase 3B. */
 export function esAperturaIdValido(aperturaId: unknown): aperturaId is string {
   return /^APE-\d{8}$/.test(String(aperturaId ?? ''));
@@ -86,6 +90,80 @@ function esFormaPagoValida(valor: unknown): valor is FormaPagoVentaPresencial {
   return (FORMAS_PAGO_VENTA_PRESENCIAL as readonly string[]).includes(
     String(valor ?? '')
   );
+}
+
+/**
+ * Valida la forma de una solicitud antes de enviarla a Apps Script. Esta
+ * comprobación no reemplaza la validación de catálogo, apertura, precios ni
+ * stock que se ejecuta nuevamente dentro del lock en el backend TEST.
+ */
+export function validarSolicitudVentaPresencial(
+  valor: unknown
+): ResultadoSolicitudVentaPresencial {
+  if (!valor || typeof valor !== 'object') {
+    return { ok: false, error: 'La venta enviada no es válida.' };
+  }
+
+  const entrada = valor as Record<string, unknown>;
+  const aperturaId = String(entrada.apertura_id ?? '').trim();
+  const fechaHora = String(entrada.fecha_hora ?? '').trim();
+  const vendedor = String(entrada.vendedor ?? '').trim();
+  const observaciones = String(entrada.observaciones ?? '').trim();
+  const formaPago = entrada.forma_pago;
+  const lineasCrudas = entrada.lineas;
+
+  if (!esAperturaIdValido(aperturaId)) {
+    return { ok: false, error: 'Falta una apertura_id válida.' };
+  }
+  if (!esFechaHoraLocalValida(fechaHora)) {
+    return { ok: false, error: 'La fecha_hora debe usar el formato yyyy-MM-ddTHH:mm.' };
+  }
+  if (!vendedor || vendedor.length > 100) {
+    return { ok: false, error: 'Falta un vendedor válido.' };
+  }
+  if (observaciones.length > 500) {
+    return { ok: false, error: 'Las observaciones no pueden superar 500 caracteres.' };
+  }
+  if (!esFormaPagoValida(formaPago)) {
+    return { ok: false, error: 'La forma de pago no es válida.' };
+  }
+  if (!Array.isArray(lineasCrudas) || lineasCrudas.length === 0 || lineasCrudas.length > 100) {
+    return { ok: false, error: 'La venta debe incluir entre 1 y 100 productos.' };
+  }
+
+  const ids = new Set<string>();
+  const lineas: LineaVentaPresencialInput[] = [];
+  for (const lineaCruda of lineasCrudas) {
+    if (!lineaCruda || typeof lineaCruda !== 'object') {
+      return { ok: false, error: 'Hay una línea de venta inválida.' };
+    }
+    const linea = lineaCruda as Record<string, unknown>;
+    const productoId = String(linea.producto_id ?? '').trim();
+    const cantidad = Number(linea.cantidad);
+    if (!productoId || productoId.length > 100) {
+      return { ok: false, error: 'Hay una línea sin producto_id válido.' };
+    }
+    if (ids.has(productoId)) {
+      return { ok: false, error: `El producto "${productoId}" está repetido.` };
+    }
+    if (!Number.isFinite(cantidad) || cantidad <= 0) {
+      return { ok: false, error: `La cantidad de "${productoId}" debe ser mayor que cero.` };
+    }
+    ids.add(productoId);
+    lineas.push({ producto_id: productoId, cantidad });
+  }
+
+  return {
+    ok: true,
+    venta: {
+      apertura_id: aperturaId,
+      fecha_hora: fechaHora,
+      lineas,
+      forma_pago: formaPago,
+      vendedor,
+      ...(observaciones ? { observaciones } : {}),
+    },
+  };
 }
 
 function validarCantidadProducto(

@@ -12,6 +12,7 @@ import assert from 'node:assert/strict';
 import {
   ENTORNOS_APLICACION,
   ETIQUETA_ENTORNO,
+  assertFase56SoloTest,
   assertNoProduccionParaEscritura,
   esEntornoSeguroParaPruebas,
   obtenerEntornoAplicacion,
@@ -121,6 +122,13 @@ test('assertNoProduccionParaEscritura lanza para "demo" (no debería llegar hast
 
 test('assertNoProduccionParaEscritura lanza para "desconocido"', () => {
   assert.throws(() => assertNoProduccionParaEscritura('desconocido'), /Escritura bloqueada/);
+});
+
+test('assertFase56SoloTest habilita exclusivamente TEST', () => {
+  assert.doesNotThrow(() => assertFase56SoloTest('test'));
+  for (const entorno of ['production', 'demo', 'local', 'desconocido']) {
+    assert.throws(() => assertFase56SoloTest(entorno), /solo está habilitada en TEST/);
+  }
 });
 
 // --- ETIQUETA_ENTORNO / ENTORNOS_APLICACION ---------------------------------

@@ -136,6 +136,14 @@ export function assertCalendarioSoloTest(entorno: EntornoAplicacion): void {
   );
 }
 
+/** Guardrail estricto para ventas presenciales y caja de Fases 5–6. */
+export function assertFase56SoloTest(entorno: EntornoAplicacion): void {
+  if (entorno === 'test') return;
+  throw new Error(
+    'Ventas presenciales y caja bloqueadas: esta integración solo está habilitada en TEST.'
+  );
+}
+
 export type ResolucionValorPorEntorno =
   | { ok: true; valor: string }
   | { ok: false; error: string };
