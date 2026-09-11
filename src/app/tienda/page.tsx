@@ -8,26 +8,31 @@ import {
   formatearHorarioApertura,
 } from '@/lib/fase3b/adminAperturas';
 import type { AperturaPublicaPedidos } from '@/lib/fase3b/pedidosAnticipados';
+import {
+  descripcionFormatoVenta,
+  esProductoGranel,
+  idCategoriaVisible,
+  nombreCategoriaVisible,
+  rutaImagenProducto,
+} from '@/lib/fase4/catalogo';
 
-function normalizarNombre(nombre: string): string {
-  return nombre
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function ImagenProducto({ nombre }: { nombre: string }) {
+function ImagenProducto({ producto }: { producto: Producto }) {
   const [error, setError] = useState(false);
-  const src = `/images/productos/${normalizarNombre(nombre)}.jpg`;
+  const src = rutaImagenProducto(producto);
 
   if (error) {
     return (
-      <div className="w-full aspect-square bg-gray-100 flex items-center justify-center rounded-t-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-gray-300">
+      <div
+        className="flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-t-lg bg-gray-100 px-3 text-center"
+        role="img"
+        aria-label={`Imagen pendiente para ${producto.nombre}`}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-10 w-10 text-gray-300" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
         </svg>
+        <span className="text-[11px] font-medium leading-tight text-gray-400">
+          Imagen por incorporar
+        </span>
       </div>
     );
   }
@@ -36,7 +41,7 @@ function ImagenProducto({ nombre }: { nombre: string }) {
     <div className="w-full aspect-square relative rounded-t-lg overflow-hidden">
       <Image
         src={src}
-        alt={nombre}
+        alt={`Imagen de ${producto.nombre}`}
         fill
         className="object-cover"
         onError={() => setError(true)}
@@ -52,6 +57,11 @@ interface Producto {
   id: string;
   nombre: string;
   precio: number;
+  categoria?: string;
+  unidad_medida?: string;
+  permite_decimal?: string | boolean;
+  paso_venta?: number;
+  imagen_url?: string;
 }
 
 interface ItemCarrito {
@@ -115,7 +125,8 @@ function CarritoPanel({
                 {producto.nombre}
               </p>
               <p className="text-xs text-gray-500">
-                {formatPrecio(producto.precio)} c/u
+                {formatPrecio(producto.precio)}
+                {producto.unidad_medida ? ` · ${producto.unidad_medida}` : ''}
               </p>
             </div>
             <div className="flex items-center gap-1 shrink-0">
@@ -197,6 +208,7 @@ export default function TiendaPage() {
   const [telefono, setTelefono] = useState('');
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [busqueda, setBusqueda] = useState('');
+  const [categoriaActiva, setCategoriaActiva] = useState('todas');
   const [enviando, setEnviando] = useState(false);
   const [apertura, setApertura] = useState<AperturaPublicaPedidos | null>(null);
   const [cargandoApertura, setCargandoApertura] = useState(usaCalendarioTest);
@@ -271,6 +283,16 @@ export default function TiendaPage() {
 
   const total = carrito.reduce((acc, i) => acc + i.producto.precio * i.cantidad, 0);
   const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0);
+  const categoriasDisponibles = Array.from(
+    new Map(
+      productos
+        .filter((producto) => String(producto.categoria ?? '').trim())
+        .map((producto) => [
+          idCategoriaVisible(producto.categoria),
+          nombreCategoriaVisible(producto.categoria),
+        ])
+    )
+  );
 
   const enviarPedido = async () => {
     if (enviando) return;
@@ -318,7 +340,7 @@ export default function TiendaPage() {
         .join('\n');
 
       const mensaje =
-        `Hola! Quiero confirmar mi pedido del Almacén Popular Rosa Elena Morales Morales:\n\n` +
+        `Hola! Quiero confirmar mi pedido del Almacén Popular Rosa Elena Morales:\n\n` +
         `N° de pedido: ${idPedido}\n\n` +
         `${lista}\n\n` +
         `Total: ${formatPrecio(totalReal)}\n` +
@@ -451,10 +473,52 @@ export default function TiendaPage() {
                   />
                 </div>
 
+                {categoriasDisponibles.length > 0 && (
+                  <div
+                    className="mb-8 flex flex-wrap justify-center gap-2"
+                    aria-label="Filtrar productos por categoría"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setCategoriaActiva('todas')}
+                      className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                        categoriaActiva === 'todas'
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-primary-light bg-white text-primary-dark hover:border-primary'
+                      }`}
+                    >
+                      Todas las categorías
+                    </button>
+                    {categoriasDisponibles.map(([id, nombre]) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setCategoriaActiva(id)}
+                        className={`max-w-full rounded-full border px-4 py-2 text-sm font-medium leading-tight transition-colors ${
+                          categoriaActiva === id
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-primary-light bg-white text-primary-dark hover:border-primary'
+                        }`}
+                      >
+                        {nombre}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {(() => {
-                  const productosFiltrados = productos.filter((p) =>
-                    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
-                  );
+                  const busquedaNormalizada = busqueda.trim().toLowerCase();
+                  const productosFiltrados = productos.filter((producto) => {
+                    const coincideBusqueda =
+                      producto.nombre.toLowerCase().includes(busquedaNormalizada) ||
+                      nombreCategoriaVisible(producto.categoria)
+                        .toLowerCase()
+                        .includes(busquedaNormalizada);
+                    const coincideCategoria =
+                      categoriaActiva === 'todas' ||
+                      idCategoriaVisible(producto.categoria) === categoriaActiva;
+                    return coincideBusqueda && coincideCategoria;
+                  });
                   if (productosFiltrados.length === 0) {
                     return (
                       <p className="text-center text-gray-500 py-16">
@@ -463,16 +527,33 @@ export default function TiendaPage() {
                     );
                   }
                   return (
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 px-2">
+              <div className="grid grid-cols-2 gap-3 px-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
                 {productosFiltrados.map((producto) => {
                   const cantidad = cantidadEnCarrito(producto.id);
+                  const categoria = nombreCategoriaVisible(producto.categoria);
+                  const formato = descripcionFormatoVenta(producto);
                   return (
                     <div key={producto.id} className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col gap-2">
-                      <ImagenProducto nombre={producto.nombre} />
-                      <div className="px-2 md:px-4 pb-2 md:pb-4 flex flex-col gap-2 flex-1">
-                      <h3 className="text-xs md:text-sm font-semibold text-primary-dark leading-tight">
-                        {producto.nombre}
-                      </h3>
+                       <ImagenProducto producto={producto} />
+                       <div className="px-2 md:px-4 pb-2 md:pb-4 flex flex-col gap-2 flex-1">
+                       <div className="flex flex-wrap gap-1.5">
+                         {categoria && (
+                           <span className="rounded-full bg-primary-light/30 px-2 py-1 text-[10px] font-semibold leading-tight text-primary-dark">
+                             {categoria}
+                           </span>
+                         )}
+                         {esProductoGranel(producto) && (
+                           <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold leading-tight text-amber-900">
+                             A granel
+                           </span>
+                         )}
+                       </div>
+                       <h3 className="text-xs md:text-sm font-semibold text-primary-dark leading-tight">
+                         {producto.nombre}
+                       </h3>
+                       {formato && (
+                         <p className="text-[11px] leading-snug text-gray-500">{formato}</p>
+                       )}
                       <p className="font-bold text-sm md:text-lg text-primary">
                         {formatPrecio(producto.precio)}
                       </p>

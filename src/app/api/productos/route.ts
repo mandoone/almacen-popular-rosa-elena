@@ -14,6 +14,11 @@ interface ProductoTienda {
   id: string;
   nombre: string;
   precio: number;
+  categoria: string;
+  unidad_medida: string;
+  permite_decimal: string;
+  paso_venta: number;
+  imagen_url: string;
 }
 
 export async function GET() {
@@ -23,6 +28,11 @@ export async function GET() {
       id: p.id_producto,
       nombre: p.nombre,
       precio: p.precio_venta,
+      categoria: p.categoria,
+      unidad_medida: p.unidad_medida,
+      permite_decimal: p.permite_decimal,
+      paso_venta: p.paso_venta,
+      imagen_url: p.imagen_url,
     }));
     return NextResponse.json(data);
   } catch (err) {
