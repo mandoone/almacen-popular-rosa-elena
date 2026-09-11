@@ -205,8 +205,10 @@ atómico antes de cualquier cambio productivo.
   anticipado real de prueba asociado a la apertura activa.
 - ⬜ Mantener pendientes y sujetos a decisión separada todos los pasos
   productivos: variables, Apps Script, Sheet y despliegue.
-- ⬜ Fase 4: productos, stock, precios e imágenes.
-- ⬜ Fase 9: contenido público, historia y comunidad.
+- 🔄 Fase 4: catálogo público preparado; validación de productos, stock,
+  precios e imágenes pendiente con el Almacén.
+- 🔄 Fase 9: contenido público preparado; revisión editorial e imágenes
+  definitivas pendientes con el Almacén.
 - ⬜ Luego Fase 5 + 6: panel vendedor, comandas, caja y cierre por apertura.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
@@ -216,38 +218,53 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 ---
 
-## FASE 2 — Panel vendedor
+## FASE 5 — Panel vendedor y comandas
 
 - ⬜ Rol vendedor separado de administrador.
 - ⬜ Vista de pedidos del día operable durante la apertura.
 
 ---
 
-## FASE 3 — Productos, precios y stock
+## FASE 4 — Productos, stock, precios e imágenes
 
 - ⬜ Gestión de productos desde la Sheet operativa (hoja PRODUCTOS).
 - ⬜ Cálculo de `precio_venta` (costo + margen, redondeo a $10) — ver `docs/DATA_MODEL.md`.
 - ⬜ Control de stock con MOVIMIENTOS_STOCK (reserva/devolución/salida/entrada).
+- ✅ Preparar categorías largas, filtros, señal de granel, unidad visible y
+  placeholder para productos sin imagen, sin alterar datos operativos.
+- ⬜ Validar nombres, categorías, formatos, fotos, stock y precios finales con
+  el Almacén — `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
 
 ---
 
-## FASE 4 — Compras y abastecimiento
+## FASE 7 — Compras y abastecimiento
 
 - ⬜ Registro de compras (COMPRAS / DETALLE_COMPRAS).
 - ⬜ Movimientos de stock por entrada de mercadería.
 
 ---
 
-## FASE 5 — Caja y reportes
+## FASE 6 — Caja, pendientes y cierre por apertura
 
 - ⬜ Registro de ventas y caja (VENTAS / DETALLE_VENTAS).
 - ⬜ Reportes básicos (ventas, pedidos, stock).
 
 ---
 
+## FASE 9 — Contenido público, historia y comunidad
+
+- ✅ Incorporar secciones breves de funcionamiento, historia, Rosa Elena,
+  comunidad, participación y aportes.
+- ✅ Publicar las siete próximas aperturas 2026 con horario y lugar informados.
+- ✅ Mantener diseño responsive y reutilizar únicamente imágenes existentes.
+- ⬜ Validar textos e imágenes públicas finales con el Almacén —
+  `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
+
+---
+
 ## Pendientes transversales (a vigilar)
 
 - ⬜ Centralizar datos hardcodeados (WhatsApp, dirección, fechas) en CONFIG.
-- ⬜ Actualizar fechas de apertura del Home (hoy desactualizadas).
+- ✅ Actualizar fechas de apertura del Home con las siete fechas informadas.
 - ⬜ Reescribir `README.md` con descripción real (apuntando a `docs/`).
 - ⬜ Riesgo repo en Dropbox: vigilar conflictos de sincronización de `.git`.

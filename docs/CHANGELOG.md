@@ -5,6 +5,31 @@
 
 ---
 
+## [FASE 4 + FASE 9] — Catálogo y contenido preparados para validación (2026-09-10)
+
+### Fase 4
+
+- El catálogo público conserva nombres, stock y precios existentes, y agrega
+  filtros con las categorías largas informadas, señales de granel y unidad de
+  venta, además de un placeholder accesible para fotografías pendientes.
+- La API pública expone solo los metadatos de presentación ya disponibles; no
+  incorpora precio costo, margen ni campos internos.
+
+### Fase 9
+
+- La portada y páginas públicas presentan bloques breves de funcionamiento,
+  historia, Rosa Elena, comunidad, participación, aportes y próximas aperturas.
+- Se reemplazaron fechas antiguas por las siete fechas 2026, con horario y lugar
+  informados, sin agregar imágenes ni datos no confirmados.
+
+### Pendiente
+
+- El checklist `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md` concentra
+  nombres, categorías, fotos, datos operativos y textos que debe validar el
+  Almacén. Producción y Apps Script permanecen fuera de alcance.
+
+---
+
 ## [FASE 3B — pedidos anticipados TEST] — Validación real cerrada (2026-09-10)
 
 ### Validado

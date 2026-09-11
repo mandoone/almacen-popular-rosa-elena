@@ -12,7 +12,8 @@ lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran lo
 sábados de apertura.
 
 - **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
-  modo demo aislado y calendario de aperturas Fase 3B validado en TEST.
+  Fase 3B validada en TEST y primer bloque controlado de Fase 4 + Fase 9
+  preparado para revisión del Almacén.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
 - **Próxima prioridad:** avanzar Fase 4 (productos, stock, precios e imágenes)
@@ -72,7 +73,7 @@ ni pagos.
 
 ```
 src/app/
-  api/productos/route.ts   Lee el CSV de Sheets y devuelve JSON
+  api/productos/route.ts   Sirve el catálogo público desde Apps Script
   tienda/page.tsx          Catálogo + carrito + envío de pedido
   admin/page.tsx           Panel de pedidos (login local)
   page.tsx                 Home
@@ -90,6 +91,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ **Catálogo dinámico** desde la base operativa de Google Sheets.
 - ✅ **Carrito** completo (agregar/reducir/vaciar, persistido en `localStorage`).
 - ✅ **Buscador** de productos por nombre.
+- ✅ **Filtros y metadatos de catálogo Fase 4:** categorías largas, granel,
+  unidad de venta y placeholder accesible para imágenes pendientes.
 - ✅ **Envío de pedido por WhatsApp** con mensaje pre-armado (`wa.me`).
 - ✅ **Imágenes de producto** por convención de nombre, con fallback.
 - ✅ **Pedidos reales compartidos** en Google Sheets, visibles entre dispositivos.
@@ -102,6 +105,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   inválidas o terminales.
 - ✅ **Modo demo local** validado visualmente sin llamadas a
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
+- ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
+  comunidad, participación, aportes y siete próximas aperturas 2026.
 
 ---
 
@@ -123,28 +128,28 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); el contrato de backend
   real ya está diseñado en el modelo §G–§H; falta
   implementarlo y probarlo exclusivamente en TEST.
-- Pendientes reales del Almacén (normalización de nombres, contenido, fotos,
-  lugar, aperturas especiales y nómina de
-  usuarios) — ver `docs/fase-3b/PENDIENTES_ALMACEN_FASE_3B.md`.
+- Validar nombres y variantes de productos, fotos finales, categorías, unidades,
+  stock, precios y textos públicos — ver
+  `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
 
 ---
 
 ## Prioridad actual
 
-**Fase 4 + Fase 9 en paralelo.** Avanzar productos, stock, precios e imágenes,
-junto con contenido público, historia y comunidad. Después, abordar Fase 5 + 6:
-panel vendedor, comandas, caja y cierre por apertura. Cualquier intervención
-productiva continúa pendiente de una decisión Go/No-Go separada.
+**Validar con el Almacén el bloque Fase 4 + Fase 9 preparado.** Resolver nombres,
+categorías, imágenes y textos pendientes sin cambiar stock ni precios hasta su
+confirmación. Después, abordar Fase 5 + 6: panel vendedor, comandas, caja y
+cierre por apertura. Cualquier intervención productiva continúa pendiente de
+una decisión Go/No-Go separada.
 
 ---
 
 ## Datos hardcodeados a tener presentes
 
 - Número WhatsApp `56950807172` (tienda, participar, footer).
-- URL del CSV de Google Sheets (en `src/app/api/productos/route.ts`).
+- Datos de contacto públicos repetidos en tienda, participar y footer.
 - Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
-- Fechas de apertura en el Home (desactualizadas). El Almacén confirmó siete
-  fechas vigentes entre 2026-09-19 y 2026-12-19 y horario 11:00–15:00 hrs
-  (ver `docs/fase-3b/DECISIONES_OPERATIVAS_FASE_3B.md` §1.1); todavía no se
-  implementan ni publican.
+- Fechas y lugar de aperturas 2026 centralizados en
+  `src/lib/fase9/contenidoPublico.ts`; deben actualizarse cuando el Almacén
+  informe cambios.
 - Dirección: Gamero 2670, Independencia.
