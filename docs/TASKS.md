@@ -209,7 +209,10 @@ atómico antes de cualquier cambio productivo.
   precios e imágenes pendiente con el Almacén.
 - 🔄 Fase 9: contenido público preparado; revisión editorial e imágenes
   definitivas pendientes con el Almacén.
-- ⬜ Luego Fase 5 + 6: panel vendedor, comandas, caja y cierre por apertura.
+- ✅ Fase 5 + 6 preparadas técnicamente en local: contrato, lógica pura y
+  pruebas para venta presencial, comanda y resumen por apertura. No hay UI
+  operativa, escritura ni Apps Script nuevo; el siguiente bloque es la
+  implementación real exclusivamente en TEST con schema y permisos verificados.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
@@ -220,8 +223,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 ## FASE 5 — Panel vendedor y comandas
 
+- ✅ Contrato preparatorio para venta presencial/comanda y validaciones puras
+  (`docs/fase-5-6/`, `src/lib/fase5/`).
 - ⬜ Rol vendedor separado de administrador.
 - ⬜ Vista de pedidos del día operable durante la apertura.
+- ⬜ Implementar y probar Apps Script TEST para ventas, detalle y movimiento de
+  stock; no autorizado todavía en producción.
 
 ---
 
@@ -246,8 +253,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 ## FASE 6 — Caja, pendientes y cierre por apertura
 
+- ✅ Contrato y resumen/cierre de solo lectura preparados en lógica pura
+  (`docs/fase-5-6/`, `src/lib/fase6/`).
 - ⬜ Registro de ventas y caja (VENTAS / DETALLE_VENTAS).
 - ⬜ Reportes básicos (ventas, pedidos, stock).
+- ⬜ Validar con el Almacén responsables, diferencias, pago al retirar y regla
+  de cierre antes de implementar una escritura en TEST.
 
 ---
 

@@ -5,6 +5,25 @@
 
 ---
 
+## [FASE 5 + FASE 6] — Preparación técnica local de venta presencial y caja (2026-09-11)
+
+### Añadido
+
+- Contratos y plan de implementación futura para panel vendedor, comandas,
+  ventas presenciales, resumen de caja y cierre por apertura.
+- Helpers puros y pruebas para validar cantidades, stock, apertura, cálculo de
+  totales, estructura de comanda, exclusión de cancelados y diferencias de
+  efectivo.
+
+### Estado
+
+- No se agregaron rutas, escrituras de Google Sheets, acciones Apps Script ni
+  despliegues. La implementación real queda pendiente, primero en TEST, junto
+  con la validación de permisos, schema y decisiones de caja del Almacén.
+- Producción, variables y secretos permanecen fuera de alcance.
+
+---
+
 ## [FASE 4 + FASE 9] — Catálogo y contenido preparados para validación (2026-09-10)
 
 ### Fase 4
