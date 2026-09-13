@@ -9,7 +9,9 @@
  *   GET  con token:      listarPedidos, obtenerPedido, listarAperturas,
  *                        obtenerApertura, obtenerCapacidadesFase3b,
  *                        obtenerVentaPresencial, listarVentasPorApertura,
- *                        obtenerResumenApertura
+ *                        obtenerResumenApertura, verificarDestinoE2EFase56,
+ *                        obtenerEstadoE2EFase56,
+ *                        obtenerEvidenciaVentaE2EFase56
  *   POST con token:      actualizarEstadoPedido, cancelarPedido,
  *                        crearApertura, actualizarApertura,
  *                        cambiarEstadoApertura, crearVentaPresencial
@@ -59,6 +61,7 @@ var COLUMNAS_APERTURAS = [
 ];
 
 var CANAL_WEB = 'web';
+var NOMBRE_SHEET_TEST_E2E = 'TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES';
 
 var COLUMNAS_VENTA_PRESENCIAL = {
   VENTAS: [
@@ -123,6 +126,18 @@ function doGet(e) {
         exigirToken_(params.token);
         validarEntornoTestVentas_();
         return jsonOk_(obtenerResumenApertura_(params.apertura_id));
+      case 'verificarDestinoE2EFase56':
+        exigirToken_(params.token);
+        validarEntornoTestVentas_();
+        return jsonOk_(verificarDestinoE2EFase56_());
+      case 'obtenerEstadoE2EFase56':
+        exigirToken_(params.token);
+        validarEntornoTestVentas_();
+        return jsonOk_(obtenerEstadoE2EFase56_(params.apertura_id, params.producto_ids));
+      case 'obtenerEvidenciaVentaE2EFase56':
+        exigirToken_(params.token);
+        validarEntornoTestVentas_();
+        return jsonOk_(obtenerEvidenciaVentaE2EFase56_(params.venta_id));
       default:
         return jsonError_('Accion GET no reconocida: "' + action + '".', 400);
     }
@@ -898,6 +913,147 @@ function obtenerResumenApertura_(aperturaId) {
   return resumen;
 }
 
+/**
+ * Preflight E2E de solo lectura. APP_ENV=TEST se valida antes de entrar aqui y
+ * el nombre exacto de la Sheet evita que una propiedad TEST mal configurada
+ * autorice escrituras sobre la base operativa productiva.
+ */
+function verificarDestinoE2EFase56_() {
+  validarEntornoTestVentas_();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  if (limpiar_(ss.getName()) !== NOMBRE_SHEET_TEST_E2E) {
+    lanzar_('Destino E2E bloqueado: la Sheet no corresponde a TEST.', 403);
+  }
+
+  var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var ventas = leerHoja_(ss, HOJAS.VENTAS);
+  var detalles = leerHoja_(ss, HOJAS.DETALLE_VENTAS);
+  var movimientos = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
+  validarEncabezadosAperturas_(aperturas);
+  exigirColumnas_(productos, [
+    'id_producto', 'activo', 'nombre', 'unidad_medida', 'permite_decimal',
+    'paso_venta', 'precio_venta', 'stock_actual'
+  ]);
+  exigirColumnas_(ventas, COLUMNAS_VENTA_PRESENCIAL.VENTAS);
+  exigirColumnas_(detalles, COLUMNAS_VENTA_PRESENCIAL.DETALLE_VENTAS);
+  exigirColumnas_(movimientos, COLUMNAS_VENTA_PRESENCIAL.MOVIMIENTOS_STOCK);
+
+  return {
+    entorno: 'TEST',
+    destino: 'backend_test_verificado',
+    contrato: 'fase56_e2e_test_v1',
+    sheet_nombre: NOMBRE_SHEET_TEST_E2E
+  };
+}
+
+/** Snapshot de solo lectura, acotado a una apertura y productos declarados. */
+function obtenerEstadoE2EFase56_(aperturaId, productoIdsCrudos) {
+  verificarDestinoE2EFase56_();
+  aperturaId = limpiar_(aperturaId);
+  if (!/^APE-[0-9]{8}$/.test(aperturaId)) lanzar_('apertura_id invalida.', 400);
+  var productoIds = limpiar_(productoIdsCrudos).split(',').map(limpiar_).filter(Boolean);
+  if (!productoIds.length || productoIds.length > 10) {
+    lanzar_('Se requieren entre 1 y 10 producto_ids para evidencia E2E.', 400);
+  }
+  var ids = {};
+  for (var i = 0; i < productoIds.length; i++) {
+    if (!/^[A-Za-z0-9_-]{3,100}$/.test(productoIds[i]) || ids[productoIds[i]]) {
+      lanzar_('producto_ids invalidos para evidencia E2E.', 400);
+    }
+    ids[productoIds[i]] = true;
+  }
+
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
+  var apertura = obtenerAperturaEnHoja_(aperturas, aperturaId).apertura;
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var cProducto = col_(productos, 'id_producto');
+  var encontrados = {};
+  for (var p = 0; p < productos.filas.length; p++) {
+    var productoId = limpiar_(productos.filas[p][cProducto]);
+    if (!ids[productoId]) continue;
+    var producto = filaAObjeto_(productos, productos.filas[p]);
+    encontrados[productoId] = {
+      id_producto: productoId,
+      nombre: limpiar_(producto.nombre),
+      activo: limpiar_(producto.activo),
+      unidad_medida: limpiar_(producto.unidad_medida),
+      permite_decimal: limpiar_(producto.permite_decimal),
+      paso_venta: parseNum_(producto.paso_venta),
+      precio_venta: parseNum_(producto.precio_venta),
+      stock_actual: parseNum_(producto.stock_actual)
+    };
+  }
+  for (var e = 0; e < productoIds.length; e++) {
+    if (!encontrados[productoIds[e]]) {
+      lanzar_('Producto E2E no encontrado en TEST.', 404);
+    }
+  }
+
+  return {
+    contrato: 'fase56_e2e_test_v1',
+    // La fila completa permite demostrar que las consultas de caja no cambian
+    // ningun campo persistente de APERTURAS. Sigue acotada a una sola apertura
+    // solicitada y esta accion exige token admin + APP_ENV=TEST.
+    apertura: apertura,
+    productos: encontrados,
+    filas: {
+      ventas: contarFilasIdentificadas_(leerHoja_(ss, HOJAS.VENTAS), ['venta_id', 'id_venta']),
+      detalle_ventas: contarFilasIdentificadas_(
+        leerHoja_(ss, HOJAS.DETALLE_VENTAS), ['detalle_id']
+      ),
+      movimientos_stock: contarFilasIdentificadas_(
+        leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK), ['movimiento_id', 'id_movimiento']
+      ),
+      pedidos: contarFilasIdentificadas_(leerHoja_(ss, HOJAS.PEDIDOS), ['id_pedido']),
+      detalle_pedidos: contarFilasIdentificadas_(
+        leerHoja_(ss, HOJAS.DETALLE_PEDIDOS), ['id_pedido']
+      )
+    }
+  };
+}
+
+/** Cuenta evidencia exacta de una venta persistida, sin devolver filas crudas. */
+function obtenerEvidenciaVentaE2EFase56_(ventaId) {
+  verificarDestinoE2EFase56_();
+  ventaId = limpiar_(ventaId);
+  if (!/^VEN-[A-Za-z0-9-]{8,100}$/.test(ventaId)) lanzar_('venta_id invalida.', 400);
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var ventas = leerHoja_(ss, HOJAS.VENTAS);
+  var detalles = leerHoja_(ss, HOJAS.DETALLE_VENTAS);
+  var movimientos = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
+  return {
+    contrato: 'fase56_e2e_test_v1',
+    venta_id: ventaId,
+    filas: {
+      ventas: contarCoincidencias_(ventas, ['venta_id', 'id_venta'], ventaId),
+      detalle_ventas: contarCoincidencias_(detalles, ['venta_id', 'id_venta'], ventaId),
+      movimientos_stock: contarCoincidencias_(
+        movimientos, ['referencia_id', 'id_origen'], ventaId
+      )
+    }
+  };
+}
+
+function contarFilasIdentificadas_(hoja, columnasId) {
+  var cId = colPrimera_(hoja, columnasId);
+  var total = 0;
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cId])) total++;
+  }
+  return total;
+}
+
+function contarCoincidencias_(hoja, columnasId, id) {
+  var cId = colPrimera_(hoja, columnasId);
+  var total = 0;
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cId]) === id) total++;
+  }
+  return total;
+}
+
 function acumularResumenApertura_(resumen, origen, total, estado, estadoPago, formaPago) {
   total = redondear2_(parseNum_(total));
   if (estado === 'cancelado') {
@@ -934,14 +1090,29 @@ function acumularResumenApertura_(resumen, origen, total, estado, estadoPago, fo
 function serializarVentaPresencial_(obj) {
   return {
     venta_id: limpiar_(obj.venta_id || obj.id_venta),
-    fecha_hora: limpiar_(obj.fecha_hora), apertura_id: limpiar_(obj.apertura_id),
+    fecha_hora: valorFechaHoraVenta_(obj.fecha_hora), apertura_id: limpiar_(obj.apertura_id),
     origen_venta: limpiar_(obj.origen_venta) || 'presencial',
     vendedor: limpiar_(obj.vendedor), total: parseNum_(obj.total),
     estado_venta: limpiar_(obj.estado_venta) || 'vigente',
     estado_pago: limpiar_(obj.estado_pago), forma_pago: limpiar_(obj.forma_pago),
-    observaciones: limpiar_(obj.observaciones), creado_en: limpiar_(obj.creado_en),
-    actualizado_en: limpiar_(obj.actualizado_en)
+    observaciones: limpiar_(obj.observaciones),
+    creado_en: valorAuditoriaVenta_(obj.creado_en),
+    actualizado_en: valorAuditoriaVenta_(obj.actualizado_en)
   };
+}
+
+function valorFechaHoraVenta_(valor) {
+  if (Object.prototype.toString.call(valor) === '[object Date]') {
+    return marca_(valor);
+  }
+  return limpiar_(valor);
+}
+
+function valorAuditoriaVenta_(valor) {
+  if (Object.prototype.toString.call(valor) === '[object Date]') {
+    return marcaIso_(valor);
+  }
+  return limpiar_(valor);
 }
 
 function serializarDetalleVenta_(obj) {

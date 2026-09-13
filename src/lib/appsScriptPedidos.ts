@@ -33,6 +33,14 @@ import {
   resolverConfigPorEntorno,
 } from './env';
 import type { VentaPresencialInput } from './fase5/ventaPresencial';
+import {
+  diagnosticarRespuestaNoJson,
+  esCodigoTransitorioAppsScript,
+  mensajeRespuestaNoJsonSeguro,
+} from './appsScriptRespuesta';
+
+const MAX_INTENTOS_GET = 2;
+const ESPERA_REINTENTO_GET_MS = 1000;
 
 export interface CarritoItem {
   id_producto: string;
@@ -121,10 +129,12 @@ export interface AperturaAdmin extends AperturaInput {
 /** Error con código HTTP propagable hacia el route handler. */
 export class AppsScriptError extends Error {
   status: number;
-  constructor(message: string, status = 502) {
+  transitorioLectura: boolean;
+  constructor(message: string, status = 502, transitorioLectura = false) {
     super(message);
     this.name = 'AppsScriptError';
     this.status = status;
+    this.transitorioLectura = transitorioLectura;
   }
 }
 
@@ -197,21 +207,53 @@ function adminToken(): string {
   return resolucion.valor;
 }
 
-async function leerRespuesta<T>(res: Response): Promise<T> {
+async function leerRespuesta<T>(res: Response, operacion: string): Promise<T> {
   const texto = await res.text();
   let json: ScriptResponse<T>;
   try {
     json = JSON.parse(texto);
   } catch {
-    throw new AppsScriptError('Respuesta no valida del backend de pedidos.', 502);
+    const diagnostico = diagnosticarRespuestaNoJson({
+      httpStatus: res.status,
+      contentType: res.headers.get('content-type'),
+      redirected: res.redirected,
+      responseUrl: res.url,
+      cuerpo: texto,
+    });
+    throw new AppsScriptError(
+      mensajeRespuestaNoJsonSeguro(operacion, diagnostico),
+      502,
+      diagnostico.transitorioLectura
+    );
   }
   if (!json.ok) {
+    const codigo = Number(json.codigo || res.status || 502);
     throw new AppsScriptError(
       json.error || 'Error en el backend de pedidos.',
-      json.codigo || 502
+      codigo,
+      esCodigoTransitorioAppsScript(codigo)
     );
   }
   return json.data as T;
+}
+
+function nombreAccionSeguro(valor: unknown): string {
+  const accion = typeof valor === 'string' ? valor : '';
+  return /^[A-Za-z0-9_]{1,80}$/.test(accion) ? accion : 'acción-desconocida';
+}
+
+function esFalloReintentableGet(error: unknown): boolean {
+  return (error instanceof AppsScriptError && error.transitorioLectura) ||
+    (error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name)) ||
+    error instanceof TypeError;
+}
+
+function errorRedSeguro(error: unknown): AppsScriptError {
+  if (error instanceof AppsScriptError) return error;
+  if (error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name)) {
+    return new AppsScriptError('Tiempo de espera agotado contra el backend de pedidos.', 504);
+  }
+  return new AppsScriptError('No se pudo contactar el backend de pedidos.', 502);
 }
 
 async function postScript<T>(body: Record<string, unknown>): Promise<T> {
@@ -222,18 +264,32 @@ async function postScript<T>(body: Record<string, unknown>): Promise<T> {
     redirect: 'follow',
     cache: 'no-store',
   });
-  return leerRespuesta<T>(res);
+  return leerRespuesta<T>(res, `POST ${nombreAccionSeguro(body.action)}`);
 }
 
 async function getScript<T>(params: Record<string, string>): Promise<T> {
-  const url = new URL(baseUrl());
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  const res = await fetch(url.toString(), {
-    method: 'GET',
-    redirect: 'follow',
-    cache: 'no-store',
-  });
-  return leerRespuesta<T>(res);
+  const accion = nombreAccionSeguro(params.action);
+  let ultimoError: unknown;
+  for (let intento = 1; intento <= MAX_INTENTOS_GET; intento++) {
+    try {
+      const url = new URL(baseUrl());
+      url.searchParams.set('_request_id', crypto.randomUUID());
+      Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+      const res = await fetch(url.toString(), {
+        method: 'GET',
+        redirect: 'follow',
+        cache: 'no-store',
+      });
+      return await leerRespuesta<T>(res, `GET ${accion}`);
+    } catch (error) {
+      ultimoError = error;
+      if (!esFalloReintentableGet(error) || intento === MAX_INTENTOS_GET) {
+        throw errorRedSeguro(error);
+      }
+      await new Promise((resolve) => setTimeout(resolve, ESPERA_REINTENTO_GET_MS));
+    }
+  }
+  throw errorRedSeguro(ultimoError);
 }
 
 // ── Acciones públicas ─────────────────────────────────────────────────────────
