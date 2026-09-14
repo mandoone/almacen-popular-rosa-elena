@@ -5,6 +5,14 @@ export const LUGAR_APERTURAS =
 
 export const HORARIO_APERTURAS = '11:00–15:00';
 
+// Valores ya publicados, centralizados para evitar divergencias entre páginas.
+// Cualquier cambio de contacto sigue requiriendo confirmación del Almacén.
+export const CONTACTO_WHATSAPP_NUMERO = '56950807172';
+export const CONTACTO_WHATSAPP_URL = `https://wa.me/${CONTACTO_WHATSAPP_NUMERO}`;
+export const CONTACTO_EMAIL = 'almacenpopular.rosaelenamorarles@gmail.com';
+export const CONTACTO_INSTAGRAM_USUARIO = 'almacenpopular.rosamoralesm';
+export const CONTACTO_INSTAGRAM_URL = `https://instagram.com/${CONTACTO_INSTAGRAM_USUARIO}`;
+
 export const APERTURAS_PUBLICAS_2026 = [
   { fechaIso: '2026-09-19', fechaVisible: '19 de septiembre' },
   { fechaIso: '2026-10-03', fechaVisible: '3 de octubre' },

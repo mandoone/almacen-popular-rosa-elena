@@ -15,6 +15,7 @@ import {
   nombreCategoriaVisible,
   rutaImagenProducto,
 } from '@/lib/fase4/catalogo';
+import { CONTACTO_WHATSAPP_NUMERO } from '@/lib/fase9/contenidoPublico';
 
 function ImagenProducto({ producto }: { producto: Producto }) {
   const [error, setError] = useState(false);
@@ -51,7 +52,6 @@ function ImagenProducto({ producto }: { producto: Producto }) {
   );
 }
 
-const WA_NUMBER = '56950807172';
 
 interface Producto {
   id: string;
@@ -348,7 +348,7 @@ export default function TiendaPage() {
         `Teléfono: ${telefono}\n\n` +
         `Iré a retirar el próximo sábado de apertura. ¡Gracias!`;
 
-      window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensaje)}`, '_blank');
+      window.open(`https://wa.me/${CONTACTO_WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`, '_blank');
 
       // 3) Pedido confirmado: limpiar carrito (el pedido ya vive en la base operativa).
       alert(`¡Pedido registrado! Tu número de pedido es ${idPedido}.`);

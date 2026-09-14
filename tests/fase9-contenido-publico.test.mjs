@@ -54,3 +54,15 @@ test('las páginas públicas contienen las secciones principales de Fase 9', asy
   }
   assert.doesNotMatch(contenido, /9 y 23 de mayo|Morales Morales/i);
 });
+
+test('Fase 9: contacto publicado tiene una única fuente compartida', async () => {
+  const contenido = await readFile(new URL('../src/lib/fase9/contenidoPublico.ts', import.meta.url), 'utf8');
+  const footer = await readFile(new URL('../src/components/Footer.tsx', import.meta.url), 'utf8');
+  const participar = await readFile(new URL('../src/app/participar/page.tsx', import.meta.url), 'utf8');
+  const tienda = await readFile(new URL('../src/app/tienda/page.tsx', import.meta.url), 'utf8');
+  assert.match(contenido, /CONTACTO_WHATSAPP_NUMERO/);
+  assert.match(footer, /CONTACTO_WHATSAPP_URL/);
+  assert.match(participar, /CONTACTO_INSTAGRAM_URL/);
+  assert.match(tienda, /CONTACTO_WHATSAPP_NUMERO/);
+  assert.doesNotMatch(`${footer}\n${participar}\n${tienda}`, /56950807172|almacenpopular\.rosamoralesm/);
+});

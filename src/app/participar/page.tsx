@@ -1,5 +1,7 @@
 import {
   APERTURAS_PUBLICAS_2026,
+  CONTACTO_INSTAGRAM_URL,
+  CONTACTO_WHATSAPP_URL,
   HORARIO_APERTURAS,
   LUGAR_APERTURAS,
 } from '@/lib/fase9/contenidoPublico';
@@ -119,7 +121,7 @@ export default function ParticiparPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="https://wa.me/56950807172"
+              href={CONTACTO_WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-green-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition-colors"
@@ -130,7 +132,7 @@ export default function ParticiparPage() {
               Escríbenos por WhatsApp
             </a>
             <a
-              href="https://instagram.com/almacenpopular.rosamoralesm"
+              href={CONTACTO_INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-primary text-white font-semibold px-6 py-3 rounded-md hover:bg-primary-dark transition-colors"
