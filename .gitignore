@@ -38,5 +38,11 @@ next-env.d.ts
 # Claude Code
 .claude/
 
+# clasp local: nunca versionar IDs de proyecto ni credenciales OAuth
+.clasp.json
+.clasprc.json
+.clasp.test.json
+.almacen-popular-clasp-test.json
+
 .vercel
 .env*
