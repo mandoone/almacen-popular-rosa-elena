@@ -43,5 +43,7 @@ test('Fase 10: preflight consolidado no carga env ni ejecuta escrituras', async 
   assert.match(fuente, /audit['"], ['"]--audit-level=critical/);
   assert.match(fuente, /apps-script:test:dry-run/);
   assert.match(fuente, /test:e2e:fase56:preflight/);
+  assert.match(fuente, /process\.execPath/);
+  assert.doesNotMatch(fuente, /shell:\s*true/);
   assert.doesNotMatch(fuente, /env\.local|dotenv|apps-script:test:deploy|idempotencia|--write-test/);
 });
