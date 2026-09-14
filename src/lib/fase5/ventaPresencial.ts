@@ -82,6 +82,11 @@ export function esAperturaIdValido(aperturaId: unknown): aperturaId is string {
   return /^APE-\d{8}$/.test(String(aperturaId ?? ''));
 }
 
+/** Mismo contrato defensivo que usa Apps Script para consultas por venta. */
+export function esVentaIdValido(ventaId: unknown): ventaId is string {
+  return /^VEN-[A-Za-z0-9-]{8,100}$/.test(String(ventaId ?? ''));
+}
+
 function esFechaHoraLocalValida(valor: string): boolean {
   return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(valor);
 }

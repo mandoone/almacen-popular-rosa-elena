@@ -206,6 +206,30 @@ test('Fase 5/6: las rutas quedan bajo admin, sin secretos, y demo no las invoca'
   }
 });
 
+test('Fase 5: una comanda existente se abre y reimprime sin crear otra venta', async () => {
+  const pagina = await archivo('../src/app/admin/ventas/[id]/page.tsx');
+  const componente = await archivo('../src/components/admin/ComandaVenta.tsx');
+  const vendedor = await archivo('../src/app/admin/vendedor/page.tsx');
+  const ruta = await archivo('../src/app/api/admin/ventas/[id]/route.ts');
+
+  assert.match(pagina, /fetch\(`\/api\/admin\/ventas\/\$\{encodeURIComponent\(params\.id\)\}`/);
+  assert.doesNotMatch(pagina, /method:\s*['"]POST['"]/);
+  assert.match(componente, /window\.print\(\)/);
+  assert.match(vendedor, /<ComandaVenta resultado=\{venta\} mostrarEnlacePermanente/);
+  assert.match(ruta, /esVentaIdValido\(params\.id\)/);
+});
+
+test('Fase 5/6: los selectores muestran fecha amigable sin cambiar apertura_id', async () => {
+  for (const ruta of [
+    '../src/app/admin/vendedor/page.tsx',
+    '../src/app/admin/caja/page.tsx',
+  ]) {
+    const fuente = await archivo(ruta);
+    assert.match(fuente, /formatearFechaApertura\(.*fecha_apertura\)/);
+    assert.match(fuente, /value=\{.*apertura_id\}/);
+  }
+});
+
 test('Fase 6: la vista se declara de lectura y no ofrece cierre persistente', async () => {
   const fuente = await archivo('../src/app/admin/caja/page.tsx');
   assert.match(fuente, /Cierre de lectura \/ borrador/);

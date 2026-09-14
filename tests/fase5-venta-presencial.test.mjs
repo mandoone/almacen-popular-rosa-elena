@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   esAperturaIdValido,
+  esVentaIdValido,
   prepararComanda,
   validarSolicitudVentaPresencial,
   validarYCalcularVentaPresencial,
@@ -94,6 +95,13 @@ test('Fase 5: exige apertura válida y habilitada para venta presencial', () => 
   assert.equal(resultado.valido, false);
   assert.match(resultado.errores.join(' '), /apertura_id válida/);
   assert.match(resultado.errores.join(' '), /no está habilitada/);
+});
+
+test('Fase 5: valida identificadores antes de consultar una comanda existente', () => {
+  assert.equal(esVentaIdValido('VEN-20260913-133711-ee2a6a88'), true);
+  assert.equal(esVentaIdValido('VEN-TEST-001'), true);
+  assert.equal(esVentaIdValido('../secreto'), false);
+  assert.equal(esVentaIdValido(''), false);
 });
 
 test('Fase 5: prepara una comanda sin asignar ni escribir la venta', () => {

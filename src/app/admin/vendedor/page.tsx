@@ -2,6 +2,11 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ComandaVenta,
+  type VentaConComanda,
+} from '@/components/admin/ComandaVenta';
+import { formatearFechaApertura } from '@/lib/fase3b/adminAperturas';
 import { FORMAS_PAGO_VENTA_PRESENCIAL } from '@/lib/fase5/ventaPresencial';
 
 interface Producto {
@@ -22,28 +27,7 @@ interface Apertura {
   modo_presencial_estado: string;
 }
 
-interface LineaComanda {
-  detalle_id: string;
-  producto_id: string;
-  nombre_producto: string;
-  cantidad: number;
-  unidad_medida: string;
-  precio_unitario: number;
-  subtotal: number;
-}
-
-interface VentaCreada {
-  venta: {
-    venta_id: string;
-    fecha_hora: string;
-    apertura_id: string;
-    total: number;
-    estado_pago: string;
-    forma_pago: string;
-    vendedor: string;
-  };
-  comanda: { detalle: LineaComanda[] };
-}
+type VentaCreada = VentaConComanda;
 
 function formatoPrecio(valor: number) {
   return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valor);
@@ -192,7 +176,7 @@ export default function PanelVendedorPage() {
                 <label className="text-sm">Apertura habilitada
                   <select value={aperturaId} onChange={(e) => { marcarVentaEditada(); setAperturaId(e.target.value); }} className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2">
                     <option value="">Sin apertura habilitada</option>
-                    {aperturas.map((a) => <option key={a.apertura_id} value={a.apertura_id}>{a.fecha_apertura} · {a.lugar}</option>)}
+                    {aperturas.map((a) => <option key={a.apertura_id} value={a.apertura_id}>{formatearFechaApertura(a.fecha_apertura)} · {a.lugar}</option>)}
                   </select>
                 </label>
                 <label className="text-sm">Buscar producto
@@ -225,12 +209,11 @@ export default function PanelVendedorPage() {
           </form>
         )}
 
-        {venta && <section className="mt-6 rounded-xl border border-primary-light bg-white p-6 shadow-sm print:m-0 print:border-0 print:shadow-none">
-          <div className="flex justify-between gap-4"><div><p className="text-xs font-bold uppercase text-primary">Comanda TEST</p><h2 className="font-serif text-2xl font-bold text-primary-dark">{venta.venta.venta_id}</h2></div><button onClick={() => window.print()} className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white print:hidden">Imprimir comanda</button></div>
-          <dl className="my-4 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-gray-400">Apertura</dt><dd>{venta.venta.apertura_id}</dd></div><div><dt className="text-gray-400">Fecha</dt><dd>{venta.venta.fecha_hora}</dd></div><div><dt className="text-gray-400">Vendedor/a</dt><dd>{venta.venta.vendedor}</dd></div><div><dt className="text-gray-400">Pago</dt><dd>{venta.venta.forma_pago} · {venta.venta.estado_pago}</dd></div></dl>
-          <table className="w-full text-left text-sm"><thead><tr className="border-b"><th className="py-2">Producto</th><th>Cantidad</th><th className="text-right">Subtotal</th></tr></thead><tbody>{venta.comanda.detalle.map((linea) => <tr key={linea.detalle_id} className="border-b border-gray-100"><td className="py-2">{linea.nombre_producto}</td><td>{linea.cantidad} {linea.unidad_medida}</td><td className="text-right">{formatoPrecio(linea.subtotal)}</td></tr>)}</tbody></table>
-          <p className="mt-4 text-right text-xl font-bold">Total {formatoPrecio(venta.venta.total)}</p>
-        </section>}
+        {venta && (
+          <div className="mt-6">
+            <ComandaVenta resultado={venta} mostrarEnlacePermanente />
+          </div>
+        )}
       </div>
     </main>
   );

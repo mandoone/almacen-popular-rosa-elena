@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { formatearFechaApertura } from '@/lib/fase3b/adminAperturas';
 
 interface Apertura {
   apertura_id: string;
@@ -125,7 +126,7 @@ export default function CajaPorAperturaPage() {
               <option value="">Selecciona una apertura</option>
               {aperturas.map((apertura) => (
                 <option key={apertura.apertura_id} value={apertura.apertura_id}>
-                  {apertura.fecha_apertura} · {apertura.lugar} · {apertura.estado_apertura}
+                  {formatearFechaApertura(apertura.fecha_apertura)} · {apertura.lugar} · {apertura.estado_apertura}
                 </option>
               ))}
             </select>
