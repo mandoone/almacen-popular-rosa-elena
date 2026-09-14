@@ -31,7 +31,7 @@ test('clasp TEST: configura el proyecto fuera del repo y no imprime secretos', (
 });
 
 test('clasp TEST: preflight y comparacion remota ocurren antes de push', () => {
-  const preflight = fuente.indexOf('\n  Invoke-TestPreflight\n');
+  const preflight = fuente.search(/\r?\n  Invoke-TestPreflight\r?\n/);
   const push = fuente.indexOf("-Arguments @('push', '--force')");
   assert.ok(preflight >= 0 && push > preflight);
   assert.match(fuente, /HEAD remoto y deployment TEST difieren/);
