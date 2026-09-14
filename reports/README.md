@@ -33,6 +33,10 @@ Los HTML generados se guardan en la carpeta equivalente bajo `reports/html/`.
 Los dos archivos `preview_2026-07-11_*_v0.2.html` son referencias visuales aprobadas
 y no deben eliminarse ni rediseñarse.
 
+Los archivos v0.2.1 son la segunda iteración compacta: tipografía aproximada al
+70 % y checklist completo de Fases 0–6. Permanecen en revisión hasta aprobación
+humana expresa.
+
 ## PDF
 
 Los PDF se guardarán en `reports/pdf/<tipo>/` únicamente después de revisar y
