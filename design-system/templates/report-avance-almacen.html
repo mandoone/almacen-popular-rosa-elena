@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{{DESIGN_SYSTEM_BASE}}/themes/almacen.css">
   <link rel="stylesheet" href="{{DESIGN_SYSTEM_BASE}}/themes/reports.css">
 </head>
-<body class="report-document report-type-avance-almacen">
+<body class="report-document report-density-compact report-type-avance-almacen">
   <main class="report-page">
     <header class="report-hero">
       <img class="report-hero-logo" src="{{DESIGN_SYSTEM_BASE}}/brandkit/assets/logo.png" alt="Logo Almacén Popular Rosa Elena Morales">
@@ -56,6 +56,12 @@
     </section>
 
     {{FASES_HTML}}
+
+    <section class="report-section report-page-break">
+      <p class="report-section-label">Roadmap completo</p>
+      <h2>Checklist de todas las fases</h2>
+      <div class="report-roadmap-grid">{{ROADMAP_COMPLETO_HTML}}</div>
+    </section>
 
     <section class="report-section">
       <p class="report-section-label">Información adicional</p>

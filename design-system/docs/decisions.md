@@ -134,3 +134,18 @@ defecto. Los PDF finales se versionan solo si se decide conservarlos en el histo
 
 **Consecuencia:** los dos pilotos v0.2 aprobados forman parte de la base documental;
 la publicación en Drive conserva las versiones enviadas.
+
+---
+
+## D11 — Perfil compacto y roadmap completo
+
+**Decisión:** los templates oficiales aplican `.report-density-compact`, equivalente
+a aproximadamente 70 % de la escala visual original, e incluyen un checklist de
+todas las fases del roadmap.
+
+**Razón:** la primera exportación PDF v0.2 resultó legible pero demasiado grande y
+dejaba fuera fases futuras, reduciendo su utilidad para seguimiento.
+
+**Consecuencia:** la base de impresión queda en 7–7,2 pt, con espaciados reducidos,
+logo preservado y jerarquía proporcional. Todo informe debe mostrar fases realizadas,
+prioridad actual y backlog futuro.

@@ -471,6 +471,72 @@ body.report-document {
 .report-avoid-break { break-inside: avoid; page-break-inside: avoid; }
 .report-no-print { display: initial; }
 
+/* Perfil compacto aprobado para informes A4 desde v0.2.1.
+ * Reduce tipografía y ritmo vertical aproximadamente al 70 %, conservando
+ * logo, paleta y jerarquía editorial.
+ */
+.report-density-compact { font-size: 11px; }
+.report-density-compact .report-page { max-width: 920px; padding: 24px 14px 42px; }
+.report-density-compact .report-hero { padding: 32px 30px 23px; border-radius: 18px; }
+.report-density-compact .report-hero-logo { top: 21px; right: 27px; width: 96px; height: 96px; }
+.report-density-compact .report-hero-copy { padding-right: 100px; }
+.report-density-compact .report-eyebrow { padding: 4px 9px; font-size: 8px; }
+.report-density-compact .report-hero h1 { margin: 12px 0 7px; font-size: clamp(26px, 3.5vw, 37px); }
+.report-density-compact .report-hero-subtitle { font-size: 12.5px; }
+.report-density-compact .report-meta-grid { gap: 8px; margin-top: 20px; }
+.report-density-compact .report-meta-card { padding: 10px 11px; border-radius: 10px; }
+.report-density-compact .report-meta-label,
+.report-density-compact .report-card-label { font-size: 7px; }
+.report-density-compact .report-meta-value { margin-top: 3px; font-size: 9.5px; }
+.report-density-compact .report-document-control { margin-top: 12px; border-radius: 9px; }
+.report-density-compact .report-document-control > span { padding: 7px 8px; font-size: 7.5px; }
+.report-density-compact .report-document-label { font-size: 6.5px; }
+.report-density-compact .report-legend { gap: 7px; margin: 11px 3px 15px; }
+.report-density-compact .report-badge { padding: 4px 7px; font-size: 7.5px; }
+.report-density-compact .report-section,
+.report-density-compact .report-phase { margin-top: 13px; border-radius: 13px; }
+.report-density-compact .report-section { padding: 18px 20px; }
+.report-density-compact .report-section-label { margin-bottom: 3px; font-size: 7px; }
+.report-density-compact .report-section h2,
+.report-density-compact .report-synthesis h2 { margin-bottom: 9px; font-size: 19px; }
+.report-density-compact .report-section h3,
+.report-density-compact .report-phase h3 { margin: 13px 0 5px; font-size: 11.5px; }
+.report-density-compact .report-lead { font-size: 12px; line-height: 1.55; }
+.report-density-compact p { margin-bottom: 9px; }
+.report-density-compact .report-cards { gap: 8px; margin-top: 12px; }
+.report-density-compact .report-card,
+.report-density-compact .report-info-box { padding: 11px; border-radius: 10px; }
+.report-density-compact .report-card { min-height: 76px; }
+.report-density-compact .report-card-value { margin: 3px 0 2px; font-size: 14px; }
+.report-density-compact .report-card-description { font-size: 8.5px; }
+.report-density-compact .report-phase-header { gap: 10px; padding: 12px 15px; border-radius: 13px 13px 0 0; }
+.report-density-compact .report-phase-title { font-size: 15.5px; }
+.report-density-compact .report-phase-body { padding: 14px 18px 16px; }
+.report-density-compact .report-two-columns { gap: 11px; }
+.report-density-compact .report-three-columns { gap: 10px; }
+.report-density-compact .report-checklist { gap: 5px; margin-top: 8px; }
+.report-density-compact .report-checklist > li { padding-left: 19px; font-size: 9.5px; }
+.report-density-compact .report-checklist.is-done > li::before { width: 13px; height: 13px; font-size: 8px; line-height: 13px; }
+.report-density-compact .report-checklist.is-pending > li::before { top: 2px; width: 10px; height: 10px; border-width: 1.5px; }
+.report-density-compact .report-table { margin-top: 10px; font-size: 8.8px; }
+.report-density-compact .report-table th { padding: 7px 9px; font-size: 7px; }
+.report-density-compact .report-table td { padding: 6px 9px; }
+.report-density-compact .report-code-block { margin: 9px 0; padding: 10px 12px; border-radius: 8px; font-size: 8.5px; }
+.report-density-compact .report-callout { margin-top: 10px; padding: 10px 12px; border-radius: 7px; }
+.report-density-compact .report-steps { gap: 8px; margin-top: 11px; }
+.report-density-compact .report-step { padding: 12px; border-radius: 10px; }
+.report-density-compact .report-step::before { width: 20px; height: 20px; margin-bottom: 7px; font-size: 9px; }
+.report-density-compact .report-step strong { margin-bottom: 3px; font-size: 9.5px; }
+.report-density-compact .report-step span { font-size: 8px; }
+.report-density-compact .report-synthesis { margin-top: 13px; padding: 20px; border-radius: 13px; }
+.report-density-compact .report-footer { padding-top: 16px; font-size: 7.5px; }
+
+.report-roadmap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.report-roadmap-item { padding: 12px; border: 1px solid var(--report-line); border-radius: 10px; background: var(--report-purple-050); }
+.report-roadmap-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.report-roadmap-title { margin: 0; color: var(--color-primary-dark); font-size: 11px; font-weight: var(--weight-bold); }
+.report-roadmap-note { margin-top: 7px; color: var(--report-text-500); font-size: 8px; }
+
 @media (max-width: 760px) {
   .report-hero { padding: 32px 24px; }
   .report-hero-logo { top: 18px; right: 18px; width: 76px; height: 76px; }
@@ -479,7 +545,8 @@ body.report-document {
   .report-cards,
   .report-steps,
   .report-two-columns,
-  .report-three-columns { grid-template-columns: 1fr; }
+  .report-three-columns,
+  .report-roadmap-grid { grid-template-columns: 1fr; }
   .report-document-control { grid-template-columns: 1fr 1fr; }
   .report-document-control > span { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
   .report-section { padding: 23px 20px; }
@@ -488,6 +555,7 @@ body.report-document {
 
 @media print {
   body.report-document { background: var(--color-white); font-size: 10pt; }
+  body.report-document.report-density-compact { font-size: 7.2pt; }
   .report-page { width: 100%; padding: 0; }
   .report-hero,
   .report-section,
@@ -498,6 +566,7 @@ body.report-document {
   .report-phase,
   .report-card,
   .report-info-box,
+  .report-roadmap-item,
   .report-callout,
   .report-step,
   .report-table { break-inside: avoid; page-break-inside: avoid; }

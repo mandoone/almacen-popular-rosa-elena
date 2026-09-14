@@ -184,6 +184,18 @@ Los templates deben cargar primero `almacen.css` y después `reports.css`.
 | Síntesis | `.report-synthesis` |
 | Pie | `.report-footer` |
 
+### Perfil compacto A4
+
+Desde la iteración v0.2.1, los templates oficiales usan
+`.report-density-compact`. Este perfil reduce la tipografía y el ritmo vertical a
+aproximadamente 70 % de la escala piloto original, con base de 7–7,2 pt al imprimir.
+El logo conserva presencia institucional y la jerarquía de títulos se reduce de
+forma proporcional, no mediante una escala global del navegador.
+
+Todo informe debe incluir además un checklist completo del roadmap mediante
+`.report-roadmap-grid`, diferenciando fases realizadas, prioridad actual y fases
+pendientes.
+
 ## 8. Estados visuales
 
 Los estados se aplican como modificadores de `.report-badge`:
@@ -209,6 +221,7 @@ El color nunca reemplaza el texto: todo badge debe incluir una etiqueta legible.
 - Usar `.report-page-break` solo cuando una sección deba comenzar en página nueva.
 - Usar `.report-avoid-break` para bloques cortos que no deben partirse.
 - Revisar manualmente tablas largas, fases y síntesis antes de aprobar el PDF.
+- Confirmar que el perfil compacto siga legible a tamaño real de impresión.
 - No generar PDF si el HTML todavía está en `BORRADOR` o no fue revisado visualmente.
 
 ## 10. Convención de nombres

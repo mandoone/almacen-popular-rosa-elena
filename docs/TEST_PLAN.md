@@ -117,3 +117,11 @@
 ### TD5 — Ausencia de secretos
 1. Buscar tokens, credenciales, valores de variables e IDs privados.
 - ✅ Esperado: solo aparecen nombres de variables; ningún valor sensible.
+
+### TD6 — Densidad compacta y roadmap completo
+1. Comparar HTML/PDF v0.2.1 con la versión v0.2 a tamaño real A4.
+2. Verificar base de impresión de 7–7,2 pt y jerarquía legible.
+3. Confirmar checklist Fases 0, 1, 1B, 2, 3, 4, 5 y 6.
+4. Revisar que cada fase indique realizada, prioridad actual o pendiente.
+- ✅ Esperado: documento más compacto, sin desbordes y útil para seguimiento del
+  roadmap completo.

@@ -16,11 +16,13 @@ La guía oficial es `design-system/docs/ADS-002_sistema_documental.md`.
    - `AVANCE_ALMACEN` → `design-system/templates/report-avance-almacen.html`;
    - `TECNICO_INTERNO` → `design-system/templates/report-tecnico-interno.html`.
 5. Reemplazar todos los placeholders con contenido comprobado.
-6. Para un HTML dentro de `reports/html/<tipo>/`, usar
+6. Incluir `{{ROADMAP_COMPLETO_HTML}}` con todas las fases vigentes, no solo las
+   ejecutadas. Marcar claramente realizado, prioridad actual y pendiente.
+7. Para un HTML dentro de `reports/html/<tipo>/`, usar
    `{{DESIGN_SYSTEM_BASE}} = ../../../design-system`.
-7. Guardar usando la convención `YYYY-MM-DD_tipo-descripcion_vN.N.html`.
-8. Abrir en navegador y comparar con los dos pilotos v0.2 aprobados.
-9. Verificar que no quedan placeholders, rutas rotas ni secretos.
+8. Guardar usando la convención `YYYY-MM-DD_tipo-descripcion_vN.N.html`.
+9. Abrir en navegador y comparar con la iteración compacta v0.2.1.
+10. Verificar que no quedan placeholders, rutas rotas ni secretos.
 
 ## Reglas por tipo
 
@@ -47,7 +49,8 @@ La guía oficial es `design-system/docs/ADS-002_sistema_documental.md`.
 
 Usar las clases oficiales de `reports.css`: `.report-hero`, `.report-document-control`,
 `.report-card`, `.report-phase`, `.report-badge`, `.report-checklist`, `.report-table`,
-`.report-callout`, `.report-steps`, `.report-synthesis` y `.report-footer`.
+`.report-callout`, `.report-steps`, `.report-roadmap-grid`, `.report-synthesis` y
+`.report-footer`. Mantener `.report-density-compact` en el elemento `<body>`.
 
 No crear una estética nueva, no convertir el informe en landing page y no copiar un
 bloque grande de CSS dentro del HTML generado.
