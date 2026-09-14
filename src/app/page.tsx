@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   APERTURAS_PUBLICAS_2026,
   FORMAS_DE_PARTICIPAR,
@@ -7,6 +8,11 @@ import {
   LUGAR_APERTURAS,
   PASOS_COMO_FUNCIONA,
 } from "@/lib/fase9/contenidoPublico";
+
+export const metadata: Metadata = {
+  title: "Inicio",
+  description: "Conoce el almacén popular, sus próximas aperturas y cómo participar en esta iniciativa comunitaria de Independencia.",
+};
 
 export default function Home() {
   return (

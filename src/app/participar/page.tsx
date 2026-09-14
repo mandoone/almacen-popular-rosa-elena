@@ -3,6 +3,12 @@ import {
   HORARIO_APERTURAS,
   LUGAR_APERTURAS,
 } from '@/lib/fase9/contenidoPublico';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Participar',
+  description: 'Formas de participar y colaborar con el Almacén Popular Rosa Elena Morales.',
+};
 
 const formas = [
   {

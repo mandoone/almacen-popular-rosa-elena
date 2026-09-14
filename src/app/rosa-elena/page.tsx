@@ -1,4 +1,10 @@
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Rosa Elena Morales",
+  description: "Memoria de Rosa Elena Morales y su vínculo con la organización comunitaria de la población Juan Antonio Ríos.",
+};
 
 const fotos = [
   { src: "/images/rosa-elena-1.jpg", caption: "Rosa Elena Morales" },

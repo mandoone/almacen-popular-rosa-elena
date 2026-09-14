@@ -15,9 +15,14 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Almacén Popular Rosa Elena Morales",
+  title: {
+    default: "Almacén Popular Rosa Elena Morales",
+    template: "%s | Almacén Popular Rosa Elena Morales",
+  },
   description:
     "Proyecto comunitario sin fines de lucro. Población Juan Antonio Ríos, Independencia, Santiago.",
+  applicationName: "Almacén Popular Rosa Elena Morales",
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
