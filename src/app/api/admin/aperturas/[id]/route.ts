@@ -14,16 +14,18 @@ function manejarError(err: unknown) {
   return NextResponse.json({ ok: false, error: message }, { status });
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const apertura = await obtenerApertura(params.id);
+    const apertura = await obtenerApertura(id);
     return NextResponse.json({ ok: true, data: apertura });
   } catch (err) {
     return manejarError(err);
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const body = await req.json().catch(() => ({}));
     if (typeof body.actualizado_en_esperado !== 'string' || !body.actualizado_en_esperado) {
@@ -43,14 +45,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if (!validacion.ok) {
       return NextResponse.json({ ok: false, error: validacion.error }, { status: 400 });
     }
-    if (validacion.apertura.apertura_id !== params.id) {
+    if (validacion.apertura.apertura_id !== id) {
       return NextResponse.json(
         { ok: false, error: 'apertura_id no coincide con la ruta.' },
         { status: 400 }
       );
     }
     const apertura = await actualizarApertura({
-      apertura_id: params.id,
+      apertura_id: id,
       apertura: validacion.apertura,
       actualizado_en_esperado: body.actualizado_en_esperado,
       idempotency_key: body.idempotency_key,

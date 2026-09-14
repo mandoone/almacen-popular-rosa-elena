@@ -55,10 +55,11 @@ async function leerEstadoActual(idPedido: string): Promise<string> {
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const data = await obtenerPedido(params.id);
+    const data = await obtenerPedido(id);
     return NextResponse.json({ ok: true, data });
   } catch (err) {
     return manejarError(err);
@@ -67,8 +68,9 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await req.json().catch(() => ({}));
     if (!body.estado_pedido && !body.estado_pago) {
@@ -81,13 +83,13 @@ export async function PATCH(
     // Solo se consulta el estado actual si la peticion pretende cambiarlo; una
     // actualizacion de pago sola no necesita la llamada extra a Apps Script.
     if (body.estado_pedido) {
-      const estadoActual = await leerEstadoActual(params.id);
+      const estadoActual = await leerEstadoActual(id);
       const decision = decidirPatchEstado(estadoActual, body.estado_pedido);
       if (!decision.permitido) return rechazo(decision);
     }
 
     const data = await actualizarEstadoPedido({
-      id_pedido: params.id,
+      id_pedido: id,
       estado_pedido: String(body.estado_pedido || ''),
       estado_pago: body.estado_pago ? String(body.estado_pago) : undefined,
     });
@@ -99,14 +101,15 @@ export async function PATCH(
 
 export async function POST(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const estadoActual = await leerEstadoActual(params.id);
+    const estadoActual = await leerEstadoActual(id);
     const decision = decidirCancelacion(estadoActual);
     if (!decision.permitido) return rechazo(decision);
 
-    const data = await cancelarPedido(params.id);
+    const data = await cancelarPedido(id);
     return NextResponse.json({ ok: true, data });
   } catch (err) {
     return manejarError(err);

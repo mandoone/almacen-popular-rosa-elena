@@ -3,7 +3,8 @@ import { AppsScriptError, cambiarEstadoApertura } from '@/lib/appsScriptPedidos'
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const body = await req.json().catch(() => ({}));
     if (body.estado_apertura !== 'cerrada') {
@@ -26,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       );
     }
     const apertura = await cambiarEstadoApertura({
-      apertura_id: params.id,
+      apertura_id: id,
       estado_apertura: 'cerrada',
       actualizado_en_esperado: body.actualizado_en_esperado,
       idempotency_key: body.idempotency_key,

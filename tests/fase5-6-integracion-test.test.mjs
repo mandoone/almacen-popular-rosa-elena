@@ -216,7 +216,8 @@ test('Fase 5: una comanda existente se abre y reimprime sin crear otra venta', a
   assert.doesNotMatch(pagina, /method:\s*['"]POST['"]/);
   assert.match(componente, /window\.print\(\)/);
   assert.match(vendedor, /<ComandaVenta resultado=\{venta\} mostrarEnlacePermanente/);
-  assert.match(ruta, /esVentaIdValido\(params\.id\)/);
+  assert.match(ruta, /const \{ id \} = await params/);
+  assert.match(ruta, /esVentaIdValido\(id\)/);
 });
 
 test('Fase 5/6: los selectores muestran fecha amigable sin cambiar apertura_id', async () => {

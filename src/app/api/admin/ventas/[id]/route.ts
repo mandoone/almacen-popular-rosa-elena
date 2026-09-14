@@ -4,15 +4,16 @@ import { esVentaIdValido } from '@/lib/fase5/ventaPresencial';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  if (!esVentaIdValido(params.id)) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!esVentaIdValido(id)) {
     return NextResponse.json(
       { ok: false, error: 'venta_id inválida.' },
       { status: 400 }
     );
   }
   try {
-    const venta = await obtenerVentaPresencial(params.id);
+    const venta = await obtenerVentaPresencial(id);
     return NextResponse.json({ ok: true, data: venta });
   } catch (err) {
     const status = err instanceof AppsScriptError ? err.status : 500;
