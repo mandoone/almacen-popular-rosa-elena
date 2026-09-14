@@ -73,6 +73,9 @@ test('Fase 4: runner remoto es GET read-only, exige preflight y no lee env files
   assert.match(fuente, /listarProductos/);
   assert.match(fuente, /mensajeRespuestaNoJsonSeguro/);
   assert.match(fuente, /diagnosticarRespuestaNoJson/);
+  assert.match(fuente, /if \(!validarConfirmacionBackendTest\(destino\)\)/);
+  assert.doesNotMatch(fuente, /confirmacion\.ok/);
+  assert.match(fuente, /Tiempo de espera agotado en GET \$\{action\}/);
   assert.doesNotMatch(fuente, /method:\s*['"]POST['"]|\.env\.local|dotenv/);
   assert.doesNotMatch(
     fuente,

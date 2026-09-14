@@ -48,18 +48,18 @@ async function getJson(action, params = {}) {
       }
       return json.data;
     } catch (error) {
-      ultimoError = error;
       const reintentable = error instanceof TypeError ||
         error?.name === 'TimeoutError' || error?.reintentable === true;
+      ultimoError = error?.name === 'TimeoutError'
+        ? new Error(`Tiempo de espera agotado en GET ${action}.`)
+        : error;
       if (!reintentable || intento === 2) break;
       await new Promise((resolve) => setTimeout(resolve, 750));
     }
   }
   const detalle = ultimoError instanceof Error && ultimoError.message.trim()
     ? ultimoError.message
-    : ultimoError?.name === 'TimeoutError'
-      ? 'Tiempo de espera agotado contra el backend TEST.'
-      : 'Fallo de red TEST.';
+    : 'Fallo de red TEST.';
   throw new Error(detalle);
 }
 
@@ -68,8 +68,9 @@ try {
   const destino = await getJson('verificarDestinoE2EFase56', {
     token: config.config.tokenTest,
   });
-  const confirmacion = validarConfirmacionBackendTest(destino);
-  if (!confirmacion.ok) throw new Error(confirmacion.error || 'Contrato TEST no confirmado.');
+  if (!validarConfirmacionBackendTest(destino)) {
+    throw new Error('Contrato TEST no confirmado.');
+  }
 
   console.log('PASO: leer catálogo publicado TEST');
   const data = await getJson('listarProductos');
