@@ -3,9 +3,10 @@ import { AppsScriptError, listarVentasPorApertura } from '@/lib/appsScriptPedido
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const ventas = await listarVentasPorApertura(params.id);
+    const ventas = await listarVentasPorApertura(id);
     return NextResponse.json({ ok: true, data: ventas });
   } catch (err) {
     const status = err instanceof AppsScriptError ? err.status : 500;

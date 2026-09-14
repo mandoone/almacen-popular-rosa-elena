@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   ComandaVenta,
@@ -19,7 +20,8 @@ async function datosRespuesta(respuesta: Response): Promise<VentaConComanda> {
   return json.data as VentaConComanda;
 }
 
-export default function ComandaVentaPage({ params }: { params: { id: string } }) {
+export default function ComandaVentaPage() {
+  const params = useParams<{ id: string }>();
   const [resultado, setResultado] = useState<VentaConComanda | null>(null);
   const [error, setError] = useState<string | null>(null);
 

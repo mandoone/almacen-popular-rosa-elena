@@ -3,9 +3,10 @@ import { AppsScriptError, obtenerResumenApertura } from '@/lib/appsScriptPedidos
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const resumen = await obtenerResumenApertura(params.id);
+    const resumen = await obtenerResumenApertura(id);
     return NextResponse.json({ ok: true, data: resumen });
   } catch (err) {
     const status = err instanceof AppsScriptError ? err.status : 500;
