@@ -1,4 +1,7 @@
-import { auditarCatalogo } from '../src/lib/fase4/auditoriaCatalogo.ts';
+import {
+  auditarCatalogo,
+  resumirHallazgosCatalogo,
+} from '../src/lib/fase4/auditoriaCatalogo.ts';
 import {
   diagnosticarRespuestaNoJson,
   mensajeRespuestaNoJsonSeguro,
@@ -6,6 +9,7 @@ import {
 import { validarConfiguracionE2E, validarConfirmacionBackendTest } from './lib/fase56-e2e-guardrails.mjs';
 
 const config = validarConfiguracionE2E(process.env, { requiereEscritura: false });
+const TIMEOUT_GET_MS = 30_000;
 if (!config.ok) {
   console.error(`FAIL | auditoría catálogo TEST: ${config.errores.join(' ')}`);
   process.exit(1);
@@ -23,7 +27,7 @@ async function getJson(action, params = {}) {
         method: 'GET',
         redirect: 'follow',
         cache: 'no-store',
-        signal: AbortSignal.timeout(15_000),
+        signal: AbortSignal.timeout(TIMEOUT_GET_MS),
       });
       const texto = await respuesta.text();
       let json;
@@ -81,8 +85,8 @@ try {
   console.log(`ERRORES OBJETIVOS: ${resultado.errores}`);
   console.log(`ADVERTENCIAS: ${resultado.advertencias}`);
   console.log(`DECISIONES HUMANAS: ${resultado.decisiones_humanas}`);
-  for (const item of resultado.hallazgos) {
-    console.log(`${item.tipo} | ${item.codigo}${item.producto_id ? ` | ${item.producto_id}` : ''}`);
+  for (const item of resumirHallazgosCatalogo(resultado.hallazgos)) {
+    console.log(`${item.tipo} | ${item.codigo} | afectados=${item.cantidad}`);
   }
   if (resultado.errores > 0) process.exitCode = 2;
 } catch (error) {

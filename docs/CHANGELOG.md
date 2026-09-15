@@ -5,6 +5,25 @@
 
 ---
 
+## [FASE 4] — Auditoría técnica completa del catálogo TEST (2026-09-14)
+
+### Añadido
+
+- Auditoría read-only de las 54 filas de `PRODUCTOS` TEST con validación de
+  campos internos, assets y estados por producto.
+- Paquete de nueve decisiones comerciales, propuesta normalizada por producto y
+  clasificación de dependencias con Fase 7/8.
+- Validador local de planes de cambio TEST con comparación optimista y bloqueo
+  de edición directa de stock.
+
+### Estado
+
+- Cero errores objetivos detectados; costos, mínimos, prioridades, unidades,
+  categorías e imágenes requieren decisiones agrupadas del Almacén.
+- Sheet TEST, Apps Script y producción no fueron modificados.
+
+---
+
 ## [FASE 5 + FASE 6] — Implementación preparada para validación TEST (2026-09-11)
 
 ### Añadido

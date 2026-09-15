@@ -80,6 +80,20 @@
 - ✅ Esperado: `precio_venta = costo × (1 + margen)` redondeado **hacia arriba al
   múltiplo de $10** (ver `docs/DATA_MODEL.md`).
 
+### T13 — Auditoría técnica del catálogo TEST
+1. Confirmar el nombre exacto de la Sheet TEST antes de leer `PRODUCTOS`.
+2. Auditar IDs, nombres, activo, categoría, prioridad, unidad, decimal/paso,
+   costo, margen, precio, stock, mínimo e imagen.
+3. Verificar que los hallazgos masivos se agrupen y no expongan configuración.
+- ✅ Esperado: lectura sin escrituras, errores objetivos separados de advertencias
+  y decisiones humanas, con estado por producto.
+
+### T14 — Plan de cambios Fase 4
+1. Preparar un JSON con destino TEST y pares `esperado`/`propuesto`.
+2. Ejecutar `npm run catalogo:test:validar-plan -- <archivo>` con entorno TEST.
+- ✅ Esperado: no usa red; rechaza producción, campos inesperados, cambios sin
+  valor esperado y edición directa de `stock_actual`.
+
 ---
 
 ## Notas

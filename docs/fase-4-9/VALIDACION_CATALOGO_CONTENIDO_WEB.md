@@ -29,6 +29,18 @@
 
 ## Fase 4 — validaciones del catálogo
 
+### Auditoría técnica TEST 2026-09-14
+
+La pestaña `PRODUCTOS` de la Sheet TEST fue recuperada directamente en modo
+read-only y auditada completa: 54 filas, sin IDs inválidos/duplicados, sin
+nombres duplicados y sin errores objetivos de tipos, precios o stock. Los
+pendientes comerciales se redujeron a nueve decisiones agrupadas. La evidencia,
+propuesta por producto y dependencias con F7/F8 están en
+[`PROPUESTA_CATALOGO_FASE_4_TEST.md`](./PROPUESTA_CATALOGO_FASE_4_TEST.md).
+
+No se modificó la Sheet. El fixture `PROD-TEST-DECIMAL` permanece separado de
+las decisiones comerciales.
+
 ### Nombres y variantes por confirmar
 
 No normalizar ni fusionar estos nombres hasta recibir una respuesta:

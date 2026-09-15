@@ -241,8 +241,13 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ⬜ Control de stock con MOVIMIENTOS_STOCK (reserva/devolución/salida/entrada).
 - ✅ Preparar categorías largas, filtros, señal de granel, unidad visible y
   placeholder para productos sin imagen, sin alterar datos operativos.
+- ✅ Auditar en modo read-only las 54 filas de `PRODUCTOS` TEST, ampliar el
+  auditor técnico y agrupar los pendientes en nueve decisiones accionables.
+- ✅ Preparar validación local segura de planes de cambio TEST con comparación
+  `esperado`/`propuesto`, sin red ni escrituras.
 - ⬜ Validar nombres, categorías, formatos, fotos, stock y precios finales con
-  el Almacén — `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
+  el Almacén — decisiones F4-01 a F4-09 en
+  `docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md`.
 
 ---
 
