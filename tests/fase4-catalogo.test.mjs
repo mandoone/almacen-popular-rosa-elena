@@ -8,17 +8,19 @@ import {
   esProductoGranel,
   idCategoriaVisible,
   nombreCategoriaVisible,
+  permiteVentaDecimal,
   rutaImagenProducto,
 } from '../src/lib/fase4/catalogo.ts';
 
-test('las categorías largas corresponden a las tres categorías confirmadas', () => {
+test('las categorías visibles corresponden a las cuatro categorías aprobadas', () => {
   assert.deepEqual(
     CATEGORIAS_CATALOGO.map(({ nombre }) => nombre),
-    ['Productos a granel', 'Abarrotes envasados', 'Productos de higiene']
+    ['Granel', 'Alimentos', 'Limpieza', 'Higiene']
   );
-  assert.equal(nombreCategoriaVisible('Granel'), 'Productos a granel');
-  assert.equal(nombreCategoriaVisible('Alimento'), 'Abarrotes envasados');
-  assert.equal(nombreCategoriaVisible('Higiene'), 'Productos de higiene');
+  assert.equal(nombreCategoriaVisible('Productos a granel'), 'Granel');
+  assert.equal(nombreCategoriaVisible('Abarrotes'), 'Alimentos');
+  assert.equal(nombreCategoriaVisible('Productos de limpieza'), 'Limpieza');
+  assert.equal(nombreCategoriaVisible('Productos de higiene'), 'Higiene');
 });
 
 test('una categoría desconocida se conserva y no se normaliza inventando datos', () => {
@@ -26,26 +28,39 @@ test('una categoría desconocida se conserva y no se normaliza inventando datos'
   assert.equal(idCategoriaVisible('Categoría por revisar'), 'categoria por revisar');
 });
 
-test('identifica granel y describe la unidad sin cambiar cantidades ni precios', () => {
-  const granel = {
+test('separa categoría granel de la regla de venta decimal aprobada', () => {
+  const presentacionFijaGranel = {
     nombre: 'Avena',
     categoria: 'Granel',
-    unidad_medida: 'KILO',
-    permite_decimal: 'SI',
-    paso_venta: 0.25,
+    unidad_medida: 'unidad',
+    permite_decimal: 'NO',
+    paso_venta: 1,
   };
-  assert.equal(esProductoGranel(granel), true);
+  assert.equal(esProductoGranel(presentacionFijaGranel), true);
+  assert.equal(permiteVentaDecimal(presentacionFijaGranel), false);
   assert.equal(
-    descripcionFormatoVenta(granel),
-    'Venta a granel · Unidad: KILO'
+    descripcionFormatoVenta(presentacionFijaGranel),
+    'Unidad de venta: unidad'
   );
+
+  const decimal = {
+    nombre: 'Producto decimal TEST',
+    categoria: 'Alimentos',
+    unidad_medida: 'kg',
+    permite_decimal: 'SI',
+    paso_venta: 0.1,
+  };
+  assert.equal(esProductoGranel(decimal), false);
+  assert.equal(permiteVentaDecimal(decimal), true);
+  assert.equal(descripcionFormatoVenta(decimal), 'Venta fraccionada · Unidad: kg');
+
   assert.equal(
     descripcionFormatoVenta({
       nombre: 'Lavaloza',
-      categoria: 'Higiene',
-      unidad_medida: 'ENVASE',
+      categoria: 'Limpieza',
+      unidad_medida: 'unidad',
     }),
-    'Unidad de venta: ENVASE'
+    'Unidad de venta: unidad'
   );
 });
 

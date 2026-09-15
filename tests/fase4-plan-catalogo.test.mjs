@@ -53,12 +53,47 @@ test('Fase 4: el CLI no usa red, no lee env files y bloquea variables productiva
   assert.doesNotMatch(fuente, /fetch\(|https?:\/\/|\.env\.local|dotenv/);
 });
 
-test('Fase 4: la propuesta documenta 54 productos y nueve decisiones agrupadas', async () => {
+test('Fase 4: la propuesta documenta 54 productos, nueve decisiones y su aprobación', async () => {
   const propuesta = await readFile(
     new URL('../docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md', import.meta.url),
     'utf8'
   );
   assert.equal((propuesta.match(/^### DECISIÓN F4-[0-9]{2}/gm) ?? []).length, 9);
   assert.equal((propuesta.match(/^\| PROD-/gm) ?? []).length, 54);
-  assert.match(propuesta, /No autoriza cambios en TEST ni en producción/);
+  assert.match(propuesta, /fueron aprobadas el 2026-09-15/);
+  assert.match(propuesta, /no autoriza cambios en producción/i);
+});
+
+test('Fase 4: el plan aprobado cambia solo categorías y diez unidades pack', async () => {
+  const planAprobado = JSON.parse(await readFile(
+    new URL('../docs/fase-4-9/PLAN_CATALOGO_FASE_4_TEST_APROBADO.json', import.meta.url),
+    'utf8'
+  ));
+  const resultado = validarPlanCatalogoTest(planAprobado);
+  assert.deepEqual(resultado, { ok: true, errores: [], productos: 54, campos: 64 });
+
+  const categorias = planAprobado.cambios.filter((cambio) => 'categoria' in cambio.propuesto);
+  const unidades = planAprobado.cambios.filter((cambio) => 'unidad_medida' in cambio.propuesto);
+  assert.equal(categorias.length, 54);
+  assert.equal(unidades.length, 10);
+  assert.deepEqual(
+    new Set(categorias.map((cambio) => cambio.propuesto.categoria)),
+    new Set(['Granel', 'Alimentos', 'Limpieza', 'Higiene'])
+  );
+  assert.deepEqual(
+    unidades.map((cambio) => cambio.id_producto).sort(),
+    ['PROD-025', 'PROD-026', 'PROD-028', 'PROD-029', 'PROD-030', 'PROD-034',
+      'PROD-035', 'PROD-042', 'PROD-043', 'PROD-045']
+  );
+  assert.ok(unidades.every((cambio) => cambio.propuesto.unidad_medida === 'pack'));
+
+  const campos = planAprobado.cambios.flatMap((cambio) => Object.keys(cambio.propuesto));
+  assert.ok(campos.every((campo) => ['categoria', 'unidad_medida'].includes(campo)));
+  assert.ok(planAprobado.cambios.every((cambio) => !(
+    'precio_costo' in cambio.propuesto ||
+    'precio_venta' in cambio.propuesto ||
+    'stock_actual' in cambio.propuesto ||
+    'stock_minimo' in cambio.propuesto ||
+    'imagen_url' in cambio.propuesto
+  )));
 });

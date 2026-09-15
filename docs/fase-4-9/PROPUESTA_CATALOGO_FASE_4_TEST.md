@@ -1,8 +1,36 @@
 # Propuesta de catálogo normalizado — Fase 4 TEST
 
-> Auditoría read-only realizada el 2026-09-14. Fuente: pestaña `PRODUCTOS` de
-> `TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES`, rango acotado `A1:Z100`.
-> No autoriza cambios en TEST ni en producción.
+> Auditoría read-only realizada el 2026-09-14. Las decisiones F4-01 a F4-09
+> fueron aprobadas el 2026-09-15 y el plan exacto se aplicó exclusivamente en
+> TEST. La auditoría inicial no autoriza cambios en producción.
+
+## Resolución aprobada y aplicada en TEST
+
+- F4-01: `PROD-001`–`PROD-019` permanecen como presentaciones fijas,
+  `unidad`, decimal `NO` y paso `1`. Su categoría pasó a `Granel`; queda
+  pendiente confirmar antes de producción si físicamente se pesan al vender.
+- F4-02: taxonomía canónica `Granel`, `Alimentos`, `Limpieza`, `Higiene`.
+- F4-03: `pack` se aplicó solo a las diez presentaciones agrupadas identificadas
+  en la propuesta; los demás envases/productos individuales usan `unidad` y el
+  fixture decimal conserva `kg`.
+- F4-04: se conservaron todos los nombres e IDs actuales. No se fusionó ni creó
+  ningún SKU.
+- F4-05: costos e historial nacen desde el flujo de compra. No se inventaron
+  costos, márgenes ni precios públicos.
+- F4-06: stock y mínimos continúan sintéticos en TEST; no se alteraron.
+- F4-07: las prioridades continúan `media` hasta que F7 pueda calcularlas con
+  señales configurables de rotación, esencialidad y reposición.
+- F4-08: todos los productos permanecen activos. `PROD-017`, `PROD-034`,
+  `PROD-049` y `PROD-050` quedan marcados para reconfirmación futura sin cambiar
+  sus precios.
+- F4-09: `imagen_url` permanece vacío y la web conserva placeholders accesibles.
+  La identificación, derechos, créditos y alt text de las 45 fotos quedan fuera
+  de este lote.
+
+El plan validado y auditable está en
+[`PLAN_CATALOGO_FASE_4_TEST_APROBADO.json`](./PLAN_CATALOGO_FASE_4_TEST_APROBADO.json).
+Contiene 54 cambios de categoría y 10 cambios de unidad, con valores
+`esperado`/`propuesto`; no contiene stock, costos, mínimos, precios ni imágenes.
 
 ## Resultado objetivo
 
@@ -23,7 +51,7 @@
 - Precios de venta positivos en las 54 filas. Requieren verificación puntual
   los extremos `$100`, `$120` y `$9.700`; no se declara que sean erróneos.
 
-## Paquete de decisiones
+## Paquete de decisiones (resuelto el 2026-09-15)
 
 ### DECISIÓN F4-01 — Modelo de venta de productos a granel
 
@@ -219,7 +247,7 @@ el placeholder tiene etiqueta accesible.
 
 **BLOQUEA_F7:** no.
 
-## Propuesta por producto
+## Propuesta por producto previa a la aprobación
 
 Leyenda: `*` requiere la decisión indicada. `venta/costo` conserva el precio de
 venta conocido; el costo sigue pendiente. `stock/mínimo` muestra los valores
@@ -282,43 +310,32 @@ TEST observados, no un conteo físico.
 | PROD-053 | PAN DE MASA MADRE | Alimentos | unidad* / NO / 1 | 3300 / — | 100 / 0* | media* | pendiente | REQUIERE_DECISIÓN |
 | PROD-TEST-DECIMAL | Producto decimal TEST | TEST (no comercial) | kg / SI / 0.1 | 1000 / — | 5.5 / 0 | media | pendiente | APROBABLE_AUTOMÁTICAMENTE |
 
-## Aplicación segura después de la aprobación
+## Aplicación segura ejecutada
 
-No existe hoy un endpoint de escritura masiva de productos y no se agregó uno
-durante esta auditoría. La preparación segura queda así:
+1. El plan se validó offline con `catalogo:test:validar-plan`: 54 productos y
+   64 campos, sin red ni escrituras.
+2. El destino se resolvió por título exacto y se confirmó la pestaña
+   `PRODUCTOS`; no se usaron variables ni identificadores productivos.
+3. Se creó una copia de respaldo TEST antes del lote.
+4. Se releyeron `A1:P55`, sus validaciones y los valores esperados. No había IDs
+   duplicados ni divergencias respecto del plan.
+5. Se escribió un único lote atómico de 54 categorías y 10 unidades.
+6. La relectura completa confirmó exactamente 64 cambios previstos, cero cambios
+   adicionales y validaciones de unidad intactas.
+7. Resultado: `Granel=19`, `Alimentos=13`, `Limpieza=16`, `Higiene=6`;
+   `unidad=43`, `pack=10`, `kg=1`.
 
-1. Convertir solo las decisiones aprobadas a un JSON con `entorno`,
-   `sheet_nombre`, `decision_id`, `id_producto`, valores `esperado` y `propuesto`.
-2. Validar localmente el archivo con:
-
-   ```powershell
-   $env:NEXT_PUBLIC_APP_ENV='test'
-   npm.cmd run catalogo:test:validar-plan -- .\ruta\plan-aprobado.json
-   ```
-
-   El validador no usa red, bloquea configuración productiva genérica y no
-   admite `stock_actual`.
-3. Identificar nuevamente por título exacto la Sheet TEST y crear una copia de
-   respaldo antes de escribir. No registrar su ID en el repositorio.
-4. Leer encabezados, validaciones y valores actuales de las filas afectadas.
-   Resolver filas por `id_producto`, nunca por una posición guardada.
-5. Abortar si cualquier valor actual difiere de `esperado` o si aparece un ID
-   duplicado, una validación incompatible o un destino ambiguo.
-6. Aplicar un lote acotado solo a los campos aprobados. Los cambios de
-   `stock_actual` se hacen mediante movimiento de ajuste con motivo y
-   responsable, nunca como edición directa del catálogo.
-7. Releer las filas, ejecutar la auditoría F4, probar `/tienda` y
-   `/admin/vendedor`, y comprobar reglas decimal/entero e imágenes.
-8. Si falla la verificación, restaurar únicamente los campos del lote desde el
-   snapshot previo; no borrar movimientos ni evidencia histórica.
-9. Documentar resultados y recién entonces preparar commit/push de código o
-   documentación. Producción requiere un Go/No-Go independiente.
+Para futuros cambios se conserva el mismo procedimiento de plan, comparación
+optimista, backup, lote acotado y readback. `stock_actual` continúa excluido del
+validador y requiere un movimiento auditado.
 
 ## Dependencias con Fase 7 y Fase 8
 
-- Bloquean una propuesta real de abastecimiento: F4-01, F4-03, F4-05, F4-06,
-  F4-07 y la confirmación de activos de F4-08.
-- No bloquean registrar compras en TEST: imágenes, nombres editoriales y orden
-  visual de categorías.
-- No bloquean Fase 8 técnica: F4-02, F4-04 y F4-09; sí limitan la utilidad de
-  reportes reales los mínimos, prioridades y costos pendientes.
+- F7/F8 en TEST quedan desbloqueadas: catálogo identificable, categorías y
+  unidades canónicas, reglas entero/decimal estables y productos activos.
+- Registrar compras, gastos extra, movimientos, historial de costos, ajustes y
+  reportes técnicos no depende de stock físico, mínimos o imágenes definitivas.
+- Una propuesta **real** de abastecimiento seguirá siendo solo simulación hasta
+  contar con costos vigentes, stock físico, mínimos y señales de prioridad.
+- Producción requiere además confirmar el modelo físico de `PROD-001`–`019`,
+  los cuatro precios extremos y las imágenes/derechos.

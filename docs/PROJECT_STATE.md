@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-11.
+> tarea que cambie el estado. Última actualización: 2026-09-15.
 
 ---
 
@@ -11,15 +11,15 @@ Web del **Almacén Popular Rosa Elena Morales** — proyecto comunitario sin fin
 lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran los
 sábados de apertura.
 
-- **Estado funcional:** UI/admin de Fase 3A alineada con las transiciones válidas,
-  Fase 3B validada en TEST, Fase 4 + Fase 9 preparadas para revisión del
-  Almacén y Fase 5 + Fase 6 implementadas en código, pendientes de despliegue
-  y validación manual contra Apps Script/Sheet TEST.
+- **Estado funcional:** Fases 3B, 5 y 6 validadas en TEST. Fase 4 cerrada
+  técnicamente en TEST con decisiones aprobadas, backup, plan versionado y
+  catálogo canónico; quedan confirmaciones operativas antes de producción.
+  Dominios puros de F7/F8 están preparados y falta su persistencia/UI/E2E TEST.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Próxima prioridad:** pegar/desplegar manualmente el backend en Apps Script
-  TEST, ejecutar la preparación aditiva y validar ventas presenciales, stock,
-  comanda y resumen por apertura. Producción sigue fuera de alcance.
+- **Próxima prioridad:** implementar persistencia completa de F7/F8 en TEST:
+  compras, gastos, historial de costos, ajustes auditados y reportes. Producción
+  sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -58,8 +58,8 @@ sábados de apertura.
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | Next.js 14.2.35 (App Router) |
-| Lenguaje | TypeScript 5 · React 18 |
+| Framework | Next.js 15.5.24 (App Router) |
+| Lenguaje | TypeScript 5 · React 19.3 |
 | Estilos | Tailwind CSS 3.4 + PostCSS |
 | Fuentes | `next/font` (Inter + Playfair Display) |
 | Lint | ESLint 8 + `eslint-config-next` |
@@ -93,8 +93,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ **Catálogo dinámico** desde la base operativa de Google Sheets.
 - ✅ **Carrito** completo (agregar/reducir/vaciar, persistido en `localStorage`).
 - ✅ **Buscador** de productos por nombre.
-- ✅ **Filtros y metadatos de catálogo Fase 4:** categorías largas, granel,
-  unidad de venta y placeholder accesible para imágenes pendientes.
+- ✅ **Catálogo Fase 4 TEST:** categorías canónicas, unidad de venta,
+  separación entre categoría granel y venta decimal, y placeholder accesible.
 - ✅ **Envío de pedido por WhatsApp** con mensaje pre-armado (`wa.me`).
 - ✅ **Imágenes de producto** por convención de nombre, con fallback.
 - ✅ **Pedidos reales compartidos** en Google Sheets, visibles entre dispositivos.
@@ -130,26 +130,25 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0); el contrato de backend
   real ya está diseñado en el modelo §G–§H; falta
   implementarlo y probarlo exclusivamente en TEST.
-- 🔄 Fase 5 + Fase 6 implementadas en código para TEST: backend Apps Script con
-  lock/idempotencia/rollback compensatorio, rutas admin, panel vendedor,
-  comanda y resumen de caja de lectura. Falta despliegue manual, preparación
-  aditiva de columnas y validación E2E sobre la Sheet TEST.
-- Validar nombres y variantes de productos, fotos finales, categorías, unidades,
-  stock, precios y textos públicos — ver
-  `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
-- ✅ Auditoría técnica Fase 4 completada en TEST, read-only, sobre 54 filas:
-  cero errores objetivos de estructura y nueve decisiones comerciales agrupadas.
-  Ver `docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md`. La Sheet no fue modificada.
+- ✅ Fase 5 + Fase 6 cerradas técnicamente en TEST: ventas por unidad/decimal,
+  rechazos, idempotencia, pedidos/cancelación, stock, caja y reimpresión
+  validados; apertura de prueba restaurada.
+- ✅ Fase 4 cerrada técnicamente en TEST: 54 categorías y 10 unidades
+  normalizadas según F4-01–F4-09; backup y readback sin cambios colaterales.
+  Stock/mínimos/costos/prioridades/imágenes siguen deliberadamente sintéticos o
+  pendientes antes de producción. Ver
+  `docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md`.
+- 🔄 F7/F8: dominio puro probado; persistencia, rutas, UI y E2E TEST pendientes.
+  Estado de entrada en `docs/fase-7-8/ESTADO_ENTRADA_FASE_7_8_TEST.md`.
 
 ---
 
 ## Prioridad actual
 
-**Validar manualmente Fase 5 + 6 en TEST.** Primero preparar las columnas de las
-hojas TEST y desplegar el script actualizado; luego comprobar una venta por
-unidad, una decimal, stock, reintentos, comanda y resumen de caja. El cierre
-persistente, la anulación de ventas y cualquier intervención productiva siguen
-pendientes de decisiones y autorización separadas.
+**Implementar Fase 7 + 8 completas en TEST.** Empezar por contratos y
+persistencia idempotente de compras/gastos/costos/movimientos; después conectar
+ajustes, historiales, reportes y administración avanzada. Cualquier intervención
+productiva requiere autorización y Go/No-Go separados.
 
 ---
 

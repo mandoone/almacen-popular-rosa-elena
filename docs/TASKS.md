@@ -245,16 +245,35 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   auditor técnico y agrupar los pendientes en nueve decisiones accionables.
 - ✅ Preparar validación local segura de planes de cambio TEST con comparación
   `esperado`/`propuesto`, sin red ni escrituras.
-- ⬜ Validar nombres, categorías, formatos, fotos, stock y precios finales con
-  el Almacén — decisiones F4-01 a F4-09 en
-  `docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md`.
+- ✅ Aprobar F4-01 a F4-09, validar el plan exacto y aplicarlo con backup,
+  comparación optimista y readback exclusivo de TEST.
+- ✅ Canonizar categorías y unidades sin modificar nombres, precios, costos,
+  stock, mínimos, prioridades, activos ni imágenes.
+- ⬜ Antes de producción: confirmar modelo físico de granel, conteo/mínimos,
+  costos, prioridades, cuatro precios extremos y fotografías/derechos.
 
 ---
 
 ## FASE 7 — Compras y abastecimiento
 
+- ✅ Dominio puro de compras, gastos extra, caja para compra y propuesta
+  conservadora preparado y probado.
 - ⬜ Registro de compras (COMPRAS / DETALLE_COMPRAS).
 - ⬜ Movimientos de stock por entrada de mercadería.
+- ⬜ Persistencia TEST idempotente, historial de costos, gastos extra y E2E.
+- ⬜ Clasificación configurable por rotación, esencialidad y reposición.
+
+---
+
+## FASE 8 — Historiales, reportes y administración avanzada
+
+- ✅ Agregaciones puras de ventas, bajo stock, compras y evolución de costos.
+- ✅ Validación pura de edición de producto y ajuste de stock auditable.
+- ⬜ Persistir/consultar historiales F7 y exponer reportes admin en TEST.
+- ⬜ Crear rutas/UI admin de producto; stock solo mediante movimiento con motivo.
+- ⬜ E2E TEST de permisos, reportes, ajustes e invariantes.
+- Estado de entrada completo:
+  `docs/fase-7-8/ESTADO_ENTRADA_FASE_7_8_TEST.md`.
 
 ---
 

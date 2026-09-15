@@ -1,0 +1,646 @@
+{
+  "entorno": "TEST",
+  "sheet_nombre": "TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES",
+  "cambios": [
+    {
+      "id_producto": "PROD-001",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-002",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-003",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-004",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-005",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-006",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-007",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-008",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-009",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-010",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-011",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-012",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-013",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-014",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-015",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-016",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-017",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-018",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-019",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Granel"
+      }
+    },
+    {
+      "id_producto": "PROD-020",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-021",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-022",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-023",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-024",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-025",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-025",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-026",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-026",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-027",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-028",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-028",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-029",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-029",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-030",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-030",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-031",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-032",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-033",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-034",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-034",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-035",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-035",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-036",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-037",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-038",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-039",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-040",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-041",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-042",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-042",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-043",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-043",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-044",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-045",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-045",
+      "decision_id": "F4-03",
+      "esperado": {
+        "unidad_medida": "unidad"
+      },
+      "propuesto": {
+        "unidad_medida": "pack"
+      }
+    },
+    {
+      "id_producto": "PROD-046",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-047",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-048",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-049",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-050",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-051",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "higiene"
+      },
+      "propuesto": {
+        "categoria": "Higiene"
+      }
+    },
+    {
+      "id_producto": "PROD-052",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "limpieza"
+      },
+      "propuesto": {
+        "categoria": "Limpieza"
+      }
+    },
+    {
+      "id_producto": "PROD-053",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    },
+    {
+      "id_producto": "PROD-TEST-DECIMAL",
+      "decision_id": "F4-02",
+      "esperado": {
+        "categoria": "alimentos"
+      },
+      "propuesto": {
+        "categoria": "Alimentos"
+      }
+    }
+  ]
+}

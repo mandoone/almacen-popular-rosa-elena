@@ -41,6 +41,30 @@ propuesta por producto y dependencias con F7/F8 están en
 No se modificó la Sheet. El fixture `PROD-TEST-DECIMAL` permanece separado de
 las decisiones comerciales.
 
+### Cierre técnico Fase 4 TEST 2026-09-15
+
+Las nueve decisiones fueron aprobadas y el plan exacto se aplicó únicamente en
+la Sheet TEST, después de backup y comparación optimista de las 54 filas. La
+verificación posterior confirmó 64 cambios previstos y ninguno adicional:
+
+- categorías: 19 `Granel`, 13 `Alimentos`, 16 `Limpieza`, 6 `Higiene`;
+- unidades: 43 `unidad`, 10 `pack`, 1 `kg` (fixture decimal);
+- `PROD-001`–`PROD-019`: presentación fija, decimal `NO`, paso `1`;
+- `PROD-TEST-DECIMAL`: `kg`, decimal `SI`, paso `0.1`;
+- nombres, IDs, activo, precios, costos, stock, mínimos, prioridad e imágenes:
+  sin cambios.
+
+El plan versionado es
+[`PLAN_CATALOGO_FASE_4_TEST_APROBADO.json`](./PLAN_CATALOGO_FASE_4_TEST_APROBADO.json).
+La web reconoce las cuatro categorías, distingue categoría `Granel` de venta
+fraccionada y conserva el fallback accesible cuando `imagen_url` está vacío.
+
+Datos deliberadamente sintéticos/de TEST: stock actual, mínimos en cero,
+prioridad uniforme `media`, costos/márgenes vacíos y fixture decimal. Antes de
+producción se deben confirmar conteo físico, mínimos, costos, prioridades,
+modelo de venta física de `PROD-001`–`019`, precios de `PROD-017`, `034`, `049`,
+`050` e imágenes/derechos/créditos. Ninguno bloquea desarrollo o E2E de F7/F8.
+
 ### Nombres y variantes por confirmar
 
 No normalizar ni fusionar estos nombres hasta recibir una respuesta:
@@ -60,16 +84,13 @@ No normalizar ni fusionar estos nombres hasta recibir una respuesta:
 
 ### Categorías y formatos
 
-- [ ] Validar visualmente los tres nombres largos en teléfono y computador.
-- [ ] Confirmar si después conviene abreviarlos a `Granel`, `Abarrotes` e
-  `Higiene`.
+- [x] Usar `Granel`, `Alimentos`, `Limpieza` e `Higiene`.
 - [ ] Confirmar el orden definitivo de las categorías.
-- [ ] Normalizar la convivencia entre `limpieza` y `Productos de higiene` si
-  representan la misma categoría. La web conserva hoy ambas etiquetas tal como
-  llegan desde la Sheet.
-- [ ] Revisar la unidad o formato mostrado en cada producto.
-- [ ] Confirmar cuáles productos permiten cantidades decimales y su paso de
-  venta antes de cambiar los controles del carrito.
+- [x] Separar `Limpieza` de `Higiene`.
+- [x] Usar `pack` para presentaciones agrupadas y `unidad` para envases o
+  productos individuales, conservando el formato en el nombre.
+- [x] Mantener `PROD-001`–`019` como cantidades enteras en TEST.
+- [ ] Confirmar antes de producción si `PROD-001`–`019` se pesan al vender.
 
 ### Fotos e imágenes requeridas
 

@@ -1,17 +1,22 @@
 export const CATEGORIAS_CATALOGO = [
   {
     id: 'granel',
-    nombre: 'Productos a granel',
+    nombre: 'Granel',
     alias: ['granel', 'productos a granel'],
   },
   {
-    id: 'abarrotes',
-    nombre: 'Abarrotes envasados',
+    id: 'alimentos',
+    nombre: 'Alimentos',
     alias: ['alimento', 'alimentos', 'abarrote', 'abarrotes', 'abarrotes envasados'],
   },
   {
+    id: 'limpieza',
+    nombre: 'Limpieza',
+    alias: ['limpieza', 'productos de limpieza'],
+  },
+  {
     id: 'higiene',
-    nombre: 'Productos de higiene',
+    nombre: 'Higiene',
     alias: ['higiene', 'productos de higiene'],
   },
 ] as const;
@@ -53,19 +58,19 @@ export function idCategoriaVisible(categoria: unknown): string {
 }
 
 export function esProductoGranel(producto: ProductoPresentable): boolean {
+  return obtenerCategoriaCatalogo(producto.categoria)?.id === 'granel';
+}
+
+export function permiteVentaDecimal(producto: ProductoPresentable): boolean {
   const valorDecimal = normalizarTexto(producto.permite_decimal);
-  return (
-    obtenerCategoriaCatalogo(producto.categoria)?.id === 'granel' ||
-    producto.permite_decimal === true ||
-    ['si', 'sí', 'true', '1'].includes(valorDecimal)
-  );
+  return producto.permite_decimal === true || ['si', 'sí', 'true', '1'].includes(valorDecimal);
 }
 
 export function descripcionFormatoVenta(producto: ProductoPresentable): string {
   const unidad = String(producto.unidad_medida ?? '').trim();
-  if (!unidad) return esProductoGranel(producto) ? 'Venta a granel' : '';
-  return esProductoGranel(producto)
-    ? `Venta a granel · Unidad: ${unidad}`
+  if (!unidad) return permiteVentaDecimal(producto) ? 'Venta fraccionada' : '';
+  return permiteVentaDecimal(producto)
+    ? `Venta fraccionada · Unidad: ${unidad}`
     : `Unidad de venta: ${unidad}`;
 }
 

@@ -5,6 +5,33 @@
 
 ---
 
+## [FASE 4] — Decisiones aplicadas y cierre técnico TEST (2026-09-15)
+
+### Cambiado
+
+- Catálogo TEST normalizado a cuatro categorías: `Granel`, `Alimentos`,
+  `Limpieza` e `Higiene`.
+- Diez presentaciones agrupadas pasaron de `unidad` a `pack`;
+  `PROD-001`–`019` conservaron venta entera y el fixture decimal conservó
+  `kg`/paso 0.1.
+- La presentación web separa categoría granel de la capacidad de venta
+  fraccionada y reconoce formalmente las cuatro categorías aprobadas.
+
+### Seguridad y evidencia
+
+- Plan exacto versionado, validado offline, respaldado y aplicado únicamente a
+  la Sheet TEST con comparación optimista y verificación posterior.
+- Cero cambios en nombres, activos, precios, costos, stock, mínimos,
+  prioridades o imágenes.
+- Producción y Apps Script remoto no fueron modificados.
+
+### Preparado
+
+- Estado de entrada de F7/F8 con persistencia, gastos, costos, abastecimiento,
+  ajustes, historiales, reportes y administración avanzada.
+
+---
+
 ## [FASE 4] — Auditoría técnica completa del catálogo TEST (2026-09-14)
 
 ### Añadido
