@@ -269,6 +269,21 @@ function AdminPanel({
                 <Link href="/admin/caja" className="text-sm text-primary hover:text-primary-dark transition-colors">
                   Caja
                 </Link>
+                <Link href="/admin/compras" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Compras
+                </Link>
+                <Link href="/admin/gastos" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Gastos
+                </Link>
+                <Link href="/admin/abastecimiento" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Abastecimiento
+                </Link>
+                <Link href="/admin/historiales" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Historiales
+                </Link>
+                <Link href="/admin/productos" className="text-sm text-primary hover:text-primary-dark transition-colors">
+                  Productos
+                </Link>
               </>
             )}
             <button onClick={cargarPedidos} className="text-sm text-primary hover:text-primary-dark transition-colors">

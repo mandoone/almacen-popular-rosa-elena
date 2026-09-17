@@ -34,6 +34,18 @@ test('Apps Script GET: 404 HTML sin redirect de Google no se oculta con retry', 
   assert.equal(diagnostico.transitorioLectura, false);
 });
 
+test('Apps Script GET: 404 HTML en googleusercontent es transitorio aunque fetch no marque redirect', () => {
+  const diagnostico = diagnosticarRespuestaNoJson({
+    httpStatus: 404,
+    contentType: 'text/html',
+    redirected: false,
+    responseUrl: 'https://script.googleusercontent.com/macros/echo',
+    cuerpo: '<html>Not found</html>',
+  });
+  assert.equal(diagnostico.destino, 'googleusercontent');
+  assert.equal(diagnostico.transitorioLectura, true);
+});
+
 test('Apps Script GET: códigos funcionales 4xx no son transitorios', () => {
   assert.equal(esCodigoTransitorioAppsScript(400), false);
   assert.equal(esCodigoTransitorioAppsScript(404), false);

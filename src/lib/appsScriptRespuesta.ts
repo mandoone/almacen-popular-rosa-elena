@@ -50,7 +50,11 @@ export function diagnosticarRespuestaNoJson(args: {
   const destino = clasificarDestino(args.responseUrl);
   const cuerpo = clasificarCuerpo(args.cuerpo, contentType);
   const httpStatus = Number(args.httpStatus) || 0;
-  const transitorioGoogle = args.redirected && destino === 'googleusercontent';
+  // Algunos fetch ya exponen la URL final de googleusercontent pero reportan
+  // redirected=false. Un 404 HTML en ese host sigue siendo el fallo transitorio
+  // observado de la infraestructura, no un 404 funcional JSON de la aplicación.
+  const transitorioGoogle = destino === 'googleusercontent' && cuerpo === 'html' &&
+    (args.redirected || httpStatus === 404);
   return {
     httpStatus,
     contentType,

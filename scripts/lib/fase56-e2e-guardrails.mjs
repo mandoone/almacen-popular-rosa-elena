@@ -306,9 +306,10 @@ export function esFalloTransitorioLectura(error) {
   if (error.tipoE2E === 'respuesta_no_json') {
     const statusTransitorio = error.httpStatus === 408 || error.httpStatus === 425 ||
       error.httpStatus === 429 || error.httpStatus >= 500;
-    const htmlTrasRedirectGoogle = error.tipoCuerpoE2E === 'html' &&
-      error.redireccionE2E === true && error.destinoE2E === 'googleusercontent';
-    return statusTransitorio || htmlTrasRedirectGoogle;
+    const htmlTransitorioGoogle = error.tipoCuerpoE2E === 'html' &&
+      error.destinoE2E === 'googleusercontent' &&
+      (error.redireccionE2E === true || error.httpStatus === 404);
+    return statusTransitorio || htmlTransitorioGoogle;
   }
   const codigoLogico = Number(error.codigo || 0);
   return error.tipoE2E === 'backend_logico' &&

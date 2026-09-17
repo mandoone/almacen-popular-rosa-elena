@@ -298,6 +298,18 @@ test('E2E Fase 5/6: GET reintenta 404 HTML tras redirect a googleusercontent', (
   assert.equal(esFalloTransitorioLectura(error), true);
 });
 
+test('E2E Fase 5/6: GET reintenta 404 HTML final de googleusercontent sin flag redirect', () => {
+  const error = crearErrorRespuestaNoJsonE2E({
+    operacion: 'GET obtenerEstadoE2EFase56',
+    httpStatus: 404,
+    contentType: 'text/html; charset=utf-8',
+    redirected: false,
+    responseUrl: 'https://script.googleusercontent.com/macros/echo',
+    cuerpo: '<html>Not found</html>',
+  });
+  assert.equal(esFalloTransitorioLectura(error), true);
+});
+
 test('E2E Fase 5/6: GET no reintenta un error JSON funcional 400', () => {
   const error = Object.assign(new Error('apertura_id invalida.'), {
     tipoE2E: 'backend_logico',
