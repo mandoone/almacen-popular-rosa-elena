@@ -29,6 +29,7 @@
 import {
   assertCalendarioSoloTest,
   assertFase56SoloTest,
+  assertFase78SoloTest,
   obtenerEntornoAplicacion,
   resolverConfigPorEntorno,
 } from './env';
@@ -163,6 +164,17 @@ function exigirEntornoTestParaFase56(): void {
   } catch (err) {
     throw new AppsScriptError(
       err instanceof Error ? err.message : 'Ventas y caja bloqueadas.',
+      403
+    );
+  }
+}
+
+function exigirEntornoTestParaFase78(): void {
+  try {
+    assertFase78SoloTest(entornoActual());
+  } catch (err) {
+    throw new AppsScriptError(
+      err instanceof Error ? err.message : 'Compras e inventario bloqueados.',
       403
     );
   }
@@ -544,4 +556,215 @@ export function obtenerResumenApertura(
     token: adminToken(),
     apertura_id: aperturaId,
   }).catch(relanzarErrorFase56);
+}
+
+// ── Fases 7 + 8 (exclusivamente TEST) ──────────────────────────────────────
+
+export interface CompraAdmin {
+  compra_id: string;
+  fecha: string;
+  fecha_hora: string;
+  proveedor: string;
+  responsable: string;
+  estado: 'confirmada';
+  total: number;
+  observaciones: string;
+  creado_en: string;
+  actualizado_en: string;
+}
+
+export interface DetalleCompraAdmin {
+  detalle_compra_id: string;
+  compra_id: string;
+  producto_id: string;
+  nombre_producto: string;
+  unidad_medida: string;
+  cantidad: number;
+  costo_unitario: number;
+  costo_total: number;
+  stock_anterior: number;
+  stock_nuevo: number;
+  costo_anterior: number | '';
+  costo_nuevo: number;
+}
+
+export interface CompraConDetalle {
+  compra: CompraAdmin;
+  detalle: DetalleCompraAdmin[];
+}
+
+export interface GastoExtraAdmin {
+  gasto_id: string;
+  fecha_hora: string;
+  categoria: string;
+  descripcion: string;
+  monto: number;
+  responsable: string;
+  observaciones: string;
+  estado: 'vigente';
+}
+
+export interface ProductoAdmin extends ProductoCatalogo {
+  precio_costo: number | '';
+  activo: string;
+}
+
+export interface ReportesFase78 {
+  compras: CompraAdmin[];
+  gastos: GastoExtraAdmin[];
+  movimientos_stock: Array<Record<string, unknown>>;
+  historial_costos: Array<Record<string, unknown>>;
+  auditoria_productos: Array<Record<string, unknown>>;
+  ventas: Array<Record<string, unknown>>;
+  pedidos: Array<Record<string, unknown>>;
+  productos_mas_vendidos: Array<{
+    producto_id: string;
+    nombre_producto: string;
+    cantidad: number;
+    total: number;
+  }>;
+  productos_bajo_stock: ProductoAdmin[];
+  resumen: {
+    cantidad_compras: number;
+    total_compras: number;
+    cantidad_gastos: number;
+    total_gastos: number;
+  };
+  resumen_apertura: ResumenAperturaBackend | null;
+  advertencia_abastecimiento: string;
+}
+
+export interface CajaCompraAdmin {
+  ultimo_registro: Record<string, unknown> | null;
+  pendientes_por_cobrar: number;
+  advertencia: string;
+}
+
+export interface PropuestaAbastecimientoAdmin {
+  presupuesto: number;
+  total_propuesto: number;
+  saldo_sin_asignar: number;
+  lineas: Array<Record<string, unknown>>;
+  omitidos: Array<{ producto_id: string; motivo: string }>;
+  advertencia: string;
+}
+
+function getAdminFase78<T>(params: Record<string, string>): Promise<T> {
+  exigirEntornoTestParaFase78();
+  return getScript<T>({ ...params, token: adminToken() });
+}
+
+function postAdminFase78<T>(body: Record<string, unknown>): Promise<T> {
+  exigirEntornoTestParaFase78();
+  return postScript<T>({ ...body, token: adminToken() });
+}
+
+export function verificarDestinoFase78Test(): Promise<Record<string, string>> {
+  return getAdminFase78({ action: 'verificarDestinoFase78Test' });
+}
+
+export function obtenerEsquemaFase78Test(): Promise<Record<string, unknown>> {
+  return getAdminFase78({ action: 'obtenerEsquemaFase78Test' });
+}
+
+export function listarComprasAdmin(filtros: { desde?: string; hasta?: string } = {}): Promise<CompraAdmin[]> {
+  return getAdminFase78<{ compras: CompraAdmin[] }>({
+    action: 'listarCompras', desde: filtros.desde ?? '', hasta: filtros.hasta ?? '',
+  }).then((data) => data.compras);
+}
+
+export function obtenerCompraAdmin(compraId: string): Promise<CompraConDetalle> {
+  return getAdminFase78({ action: 'obtenerCompra', compra_id: compraId });
+}
+
+export function crearCompraAdmin(input: {
+  fecha: string;
+  proveedor: string;
+  responsable: string;
+  observaciones?: string;
+  idempotency_key: string;
+  lineas: Array<{ producto_id: string; cantidad: number; costo_unitario: number }>;
+}): Promise<CompraConDetalle> {
+  return postAdminFase78({ action: 'crearCompra', ...input });
+}
+
+export function listarGastosExtraAdmin(filtros: { desde?: string; hasta?: string } = {}): Promise<GastoExtraAdmin[]> {
+  return getAdminFase78<{ gastos: GastoExtraAdmin[] }>({
+    action: 'listarGastosExtra', desde: filtros.desde ?? '', hasta: filtros.hasta ?? '',
+  }).then((data) => data.gastos);
+}
+
+export function crearGastoExtraAdmin(input: {
+  categoria: string;
+  descripcion: string;
+  monto: number;
+  responsable: string;
+  observaciones?: string;
+  idempotency_key: string;
+}): Promise<GastoExtraAdmin> {
+  return postAdminFase78({ action: 'crearGastoExtra', ...input });
+}
+
+export function listarProductosAdmin(): Promise<ProductoAdmin[]> {
+  return getAdminFase78<{ productos: ProductoAdmin[] }>({ action: 'listarProductosAdmin' })
+    .then((data) => data.productos);
+}
+
+export function actualizarProductoAdmin(input: {
+  producto_id: string;
+  cambios: Record<string, unknown>;
+  idempotency_key: string;
+}): Promise<ProductoAdmin> {
+  return postAdminFase78({ action: 'actualizarProductoAdmin', ...input });
+}
+
+export function crearProductoAdmin(input: {
+  producto_id: string;
+  producto: Record<string, unknown>;
+  idempotency_key: string;
+}): Promise<ProductoAdmin> {
+  return postAdminFase78({ action: 'crearProductoAdmin', ...input });
+}
+
+export function ajustarStockAdmin(input: {
+  producto_id: string;
+  delta: number;
+  motivo: string;
+  responsable: string;
+  observaciones?: string;
+  idempotency_key: string;
+}): Promise<{ producto_id: string; stock_anterior: number; stock_nuevo: number; delta: number }> {
+  return postAdminFase78({ action: 'ajustarStockAdmin', ...input });
+}
+
+export function obtenerReportesFase78(filtros: {
+  desde?: string;
+  hasta?: string;
+  apertura_id?: string;
+  producto_id?: string;
+} = {}): Promise<ReportesFase78> {
+  return getAdminFase78({
+    action: 'obtenerReportesFase78', desde: filtros.desde ?? '', hasta: filtros.hasta ?? '',
+    apertura_id: filtros.apertura_id ?? '', producto_id: filtros.producto_id ?? '',
+  });
+}
+
+export function obtenerCajaCompraAdmin(): Promise<CajaCompraAdmin> {
+  return getAdminFase78({ action: 'obtenerCajaCompra' });
+}
+
+export function obtenerPropuestaAbastecimientoAdmin(presupuesto: number): Promise<PropuestaAbastecimientoAdmin> {
+  return getAdminFase78({ action: 'obtenerPropuestaAbastecimiento', presupuesto: String(presupuesto) });
+}
+
+export function registrarCajaCompraAdmin(input: {
+  saldo_cuenta: number;
+  efectivo_disponible: number;
+  pendientes_referencia: number;
+  presupuesto_confirmado: number;
+  responsable: string;
+  observaciones?: string;
+  idempotency_key: string;
+}): Promise<Record<string, unknown>> {
+  return postAdminFase78({ action: 'registrarCajaCompra', ...input });
 }

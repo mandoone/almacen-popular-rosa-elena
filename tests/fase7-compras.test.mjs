@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  clasificarPrioridad,
   proponerAbastecimiento,
   resumirCajaParaCompra,
   validarGastoExtra,
@@ -77,11 +78,11 @@ test('Fase 7: admite compra decimal solo en múltiplos del paso', () => {
 
 test('Fase 7: gastos extra usan categorías cerradas y CLP entero positivo', () => {
   assert.deepEqual(validarGastoExtra({
-    fecha: '2026-09-14', categoria: 'transporte', monto: 3000,
+    fecha: '2026-09-14', categoria: 'transporte', descripcion: 'Traslado TEST', monto: 3000,
     responsable: 'Responsable TEST',
   }), []);
   assert.ok(validarGastoExtra({
-    fecha: 'mal', categoria: 'otros', monto: 1.5, responsable: '',
+    fecha: 'mal', categoria: 'otros', descripcion: '', monto: 1.5, responsable: '',
   }).length >= 3);
 });
 
@@ -91,7 +92,7 @@ test('Fase 7: caja no cuenta pendientes por cobrar como fondos disponibles', () 
     efectivo_disponible: 5000,
     pendientes_por_cobrar: 7000,
     gastos_extra: [{
-      fecha: '2026-09-14', categoria: 'bolsas', monto: 1000,
+      fecha: '2026-09-14', categoria: 'bolsas', descripcion: 'Bolsas TEST', monto: 1000,
       responsable: 'Responsable TEST',
     }],
   });
@@ -131,4 +132,15 @@ test('Fase 7: propuesta omite productos sin costo y productos inactivos', () => 
   ], 10000);
   assert.equal(propuesta.lineas.length, 0);
   assert.deepEqual(propuesta.omitidos, [{ producto_id: 'PROD-SIN-COSTO', motivo: 'Falta costo vigente válido.' }]);
+});
+
+test('Fase 7: prioridad combina señales solo mediante pesos y umbrales configurables', () => {
+  assert.deepEqual(clasificarPrioridad(
+    { rotacion: 80, esencialidad: 100, necesidad_reposicion: 50 },
+    { peso_rotacion: 0.4, peso_esencialidad: 0.4, peso_reposicion: 0.2, umbral_alta: 75, umbral_media: 40 }
+  ), { prioridad: 'alta', puntaje: 82 });
+  assert.ok('errores' in clasificarPrioridad(
+    { rotacion: 101, esencialidad: 0, necesidad_reposicion: 0 },
+    { peso_rotacion: 1, peso_esencialidad: 1, peso_reposicion: 0, umbral_alta: 75, umbral_media: 40 }
+  ));
 });

@@ -64,6 +64,8 @@ export function prepararAjusteStock(entrada: AjusteStockAdmin): ResultadoAjusteS
 
 export interface CambioProductoAdmin {
   nombre?: string;
+  categoria?: string;
+  prioridad?: string;
   activo?: boolean;
   unidad_medida?: string;
   permite_decimal?: boolean;
@@ -71,6 +73,7 @@ export interface CambioProductoAdmin {
   precio_costo?: number;
   precio_venta?: number;
   stock_minimo?: number;
+  imagen_url?: string;
 }
 
 /** Valida edición; stock_actual queda fuera y solo se cambia mediante ajuste auditado. */
@@ -79,6 +82,15 @@ export function validarCambioProducto(cambio: CambioProductoAdmin): string[] {
   if ('nombre' in cambio && !String(cambio.nombre ?? '').trim()) errores.push('El nombre no puede quedar vacío.');
   if ('unidad_medida' in cambio && !['unidad', 'kg', 'litro', 'pack'].includes(String(cambio.unidad_medida))) {
     errores.push('La unidad de medida no es válida.');
+  }
+  if ('categoria' in cambio && !['Granel', 'Alimentos', 'Limpieza', 'Higiene'].includes(String(cambio.categoria))) {
+    errores.push('La categoría no es válida.');
+  }
+  if ('prioridad' in cambio && !['alta', 'media', 'baja'].includes(String(cambio.prioridad))) {
+    errores.push('La prioridad no es válida.');
+  }
+  if ('imagen_url' in cambio && String(cambio.imagen_url ?? '').length > 500) {
+    errores.push('La URL de imagen supera 500 caracteres.');
   }
   if ('paso_venta' in cambio && (!Number.isFinite(cambio.paso_venta) || (cambio.paso_venta ?? 0) <= 0)) {
     errores.push('El paso de venta no es válido.');

@@ -144,6 +144,14 @@ export function assertFase56SoloTest(entorno: EntornoAplicacion): void {
   );
 }
 
+/** Guardrail estricto para compras, gastos, inventario y reportes Fases 7–8. */
+export function assertFase78SoloTest(entorno: EntornoAplicacion): void {
+  if (entorno === 'test') return;
+  throw new Error(
+    'Compras, inventario y reportes bloqueados: esta integración solo está habilitada en TEST.'
+  );
+}
+
 export type ResolucionValorPorEntorno =
   | { ok: true; valor: string }
   | { ok: false; error: string };

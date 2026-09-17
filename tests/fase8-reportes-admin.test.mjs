@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { evolucionCostos, productosBajoStock, productosMasVendidos, resumirCompras } from '../src/lib/fase8/reportes.ts';
+import { evolucionCostos, productosBajoStock, productosMasVendidos, resumirCompras, resumirGastosPorCategoria, resumirMovimientosStock } from '../src/lib/fase8/reportes.ts';
 import { prepararAjusteStock, validarCambioProducto } from '../src/lib/fase8/productosAdmin.ts';
+import { valorOperativo } from '../src/lib/fase8/clienteAdmin.ts';
+
+test('Fase 8: reportes ocultan residuos binarios sin redondear enteros', () => {
+  assert.equal(valorOperativo(4.199999999999999), '4.2');
+  assert.equal(valorOperativo(2), '2');
+  assert.equal(valorOperativo('2026-09-16'), '2026-09-16');
+});
 
 test('Fase 8: ranking suma cantidades, excluye cancelados y desempata establemente', () => {
   const ranking = productosMasVendidos([
@@ -70,4 +77,26 @@ test('Fase 8: edición de producto excluye stock y valida entero/paso', () => {
   assert.deepEqual(validarCambioProducto({ nombre: 'Arroz', permite_decimal: false, paso_venta: 1 }), []);
   assert.ok(validarCambioProducto({ permite_decimal: false, paso_venta: 0.5 }).length > 0);
   assert.ok(validarCambioProducto({ unidad_medida: 'caja' }).length > 0);
+  assert.ok(validarCambioProducto({ categoria: 'Varios' }).length > 0);
+  assert.ok(validarCambioProducto({ prioridad: 'urgente' }).length > 0);
+});
+
+test('Fase 8: gastos se resumen por categoría sin incluir cancelados', () => {
+  assert.deepEqual(resumirGastosPorCategoria([
+    { categoria: 'transporte', monto: 1000 },
+    { categoria: 'transporte', monto: 500 },
+    { categoria: 'bolsas', monto: 200 },
+    { categoria: 'bolsas', monto: 999, estado: 'cancelado' },
+  ]), [{ categoria: 'transporte', total: 1500 }, { categoria: 'bolsas', total: 200 }]);
+});
+
+test('Fase 8: movimientos se agrupan por tipo con cantidad neta', () => {
+  assert.deepEqual(resumirMovimientosStock([
+    { tipo_movimiento: 'entrada', cantidad: 3 },
+    { tipo_movimiento: 'entrada', cantidad: 2 },
+    { tipo_movimiento: 'salida', cantidad: -1 },
+  ]), [
+    { tipo_movimiento: 'entrada', cantidad_neta: 5, movimientos: 2 },
+    { tipo_movimiento: 'salida', cantidad_neta: -1, movimientos: 1 },
+  ]);
 });

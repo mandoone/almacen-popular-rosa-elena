@@ -16,6 +16,49 @@ export const CATEGORIAS_GASTO_EXTRA = [
 export type CategoriaGastoExtra = (typeof CATEGORIAS_GASTO_EXTRA)[number];
 export type PrioridadAbastecimiento = 'alta' | 'media' | 'baja';
 
+export interface SenalesPrioridad {
+  rotacion: number;
+  esencialidad: number;
+  necesidad_reposicion: number;
+}
+
+export interface ConfiguracionPrioridad {
+  peso_rotacion: number;
+  peso_esencialidad: number;
+  peso_reposicion: number;
+  umbral_alta: number;
+  umbral_media: number;
+}
+
+/**
+ * Clasificación configurable. Las señales son porcentajes 0–100 y sus pesos
+ * deben sumar 1; el módulo no inventa rotación ni esencialidad comercial.
+ */
+export function clasificarPrioridad(
+  senales: SenalesPrioridad,
+  config: ConfiguracionPrioridad
+): { prioridad: PrioridadAbastecimiento; puntaje: number } | { errores: string[] } {
+  const errores: string[] = [];
+  const valores = [senales.rotacion, senales.esencialidad, senales.necesidad_reposicion];
+  if (valores.some((valor) => !Number.isFinite(valor) || valor < 0 || valor > 100)) {
+    errores.push('Las señales de prioridad deben estar entre 0 y 100.');
+  }
+  const pesos = [config.peso_rotacion, config.peso_esencialidad, config.peso_reposicion];
+  if (pesos.some((peso) => !Number.isFinite(peso) || peso < 0) || Math.abs(pesos.reduce((a, b) => a + b, 0) - 1) > 1e-9) {
+    errores.push('Los pesos de prioridad deben ser no negativos y sumar 1.');
+  }
+  if (!(config.umbral_alta > config.umbral_media && config.umbral_alta <= 100 && config.umbral_media >= 0)) {
+    errores.push('Los umbrales de prioridad no son válidos.');
+  }
+  if (errores.length) return { errores };
+  const puntaje = Math.round((
+    senales.rotacion * config.peso_rotacion +
+    senales.esencialidad * config.peso_esencialidad +
+    senales.necesidad_reposicion * config.peso_reposicion
+  ) * 100) / 100;
+  return { prioridad: puntaje >= config.umbral_alta ? 'alta' : puntaje >= config.umbral_media ? 'media' : 'baja', puntaje };
+}
+
 export interface ProductoCompra {
   id_producto: string;
   nombre: string;
@@ -175,6 +218,7 @@ export function validarYCalcularCompra(
 export interface GastoExtraInput {
   fecha: string;
   categoria: CategoriaGastoExtra;
+  descripcion: string;
   monto: number;
   responsable: string;
   observaciones?: string;
@@ -184,6 +228,7 @@ export function validarGastoExtra(gasto: GastoExtraInput): string[] {
   const errores: string[] = [];
   if (!/^\d{4}-\d{2}-\d{2}$/.test(texto(gasto.fecha))) errores.push('La fecha del gasto no es válida.');
   if (!(CATEGORIAS_GASTO_EXTRA as readonly string[]).includes(gasto.categoria)) errores.push('La categoría del gasto no es válida.');
+  if (!texto(gasto.descripcion) || texto(gasto.descripcion).length > 200) errores.push('Falta una descripción válida del gasto.');
   if (!dineroValido(gasto.monto) || gasto.monto === 0) errores.push('El monto del gasto debe ser un entero CLP positivo.');
   if (!texto(gasto.responsable)) errores.push('Falta la persona responsable del gasto.');
   if (texto(gasto.observaciones).length > 500) errores.push('Las observaciones del gasto superan 500 caracteres.');
