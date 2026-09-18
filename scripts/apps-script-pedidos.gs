@@ -233,6 +233,10 @@ function doGet(e) {
         exigirToken_(params.token);
         validarEntornoTestFase78_();
         return jsonOk_(obtenerPropuestaAbastecimiento_(params.presupuesto));
+      case 'obtenerEvidenciaPilotoTest':
+        exigirToken_(params.token);
+        validarEntornoTestFase78_();
+        return jsonOk_(obtenerEvidenciaPilotoTest_(params));
       default:
         return jsonError_('Accion GET no reconocida: "' + action + '".', 400);
     }
@@ -280,6 +284,10 @@ function doPost(e) {
         exigirToken_(body.token);
         validarEntornoTestFase78_();
         return jsonOk_(prepararEsquemaFase78Test_());
+      case 'crearBackupPilotoTest':
+        exigirToken_(body.token);
+        validarEntornoTestFase78_();
+        return jsonOk_(crearBackupPilotoTest_(body));
       case 'crearCompra':
         exigirToken_(body.token);
         validarEntornoTestFase78_();
@@ -1379,6 +1387,49 @@ function prepararEsquemaFase78Test_() {
   } finally {
     lock.releaseLock();
   }
+}
+
+function crearBackupPilotoTest_(body) {
+  verificarDestinoFase78Test_();
+  exigirIdempotencyKey_(body.idempotency_key);
+  var marcador = limpiar_(body.marcador);
+  if (!/^PILOTO-TEST-[a-f0-9]{24}$/.test(marcador)) {
+    lanzar_('Marcador de piloto TEST inválido.', 400);
+  }
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) lanzar_('El backend TEST está ocupado.', 503);
+  try {
+    return ejecutarIdempotenteBajoLock_(
+      'crearBackupPilotoTest',
+      body.idempotency_key,
+      { marcador: marcador },
+      function () {
+        var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        verificarDestinoFase78Test_();
+        var nombre = 'BACKUP PILOTO TEST ' + marca_(new Date()).replace(/[: ]/g, '-');
+        ss.copy(nombre);
+        return { entorno: 'TEST', backup_creado: true, marcador: marcador, nombre: nombre };
+      }
+    );
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function obtenerEvidenciaPilotoTest_(params) {
+  verificarDestinoFase78Test_();
+  var marcador = limpiar_(params.marcador);
+  if (!/^PILOTO-TEST-[a-f0-9]{24}$/.test(marcador)) {
+    lanzar_('Marcador de piloto TEST inválido.', 400);
+  }
+  var sufijo = marcador.substring('PILOTO-TEST-'.length);
+  var key = 'piloto_test_backup_' + sufijo;
+  var nombre = 'FASE3B_IDEM_crearBackupPilotoTest_' + key;
+  return {
+    solo_lectura: true,
+    marcador: marcador,
+    backup_creado: Boolean(PropertiesService.getScriptProperties().getProperty(nombre))
+  };
 }
 
 function crearCompra_(body) {
