@@ -1,5 +1,10 @@
 # Validación de catálogo y contenido web — Fases 4 y 9
 
+> **Actualización 2026-09-21:** el inventario y las decisiones vigentes de F9
+> fueron consolidados en [`../GO_NO_GO_FASE_9_10.md`](../GO_NO_GO_FASE_9_10.md).
+> Este archivo conserva la evidencia histórica F4 y no debe usarse como estado
+> actual de F7/F8 ni como autorización productiva.
+
 > Checklist de revisión con el Almacén. Mantiene la numeración del plan
 > original: Fase 4 corresponde a productos, stock, precios e imágenes; Fase 9,
 > a contenido público, historia y comunidad. No autoriza cambios en datos ni en

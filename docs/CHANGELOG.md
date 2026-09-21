@@ -5,6 +5,34 @@
 
 ---
 
+## [FASES 9–10] — Preparación técnica Go/No-Go (2026-09-21)
+
+### Cambiado
+
+- Accesibilidad pública: menú móvil con estado real, página activa, foco visible,
+  labels de tienda, controles con nombre y reintento del catálogo.
+- Próximas aperturas omiten fechas ya pasadas sin alterar el calendario aprobado.
+- Pies interpretativos no sustentados de la galería fueron reemplazados por alt
+  text estrictamente visual; créditos y derechos siguen pendientes.
+- Metadata por ruta, Open Graph/Twitter, sitemap y robots quedaron configurables
+  mediante `SITE_URL`, sin inventar dominio ni imagen social.
+
+### Añadido
+
+- Loading global, health check mínimo, secrets scan, control de configuración y
+  `npm run preflight:go-no-go` sin escrituras productivas.
+- Checklist único, inventario F9, cuatro decisiones editoriales, riesgos npm,
+  datos reales y backup/rollback en `docs/GO_NO_GO_FASE_9_10.md`.
+- Overrides acotados corrigieron `brace-expansion`, `js-yaml` y
+  `postcss-selector-parser`; permanecen dos alertas ligadas a Next 15/PostCSS.
+
+### Estado
+
+- F4, F5/F6 y F7/F8 cerradas técnicamente en TEST; piloto integral PASS.
+- F9 queda parcial por aprobación editorial/derechos/contactos.
+- F10 queda técnicamente preparada, pero el Go productivo permanece bloqueado
+  por decisiones y datos reales. Producción no fue tocada.
+
 ## [FASE 4] — Decisiones aplicadas y cierre técnico TEST (2026-09-15)
 
 ### Cambiado

@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-15.
+> tarea que cambie el estado. Última actualización: 2026-09-21.
 
 ---
 
@@ -11,15 +11,14 @@ Web del **Almacén Popular Rosa Elena Morales** — proyecto comunitario sin fin
 lucro. Sirve como escaparate del almacén y para tomar pedidos que se retiran los
 sábados de apertura.
 
-- **Estado funcional:** Fases 3B, 5 y 6 validadas en TEST. Fase 4 cerrada
-  técnicamente en TEST con decisiones aprobadas, backup, plan versionado y
-  catálogo canónico; quedan confirmaciones operativas antes de producción.
-  Dominios puros de F7/F8 están preparados y falta su persistencia/UI/E2E TEST.
+- **Estado funcional:** Fase 4 cerrada técnicamente en TEST; F5/F6 y F7/F8
+  cerradas en TEST. El piloto operativo integral catálogo → apertura → pedido →
+  venta → caja → gasto → compra → stock → historiales → reportes →
+  abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Próxima prioridad:** implementar persistencia completa de F7/F8 en TEST:
-  compras, gastos, historial de costos, ajustes auditados y reportes. Producción
-  sigue fuera de alcance.
+- **Próxima prioridad:** resolver las decisiones y datos bloqueantes del
+  checklist F9/F10 antes de un Go/No-Go humano. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -109,6 +108,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
+- 🔄 **Fase 9:** cierre técnico completado; validación editorial, fuentes,
+  contactos y derechos/créditos de imágenes siguen pendientes.
+- ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
+  loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
+  El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
 
 ---
 
@@ -138,24 +142,22 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   Stock/mínimos/costos/prioridades/imágenes siguen deliberadamente sintéticos o
   pendientes antes de producción. Ver
   `docs/fase-4-9/PROPUESTA_CATALOGO_FASE_4_TEST.md`.
-- 🔄 F7/F8: dominio puro probado; persistencia, rutas, UI y E2E TEST pendientes.
-  Estado de entrada en `docs/fase-7-8/ESTADO_ENTRADA_FASE_7_8_TEST.md`.
+- ✅ F7/F8 cerradas técnicamente en TEST: persistencia, rutas, UI, E2E y piloto
+  integral validados. Los datos comerciales reales permanecen fuera de alcance.
 
 ---
 
 ## Prioridad actual
 
-**Implementar Fase 7 + 8 completas en TEST.** Empezar por contratos y
-persistencia idempotente de compras/gastos/costos/movimientos; después conectar
-ajustes, historiales, reportes y administración avanzada. Cualquier intervención
-productiva requiere autorización y Go/No-Go separados.
+**Cerrar decisiones humanas F9/F10 y datos reales bloqueantes.** Cualquier
+intervención productiva requiere autorización y Go/No-Go separados.
 
 ---
 
 ## Datos hardcodeados a tener presentes
 
-- Número WhatsApp `56950807172` (tienda, participar, footer).
-- Datos de contacto públicos repetidos en tienda, participar y footer.
+- Contactos, lugar, horario y fechas centralizados en
+  `src/lib/fase9/contenidoPublico.ts`; falta confirmación institucional final.
 - Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
 - Fechas y lugar de aperturas 2026 centralizados en
   `src/lib/fase9/contenidoPublico.ts`; deben actualizarse cuando el Almacén

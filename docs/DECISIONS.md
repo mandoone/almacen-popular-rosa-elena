@@ -8,6 +8,24 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D20 — SEO dependiente de un origen público explícito
+
+- **Contexto:** no existe un dominio público definitivo aprobado y no se debe
+  inventar canonical ni sitemap con un subdominio temporal.
+- **Decisión:** canonical, `metadataBase`, sitemap y su referencia en robots se
+  habilitan solo con `SITE_URL` válido; el resto de metadata funciona sin él.
+- **Consecuencias:** el build local es seguro y el dominio queda como decisión
+  humana bloqueante antes de indexar producción.
+
+## D21 — No migrar automáticamente a Next 16 por npm audit
+
+- **Contexto:** las alertas corregibles sin cambio mayor eran transitivas; las
+  restantes provienen del PostCSS incluido por Next 15 y npm propone Next 16.
+- **Decisión:** fijar overrides compatibles para las transitivas corregidas y
+  documentar las dos alertas restantes; cualquier Next 16 será trabajo separado.
+- **Consecuencias:** se reducen cinco alertas a dos, con cero críticas, sin
+  ampliar el alcance ni arriesgar los flujos ya validados.
+
 ## D1 — Usar un arnés liviano de documentación
 
 - **Contexto:** el proyecto es pequeño, comunitario y mantenido sin equipo técnico

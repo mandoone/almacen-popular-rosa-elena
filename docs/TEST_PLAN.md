@@ -5,6 +5,24 @@
 
 ---
 
+## F9/F10 — QA público y preflight (2026-09-21)
+
+1. Ejecutar `npm run preflight:go-no-go -- --allow-dirty` durante desarrollo y
+   el mismo comando sin flags desde el commit candidato limpio.
+2. Verificar `/`, `/historia`, `/rosa-elena`, `/participar` y `/tienda` en
+   desktop y móvil; revisar teclado, foco, menú, imágenes, filtros, carrito,
+   loading, error/reintento y ausencia de scroll horizontal.
+3. Abrir `/robots.txt`, `/sitemap.xml`, una ruta inexistente y `/api/health`.
+4. Con `SITE_URL` ausente, esperar canonical/sitemap inactivos y aviso
+   `HUMAN_DECISION_REQUIRED`; con origen HTTPS confirmado, esperar cinco URLs
+   públicas y exclusión de `/admin` y `/api`.
+5. Confirmar que el preflight TEST indica escrituras deshabilitadas y que no se
+   ejecutó ningún deploy ni E2E remoto de escritura.
+
+Resultado automatizado de referencia: tests, lint, build, audit, diff check y
+secrets scan. La evidencia final de esta sesión se registra en
+`docs/GO_NO_GO_FASE_9_10.md` y `docs/CHANGELOG.md`.
+
 ## 1. Pruebas actuales (estado vigente)
 
 ### T1 — Catálogo carga desde Google Sheets

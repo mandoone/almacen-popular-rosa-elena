@@ -6,15 +6,20 @@ Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones p
 
 1. Confirmar Go/No-Go humano, responsable y ventana de cambio.
 2. Registrar el commit exacto que se propone desplegar y conservar el último commit estable.
+   Crear un tag Git anotado para el candidato aprobado y registrar también el
+   tag/commit del último estado estable. No mover ni reutilizar esos tags.
 3. Crear manualmente una copia fechada de la Sheet productiva y comprobar que contiene todas sus pestañas. No almacenar el enlace ni su identificador en Git.
 4. Registrar la versión y el deployment productivo vigentes de Apps Script en el gestor seguro acordado, nunca en documentación versionada.
 5. Exportar o verificar las variables productivas desde el proveedor, sin imprimirlas en terminal ni copiarlas al repositorio.
 6. Ejecutar tests, lint, build y el checklist TEST desde el commit candidato.
+7. Registrar el identificador del deployment web vigente y del candidato, la
+   persona responsable, la ventana y los criterios de abortar/revertir.
 
 ## Rollback de la web
 
 1. Detener cambios nuevos y registrar la evidencia del incidente.
 2. Redeployar desde el último commit estable conocido mediante el mecanismo del proveedor.
+   Confirmar que el deployment resultante referencia exactamente ese commit.
 3. Comprobar páginas públicas, autenticación admin y rutas de lectura.
 4. No reejecutar escrituras fallidas sin determinar primero si surtieron efecto.
 

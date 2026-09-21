@@ -207,11 +207,9 @@ atómico antes de cualquier cambio productivo.
   productivos: variables, Apps Script, Sheet y despliegue.
 - 🔄 Fase 4: catálogo público preparado; validación de productos, stock,
   precios e imágenes pendiente con el Almacén.
-- 🔄 Fase 9: contenido público preparado; revisión editorial e imágenes
-  definitivas pendientes con el Almacén.
-- 🔄 Fase 5 + 6 implementadas en código para TEST: Apps Script, rutas admin,
-  panel vendedor, comanda y resumen de caja. Pendiente pegar/desplegar el
-  script y validar el flujo E2E en la Sheet TEST; producción no fue tocada.
+- 🔄 Fase 9: cierre técnico completado; revisión editorial, fuentes, contactos
+  y derechos/créditos pendientes con el Almacén.
+- ✅ Fase 5 + 6 cerradas técnicamente en TEST; piloto integral PASS.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
 
@@ -227,8 +225,8 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Implementar en código Apps Script TEST con token, `APP_ENV=TEST`, lock,
   idempotencia, cálculo de servidor y rollback compensatorio.
 - ✅ Crear rutas admin protegidas, panel `/admin/vendedor` y comanda imprimible.
-- ⬜ Ejecutar preparación aditiva, desplegar Apps Script TEST y validar venta
-  real por unidad y decimal, stock, errores y reintento idempotente.
+- ✅ Preparación aditiva, Apps Script TEST, venta por unidad/decimal, stock,
+  errores e idempotencia validados.
 - ⬜ Rol vendedor separado de administrador.
 - ⬜ Política segura e idempotente para anular/devolver una venta presencial.
 
@@ -258,10 +256,10 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 - ✅ Dominio puro de compras, gastos extra, caja para compra y propuesta
   conservadora preparado y probado.
-- ⬜ Registro de compras (COMPRAS / DETALLE_COMPRAS).
-- ⬜ Movimientos de stock por entrada de mercadería.
-- ⬜ Persistencia TEST idempotente, historial de costos, gastos extra y E2E.
-- ⬜ Clasificación configurable por rotación, esencialidad y reposición.
+- ✅ Registro de compras y detalle en TEST.
+- ✅ Movimientos de stock por entrada de mercadería.
+- ✅ Persistencia TEST idempotente, historial de costos, gastos extra y E2E.
+- ✅ Clasificación configurable por rotación, esencialidad y reposición.
 
 ---
 
@@ -269,9 +267,9 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 - ✅ Agregaciones puras de ventas, bajo stock, compras y evolución de costos.
 - ✅ Validación pura de edición de producto y ajuste de stock auditable.
-- ⬜ Persistir/consultar historiales F7 y exponer reportes admin en TEST.
-- ⬜ Crear rutas/UI admin de producto; stock solo mediante movimiento con motivo.
-- ⬜ E2E TEST de permisos, reportes, ajustes e invariantes.
+- ✅ Persistir/consultar historiales F7 y exponer reportes admin en TEST.
+- ✅ Rutas/UI admin de producto; stock solo mediante movimiento con motivo.
+- ✅ E2E TEST de permisos, reportes, ajustes e invariantes.
 - Estado de entrada completo:
   `docs/fase-7-8/ESTADO_ENTRADA_FASE_7_8_TEST.md`.
 
@@ -283,7 +281,7 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   (`docs/fase-5-6/`, `src/lib/fase6/`).
 - ✅ Implementar en código lectura consolidada por apertura y vista
   `/admin/caja`, con ventas/pedidos, pendientes, pagos y cancelados separados.
-- ⬜ Validar el resumen contra datos reales controlados de la Sheet TEST.
+- ✅ Resumen validado contra datos controlados de la Sheet TEST.
 - ⬜ Registro persistente de cierre; esta entrega es solo lectura/borrador.
 - ⬜ Reportes básicos (ventas, pedidos, stock).
 - ⬜ Validar con el Almacén responsables, diferencias, pago al retirar y regla
@@ -298,7 +296,17 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Publicar las siete próximas aperturas 2026 con horario y lugar informados.
 - ✅ Mantener diseño responsive y reutilizar únicamente imágenes existentes.
 - ⬜ Validar textos e imágenes públicas finales con el Almacén —
-  `docs/fase-4-9/VALIDACION_CATALOGO_CONTENIDO_WEB.md`.
+  `docs/GO_NO_GO_FASE_9_10.md`.
+
+## FASE 10 — Preparación Go/No-Go
+
+- ✅ Metadata por página, Open Graph/Twitter y favicon revisados.
+- ✅ Sitemap y robots preparados con `SITE_URL` configurable; admin/API excluidos.
+- ✅ 404, error global, loading, fallback/reintento de tienda y health check.
+- ✅ Headers, sesión/rutas admin, CI mínimo y secrets scan revisados.
+- ✅ Backup/rollback y `npm run preflight:go-no-go` consolidados.
+- ⬜ Resolver decisiones, datos reales y bloqueos del checklist único en
+  `docs/GO_NO_GO_FASE_9_10.md` antes de producción.
 
 ---
 
