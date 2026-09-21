@@ -18,6 +18,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: git diff --check
+      - run: npm run scan:secrets
+      - run: npm run check:go-no-go
       - run: npm test
       - run: npm run lint
       - run: npm run build
+      - run: npm audit --audit-level=critical
