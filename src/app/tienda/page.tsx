@@ -20,8 +20,9 @@ import { CONTACTO_WHATSAPP_NUMERO } from '@/lib/fase9/contenidoPublico';
 function ImagenProducto({ producto }: { producto: Producto }) {
   const [error, setError] = useState(false);
   const src = rutaImagenProducto(producto);
+  const tieneImagenAprobada = Boolean(producto.imagen_url?.trim());
 
-  if (error) {
+  if (error || !tieneImagenAprobada) {
     return (
       <div
         className="flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-t-lg bg-gray-100 px-3 text-center"
@@ -109,6 +110,7 @@ function CarritoPanel({
           Tu pedido
         </h2>
         <button
+          type="button"
           onClick={onVaciar}
           className="text-xs text-red-500 hover:text-red-700 transition-colors"
         >
@@ -131,7 +133,9 @@ function CarritoPanel({
             </div>
             <div className="flex items-center gap-1 shrink-0">
               <button
+                type="button"
                 onClick={() => onReducir(producto.id)}
+                aria-label={`Quitar una unidad de ${producto.nombre}`}
                 className="w-7 h-7 rounded-full bg-primary-light text-primary-dark font-bold text-sm flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
               >
                 −
@@ -140,7 +144,9 @@ function CarritoPanel({
                 {cantidad}
               </span>
               <button
+                type="button"
                 onClick={() => onAgregar(producto)}
+                aria-label={`Agregar una unidad de ${producto.nombre}`}
                 className="w-7 h-7 rounded-full bg-primary-light text-primary-dark font-bold text-sm flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
               >
                 +
@@ -163,24 +169,34 @@ function CarritoPanel({
 
       {/* Datos cliente */}
       <div className="space-y-3 mb-4">
-        <input
-          type="text"
-          placeholder="Tu nombre *"
-          value={nombre}
-          onChange={(e) => onNombre(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <input
-          type="tel"
-          placeholder="Tu teléfono *"
-          value={telefono}
-          onChange={(e) => onTelefono(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+        <label className="block text-sm font-medium text-gray-700">
+          Nombre
+          <input
+            type="text"
+            autoComplete="name"
+            required
+            value={nombre}
+            onChange={(e) => onNombre(e.target.value)}
+            className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </label>
+        <label className="block text-sm font-medium text-gray-700">
+          Teléfono
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            required
+            value={telefono}
+            onChange={(e) => onTelefono(e.target.value)}
+            className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </label>
       </div>
 
       {/* Botón enviar */}
       <button
+        type="button"
         onClick={onEnviar}
         disabled={enviando || !pedidoHabilitado}
         className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-600/60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-md transition-colors flex items-center justify-center gap-2 text-sm"
@@ -203,6 +219,7 @@ export default function TiendaPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [intentoCatalogo, setIntentoCatalogo] = useState(0);
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -226,7 +243,10 @@ export default function TiendaPage() {
   }, [carrito]);
 
   useEffect(() => {
-    fetch('/api/productos')
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
+    fetch('/api/productos', { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error('No se pudo cargar el catálogo');
         return res.json();
@@ -236,9 +256,15 @@ export default function TiendaPage() {
           throw new Error('El catálogo está vacío o no tiene el formato esperado');
         setProductos(data);
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+      .catch((err) => {
+        if (err instanceof Error && err.name === 'AbortError') return;
+        setError(err instanceof Error ? err.message : 'No se pudo cargar el catálogo');
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [intentoCatalogo]);
 
   useEffect(() => {
     if (!usaCalendarioTest) return;
@@ -449,6 +475,13 @@ export default function TiendaPage() {
               <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
                 <p className="text-red-600 font-semibold text-lg">No se pudo cargar el catálogo</p>
                 <p className="text-gray-500 text-sm">{error}</p>
+                <button
+                  type="button"
+                  onClick={() => setIntentoCatalogo((intento) => intento + 1)}
+                  className="mt-2 rounded-md bg-primary px-5 py-2.5 font-semibold text-white hover:bg-primary-dark"
+                >
+                  Intentar nuevamente
+                </button>
               </div>
             )}
 
@@ -464,6 +497,7 @@ export default function TiendaPage() {
                   <input
                     type="text"
                     placeholder="Buscar producto..."
+                    aria-label="Buscar productos"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                     className="w-full bg-white border border-primary-light rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -477,6 +511,7 @@ export default function TiendaPage() {
                   >
                     <button
                       type="button"
+                      aria-pressed={categoriaActiva === 'todas'}
                       onClick={() => setCategoriaActiva('todas')}
                       className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                         categoriaActiva === 'todas'
@@ -490,6 +525,7 @@ export default function TiendaPage() {
                       <button
                         key={id}
                         type="button"
+                        aria-pressed={categoriaActiva === id}
                         onClick={() => setCategoriaActiva(id)}
                         className={`max-w-full rounded-full border px-4 py-2 text-sm font-medium leading-tight transition-colors ${
                           categoriaActiva === id
@@ -556,7 +592,9 @@ export default function TiendaPage() {
                       </p>
                       {cantidad === 0 ? (
                         <button
+                          type="button"
                           onClick={() => agregar(producto)}
+                          aria-label={`Agregar ${producto.nombre} al pedido`}
                           className="mt-auto bg-primary text-white rounded-md text-xs py-1.5 w-full font-medium hover:bg-primary-dark transition-colors"
                         >
                           Agregar
@@ -564,7 +602,9 @@ export default function TiendaPage() {
                       ) : (
                         <div className="mt-auto flex items-center gap-3">
                           <button
+                            type="button"
                             onClick={() => reducir(producto.id)}
+                            aria-label={`Quitar una unidad de ${producto.nombre}`}
                             className="w-9 h-9 rounded-full bg-primary-light text-primary-dark font-bold text-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                           >
                             −
@@ -573,7 +613,9 @@ export default function TiendaPage() {
                             {cantidad}
                           </span>
                           <button
+                            type="button"
                             onClick={() => agregar(producto)}
+                            aria-label={`Agregar una unidad de ${producto.nombre}`}
                             className="w-9 h-9 rounded-full bg-primary-light text-primary-dark font-bold text-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                           >
                             +
@@ -606,12 +648,15 @@ export default function TiendaPage() {
       {carrito.length > 0 && (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
           {carritoAbierto && (
-            <div className="bg-white border-t border-primary-light shadow-2xl px-4 pt-4 pb-6 max-h-[80vh] overflow-y-auto">
+            <div id="carrito-movil" className="bg-white border-t border-primary-light shadow-2xl px-4 pt-4 pb-6 max-h-[80vh] overflow-y-auto">
               <CarritoPanel {...carritoProps} />
             </div>
           )}
           <button
+            type="button"
             onClick={() => setCarritoAbierto((o) => !o)}
+            aria-expanded={carritoAbierto}
+            aria-controls="carrito-movil"
             className="w-full bg-primary text-white flex items-center justify-between px-5 py-4 font-semibold"
           >
             <span className="flex items-center gap-2">

@@ -1,21 +1,20 @@
 import {
-  APERTURAS_PUBLICAS_2026,
   CONTACTO_INSTAGRAM_URL,
   CONTACTO_WHATSAPP_URL,
-  HORARIO_APERTURAS,
-  LUGAR_APERTURAS,
 } from '@/lib/fase9/contenidoPublico';
-import type { Metadata } from 'next';
+import AperturasPublicas from '@/components/AperturasPublicas';
+import { crearMetadataPublica } from '@/lib/fase10/metadataPublica';
 
-export const metadata: Metadata = {
+export const metadata = crearMetadataPublica({
   title: 'Participar',
   description: 'Formas de participar y colaborar con el Almacén Popular Rosa Elena Morales.',
-};
+  path: '/participar',
+});
 
 const formas = [
   {
     title: "Turnos de atención",
-    desc: "Participa en los turnos rotativos de atención del almacén los sábados de apertura. No se requiere experiencia previa, solo ganas de ayudar.",
+    desc: "Consulta por los turnos rotativos de atención y por las necesidades de cada sábado de apertura.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -93,20 +92,7 @@ export default function ParticiparPage() {
           <h2 className="font-serif text-primary-dark text-2xl sm:text-3xl font-bold mb-4">
             Próximos sábados de apertura
           </h2>
-          <p className="text-primary-dark font-medium text-lg mb-3">
-            {HORARIO_APERTURAS} • {LUGAR_APERTURAS}
-          </p>
-          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {APERTURAS_PUBLICAS_2026.map((apertura) => (
-              <time
-                key={apertura.fechaIso}
-                dateTime={apertura.fechaIso}
-                className="rounded-lg bg-white/70 px-3 py-3 text-sm font-semibold text-primary-dark"
-              >
-                {apertura.fechaVisible}
-              </time>
-            ))}
-          </div>
+          <AperturasPublicas />
         </div>
       </section>
 

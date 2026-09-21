@@ -23,6 +23,17 @@ export const APERTURAS_PUBLICAS_2026 = [
   { fechaIso: '2026-12-19', fechaVisible: '19 de diciembre' },
 ] as const;
 
+export function obtenerAperturasPublicasFuturas(fechaReferencia = new Date()) {
+  const hoySantiago = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Santiago',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(fechaReferencia);
+
+  return APERTURAS_PUBLICAS_2026.filter(({ fechaIso }) => fechaIso >= hoySantiago);
+}
+
 export const PASOS_COMO_FUNCIONA = [
   {
     numero: '1',

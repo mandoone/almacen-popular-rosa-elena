@@ -1,18 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
+import AperturasPublicas from "@/components/AperturasPublicas";
+import { crearMetadataPublica } from "@/lib/fase10/metadataPublica";
 import {
-  APERTURAS_PUBLICAS_2026,
   FORMAS_DE_PARTICIPAR,
-  HORARIO_APERTURAS,
-  LUGAR_APERTURAS,
   PASOS_COMO_FUNCIONA,
 } from "@/lib/fase9/contenidoPublico";
 
-export const metadata: Metadata = {
+export const metadata = crearMetadataPublica({
   title: "Inicio",
   description: "Conoce el almacén popular, sus próximas aperturas y cómo participar en esta iniciativa comunitaria de Independencia.",
-};
+  path: '/',
+});
 
 export default function Home() {
   return (
@@ -61,28 +60,12 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
               </svg>
             </div>
-            <div>
+            <div className="w-full">
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-primary-dark mb-2">
                 Próximos sábados de apertura
               </h2>
-              <p className="text-primary-dark/80 font-medium text-lg">
-                Horario {HORARIO_APERTURAS}
-              </p>
-              <p className="mt-1 text-primary-dark/70">
-                {LUGAR_APERTURAS}
-              </p>
+              <AperturasPublicas conBorde />
             </div>
-          </div>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {APERTURAS_PUBLICAS_2026.map((apertura) => (
-              <time
-                key={apertura.fechaIso}
-                dateTime={apertura.fechaIso}
-                className="rounded-lg border border-primary-dark/10 bg-white/70 px-3 py-3 text-center text-sm font-semibold text-primary-dark"
-              >
-                {apertura.fechaVisible}
-              </time>
-            ))}
           </div>
         </div>
       </section>
@@ -200,7 +183,9 @@ export default function Home() {
             <h3 className="font-serif text-3xl sm:text-4xl font-bold text-primary-dark mb-2">
               Rosa Elena Morales
             </h3>
-            <p className="text-gray-500 font-medium mb-6">1930 — 18 de agosto de 1976</p>
+            <p className="text-gray-500 font-medium mb-6">
+              Detenida desaparecida desde el 18 de agosto de 1976
+            </p>
             <p className="text-gray-700 text-lg leading-relaxed mb-8">
               Dirigenta vecinal de nuestra población, secretaria del Comité local Juan Antonio Ríos del Partido Comunista y dirigenta de la Junta de Abastecimiento y Control de Precios durante el gobierno de Salvador Allende. Secuestrada y desaparecida por la DINA el 18 de agosto de 1976. Su memoria nos inspira.
             </p>

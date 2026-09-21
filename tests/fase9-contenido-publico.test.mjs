@@ -7,6 +7,7 @@ import {
   HORARIO_APERTURAS,
   LUGAR_APERTURAS,
   NOMBRE_ALMACEN,
+  obtenerAperturasPublicasFuturas,
 } from '../src/lib/fase9/contenidoPublico.ts';
 
 test('publica las siete aperturas confirmadas con horario y lugar informados', () => {
@@ -25,6 +26,15 @@ test('publica las siete aperturas confirmadas con horario y lugar informados', (
   );
   assert.equal(HORARIO_APERTURAS, '11:00–15:00');
   assert.match(LUGAR_APERTURAS, /Gamero 2670, Independencia/);
+});
+
+test('las páginas muestran solo aperturas vigentes desde la fecha de referencia', () => {
+  assert.deepEqual(
+    obtenerAperturasPublicasFuturas(new Date('2026-09-21T12:00:00-03:00')).map(
+      ({ fechaIso }) => fechaIso
+    ),
+    ['2026-10-03', '2026-10-17', '2026-11-07', '2026-11-21', '2026-12-05', '2026-12-19']
+  );
 });
 
 test('el nombre público no contiene la duplicación histórica', () => {
@@ -65,4 +75,13 @@ test('Fase 9: contacto publicado tiene una única fuente compartida', async () =
   assert.match(participar, /CONTACTO_INSTAGRAM_URL/);
   assert.match(tienda, /CONTACTO_WHATSAPP_NUMERO/);
   assert.doesNotMatch(`${footer}\n${participar}\n${tienda}`, /56950807172|almacenpopular\.rosamoralesm/);
+});
+
+test('Fase 9: navegación móvil y tienda exponen estado y nombres accesibles', async () => {
+  const navbar = await readFile(new URL('../src/components/Navbar.tsx', import.meta.url), 'utf8');
+  const tienda = await readFile(new URL('../src/app/tienda/page.tsx', import.meta.url), 'utf8');
+  assert.match(navbar, /aria-expanded=\{isOpen\}/);
+  assert.match(navbar, /aria-current=/);
+  assert.match(tienda, /aria-label="Buscar productos"/);
+  assert.match(tienda, /Intentar nuevamente/);
 });

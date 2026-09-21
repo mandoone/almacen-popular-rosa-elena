@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { crearMetadataPublica } from "@/lib/fase10/metadataPublica";
 
-export const metadata: Metadata = {
+export const metadata = crearMetadataPublica({
   title: "Historia",
   description: "Historia de la red de abastecimiento y del Almacén Popular Rosa Elena Morales en la población Juan Antonio Ríos.",
-};
+  path: '/historia',
+});
 
 const tarjetas = [
   {
@@ -77,7 +78,7 @@ export default function HistoriaPage() {
           alt="Logo Red de Abastecimiento Rosa Elena Morales"
           width={200}
           height={250}
-          className="object-contain mb-4"
+          className="h-auto w-auto object-contain mb-4"
         />
         <p className="text-center text-gray-500 italic text-sm">
           Logo original de la Red de Abastecimiento Rosa Elena Morales

@@ -1,16 +1,17 @@
 import Image from "next/image";
-import type { Metadata } from "next";
+import { crearMetadataPublica } from "@/lib/fase10/metadataPublica";
 
-export const metadata: Metadata = {
+export const metadata = crearMetadataPublica({
   title: "Rosa Elena Morales",
   description: "Memoria de Rosa Elena Morales y su vínculo con la organización comunitaria de la población Juan Antonio Ríos.",
-};
+  path: '/rosa-elena',
+});
 
 const fotos = [
-  { src: "/images/rosa-elena-1.jpg", caption: "Rosa Elena Morales" },
-  { src: "/images/rosa-elena-2.jpg", caption: "Junto a la comunidad" },
-  { src: "/images/rosa-elena-3.jpg", caption: "Trabajo organizativo" },
-  { src: "/images/rosa-elena-4.jpg", caption: "Memoria presente" },
+  { src: "/images/rosa-elena-1.jpg", alt: "Retrato en blanco y negro de Rosa Elena Morales, de frente" },
+  { src: "/images/rosa-elena-2.jpg", alt: "Retrato en blanco y negro de Rosa Elena Morales, de frente" },
+  { src: "/images/rosa-elena-3.jpg", alt: "Retrato histórico en blanco y negro de Rosa Elena Morales al aire libre" },
+  { src: "/images/rosa-elena-4.jpg", alt: "Retrato histórico en blanco y negro de Rosa Elena Morales sentada" },
 ];
 
 const legado = [
@@ -40,7 +41,7 @@ export default function RosaElenaPage() {
           Dirigenta vecinal • Luchadora popular • Detenida desaparecida
         </p>
         <p className="text-primary-light text-lg sm:text-xl tracking-widest font-semibold">
-          1930 — 18 de agosto de 1976
+          Detenida desaparecida desde el 18 de agosto de 1976
         </p>
       </section>
 
@@ -51,20 +52,17 @@ export default function RosaElenaPage() {
             Su rostro, nuestra memoria
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-            {fotos.map((foto, index) => (
-              <div key={index} className="flex flex-col items-center group w-full max-w-[300px]">
+            {fotos.map((foto) => (
+              <div key={foto.src} className="flex flex-col items-center group w-full max-w-[300px]">
                 <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg mb-3">
                   <Image
                     src={foto.src}
-                    alt={foto.caption}
+                    alt={foto.alt}
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
                     sizes="(max-width: 768px) 100vw, 300px"
                   />
                 </div>
-                <p className="text-primary font-medium text-sm text-center">
-                  {foto.caption}
-                </p>
               </div>
             ))}
           </div>
@@ -85,7 +83,7 @@ export default function RosaElenaPage() {
               Durante el gobierno del Presidente Salvador Allende, Rosa Elena asumió un rol fundamental en el abastecimiento popular: fue Secretaria del Ministro del Trabajo y dirigenta de la Junta de Abastecimiento y Control de Precios (JAP), organismos creados para garantizar el acceso a productos básicos a precios justos para el pueblo.
             </p>
             <p>
-              Tras el golpe de Estado del 11 de septiembre de 1973, Rosa Elena continuó su labor organizativa clandestina en la población. El 18 de agosto de 1976, fue secuestrada por agentes de la DINA — la policía secreta de la dictadura de Pinochet — y desde entonces permanece como detenida desaparecida. Tenía 44 años.
+              Tras el golpe de Estado del 11 de septiembre de 1973, Rosa Elena continuó su labor organizativa clandestina en la población. El 18 de agosto de 1976, fue secuestrada por agentes de la DINA — la policía secreta de la dictadura de Pinochet — y desde entonces permanece como detenida desaparecida.
             </p>
             <p>
               Su figura representa a las miles de mujeres que sostuvieron la vida comunitaria, el cuidado y la organización popular, trabajo históricamente invisibilizado pero esencial. Hoy, el Almacén Popular lleva su nombre como homenaje a ella y a todas las mujeres de nuestra población.
