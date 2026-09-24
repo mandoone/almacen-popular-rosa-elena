@@ -88,7 +88,7 @@ nuevo.**
 | S1 | Crear pedido web | Nace `recibido`; **stock sin cambios** |
 | S2 | Confirmar (`recibido → pendiente`) | Stock baja; movimiento `salida`; `fecha_confirmacion` escrita |
 | S3 | `pendiente → listo` | Stock **sin cambios** |
-| S4 | `listo → pendiente` | Stock **sin cambios** |
+| S4 | Intentar retroceder desde `listo` | **Rechazado**; stock sin cambios |
 | S5 | `listo → entregado` con pago | Stock sin cambios; pasa |
 | S6 | `listo → entregado` sin pago | **Rechazado** (§4.4) |
 | S7 | Cancelar desde `recibido` | Stock **sin cambios** |

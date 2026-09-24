@@ -5,6 +5,81 @@
 
 ---
 
+## [F9-A final] — Fail-closed y readback numérico estricto (2026-09-23)
+
+### Corregido
+
+- El diario acepta únicamente `PREPARADA`, `APLICANDO`, `COMPLETADA` y
+  `REQUIERE_REVISION`; cualquier estado vacío o desconocido bloquea nuevas keys
+  y retries automáticos con un error explícito de consistencia.
+- El circuito durable usa validación numérica estricta para snapshot, stock y
+  movimientos. Vacíos, valores no finitos y strings mixtos ya no pueden superar
+  el readback ni llevar una operación a `COMPLETADA`.
+
+### Estado
+
+- Corrección preparada y validada localmente. F9 continúa abierta, pendiente de
+  despliegue/migración y validación TEST, además de las decisiones humanas.
+- No se declara ACID; Producción no está autorizada y no se ejecutaron escrituras
+  remotas, deploy, migración remota, E2E remoto, commit ni push.
+
+## [F9-A.2] — Diario durable e idempotencia multitabla preparados (2026-09-22)
+
+### Añadido
+
+- Diario TEST-only `OPERACIONES_PEDIDOS` con intención previa, hash/plan mínimo,
+  estados `PREPARADA`, `APLICANDO`, `COMPLETADA` y `REQUIERE_REVISION`.
+- `operacion_id` aditivo en movimientos, readback determinista de pedido/stock/
+  movimientos y diagnóstico interno sin reparación automática destructiva.
+- Pruebas locales con fallos inyectados en productos, movimientos, pedido,
+  `flush`, readback y registro del estado incierto.
+
+### Cambiado
+
+- Confirmar y cancelar exigen `idempotency_key`, reanudan efectos ya aplicados y
+  bloquean mutaciones incompatibles mientras exista una operación no completada.
+- Una operación solo se declara completada tras comprobar todos sus efectos; una
+  divergencia explícita exige revisión humana.
+
+### Estado
+
+- Arquitectura y migración aditiva preparadas localmente, no desplegadas ni
+  ejecutadas remotamente. F9 sigue abierta y Producción no está autorizada.
+- Google Sheets no se declara ACID ni transaccional: el mecanismo es serializado,
+  idempotente, durable, verificable y reconciliable.
+- Sin escrituras remotas, E2E remoto, commit ni push.
+
+## [F9-A.1] — Seguridad, roles e IDs preparados en código (2026-09-22)
+
+### Añadido
+
+- Roles `venta`, `operacion` y `administracion`, capacidades explícitas,
+  autorización central, endpoint mínimo de sesión y UI filtrada.
+- Sesión HMAC con actor, nombre opcional, rol, emisión y expiración; compatibilidad
+  temporal del login compartido como `legacy-admin`/`administracion`.
+- Pruebas de matriz, sesión, permisos y flujo de stock sin red.
+- DTOs allowlist para toda escritura admin; acción/token quedan fijados por el
+  servidor y el actor auditado solo proviene de la sesión.
+
+### Cambiado
+
+- Pedido web nuevo queda `recibido` y no descuenta stock.
+- Confirmación `recibido → pendiente` valida todo el detalle y descuenta bajo
+  lock una vez; cancelación devuelve solo desde `pendiente`/`listo` y registra
+  el actor validado por el servidor.
+- IDs `PED` y `MOV` incorporan sufijo UUID; se retiró `listo → pendiente`; la
+  creación compensa cabecera/detalles parciales y hace explícita una
+  `CONSISTENCIA_INCIERTA` si falla esa compensación.
+
+### Estado
+
+- Preparado localmente para TEST y pendiente de revisión humana/despliegue TEST.
+- Matriz provisional de Omar; asignación de personas y aceptación del Almacén
+  pendientes. F9 no se declara cerrada.
+- Producción no tocada; sin deploy, escrituras remotas, commit ni push.
+- La compensación acotada de creación no resolvía consistencia multitabla; ese
+  alcance se aborda por separado en F9-A.2.
+
 ## [FASES 9–10] — Preparación técnica Go/No-Go (2026-09-21)
 
 ### Cambiado

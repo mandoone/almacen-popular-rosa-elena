@@ -67,8 +67,8 @@ Reglas derivadas:
 | `cancelado` | con valor | No | Se había descontado y luego fue devuelto |
 | estado ilegible | cualquiera | No inferir | Bloquear mutaciones y revisar manualmente |
 
-`fecha_confirmacion` se escribe una sola vez en `recibido → pendiente` o
-`recibido → listo`. Los cambios posteriores no la reemplazan ni la borran.
+`fecha_confirmacion` se escribe una sola vez en `recibido → pendiente`. Los
+cambios posteriores no la reemplazan ni la borran.
 
 Para pedidos heredados se puede poblar con la fecha de migración porque fueron
 creados bajo un modelo que descontaba stock al crear. Antes de hacerlo se debe
@@ -184,9 +184,10 @@ Ese ID sirve para auditoría de una ejecución, pero no convierte reintentos de 
 cliente antiguo en idempotentes. La protección adicional será la transición de
 estado y la prohibición de reintento automático.
 
-### 2.5 Atomicidad parcial y orden de escrituras
+### 2.5 Consistencia durable y orden de escrituras
 
-**Decisión: propuesta cerrada como estrategia de contención.**
+**Decisión: estrategia de contención implementada localmente en F9-A.2 para
+confirmación/cancelación; pendiente de migración y validación TEST remota.**
 
 `LockService` evita carreras, pero no convierte varias hojas en una transacción.
 Antes de escribir se debe leer y validar todo dentro del lock, calcular el plan

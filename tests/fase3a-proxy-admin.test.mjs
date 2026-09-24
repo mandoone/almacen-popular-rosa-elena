@@ -41,6 +41,18 @@ test('Listo -> Entregado si se permite', () => {
   assert.equal(decidirPatchEstado('listo', 'entregado').permitido, true);
 });
 
+test('Listo -> Pendiente se rechaza porque no pertenece al flujo aprobado', () => {
+  const d = decidirPatchEstado('listo', 'pendiente');
+  assert.equal(d.permitido, false);
+  assert.equal(d.status, 409);
+});
+
+test('Recibido -> Listo se rechaza: confirmar es un paso obligatorio', () => {
+  const d = decidirPatchEstado('recibido', 'listo');
+  assert.equal(d.permitido, false);
+  assert.equal(d.status, 409);
+});
+
 // ── La trampa del desplegable de pago ────────────────────────────────────────
 
 test('reenviar el mismo estado se permite y no cuenta como transicion', () => {

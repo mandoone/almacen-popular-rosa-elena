@@ -4,14 +4,9 @@
  * Fuente de verdad operativa:
  *   docs/fase-3a/levantamiento_operativo_fase_3a_consolidado.md (§3.4, §3.5, §3.8)
  *
- * IMPORTANTE — este módulo es PURO y todavía NO está conectado al flujo real.
- * El backend productivo (scripts/apps-script-pedidos.gs) hoy NO conoce el estado
- * `recibido` y descuenta stock al CREAR el pedido. Ver:
- *   docs/fase-3a/DIAGNOSTICO_ACTUAL.md
- *   docs/fase-3a/CONTRATO_APPS_SCRIPT_PROPUESTO.md
- *
- * Mientras esa migración no se ejecute, estas funciones sirven como
- * especificación ejecutable y verificable, no como comportamiento vigente.
+ * Esta misma matriz se aplica en el proxy Next.js y se replica defensivamente
+ * dentro de Apps Script. Allí el lock serializa la operación; el diario durable
+ * y el readback verifican sus efectos sin afirmar atomicidad multitabla.
  */
 
 export const ESTADOS_PEDIDO = [
@@ -64,14 +59,12 @@ export function consumeStock(estado: EstadoPedido): boolean {
 /**
  * Transiciones aprobadas en el levantamiento (§3.4).
  *
- * Nota: `pendiente → entregado` NO aparece en el flujo aprobado, aunque el panel
- * actual sí lo permite. Se respeta el levantamiento y la divergencia queda
- * registrada como pendiente técnico en docs/fase-3a/PENDIENTES_CAROLINA_NADIA.md.
+ * `recibido → listo` y `pendiente → entregado` se rechazan porque saltan pasos.
  */
 const TRANSICIONES: Record<EstadoPedido, readonly EstadoPedido[]> = {
-  recibido: ['pendiente', 'listo', 'cancelado'],
+  recibido: ['pendiente', 'cancelado'],
   pendiente: ['listo', 'cancelado'],
-  listo: ['pendiente', 'entregado', 'cancelado'],
+  listo: ['entregado', 'cancelado'],
   entregado: [],
   cancelado: [],
 };
@@ -107,9 +100,8 @@ export interface ResultadoTransicion {
  * Evalúa una transición y devuelve su impacto de stock.
  *
  * Reglas derivadas (§3.4 y §3.8 del levantamiento):
- *   recibido  → pendiente/listo  → descuenta
+ *   recibido  → pendiente        → descuenta
  *   pendiente → listo            → ninguno (ya estaba descontado)
- *   listo     → pendiente        → ninguno
  *   listo     → entregado        → ninguno
  *   recibido  → cancelado        → ninguno (nunca descontó)
  *   pendiente/listo → cancelado  → devuelve

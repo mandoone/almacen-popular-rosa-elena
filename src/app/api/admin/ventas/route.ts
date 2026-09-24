@@ -6,6 +6,7 @@ import {
   listarCatalogoVentaPresencial,
 } from '@/lib/appsScriptPedidos';
 import { validarSolicitudVentaPresencial } from '@/lib/fase5/ventaPresencial';
+import { actorIdFromRequest } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,7 +42,14 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    const validacion = validarSolicitudVentaPresencial(body);
+    const validacion = validarSolicitudVentaPresencial({
+      apertura_id: body.apertura_id,
+      fecha_hora: body.fecha_hora,
+      lineas: body.lineas,
+      forma_pago: body.forma_pago,
+      observaciones: body.observaciones,
+      vendedor: actorIdFromRequest(req),
+    });
     if (!validacion.ok) {
       return NextResponse.json(
         { ok: false, error: validacion.error },

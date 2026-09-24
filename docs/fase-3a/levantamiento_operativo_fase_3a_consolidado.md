@@ -163,7 +163,7 @@ Tu pedido fue recibido correctamente. El Almacén Popular revisará tu solicitud
 | Entregado | Pedido retirado o entregado. | Stock ya descontado. |
 | Cancelado | Pedido anulado. | Depende del estado anterior. |
 
-**Flujo aprobado:** Recibido → Pendiente; Recibido → Listo; Pendiente → Listo; Listo → Pendiente; Listo → Entregado; Recibido/Pendiente/Listo → Cancelado. Cancelado no se reabre. Entregado no se cancela en flujo normal.
+**Flujo vigente (F9A-04, que supersede la matriz histórica):** Recibido → Pendiente → Listo → Entregado; Recibido/Pendiente/Listo → Cancelado. No hay saltos ni retrocesos. Cancelado no se reabre. Entregado no se cancela en flujo normal.
 
 ### 3.5 Reabrir pedidos cancelados
 

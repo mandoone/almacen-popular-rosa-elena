@@ -228,7 +228,7 @@ implica, `origen_pedido` manda.
 ## E. Compatibilidad con el flujo de Fase 3A
 
 `docs/fase-3a/MODELO_ESTADOS_PEDIDOS.md` no cambia: sigue siendo
-`recibido → pendiente/listo → entregado`, con `entregado` y `cancelado` como
+`recibido → pendiente → listo → entregado`, con `entregado` y `cancelado` como
 estados finales. Fase 3B no reabre esa máquina de estados; solo define **cómo
 entra** cada pedido a ella según su origen:
 
@@ -253,7 +253,7 @@ implementar código conectado:
 
 ### F.1 ¿Venta asistida entra en `recibido` o ya confirmada? — ✅ Aprobada
 Si un vendedor arma la venta y la cobra en el momento, exigir que pase por
-`recibido → pendiente/listo` como un pedido web es una fricción operativa (dos
+`recibido → pendiente → listo` como un pedido web es una fricción operativa (dos
 pasos para una sola persona). Pero saltarse `recibido` rompe la regla actual de
 que todo pedido nuevo nace sin comprometer stock. Se necesita una decisión
 explícita, no un valor por defecto inventado aquí.
@@ -364,17 +364,17 @@ mutar `APERTURAS`.
 
 **Implementación parcial:** lectura pública, bloqueo por apertura activa y
 asociación mínima de pedidos anticipados preparados solo para TEST. El cambio
-de estado inicial/stock atómico y todos los orígenes presenciales siguen sin
+de estado inicial/stock consistente y todos los orígenes presenciales siguen sin
 implementar. Se reutiliza la máquina de Fase 3A; no agrega estados.
 
 ### H.1 Entrada por origen, estado inicial y stock
 
 | origen_pedido | Estado inicial | Cuándo descuenta | Cuándo devuelve |
 |---|---|---|---|
-| `online_anticipado` | `recibido` | Al confirmar a `pendiente` o `listo` | Al cancelar desde un estado que comprometía stock |
-| `presencial_qr` | `recibido` | Al confirmar a `pendiente` o `listo` | Igual que anticipado |
-| `presencial_vendedor` | `listo` | Atómicamente durante la creación | Al cancelar desde `listo` |
-| `comanda_papel` | `listo` | Atómicamente durante la creación/transcripción | Al cancelar desde `listo` |
+| `online_anticipado` | `recibido` | Al confirmar a `pendiente` | Al cancelar desde un estado que comprometía stock |
+| `presencial_qr` | `recibido` | Al confirmar a `pendiente` | Igual que anticipado |
+| `presencial_vendedor` | `listo` | En una creación serializada, idempotente y verificable | Al cancelar desde `listo` |
+| `comanda_papel` | `listo` | En una creación/transcripción serializada, idempotente y verificable | Al cancelar desde `listo` |
 
 `entregado` y `cancelado` siguen terminales. `listo → entregado` no vuelve a
 tocar stock. Una falla parcial debe dejar el pedido y el inventario sin cambios
@@ -385,8 +385,8 @@ o registrar una operación recuperable; nunca aceptar un pedido parcialmente.
 - Apps Script TEST: extender creación anticipada con `apertura_id`,
   `origen_pedido` e `idempotency_key`; crear una operación separada
   `crearVentaPresencialConfirmada` para crear cabecera, detalle, pago,
-  movimiento y descuento de stock en una transacción lógica; reutilizar el
-  cambio atómico de estado y cancelación de Fase 3A.
+  movimiento y descuento de stock como operación durable y verificable;
+  reutilizar el diario de estado/cancelación de Fase 3A.
 - Next.js: extender `POST /api/pedidos` para anticipado; preparar
   `POST /api/pedidos/presencial` para QR y
   `POST /api/admin/ventas-presenciales` para vendedor/comanda papel.

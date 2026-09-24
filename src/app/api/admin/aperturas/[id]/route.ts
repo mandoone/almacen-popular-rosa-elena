@@ -5,6 +5,7 @@ import {
   obtenerApertura,
 } from '@/lib/appsScriptPedidos';
 import { validarAperturaEditable } from '@/lib/fase3b/adminAperturas';
+import { actorIdFromRequest } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +57,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       apertura: validacion.apertura,
       actualizado_en_esperado: body.actualizado_en_esperado,
       idempotency_key: body.idempotency_key,
+      actor: actorIdFromRequest(req),
     });
     return NextResponse.json({ ok: true, data: apertura });
   } catch (err) {

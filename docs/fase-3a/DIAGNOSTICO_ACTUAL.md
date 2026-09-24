@@ -16,7 +16,7 @@ momento en que se descuenta el stock.
 | Dimensión | Modelo aprobado (levantamiento) | Sistema hoy |
 |---|---|---|
 | Estado inicial del pedido web | `recibido` | `pendiente` |
-| Cuándo descuenta stock | Al **confirmar** (recibido → pendiente/listo) | Al **crear** el pedido |
+| Cuándo descuenta stock | Al **confirmar** (recibido → pendiente) | Al **crear** el pedido |
 | Estado de pago | Separado del método | Mezclado (`pagado_efectivo`) |
 | Transiciones | Lista cerrada y validada | Sin validar: cualquiera a cualquiera |
 | Motivo de cancelación | Obligatorio | No existe |

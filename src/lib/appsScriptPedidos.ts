@@ -34,6 +34,7 @@ import {
   resolverConfigPorEntorno,
 } from './env';
 import type { VentaPresencialInput } from './fase5/ventaPresencial';
+import { payloadAdminFase78 } from './fase9/dtoAdmin';
 import {
   diagnosticarRespuestaNoJson,
   esCodigoTransitorioAppsScript,
@@ -327,7 +328,20 @@ export function listarProductos(): Promise<ProductoCatalogo[]> {
 }
 
 export function crearPedido(input: CrearPedidoInput): Promise<CrearPedidoResult> {
-  return postScript<CrearPedidoResult>({ action: 'crearPedido', ...input });
+  return postScript<CrearPedidoResult>({
+    nombre_cliente: input.nombre_cliente,
+    telefono: input.telefono,
+    forma_pago: input.forma_pago,
+    observaciones: input.observaciones,
+    carrito: input.carrito.map((item) => ({
+      id_producto: item.id_producto,
+      cantidad: item.cantidad,
+      nombre: item.nombre,
+    })),
+    apertura_id: input.apertura_id,
+    origen_pedido: input.origen_pedido,
+    action: 'crearPedido',
+  });
 }
 
 export interface VentaPresencialCabecera {
@@ -427,19 +441,31 @@ export function actualizarEstadoPedido(args: {
   id_pedido: string;
   estado_pedido: string;
   estado_pago?: string;
+  actor: string;
+  idempotency_key: string;
 }): Promise<unknown> {
   return postScript({
+    id_pedido: args.id_pedido,
+    estado_pedido: args.estado_pedido,
+    estado_pago: args.estado_pago,
+    actor: args.actor,
+    idempotency_key: args.idempotency_key,
     action: 'actualizarEstadoPedido',
     token: adminToken(),
-    ...args,
   });
 }
 
-export function cancelarPedido(idPedido: string): Promise<unknown> {
+export function cancelarPedido(
+  idPedido: string,
+  actor: string,
+  idempotencyKey: string
+): Promise<unknown> {
   return postScript({
     action: 'cancelarPedido',
     token: adminToken(),
     id_pedido: idPedido,
+    actor,
+    idempotency_key: idempotencyKey,
   });
 }
 
@@ -465,13 +491,15 @@ export function obtenerApertura(idApertura: string): Promise<AperturaAdmin> {
 export function crearApertura(args: {
   apertura: AperturaInput;
   idempotency_key: string;
+  actor: string;
 }): Promise<AperturaAdmin> {
   exigirEntornoTestParaCalendario();
   return postScript<AperturaAdmin>({
+    apertura: args.apertura,
+    idempotency_key: args.idempotency_key,
+    actor: args.actor,
     action: 'crearApertura',
     token: adminToken(),
-    actor: 'admin_web',
-    ...args,
   });
 }
 
@@ -480,13 +508,17 @@ export function actualizarApertura(args: {
   apertura: AperturaInput;
   actualizado_en_esperado: string;
   idempotency_key: string;
+  actor: string;
 }): Promise<AperturaAdmin> {
   exigirEntornoTestParaCalendario();
   return postScript<AperturaAdmin>({
+    apertura_id: args.apertura_id,
+    apertura: args.apertura,
+    actualizado_en_esperado: args.actualizado_en_esperado,
+    idempotency_key: args.idempotency_key,
+    actor: args.actor,
     action: 'actualizarApertura',
     token: adminToken(),
-    actor: 'admin_web',
-    ...args,
   });
 }
 
@@ -495,13 +527,17 @@ export function cambiarEstadoApertura(args: {
   estado_apertura: string;
   actualizado_en_esperado: string;
   idempotency_key: string;
+  actor: string;
 }): Promise<AperturaAdmin> {
   exigirEntornoTestParaCalendario();
   return postScript<AperturaAdmin>({
+    apertura_id: args.apertura_id,
+    estado_apertura: args.estado_apertura,
+    actualizado_en_esperado: args.actualizado_en_esperado,
+    idempotency_key: args.idempotency_key,
+    actor: args.actor,
     action: 'cambiarEstadoApertura',
     token: adminToken(),
-    actor: 'admin_web',
-    ...args,
   });
 }
 
@@ -518,10 +554,18 @@ export function crearVentaPresencial(
 ): Promise<VentaPresencialRegistrada> {
   exigirEntornoTestParaFase56();
   return postScript<VentaPresencialRegistrada>({
+    apertura_id: venta.apertura_id,
+    fecha_hora: venta.fecha_hora,
+    lineas: venta.lineas.map((linea) => ({
+      producto_id: linea.producto_id,
+      cantidad: linea.cantidad,
+    })),
+    forma_pago: venta.forma_pago,
+    vendedor: venta.vendedor,
+    observaciones: venta.observaciones,
+    idempotency_key: idempotencyKey,
     action: 'crearVentaPresencial',
     token: adminToken(),
-    idempotency_key: idempotencyKey,
-    ...venta,
   }).catch(relanzarErrorFase56);
 }
 
@@ -654,9 +698,13 @@ function getAdminFase78<T>(params: Record<string, string>): Promise<T> {
   return getScript<T>({ ...params, token: adminToken() });
 }
 
-function postAdminFase78<T>(body: Record<string, unknown>): Promise<T> {
+function postAdminFase78<T>(
+  action: string,
+  actor: string,
+  body: Record<string, unknown>
+): Promise<T> {
   exigirEntornoTestParaFase78();
-  return postScript<T>({ ...body, token: adminToken() });
+  return postScript<T>(payloadAdminFase78(action, actor, adminToken(), body));
 }
 
 export function verificarDestinoFase78Test(): Promise<Record<string, string>> {
@@ -680,12 +728,21 @@ export function obtenerCompraAdmin(compraId: string): Promise<CompraConDetalle> 
 export function crearCompraAdmin(input: {
   fecha: string;
   proveedor: string;
-  responsable: string;
   observaciones?: string;
   idempotency_key: string;
   lineas: Array<{ producto_id: string; cantidad: number; costo_unitario: number }>;
-}): Promise<CompraConDetalle> {
-  return postAdminFase78({ action: 'crearCompra', ...input });
+}, actor: string): Promise<CompraConDetalle> {
+  return postAdminFase78('crearCompra', actor, {
+    fecha: input.fecha,
+    proveedor: input.proveedor,
+    observaciones: input.observaciones,
+    idempotency_key: input.idempotency_key,
+    lineas: input.lineas.map((linea) => ({
+      producto_id: linea.producto_id,
+      cantidad: linea.cantidad,
+      costo_unitario: linea.costo_unitario,
+    })),
+  });
 }
 
 export function listarGastosExtraAdmin(filtros: { desde?: string; hasta?: string } = {}): Promise<GastoExtraAdmin[]> {
@@ -698,11 +755,16 @@ export function crearGastoExtraAdmin(input: {
   categoria: string;
   descripcion: string;
   monto: number;
-  responsable: string;
   observaciones?: string;
   idempotency_key: string;
-}): Promise<GastoExtraAdmin> {
-  return postAdminFase78({ action: 'crearGastoExtra', ...input });
+}, actor: string): Promise<GastoExtraAdmin> {
+  return postAdminFase78('crearGastoExtra', actor, {
+    categoria: input.categoria,
+    descripcion: input.descripcion,
+    monto: input.monto,
+    observaciones: input.observaciones,
+    idempotency_key: input.idempotency_key,
+  });
 }
 
 export function listarProductosAdmin(): Promise<ProductoAdmin[]> {
@@ -714,27 +776,40 @@ export function actualizarProductoAdmin(input: {
   producto_id: string;
   cambios: Record<string, unknown>;
   idempotency_key: string;
-}): Promise<ProductoAdmin> {
-  return postAdminFase78({ action: 'actualizarProductoAdmin', ...input });
+}, actor: string): Promise<ProductoAdmin> {
+  return postAdminFase78('actualizarProductoAdmin', actor, {
+    producto_id: input.producto_id,
+    cambios: input.cambios,
+    idempotency_key: input.idempotency_key,
+  });
 }
 
 export function crearProductoAdmin(input: {
   producto_id: string;
   producto: Record<string, unknown>;
   idempotency_key: string;
-}): Promise<ProductoAdmin> {
-  return postAdminFase78({ action: 'crearProductoAdmin', ...input });
+}, actor: string): Promise<ProductoAdmin> {
+  return postAdminFase78('crearProductoAdmin', actor, {
+    producto_id: input.producto_id,
+    producto: input.producto,
+    idempotency_key: input.idempotency_key,
+  });
 }
 
 export function ajustarStockAdmin(input: {
   producto_id: string;
   delta: number;
   motivo: string;
-  responsable: string;
   observaciones?: string;
   idempotency_key: string;
-}): Promise<{ producto_id: string; stock_anterior: number; stock_nuevo: number; delta: number }> {
-  return postAdminFase78({ action: 'ajustarStockAdmin', ...input });
+}, actor: string): Promise<{ producto_id: string; stock_anterior: number; stock_nuevo: number; delta: number }> {
+  return postAdminFase78('ajustarStockAdmin', actor, {
+    producto_id: input.producto_id,
+    delta: input.delta,
+    motivo: input.motivo,
+    observaciones: input.observaciones,
+    idempotency_key: input.idempotency_key,
+  });
 }
 
 export function obtenerReportesFase78(filtros: {
@@ -762,9 +837,15 @@ export function registrarCajaCompraAdmin(input: {
   efectivo_disponible: number;
   pendientes_referencia: number;
   presupuesto_confirmado: number;
-  responsable: string;
   observaciones?: string;
   idempotency_key: string;
-}): Promise<Record<string, unknown>> {
-  return postAdminFase78({ action: 'registrarCajaCompra', ...input });
+}, actor: string): Promise<Record<string, unknown>> {
+  return postAdminFase78('registrarCajaCompra', actor, {
+    saldo_cuenta: input.saldo_cuenta,
+    efectivo_disponible: input.efectivo_disponible,
+    pendientes_referencia: input.pendientes_referencia,
+    presupuesto_confirmado: input.presupuesto_confirmado,
+    observaciones: input.observaciones,
+    idempotency_key: input.idempotency_key,
+  });
 }

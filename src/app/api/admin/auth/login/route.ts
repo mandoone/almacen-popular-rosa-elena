@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
-import { makeSessionToken, COOKIE_NAME, cookieOptions, SESSION_MAX_AGE_S } from '@/lib/session';
+import {
+  makeSessionToken,
+  COOKIE_NAME,
+  cookieOptions,
+  permiteLoginLegacy,
+  SESSION_MAX_AGE_S,
+} from '@/lib/session';
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -11,6 +17,12 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 export async function POST(req: Request) {
+  if (!permiteLoginLegacy(process.env.NODE_ENV, process.env.NEXT_PUBLIC_APP_ENV)) {
+    return NextResponse.json(
+      { ok: false, error: 'El acceso legacy-admin está bloqueado en producción.' },
+      { status: 403 }
+    );
+  }
   const adminPassword = process.env.ADMIN_PANEL_PASSWORD;
   const sessionSecret = process.env.ADMIN_SESSION_SECRET;
 

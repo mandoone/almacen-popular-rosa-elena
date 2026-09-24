@@ -92,7 +92,16 @@ var HOJAS = [
     encabezados: [
       'id_movimiento', 'fecha_hora', 'tipo', 'origen', 'id_origen',
       'id_producto', 'cantidad', 'stock_anterior', 'stock_resultante',
-      'usuario', 'observaciones'
+      'usuario', 'observaciones', 'operacion_id'
+    ]
+  },
+  {
+    nombre: 'OPERACIONES_PEDIDOS',
+    encabezados: [
+      'operacion_id', 'idempotency_key', 'tipo_operacion', 'id_pedido', 'actor',
+      'estado_operacion', 'paso', 'payload_hash', 'snapshot_json',
+      'resultado_json', 'error_codigo', 'error_detalle', 'creado_en',
+      'actualizado_en'
     ]
   }
 ];
@@ -110,7 +119,7 @@ var VALIDACIONES = {
     permite_decimal: ['SI', 'NO']
   },
   PEDIDOS: {
-    estado_pedido: ['pendiente', 'listo', 'entregado', 'cancelado'],
+    estado_pedido: ['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'],
     estado_pago: ['pendiente', 'pagado_transferencia', 'pagado_efectivo', 'anulado'],
     forma_pago: ['transferencia', 'efectivo_al_retirar']
   },

@@ -134,4 +134,4 @@ No se movieron, borraron ni trataron como imágenes finales.
 - Publicar las fechas sin completar `lugar` o sin revisión humana puede mostrar
   información incompleta.
 - Compartir catálogo entre web y presencial aumenta la competencia por el mismo
-  stock; ambos canales deben reutilizar una única operación atómica.
+  stock; ambos canales deben reutilizar una única operación durable y verificable.

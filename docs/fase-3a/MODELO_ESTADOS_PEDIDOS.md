@@ -35,12 +35,12 @@ o devolver dos veces.
 ```
                     ┌──────────────┐
                     │  recibido    │  (nace aquí el pedido web)
-                    └──┬────┬────┬─┘
-            descuenta  │    │    │  sin tocar stock
-        ┌──────────────┘    │    └──────────────┐
-        ▼                   ▼ descuenta         ▼
+                    └──┬─────────┬─┘
+            descuenta  │         │  sin tocar stock
+        ┌──────────────┘         └──────────────┐
+        ▼                                       ▼
   ┌───────────┐        ┌─────────┐        ┌───────────┐
-  │ pendiente │◀──────▶│  listo  │        │ cancelado │
+  │ pendiente │───────▶│  listo  │        │ cancelado │
   └─────┬─────┘        └────┬────┘        └───────────┘
         │                   │                   ▲
         │ devuelve          │ devuelve          │
@@ -55,11 +55,9 @@ o devolver dos veces.
 | Desde | Hacia | Permitido | Impacto en stock |
 |---|---|---|---|
 | `recibido` | `pendiente` | ✅ | **descuenta** |
-| `recibido` | `listo` | ✅ | **descuenta** |
 | `recibido` | `cancelado` | ✅ | ninguno (nunca descontó) |
 | `pendiente` | `listo` | ✅ | ninguno (ya descontado) |
 | `pendiente` | `cancelado` | ✅ | **devuelve** |
-| `listo` | `pendiente` | ✅ | ninguno |
 | `listo` | `entregado` | ✅ | ninguno |
 | `listo` | `cancelado` | ✅ | **devuelve** |
 | `entregado` | cualquiera | ❌ | — |
@@ -117,7 +115,7 @@ ella en el punto de llamada:
 |---|---|---|
 | `→ entregado` | Pago registrado: `pagado` + método + responsable (§4.4) | `pagos.ts` → `validarEntrega` |
 | `→ cancelado` | Motivo obligatorio; con “Otro”, observación obligatoria (§3.8) | `cancelacion.ts` → `validarCancelacion` |
-| `recibido → pendiente/listo` | Stock suficiente en cada línea (§3.7) | `productos.ts` → `validarCantidad` |
+| `recibido → pendiente` | Stock suficiente en cada línea (§3.7) | `productos.ts` → `validarCantidad` |
 
 Si al confirmar no alcanza el stock, §3.7 manda: el pedido **se queda en
 `recibido`**, se contacta al cliente por WhatsApp y se ajusta antes de reintentar.

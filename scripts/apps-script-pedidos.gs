@@ -45,8 +45,19 @@ var HOJAS = {
   GASTOS_EXTRA: 'GASTOS_EXTRA',
   HISTORIAL_COSTOS: 'HISTORIAL_COSTOS',
   CAJA_COMPRA: 'CAJA_COMPRA',
-  AUDITORIA_PRODUCTOS: 'AUDITORIA_PRODUCTOS'
+  AUDITORIA_PRODUCTOS: 'AUDITORIA_PRODUCTOS',
+  OPERACIONES_PEDIDOS: 'OPERACIONES_PEDIDOS'
 };
+
+var COLUMNAS_OPERACIONES_PEDIDOS = [
+  'operacion_id', 'idempotency_key', 'tipo_operacion', 'id_pedido', 'actor',
+  'estado_operacion', 'paso', 'payload_hash', 'snapshot_json', 'resultado_json',
+  'error_codigo', 'error_detalle', 'creado_en', 'actualizado_en'
+];
+
+var ESTADOS_OPERACION_PEDIDO = [
+  'PREPARADA', 'APLICANDO', 'COMPLETADA', 'REQUIERE_REVISION'
+];
 
 var COLUMNAS_APERTURAS = [
   'apertura_id',
@@ -117,7 +128,7 @@ var COLUMNAS_FASE_7_8 = {
   MOVIMIENTOS_STOCK: [
     'movimiento_id', 'fecha_hora', 'producto_id', 'tipo_movimiento', 'cantidad',
     'referencia_tipo', 'referencia_id', 'apertura_id', 'observacion',
-    'stock_anterior', 'stock_resultante', 'usuario', 'payload_hash'
+    'stock_anterior', 'stock_resultante', 'usuario', 'payload_hash', 'operacion_id'
   ],
   PRODUCTOS_ADMIN: [
     'id_producto', 'activo', 'nombre', 'categoria', 'prioridad', 'unidad_medida',
@@ -323,9 +334,9 @@ function doPost(e) {
 // ============================== ACCIONES =======================================
 
 /**
- * Crea un pedido real. Precios y validaciones SIEMPRE desde PRODUCTOS (no se
- * confia en los precios enviados por el frontend). Usa LockService para evitar
- * condiciones de carrera de stock.
+ * Crea un pedido recibido. Precios y validaciones SIEMPRE desde PRODUCTOS (no
+ * se confia en los precios enviados por el frontend). La disponibilidad se
+ * informa al crear, pero NO se reserva ni descuenta stock en este paso.
  */
 function crearPedido_(body) {
   var nombreCliente = limpiar_(body.nombre_cliente);
@@ -403,75 +414,71 @@ function crearPedido_(body) {
         cantidad: cant,
         precio_unitario: precio,
         subtotal: subtotal,
-        stock_anterior: stockActual,
-        stock_resultante: redondear2_(stockActual - cant)
+        stock_disponible_al_crear: stockActual
       });
     }
     total = redondear2_(total);
 
-    var idPedido = generarId_('PED', ahora);
-
-    // 1) Escribir cabecera en PEDIDOS.
     var ped = leerHoja_(ss, HOJAS.PEDIDOS);
-    agregarFila_(ped, {
-      id_pedido: idPedido,
-      fecha_hora: marca_(ahora),
-      canal: CANAL_WEB,
-      id_cliente: '',
-      nombre_cliente: nombreCliente,
-      telefono: telefono,
-      total: total,
-      estado_pedido: 'pendiente',
-      estado_pago: 'pendiente',
-      forma_pago: formaPago,
-      observaciones: observaciones,
-      vendedor_admin: '',
-      fecha_entrega: '',
-      apertura_id: contextoApertura.apertura_id,
-      origen_pedido: contextoApertura.origen_pedido
-    });
-
-    // 2) Escribir lineas en DETALLE_PEDIDOS.
     var det = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
-    for (var d = 0; d < lineas.length; d++) {
-      var ln = lineas[d];
-      agregarFila_(det, {
+    var idPedido = generarIdUnicoEnHoja_(ped, 'id_pedido', 'PED', ahora);
+    var ultimaFilaPedidos = ped.sheet.getLastRow();
+    var ultimaFilaDetalles = det.sheet.getLastRow();
+    var filasPedidoCreadas = 0;
+    var filasDetalleCreadas = 0;
+    try {
+      // 1) Escribir cabecera en PEDIDOS.
+      agregarFila_(ped, {
         id_pedido: idPedido,
-        id_producto: ln.id_producto,
-        nombre_producto: ln.nombre_producto,
-        cantidad: ln.cantidad,
-        unidad_medida: ln.unidad_medida,
-        precio_unitario: ln.precio_unitario,
-        subtotal: ln.subtotal
+        fecha_hora: marca_(ahora),
+        canal: CANAL_WEB,
+        id_cliente: '',
+        nombre_cliente: nombreCliente,
+        telefono: telefono,
+        total: total,
+        estado_pedido: 'recibido',
+        estado_pago: 'pendiente',
+        forma_pago: formaPago,
+        observaciones: observaciones,
+        vendedor_admin: '',
+        fecha_entrega: '',
+        apertura_id: contextoApertura.apertura_id,
+        origen_pedido: contextoApertura.origen_pedido
       });
-    }
+      filasPedidoCreadas++;
 
-    // 3) Descontar stock en PRODUCTOS + 4) registrar MOVIMIENTOS_STOCK.
-    var mov = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
-    for (var s = 0; s < lineas.length; s++) {
-      var l = lineas[s];
-      // Fila real en la hoja = indice de datos + 2 (encabezado en fila 1).
-      prod.sheet.getRange(l.filaProducto + 2, cStock + 1).setValue(l.stock_resultante);
-      registrarMovimiento_(mov, {
-        tipo: 'salida',
-        origen: 'pedido',
-        id_origen: idPedido,
-        id_producto: l.id_producto,
-        cantidad: -l.cantidad,
-        stock_anterior: l.stock_anterior,
-        stock_resultante: l.stock_resultante,
-        usuario: 'web',
-        observaciones: 'Pedido web ' + idPedido,
-        ahora: ahora
-      });
-    }
+      // 2) Escribir lineas en DETALLE_PEDIDOS.
+      for (var d = 0; d < lineas.length; d++) {
+        var ln = lineas[d];
+        agregarFila_(det, {
+          id_pedido: idPedido,
+          id_producto: ln.id_producto,
+          nombre_producto: ln.nombre_producto,
+          cantidad: ln.cantidad,
+          unidad_medida: ln.unidad_medida,
+          precio_unitario: ln.precio_unitario,
+          subtotal: ln.subtotal
+        });
+        filasDetalleCreadas++;
+      }
 
-    SpreadsheetApp.flush();
+      SpreadsheetApp.flush();
+    } catch (err) {
+      var compensada = compensarCreacionPedido_(
+        ped.sheet, ultimaFilaPedidos, filasPedidoCreadas,
+        det.sheet, ultimaFilaDetalles, filasDetalleCreadas
+      );
+      if (!compensada) {
+        lanzar_('CONSISTENCIA_INCIERTA: fallo al crear y compensar el pedido "' +
+          idPedido + '". Requiere revision manual.', 500);
+      }
+      throw err;
+    }
 
     return {
       id_pedido: idPedido,
       total: total,
-      estado_pedido: 'pendiente',
+      estado_pedido: 'recibido',
       items: lineas.length,
       apertura_id: contextoApertura.apertura_id || undefined,
       origen_pedido: contextoApertura.origen_pedido || undefined,
@@ -585,117 +592,714 @@ function obtenerPedido_(idPedido) {
   return { pedido: cabecera, detalle: detalle };
 }
 
-/**
- * Actualiza estado_pedido (y estado_pago opcional). No toca stock.
- */
+function impactoTransicionPedido_(actual, siguiente) {
+  var permitidas = {
+    recibido: ['pendiente', 'cancelado'],
+    pendiente: ['listo', 'cancelado'],
+    listo: ['entregado', 'cancelado'],
+    entregado: [],
+    cancelado: []
+  };
+  if (!permitidas[actual]) lanzar_('Estado actual de pedido no reconocido: "' + actual + '".', 409);
+  if (actual === siguiente) return 'ninguno';
+  if (permitidas[actual].indexOf(siguiente) === -1) {
+    lanzar_('Transicion de pedido no permitida: ' + actual + ' -> ' + siguiente + '.', 409);
+  }
+  if (actual === 'recibido' && siguiente === 'pendiente') return 'descuenta';
+  if ((actual === 'pendiente' || actual === 'listo') && siguiente === 'cancelado') return 'devuelve';
+  return 'ninguno';
+}
+
+function lanzarOperacionPedido_(codigo, mensaje, status) {
+  var err = new Error(codigo + ': ' + mensaje);
+  err.codigo_operacion = codigo;
+  err.codigo = status || 409;
+  throw err;
+}
+
+function codigoOperacionError_(err, fallback) {
+  return limpiar_(err && err.codigo_operacion) || fallback || 'FALLO_APLICACION';
+}
+
+function detalleOperacionError_(err) {
+  return limpiar_(err && err.message || err || 'Error no identificado.').slice(0, 500);
+}
+
+function parseNumeroDurableEstricto_(valor) {
+  var numero;
+  if (typeof valor === 'number') {
+    numero = valor;
+  } else if (typeof valor === 'string') {
+    if (valor !== valor.trim() || !/^[+-]?\d+(?:\.\d+)?$/.test(valor)) {
+      return { valido: false, valor: null };
+    }
+    numero = Number(valor);
+  } else {
+    return { valido: false, valor: null };
+  }
+  return isFinite(numero)
+    ? { valido: true, valor: numero }
+    : { valido: false, valor: null };
+}
+
+function numerosOperacionIguales_(a, b) {
+  var numeroA = parseNumeroDurableEstricto_(a);
+  var numeroB = parseNumeroDurableEstricto_(b);
+  return numeroA.valido && numeroB.valido &&
+    Math.abs(numeroA.valor - numeroB.valor) < 0.000001;
+}
+
+function estadoOperacionPedidoValido_(valor) {
+  if (typeof valor !== 'string') return null;
+  return ESTADOS_OPERACION_PEDIDO.indexOf(valor) === -1 ? null : valor;
+}
+
+function exigirEstadoOperacionPedidoValido_(valor) {
+  var estado = estadoOperacionPedidoValido_(valor);
+  if (!estado) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'El pedido tiene una operación durable con estado inválido o desconocido.', 409);
+  }
+  return estado;
+}
+
+function planOperacionTieneNumerosValidos_(plan) {
+  if (!plan || !Array.isArray(plan.productos)) return false;
+  for (var i = 0; i < plan.productos.length; i++) {
+    var producto = plan.productos[i] || {};
+    if (!parseNumeroDurableEstricto_(producto.cantidad_movimiento).valido ||
+        !parseNumeroDurableEstricto_(producto.stock_anterior).valido ||
+        !parseNumeroDurableEstricto_(producto.stock_resultante).valido) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function parseJsonOperacion_(texto, etiqueta) {
+  try {
+    return JSON.parse(String(texto || ''));
+  } catch (err) {
+    lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+      'El ' + etiqueta + ' durable no es legible.', 409);
+  }
+}
+
+function serializarOperacionPedido_(hoja, indice) {
+  var obj = filaAObjeto_(hoja, hoja.filas[indice]);
+  return {
+    indice: indice,
+    operacion_id: limpiar_(obj.operacion_id),
+    idempotency_key: limpiar_(obj.idempotency_key),
+    tipo_operacion: limpiar_(obj.tipo_operacion),
+    id_pedido: limpiar_(obj.id_pedido),
+    actor: limpiar_(obj.actor),
+    estado_operacion: obj.estado_operacion,
+    paso: limpiar_(obj.paso),
+    payload_hash: limpiar_(obj.payload_hash),
+    snapshot_json: String(obj.snapshot_json || ''),
+    resultado_json: String(obj.resultado_json || ''),
+    error_codigo: limpiar_(obj.error_codigo),
+    error_detalle: limpiar_(obj.error_detalle),
+    creado_en: limpiar_(obj.creado_en),
+    actualizado_en: limpiar_(obj.actualizado_en)
+  };
+}
+
+function buscarOperacionPedidoPor_(ss, campo, valor) {
+  var hoja = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+  exigirColumnas_(hoja, COLUMNAS_OPERACIONES_PEDIDOS);
+  var indice = buscarFila_(hoja, col_(hoja, campo), valor);
+  return indice === -1 ? null : serializarOperacionPedido_(hoja, indice);
+}
+
+function actualizarOperacionPedido_(ss, operacionId, cambios) {
+  var hoja = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+  var indice = buscarFila_(hoja, col_(hoja, 'operacion_id'), operacionId);
+  if (indice === -1) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'No se encontró la intención durable de la operación.', 500);
+  }
+  var obj = filaAObjeto_(hoja, hoja.filas[indice]);
+  Object.keys(cambios).forEach(function (campo) { obj[campo] = cambios[campo]; });
+  obj.actualizado_en = marcaIso_(new Date());
+  escribirObjetoEnFila_(hoja, indice, obj);
+  SpreadsheetApp.flush();
+  var leida = buscarOperacionPedidoPor_(ss, 'operacion_id', operacionId);
+  if (!leida || (cambios.estado_operacion &&
+      leida.estado_operacion !== cambios.estado_operacion)) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'El cambio de estado durable no superó el readback.', 500);
+  }
+  return leida;
+}
+
+function persistirOperacionPreparada_(ss, registro) {
+  try {
+    var hoja = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+    agregarFila_(hoja, registro);
+    SpreadsheetApp.flush();
+    var leida = buscarOperacionPedidoPor_(ss, 'operacion_id', registro.operacion_id);
+    if (!leida || leida.estado_operacion !== 'PREPARADA' ||
+        leida.payload_hash !== registro.payload_hash ||
+        leida.snapshot_json !== registro.snapshot_json) {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'La intención durable no superó el readback.', 500);
+    }
+    return leida;
+  } catch (err) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'No se pudo confirmar la intención durable; no se modificó stock ni pedido. ' +
+      detalleOperacionError_(err), 500);
+  }
+}
+
+function exigirSinOperacionPedidoBloqueante_(ss, idPedido, operacionIdPermitida) {
+  var hoja = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+  var cPedido = col_(hoja, 'id_pedido');
+  var cEstado = col_(hoja, 'estado_operacion');
+  var cOperacion = col_(hoja, 'operacion_id');
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cPedido]) !== idPedido) continue;
+    if (limpiar_(hoja.filas[i][cOperacion]) === operacionIdPermitida) continue;
+    var estado = exigirEstadoOperacionPedidoValido_(hoja.filas[i][cEstado]);
+    if (estado === 'COMPLETADA') continue;
+    if (estado === 'REQUIERE_REVISION') {
+      lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+        'El pedido tiene una operación incierta pendiente de reconciliación.', 409);
+    }
+    if (estado === 'PREPARADA' || estado === 'APLICANDO') {
+      lanzarOperacionPedido_('OPERACION_EN_CURSO',
+        'El pedido tiene una operación durable pendiente.', 409);
+    }
+  }
+}
+
+function obtenerPedidoParaOperacion_(ss, idPedido) {
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  var indice = buscarFila_(pedidos, col_(pedidos, 'id_pedido'), idPedido);
+  if (indice === -1) lanzar_('Pedido no encontrado: "' + idPedido + '".', 404);
+  return {
+    hoja: pedidos,
+    indice: indice,
+    estado: limpiar_(pedidos.filas[indice][col_(pedidos, 'estado_pedido')]),
+    actor: pedidos.headers.indexOf('vendedor_admin') === -1
+      ? '' : limpiar_(pedidos.filas[indice][pedidos.headers.indexOf('vendedor_admin')])
+  };
+}
+
+function prepararPlanStockPedido_(ss, tipo, idPedido, actor, estadoAnterior, ahora) {
+  var signo = tipo === 'CONFIRMAR_PEDIDO' ? -1 : 1;
+  var necesitaStock = tipo === 'CONFIRMAR_PEDIDO' ||
+    (tipo === 'CANCELAR_PEDIDO' && (estadoAnterior === 'pendiente' || estadoAnterior === 'listo'));
+  if (!necesitaStock) return [];
+
+  var detalle = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
+  var cPedido = col_(detalle, 'id_pedido');
+  var cProducto = col_(detalle, 'id_producto');
+  var cCantidad = col_(detalle, 'cantidad');
+  var cantidades = {};
+  for (var i = 0; i < detalle.filas.length; i++) {
+    if (limpiar_(detalle.filas[i][cPedido]) !== idPedido) continue;
+    var productoId = limpiar_(detalle.filas[i][cProducto]);
+    var cantidad = parseNum_(detalle.filas[i][cCantidad]);
+    if (!productoId || !(cantidad > 0)) {
+      lanzarOperacionPedido_('DETALLE_INVALIDO',
+        'El pedido contiene una línea de detalle inválida.', 409);
+    }
+    cantidades[productoId] = redondear2_((cantidades[productoId] || 0) + cantidad);
+  }
+  var ids = Object.keys(cantidades).sort();
+  if (!ids.length) {
+    lanzarOperacionPedido_('DETALLE_INVALIDO',
+      'El pedido no tiene detalle para mover stock.', 409);
+  }
+
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var cId = col_(productos, 'id_producto');
+  var cStock = col_(productos, 'stock_actual');
+  var porId = {};
+  for (var p = 0; p < productos.filas.length; p++) {
+    porId[limpiar_(productos.filas[p][cId])] = p;
+  }
+  return ids.map(function (id) {
+    var indice = porId[id];
+    if (indice === undefined) {
+      lanzarOperacionPedido_('PRODUCTO_NO_EXISTE',
+        'Un producto del pedido ya no existe: "' + id + '".', 409);
+    }
+    var anterior = parseNum_(productos.filas[indice][cStock]);
+    var resultante = redondear2_(anterior + signo * cantidades[id]);
+    if (resultante < 0) {
+      lanzarOperacionPedido_('STOCK_INSUFICIENTE',
+        'Stock insuficiente de "' + id + '". El pedido sigue recibido.', 409);
+    }
+    return {
+      id_producto: id,
+      cantidad: cantidades[id],
+      stock_anterior: anterior,
+      stock_resultante: resultante,
+      movimiento_id: generarIdOperacion_('MOV', ahora),
+      tipo_movimiento: signo < 0 ? 'salida' : 'devolucion',
+      origen: signo < 0 ? 'pedido' : 'cancelacion',
+      cantidad_movimiento: signo * cantidades[id],
+      actor: actor
+    };
+  });
+}
+
+function construirPlanOperacionPedido_(ss, tipo, idPedido, actor, key, ahora) {
+  var pedido = obtenerPedidoParaOperacion_(ss, idPedido);
+  var objetivo;
+  if (tipo === 'CONFIRMAR_PEDIDO') {
+    if (pedido.estado !== 'recibido') {
+      lanzarOperacionPedido_('TRANSICION_NO_PERMITIDA',
+        'Confirmar exige que el pedido esté recibido.', 409);
+    }
+    objetivo = 'pendiente';
+  } else {
+    if (pedido.estado === 'entregado' || pedido.estado === 'cancelado' ||
+        ['recibido', 'pendiente', 'listo'].indexOf(pedido.estado) === -1) {
+      lanzarOperacionPedido_('TRANSICION_NO_PERMITIDA',
+        'El pedido no se puede cancelar desde su estado actual.', 409);
+    }
+    objetivo = 'cancelado';
+  }
+  return {
+    version: 1,
+    tipo_operacion: tipo,
+    idempotency_key: key,
+    id_pedido: idPedido,
+    actor: actor,
+    estado_anterior: pedido.estado,
+    estado_objetivo: objetivo,
+    productos: prepararPlanStockPedido_(ss, tipo, idPedido, actor, pedido.estado, ahora)
+  };
+}
+
+function movimientoOperacionCoincide_(obj, esperado, operacionId, idPedido) {
+  return limpiar_(obj.operacion_id) === operacionId &&
+    limpiar_(obj.id_movimiento || obj.movimiento_id) === esperado.movimiento_id &&
+    limpiar_(obj.id_producto || obj.producto_id) === esperado.id_producto &&
+    limpiar_(obj.id_origen || obj.referencia_id) === idPedido &&
+    limpiar_(obj.tipo || obj.tipo_movimiento) === esperado.tipo_movimiento &&
+    numerosOperacionIguales_(obj.cantidad, esperado.cantidad_movimiento) &&
+    numerosOperacionIguales_(obj.stock_anterior, esperado.stock_anterior) &&
+    numerosOperacionIguales_(obj.stock_resultante, esperado.stock_resultante) &&
+    limpiar_(obj.usuario) === esperado.actor;
+}
+
+function movimientosDeOperacion_(ss, operacionId) {
+  var hoja = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
+  var cOperacion = col_(hoja, 'operacion_id');
+  var encontrados = [];
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cOperacion]) === operacionId) {
+      encontrados.push(filaAObjeto_(hoja, hoja.filas[i]));
+    }
+  }
+  return { hoja: hoja, filas: encontrados };
+}
+
+function diagnosticarOperacionPedido_(ss, operacion) {
+  var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
+  var diferencias = [];
+  var puedeContinuar = true;
+  var completa = true;
+  if (!planOperacionTieneNumerosValidos_(plan)) {
+    puedeContinuar = false;
+    completa = false;
+    diferencias.push('numeros_snapshot_invalidos');
+  }
+  var pedido = obtenerPedidoParaOperacion_(ss, plan.id_pedido);
+  if (pedido.estado !== plan.estado_anterior && pedido.estado !== plan.estado_objetivo) {
+    puedeContinuar = false;
+    diferencias.push('estado_pedido_fuera_del_plan');
+  }
+  if (pedido.estado !== plan.estado_objetivo) completa = false;
+  if (pedido.estado === plan.estado_objetivo && pedido.actor !== plan.actor) {
+    completa = false;
+    if (pedido.actor) {
+      puedeContinuar = false;
+      diferencias.push('actor_pedido_fuera_del_plan');
+    }
+  }
+
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var cId = col_(productos, 'id_producto');
+  var cStock = col_(productos, 'stock_actual');
+  var stockPorId = {};
+  for (var i = 0; i < productos.filas.length; i++) {
+    stockPorId[limpiar_(productos.filas[i][cId])] = productos.filas[i][cStock];
+  }
+  for (var p = 0; p < plan.productos.length; p++) {
+    var esperado = plan.productos[p];
+    var actual = stockPorId[esperado.id_producto];
+    if (actual === undefined || (!numerosOperacionIguales_(actual, esperado.stock_anterior) &&
+        !numerosOperacionIguales_(actual, esperado.stock_resultante))) {
+      puedeContinuar = false;
+      diferencias.push('stock_fuera_del_plan:' + esperado.id_producto);
+    }
+    if (!numerosOperacionIguales_(actual, esperado.stock_resultante)) completa = false;
+  }
+
+  var movimientos = movimientosDeOperacion_(ss, operacion.operacion_id).filas;
+  var conteoMovimientos = {};
+  if (movimientos.length > plan.productos.length) {
+    puedeContinuar = false;
+    diferencias.push('movimientos_duplicados_o_extra');
+  }
+  for (var m = 0; m < movimientos.length; m++) {
+    var movimiento = movimientos[m];
+    var esperadoMov = null;
+    for (var e = 0; e < plan.productos.length; e++) {
+      if (plan.productos[e].movimiento_id ===
+          limpiar_(movimiento.id_movimiento || movimiento.movimiento_id)) {
+        esperadoMov = plan.productos[e];
+        break;
+      }
+    }
+    if (!esperadoMov || !movimientoOperacionCoincide_(
+        movimiento, esperadoMov, operacion.operacion_id, plan.id_pedido)) {
+      puedeContinuar = false;
+      diferencias.push('movimiento_fuera_del_plan');
+    } else {
+      conteoMovimientos[esperadoMov.movimiento_id] =
+        (conteoMovimientos[esperadoMov.movimiento_id] || 0) + 1;
+      if (conteoMovimientos[esperadoMov.movimiento_id] > 1) {
+        puedeContinuar = false;
+        diferencias.push('movimiento_duplicado:' + esperadoMov.movimiento_id);
+      }
+    }
+  }
+  for (var q = 0; q < plan.productos.length; q++) {
+    if (conteoMovimientos[plan.productos[q].movimiento_id] !== 1) completa = false;
+  }
+
+  return {
+    estado: completa && puedeContinuar
+      ? 'CONSISTENTE_COMPLETADA'
+      : puedeContinuar ? 'PUEDE_CONTINUAR' : 'REQUIERE_REVISION',
+    pedido_actual: pedido.estado,
+    movimientos_encontrados: movimientos.length,
+    movimientos_esperados: plan.productos.length,
+    diferencias: diferencias
+  };
+}
+
+function aplicarPlanOperacionPedido_(ss, operacion, plan) {
+  if (!planOperacionTieneNumerosValidos_(plan)) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'El snapshot durable contiene valores numéricos inválidos.', 500);
+  }
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var cId = col_(productos, 'id_producto');
+  var cStock = col_(productos, 'stock_actual');
+  var porId = {};
+  for (var i = 0; i < productos.filas.length; i++) {
+    porId[limpiar_(productos.filas[i][cId])] = i;
+  }
+  for (var p = 0; p < plan.productos.length; p++) {
+    var cambio = plan.productos[p];
+    var indice = porId[cambio.id_producto];
+    if (indice === undefined) {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'Producto ausente durante la aplicación.', 500);
+    }
+    var actual = productos.filas[indice][cStock];
+    if (numerosOperacionIguales_(actual, cambio.stock_resultante)) continue;
+    if (!numerosOperacionIguales_(actual, cambio.stock_anterior)) {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'Stock fuera del snapshot para "' + cambio.id_producto + '".', 500);
+    }
+    productos.sheet.getRange(indice + 2, cStock + 1).setValue(cambio.stock_resultante);
+    productos.filas[indice][cStock] = cambio.stock_resultante;
+  }
+
+  var movimientos = movimientosDeOperacion_(ss, operacion.operacion_id);
+  for (var m = 0; m < plan.productos.length; m++) {
+    var esperado = plan.productos[m];
+    var existentes = movimientos.filas.filter(function (fila) {
+      return limpiar_(fila.id_movimiento || fila.movimiento_id) === esperado.movimiento_id;
+    });
+    if (existentes.length === 1 && movimientoOperacionCoincide_(
+        existentes[0], esperado, operacion.operacion_id, plan.id_pedido)) continue;
+    if (existentes.length !== 0) {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'Movimiento existente incompatible con el plan.', 500);
+    }
+    registrarMovimiento_(movimientos.hoja, {
+      id_movimiento: esperado.movimiento_id,
+      operacion_id: operacion.operacion_id,
+      tipo: esperado.tipo_movimiento,
+      origen: esperado.origen,
+      id_origen: plan.id_pedido,
+      id_producto: esperado.id_producto,
+      cantidad: esperado.cantidad_movimiento,
+      stock_anterior: esperado.stock_anterior,
+      stock_resultante: esperado.stock_resultante,
+      usuario: esperado.actor,
+      observaciones: (plan.tipo_operacion === 'CONFIRMAR_PEDIDO'
+        ? 'Confirmacion pedido ' : 'Cancelacion pedido ') + plan.id_pedido,
+      ahora: new Date()
+    });
+  }
+
+  var pedido = obtenerPedidoParaOperacion_(ss, plan.id_pedido);
+  if (pedido.estado !== plan.estado_objetivo || pedido.actor !== plan.actor) {
+    if (pedido.estado !== plan.estado_anterior) {
+      if (pedido.estado !== plan.estado_objetivo || pedido.actor) {
+        lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+          'Estado o actor del pedido fuera del snapshot.', 500);
+      }
+    }
+    var filaNueva = pedido.hoja.filas[pedido.indice].slice();
+    filaNueva[col_(pedido.hoja, 'estado_pedido')] = plan.estado_objetivo;
+    var cActor = pedido.hoja.headers.indexOf('vendedor_admin');
+    if (cActor !== -1) filaNueva[cActor] = plan.actor;
+    pedido.hoja.sheet.getRange(
+      pedido.indice + 2, 1, 1, pedido.hoja.headers.length
+    ).setValues([filaNueva]);
+  }
+  SpreadsheetApp.flush();
+}
+
+function resultadoOperacionPedido_(operacion, plan) {
+  return {
+    operacion_id: operacion.operacion_id,
+    idempotency_key: operacion.idempotency_key,
+    tipo_operacion: plan.tipo_operacion,
+    id_pedido: plan.id_pedido,
+    estado_pedido: plan.estado_objetivo,
+    actor: plan.actor,
+    movimientos: plan.productos.length,
+    consistencia: 'VERIFICADA_POR_READBACK'
+  };
+}
+
+function completarOperacionPedido_(ss, operacion, plan) {
+  var resultado = resultadoOperacionPedido_(operacion, plan);
+  try {
+    actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: 'COMPLETADA',
+      paso: 'READBACK_OK',
+      resultado_json: JSON.stringify(resultado),
+      error_codigo: '',
+      error_detalle: ''
+    });
+  } catch (err) {
+    lanzarOperacionPedido_('OPERACION_EN_CURSO',
+      'Los datos coinciden, pero no se pudo cerrar el registro durable. Reintenta con la misma key. ' +
+      detalleOperacionError_(err), 503);
+  }
+  return resultado;
+}
+
+function registrarFalloOperacionPedido_(ss, operacion, err) {
+  var diagnostico;
+  try {
+    diagnostico = diagnosticarOperacionPedido_(ss, operacion);
+  } catch (diagError) {
+    diagnostico = {
+      estado: 'REQUIERE_REVISION',
+      diferencias: ['fallo_diagnostico:' + detalleOperacionError_(diagError)]
+    };
+  }
+  if (diagnostico.estado === 'CONSISTENTE_COMPLETADA') {
+    completarOperacionPedido_(
+      ss, operacion, parseJsonOperacion_(operacion.snapshot_json, 'snapshot')
+    );
+    lanzarOperacionPedido_('OPERACION_EN_CURSO',
+      'La operación fue reconciliada después de un fallo. Reintenta con la misma key para obtener el resultado.',
+      503);
+  }
+
+  var estadoDurable = diagnostico.estado === 'PUEDE_CONTINUAR'
+    ? 'APLICANDO' : 'REQUIERE_REVISION';
+  var codigo = codigoOperacionError_(err, 'FALLO_APLICACION');
+  try {
+    actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: estadoDurable,
+      paso: diagnostico.estado === 'PUEDE_CONTINUAR'
+        ? 'INTERRUMPIDA_RECUPERABLE' : 'READBACK_INCONSISTENTE',
+      error_codigo: codigo,
+      error_detalle: detalleOperacionError_(err) +
+        (diagnostico.diferencias.length
+          ? ' | ' + diagnostico.diferencias.join(',') : '')
+    });
+  } catch (registroError) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'Error original: ' + codigo + ' - ' + detalleOperacionError_(err) +
+      '. Además no se pudo registrar el estado durable: ' +
+      detalleOperacionError_(registroError), 500);
+  }
+  if (estadoDurable === 'REQUIERE_REVISION') {
+    lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+      'El readback no coincide con el plan durable. Se bloquearon nuevas mutaciones.', 409);
+  }
+  lanzarOperacionPedido_('OPERACION_EN_CURSO',
+    'La operación quedó recuperable. Reintenta con la misma idempotency_key.', 503);
+}
+
+function continuarOperacionPedido_(ss, operacion) {
+  var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
+  try {
+    operacion = actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: 'APLICANDO',
+      paso: 'APLICANDO_CAMBIOS',
+      error_codigo: '',
+      error_detalle: ''
+    });
+    aplicarPlanOperacionPedido_(ss, operacion, plan);
+    var diagnostico = diagnosticarOperacionPedido_(ss, operacion);
+    if (diagnostico.estado !== 'CONSISTENTE_COMPLETADA') {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'El readback final no coincide con el plan.', 500);
+    }
+    return completarOperacionPedido_(ss, operacion, plan);
+  } catch (err) {
+    return registrarFalloOperacionPedido_(ss, operacion, err);
+  }
+}
+
+function ejecutarOperacionPedidoDurable_(ss, tipo, idPedido, actor, key) {
+  exigirIdempotencyKey_(key);
+  var payload = {
+    tipo_operacion: tipo,
+    id_pedido: idPedido,
+    actor: actor,
+    estado_objetivo: tipo === 'CONFIRMAR_PEDIDO' ? 'pendiente' : 'cancelado'
+  };
+  var hash = hashPayload_(payload);
+  var existente = buscarOperacionPedidoPor_(ss, 'idempotency_key', key);
+  if (existente) {
+    if (existente.payload_hash !== hash || existente.tipo_operacion !== tipo ||
+        existente.id_pedido !== idPedido) {
+      lanzarOperacionPedido_('IDEMPOTENCY_CONFLICT',
+        'La idempotency_key ya fue usada con otra operación o payload.', 409);
+    }
+    var estadoExistente = exigirEstadoOperacionPedidoValido_(existente.estado_operacion);
+    if (estadoExistente === 'COMPLETADA') {
+      return parseJsonOperacion_(existente.resultado_json, 'resultado');
+    }
+    if (estadoExistente === 'REQUIERE_REVISION') {
+      lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+        'La operación requiere reconciliación administrativa.', 409);
+    }
+    exigirSinOperacionPedidoBloqueante_(ss, idPedido, existente.operacion_id);
+    return continuarOperacionPedido_(ss, existente);
+  }
+
+  exigirSinOperacionPedidoBloqueante_(ss, idPedido, '');
+  var ahora = new Date();
+  var plan = construirPlanOperacionPedido_(ss, tipo, idPedido, actor, key, ahora);
+  var diario = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+  var operacionId = generarIdUnicoEnHoja_(diario, 'operacion_id', 'OPE', ahora);
+  var marca = marcaIso_(ahora);
+  var operacion = persistirOperacionPreparada_(ss, {
+    operacion_id: operacionId,
+    idempotency_key: key,
+    tipo_operacion: tipo,
+    id_pedido: idPedido,
+    actor: actor,
+    estado_operacion: 'PREPARADA',
+    paso: 'INTENCION_PERSISTIDA',
+    payload_hash: hash,
+    snapshot_json: JSON.stringify(plan),
+    resultado_json: '',
+    error_codigo: '',
+    error_detalle: '',
+    creado_en: marca,
+    actualizado_en: marca
+  });
+  return continuarOperacionPedido_(ss, operacion);
+}
+
+/** Cambia estado/pago bajo lock; la confirmación usa diario durable TEST. */
 function actualizarEstadoPedido_(body) {
   var idPedido = limpiar_(body.id_pedido);
   var estadoPedido = limpiar_(body.estado_pedido);
-  var estadoPago = (body.estado_pago === undefined) ? null : limpiar_(body.estado_pago);
-
+  var estadoPago = body.estado_pago === undefined ? null : limpiar_(body.estado_pago);
+  var actor = limpiar_(body.actor) || 'legacy-admin'; // PROVISORIO_TEST
   if (!idPedido) lanzar_('Falta id_pedido.', 400);
   if (!estadoPedido) lanzar_('Falta estado_pedido.', 400);
-
-  var estadosValidos = ['pendiente', 'listo', 'entregado', 'cancelado'];
-  if (estadosValidos.indexOf(estadoPedido) === -1) {
+  if (['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'].indexOf(estadoPedido) === -1) {
     lanzar_('estado_pedido invalido: "' + estadoPedido + '".', 400);
   }
-
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var ped = leerHoja_(ss, HOJAS.PEDIDOS);
-  var cPed = col_(ped, 'id_pedido');
-  var cEstado = col_(ped, 'estado_pedido');
-  var cPago = col_(ped, 'estado_pago');
-
-  var fila = buscarFila_(ped, cPed, idPedido);
-  if (fila === -1) lanzar_('Pedido no encontrado: "' + idPedido + '".', 404);
-
-  ped.sheet.getRange(fila + 2, cEstado + 1).setValue(estadoPedido);
-  if (estadoPago !== null && estadoPago !== '') {
-    ped.sheet.getRange(fila + 2, cPago + 1).setValue(estadoPago);
-  }
-  SpreadsheetApp.flush();
-
-  return { id_pedido: idPedido, estado_pedido: estadoPedido,
-    estado_pago: (estadoPago !== null ? estadoPago : undefined) };
-}
-
-/**
- * Cancela un pedido y DEVUELVE el stock de cada item del detalle.
- * Idempotente: si ya estaba cancelado, no vuelve a tocar el stock.
- */
-function cancelarPedido_(body) {
-  var idPedido = limpiar_(body.id_pedido);
-  if (!idPedido) lanzar_('Falta id_pedido.', 400);
+  if (estadoPedido === 'cancelado') lanzar_('Usa cancelarPedido para cancelar.', 400);
 
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var ped = leerHoja_(ss, HOJAS.PEDIDOS);
-    var cPed = col_(ped, 'id_pedido');
-    var cEstado = col_(ped, 'estado_pedido');
-
-    var fila = buscarFila_(ped, cPed, idPedido);
-    if (fila === -1) lanzar_('Pedido no encontrado: "' + idPedido + '".', 404);
-
-    var estadoActual = limpiar_(ped.filas[fila][cEstado]);
-    if (estadoActual === 'cancelado') {
-      return { id_pedido: idPedido, estado_pedido: 'cancelado', ya_cancelado: true };
+    validarDestinoOperacionesPedidosTest_(ss);
+    var pedido = obtenerPedidoParaOperacion_(ss, idPedido);
+    var key = limpiar_(body.idempotency_key);
+    var operacionExistente = key
+      ? buscarOperacionPedidoPor_(ss, 'idempotency_key', key)
+      : null;
+    if (operacionExistente) {
+      return ejecutarOperacionPedidoDurable_(
+        ss, 'CONFIRMAR_PEDIDO', idPedido, actor, key
+      );
+    }
+    var impacto = impactoTransicionPedido_(pedido.estado, estadoPedido);
+    if (pedido.estado !== estadoPedido && impacto === 'descuenta') {
+      return ejecutarOperacionPedidoDurable_(
+        ss, 'CONFIRMAR_PEDIDO', idPedido, actor, key
+      );
     }
 
-    // Marcar cancelado.
-    ped.sheet.getRange(fila + 2, cEstado + 1).setValue('cancelado');
-
-    // Devolver stock por cada linea del detalle.
-    var det = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
-    var cDetPed = col_(det, 'id_pedido');
-    var cDetProd = col_(det, 'id_producto');
-    var cDetCant = col_(det, 'cantidad');
-
-    var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
-    var cProdId = col_(prod, 'id_producto');
-    var cProdStock = col_(prod, 'stock_actual');
-    var indicePorId = {};
-    for (var p = 0; p < prod.filas.length; p++) {
-      var idp = limpiar_(prod.filas[p][cProdId]);
-      if (idp) indicePorId[idp] = p;
+    exigirSinOperacionPedidoBloqueante_(ss, idPedido, '');
+    var filaNueva = pedido.hoja.filas[pedido.indice].slice();
+    if (pedido.estado !== estadoPedido) {
+      filaNueva[col_(pedido.hoja, 'estado_pedido')] = estadoPedido;
+      var cActor = pedido.hoja.headers.indexOf('vendedor_admin');
+      if (cActor !== -1) filaNueva[cActor] = actor;
     }
-
-    var mov = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
-    var ahora = new Date();
-    var devoluciones = 0;
-
-    for (var j = 0; j < det.filas.length; j++) {
-      if (limpiar_(det.filas[j][cDetPed]) !== idPedido) continue;
-      var idProd = limpiar_(det.filas[j][cDetProd]);
-      var cant = parseNum_(det.filas[j][cDetCant]);
-      var fi = indicePorId[idProd];
-      if (fi === undefined) continue; // producto ya no existe: se omite
-
-      var stockAnterior = parseNum_(prod.filas[fi][cProdStock]);
-      var stockResultante = redondear2_(stockAnterior + cant);
-      prod.sheet.getRange(fi + 2, cProdStock + 1).setValue(stockResultante);
-      // Actualizar copia en memoria por si el mismo producto aparece dos veces.
-      prod.filas[fi][cProdStock] = stockResultante;
-
-      registrarMovimiento_(mov, {
-        tipo: 'devolucion',
-        origen: 'cancelacion',
-        id_origen: idPedido,
-        id_producto: idProd,
-        cantidad: cant,
-        stock_anterior: stockAnterior,
-        stock_resultante: stockResultante,
-        usuario: 'admin',
-        observaciones: 'Cancelacion pedido ' + idPedido,
-        ahora: ahora
-      });
-      devoluciones++;
+    if (estadoPago !== null && estadoPago !== '') {
+      filaNueva[col_(pedido.hoja, 'estado_pago')] = estadoPago;
     }
-
+    pedido.hoja.sheet.getRange(
+      pedido.indice + 2, 1, 1, pedido.hoja.headers.length
+    ).setValues([filaNueva]);
     SpreadsheetApp.flush();
-    return { id_pedido: idPedido, estado_pedido: 'cancelado', items_devueltos: devoluciones };
+    return {
+      id_pedido: idPedido,
+      estado_pedido: estadoPedido,
+      estado_pago: estadoPago !== null ? estadoPago : undefined,
+      actor: actor,
+      stock_actualizado: false
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Cancela mediante operación durable; recibido no genera movimientos. */
+function cancelarPedido_(body) {
+  var idPedido = limpiar_(body.id_pedido);
+  var actor = limpiar_(body.actor) || 'legacy-admin'; // PROVISORIO_TEST
+  if (!idPedido) lanzar_('Falta id_pedido.', 400);
+  exigirIdempotencyKey_(body.idempotency_key);
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    validarDestinoOperacionesPedidosTest_(ss);
+    var existente = buscarOperacionPedidoPor_(ss, 'idempotency_key', limpiar_(body.idempotency_key));
+    if (!existente) {
+      var pedido = obtenerPedidoParaOperacion_(ss, idPedido);
+      if (pedido.estado === 'cancelado') {
+        exigirSinOperacionPedidoBloqueante_(ss, idPedido, '');
+        return { id_pedido: idPedido, estado_pedido: 'cancelado', ya_cancelado: true };
+      }
+      impactoTransicionPedido_(pedido.estado, 'cancelado');
+    }
+    return ejecutarOperacionPedidoDurable_(
+      ss, 'CANCELAR_PEDIDO', idPedido, actor, limpiar_(body.idempotency_key)
+    );
   } finally {
     lock.releaseLock();
   }
@@ -1386,6 +1990,28 @@ function prepararEsquemaFase78Test_() {
     return { entorno: 'TEST', backup_creado: backupCreado, cambios: resultado };
   } finally {
     lock.releaseLock();
+  }
+}
+
+function eliminarFilasCreadas_(sheet, ultimaFilaOriginal, cantidadCreada) {
+  if (!(cantidadCreada > 0)) return;
+  var agregadas = sheet.getLastRow() - ultimaFilaOriginal;
+  if (agregadas !== cantidadCreada) {
+    lanzar_('No se pudo identificar con seguridad las filas a compensar.', 500);
+  }
+  sheet.deleteRows(ultimaFilaOriginal + 1, cantidadCreada);
+}
+
+/** Compensación acotada de creación; no constituye una transacción multitabla. */
+function compensarCreacionPedido_(pedidos, ultimaFilaPedidos, filasPedidoCreadas,
+    detalles, ultimaFilaDetalles, filasDetalleCreadas) {
+  try {
+    eliminarFilasCreadas_(detalles, ultimaFilaDetalles, filasDetalleCreadas);
+    eliminarFilasCreadas_(pedidos, ultimaFilaPedidos, filasPedidoCreadas);
+    SpreadsheetApp.flush();
+    return true;
+  } catch (rollbackError) {
+    return false;
   }
 }
 
@@ -2661,6 +3287,69 @@ function validarEntornoTestFase78_() {
   }
 }
 
+function validarDestinoOperacionesPedidosTest_(ss) {
+  var entorno = limpiar_(PropertiesService.getScriptProperties().getProperty('APP_ENV'));
+  if (entorno !== 'TEST') {
+    lanzar_('Operaciones durables de pedidos bloqueadas fuera de TEST.', 403);
+  }
+  if (!ss || typeof ss.getName !== 'function' ||
+      ss.getName() !== NOMBRE_SHEET_TEST_E2E) {
+    lanzar_('El diario de pedidos solo puede operar sobre la Sheet TEST autorizada.', 403);
+  }
+}
+
+/** Migración manual, aditiva, idempotente y exclusiva de TEST. */
+function prepararOperacionesPedidosTest() {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    validarDestinoOperacionesPedidosTest_(ss);
+    var objetivos = [
+      { nombre: HOJAS.OPERACIONES_PEDIDOS, columnas: COLUMNAS_OPERACIONES_PEDIDOS },
+      { nombre: HOJAS.MOVIMIENTOS_STOCK, columnas: ['operacion_id'] }
+    ];
+    var resultado = objetivos.map(function (objetivo) {
+      var sheet = ss.getSheetByName(objetivo.nombre);
+      if (!sheet) {
+        sheet = ss.insertSheet(objetivo.nombre);
+        sheet.getRange(1, 1, 1, objetivo.columnas.length).setValues([objetivo.columnas]);
+        sheet.setFrozenRows(1);
+        return { hoja: objetivo.nombre, creada: true, agregadas: objetivo.columnas.slice() };
+      }
+      var hoja = leerHoja_(ss, objetivo.nombre);
+      var extension = asegurarColumnasAditivas_(hoja, objetivo.columnas);
+      return { hoja: objetivo.nombre, creada: false, agregadas: extension.agregadas };
+    });
+    SpreadsheetApp.flush();
+    return { entorno: 'TEST', cambios: resultado };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Diagnóstico manual read-only para reconciliación; no corrige datos. */
+function diagnosticarOperacionPedidoTest(operacionId) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    validarDestinoOperacionesPedidosTest_(ss);
+    var operacion = buscarOperacionPedidoPor_(ss, 'operacion_id', limpiar_(operacionId));
+    if (!operacion) lanzar_('Operación durable no encontrada.', 404);
+    return {
+      operacion_id: operacion.operacion_id,
+      id_pedido: operacion.id_pedido,
+      tipo_operacion: operacion.tipo_operacion,
+      estado_operacion: operacion.estado_operacion,
+      paso: operacion.paso,
+      diagnostico: diagnosticarOperacionPedido_(ss, operacion)
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function esFechaIsoValida_(valor) {
   var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(valor);
   if (!match) return false;
@@ -2771,9 +3460,7 @@ function agregarFila_(hoja, obj) {
  * Registra un movimiento de stock generando id_movimiento.
  */
 function registrarMovimiento_(movHoja, m) {
-  var movimientoId = m.referencia_tipo === 'venta_presencial'
-    ? generarIdOperacion_('MOV', m.ahora)
-    : generarId_('MOV', m.ahora);
+  var movimientoId = limpiar_(m.id_movimiento) || generarIdOperacion_('MOV', m.ahora);
   agregarFila_(movHoja, {
     id_movimiento: movimientoId,
     movimiento_id: movimientoId,
@@ -2793,7 +3480,8 @@ function registrarMovimiento_(movHoja, m) {
     usuario: m.usuario,
     observaciones: m.observaciones,
     observacion: m.observaciones,
-    payload_hash: m.payload_hash || ''
+    payload_hash: m.payload_hash || '',
+    operacion_id: m.operacion_id || ''
   });
 }
 
@@ -2850,6 +3538,15 @@ function generarId_(prefijo, fecha) {
 
 function generarIdOperacion_(prefijo, fecha) {
   return generarId_(prefijo, fecha) + '-' + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+}
+
+function generarIdUnicoEnHoja_(hoja, campoId, prefijo, fecha) {
+  var cId = col_(hoja, campoId);
+  for (var intento = 0; intento < 10; intento++) {
+    var candidato = generarIdOperacion_(prefijo, fecha);
+    if (buscarFila_(hoja, cId, candidato) === -1) return candidato;
+  }
+  lanzar_('No se pudo generar un identificador unico para ' + prefijo + '.', 503);
 }
 
 /**

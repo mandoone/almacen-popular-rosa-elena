@@ -5,6 +5,71 @@
 
 ---
 
+## F9-A.1 — seguridad, sesión, autorización e IDs (2026-09-22)
+
+Pruebas locales automatizadas:
+
+1. Matriz completa: Venta opera pedidos pero no ajusta stock; Operación hereda
+   Venta, ajusta stock y no gestiona configuración; Administración tiene todas.
+2. Sesión: token válido, expirado, firma inválida, payload malformado, rol
+   desconocido y compatibilidad provisoria `legacy-admin`.
+3. Autorización: Venta puede pedidos, Operación puede stock y Administración
+   puede productos; una sesión válida sin capacidad recibe `403`.
+4. Stock: crear queda `recibido` sin movimiento; confirmar descuenta una vez;
+   insuficiencia no escribe parcialmente; cancelaciones devuelven según origen;
+   entregado/cancelado son terminales y entregar no toca stock.
+5. Seguridad: payload hostil no sustituye acción/token/actor/rol; DTOs no
+   propagan campos desconocidos; rutas distinguen prefijos por frontera.
+6. Pedidos: dos altas en el mismo segundo tienen IDs distintos; movimientos
+   multilínea usan IDs únicos; `listo → pendiente` falla; errores en primera,
+   intermedia o última línea compensan la creación parcial.
+7. Sesión UI: invalidar caché fuerza a leer la identidad nueva; login legacy
+   falla en producción salvo TEST/local explícito.
+8. QA requerido: `npm test`, `npm run lint`, `npm run build`,
+   `npm run scan:secrets` y `npm run preflight:tecnico`.
+
+Validación remota pendiente: desplegar solo en Apps Script TEST tras aprobar el
+diff y ejecutar un plan específico de F9-A. Este lote prohíbe escrituras remotas,
+deploys y la repetición de los E2E F4–F8.
+
+## F9-A.2 — diario durable e idempotencia multitabla (2026-09-22)
+
+Pruebas locales automatizadas con inyección de fallos:
+
+1. Confirmación completa: `PREPARADA → APLICANDO → COMPLETADA`, stock esperado,
+   movimientos únicos ligados a `operacion_id` y pedido `pendiente`.
+2. Retry completado devuelve el mismo resultado sin escrituras; misma key con
+   payload/actor distinto falla con `IDEMPOTENCY_CONFLICT`.
+3. Fallos en primer/intermedio producto, movimiento, pedido o `flush` no afirman
+   éxito; el mismo retry continúa sin duplicar efectos.
+4. Readback divergente marca `REQUIERE_REVISION`; si también falla ese registro,
+   se conserva el error original y se informa `CONSISTENCIA_INCIERTA`.
+5. Confirmación simultánea y confirmación contra cancelación quedan serializadas
+   y una operación activa bloquea claves incompatibles.
+6. Cancelación y retry reponen una sola vez; una cancelación interrumpida continúa
+   desde evidencia real.
+7. El diario no guarda tokens/cookies/secretos y la migración preparada es
+   aditiva, idempotente y exclusiva de TEST.
+
+Pendiente manual/remoto: ejecutar migración, despliegue y validación solo en TEST
+después de aprobar el diff. No se declara transacción ACID ni se ejecutaron E2E
+remotos en este lote.
+
+### Corrección final F9-A — casos fail-closed y numéricos (2026-09-23)
+
+1. Estados de diario vacío, whitespace, `null`, desconocido o con casing no
+   canónico bloquean tanto una nueva key como el retry con la misma key, sin
+   modificar pedido, stock ni movimientos.
+2. `PREPARADA` y `APLICANDO` solo se reanudan con la misma key;
+   `REQUIERE_REVISION` no se reanuda automáticamente y `COMPLETADA` permite una
+   transición posterior legítima.
+3. El comparador durable acepta números finitos y strings numéricos completos;
+   rechaza vacíos, `null`, `NaN`, infinitos, coma decimal, moneda, unidades y
+   cualquier string mixto.
+4. Un número inválido en snapshot, stock o movimiento impide `COMPLETADA`, deja
+   la operación en `REQUIERE_REVISION` cuando el diario puede persistirlo y no
+   aplica efectos desde un snapshot numéricamente inválido.
+
 ## F9/F10 — QA público y preflight (2026-09-21)
 
 1. Ejecutar `npm run preflight:go-no-go -- --allow-dirty` durante desarrollo y

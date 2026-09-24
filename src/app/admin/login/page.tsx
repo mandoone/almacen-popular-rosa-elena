@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { invalidarSesionAdmin } from '@/lib/fase9/cacheSesionAdmin';
 
 export default function LoginPage() {
   const [pass, setPass] = useState('');
@@ -21,6 +22,7 @@ export default function LoginPage() {
         body: JSON.stringify({ password: pass }),
       });
       if (res.ok) {
+        invalidarSesionAdmin();
         router.push('/admin');
       } else {
         const json = await res.json().catch(() => null);

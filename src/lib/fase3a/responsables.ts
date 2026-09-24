@@ -3,9 +3,9 @@
  *
  * Fuente: docs/fase-3a/levantamiento_operativo_fase_3a_consolidado.md (§3.1, §4.7).
  *
- * La lista es un PARÁMETRO EDITABLE: cambiar quién opera el sistema no debe
- * requerir tocar la lógica. Los permisos por rol (quién confirma, quién cancela)
- * siguen pendientes de Carolina/Nadia y NO se asumen aquí.
+ * DEPRECADO PARA AUTORIZACIÓN: este archivo conserva un snapshot histórico del
+ * levantamiento Fase 3A. La autorización runtime vive exclusivamente en
+ * `src/lib/fase9/roles.ts`; la asignación humana final sigue PENDIENTE_ALMACEN.
  */
 
 export const RESPONSABLE_OTRO = 'Otro';
@@ -28,9 +28,8 @@ export const ALERTA_RESPONSABLE_NO_AUTORIZADO =
   'Responsable no autorizado / pendiente de validación administrativa';
 
 /**
- * Roles declarados en §3.1. Se registran como dato, NO como permisos: quién
- * puede confirmar o cancelar pedidos es una pregunta abierta para Carolina/Nadia
- * (ver docs/fase-3a/PENDIENTES_CAROLINA_NADIA.md, puntos 3 y 4).
+ * Snapshot histórico, no fuente de permisos ni asignación vigente.
+ * @deprecated La asignación humana final sigue PENDIENTE_ALMACEN.
  */
 export type RolOperativo = 'administracion' | 'operacion' | 'venta';
 

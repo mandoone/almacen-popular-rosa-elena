@@ -5,12 +5,16 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 
 - **Script:** `scripts/apps-script-pedidos.gs`
 - **Modelo de datos:** `docs/DATA_MODEL.md`
-- **Estado:** backend **probado manualmente** en Google Apps Script y funcionando
-  contra la base operativa. Aún **no** está conectado a la web (`src/`) — esa
-  conexión es el próximo bloque de FASE 1.
+- **Estado:** la versión F9-A.2 del archivo local está preparada para TEST, pero
+  no fue desplegada, migrada ni validada remotamente. Producción queda fuera de
+  alcance.
 
-> ✅ **Pruebas manuales realizadas (OK):**
-> - `crearPedido`: creó pedidos reales en PEDIDOS y DETALLE_PEDIDOS, descontó stock.
+> Las pruebas manuales históricas corresponden al contrato anterior. F9-A cambia
+> el flujo: `crearPedido` deja el pedido `recibido` y no toca stock; confirmar a
+> `pendiente` descuenta bajo lock; cancelar devuelve solo desde `pendiente`/`listo`.
+>
+> ✅ **Pruebas históricas realizadas (contrato anterior):**
+> - `crearPedido`: creó pedidos reales en PEDIDOS y DETALLE_PEDIDOS.
 > - `listarPedidos`: devolvió los pedidos existentes.
 > - `obtenerPedido`: devolvió cabecera + detalle.
 > - `cancelarPedido`: marcó el pedido como cancelado y devolvió el stock.
@@ -26,11 +30,11 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 | Método | Acción | Token admin | Descripción |
 |--------|--------|:-----------:|-------------|
 | GET | `listarProductos` | ❌ público | Catálogo de la tienda: productos con `activo = SI`, sin `precio_costo`/`margen_pct`. |
-| POST | `crearPedido` | ❌ público | Crea pedido, valida stock/precios, descuenta stock. |
+| POST | `crearPedido` | ❌ público | Crea pedido `recibido`, valida stock/precios y no reserva ni descuenta. |
 | GET | `listarPedidos` | ✅ | Lista pedidos, del más reciente al más antiguo. |
 | GET | `obtenerPedido` | ✅ | Devuelve un pedido + su detalle. |
-| POST | `actualizarEstadoPedido` | ✅ | Cambia `estado_pedido` (y `estado_pago` opcional). No toca stock. |
-| POST | `cancelarPedido` | ✅ | Marca cancelado y **devuelve** el stock. |
+| POST | `actualizarEstadoPedido` | ✅ | Valida transición bajo lock; `recibido → pendiente` usa diario e idempotencia. |
+| POST | `cancelarPedido` | ✅ | Cancela con diario; devuelve solo desde `pendiente`/`listo`. |
 
 Todas responden JSON con la forma:
 ```json
@@ -94,12 +98,13 @@ curl -L -X POST "URL_WEB_APP" \
   }'
 ```
 
-Respuesta esperada: `ok: true` con `id_pedido` (`PED-YYYYMMDD-HHMMSS`), `total` e
-`items`. Verifica en la planilla:
+Respuesta esperada en TEST, después de aprobar y desplegar F9-A: `ok: true` con
+`id_pedido` (`PED-YYYYMMDD-HHMMSS-xxxxxxxx`), `total`, `items` y
+`estado_pedido: recibido`. Verifica:
 - nueva fila en **PEDIDOS**;
 - líneas en **DETALLE_PEDIDOS**;
-- `stock_actual` descontado en **PRODUCTOS**;
-- movimientos `salida` / origen `pedido` en **MOVIMIENTOS_STOCK**.
+- `stock_actual` sin cambios en **PRODUCTOS**;
+- ningún movimiento nuevo en **MOVIMIENTOS_STOCK** hasta confirmar.
 
 > El backend **ignora** cualquier precio enviado por el cliente: usa siempre el
 > `precio_venta` de la hoja PRODUCTOS.
@@ -122,15 +127,17 @@ curl -L "URL_WEB_APP?action=obtenerPedido&id_pedido=PED-XXXXXXXX-XXXXXX&token=TU
 
 Acciones admin por POST (ejemplos):
 ```bash
-# Cambiar estado
+# Confirmar (descuenta stock una vez)
 curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
   -d '{ "action": "actualizarEstadoPedido", "token": "TU_ADMIN_TOKEN",
-        "id_pedido": "PED-XXXXXXXX-XXXXXX", "estado_pedido": "listo" }'
+        "id_pedido": "PED-XXXXXXXX-XXXXXX", "estado_pedido": "pendiente",
+        "actor": "ACTOR_TEST", "idempotency_key": "CONFIRMAR_PED_TEST_UUID" }'
 
-# Cancelar (devuelve stock)
+# Cancelar (devuelve solo si estaba pendiente/listo)
 curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
   -d '{ "action": "cancelarPedido", "token": "TU_ADMIN_TOKEN",
-        "id_pedido": "PED-XXXXXXXX-XXXXXX" }'
+        "id_pedido": "PED-XXXXXXXX-XXXXXX", "actor": "ACTOR_TEST",
+        "idempotency_key": "CANCELAR_PED_TEST_UUID" }'
 ```
 
 ---
@@ -143,8 +150,31 @@ curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
   sobre HTTPS (las URL de Apps Script lo son).
 - `crearPedido` es público a propósito (lo usará la tienda). Valida todo en el
   servidor: existencia/estado del producto, stock y precios.
-- Concurrencia: `crearPedido` y `cancelarPedido` usan `LockService` para evitar que
-  dos pedidos simultáneos descuadren el stock.
+- Concurrencia: confirmación y cancelación releen estado/stock bajo el mismo
+  `LockService`; antes de tocar datos críticos persisten una intención en
+  `OPERACIONES_PEDIDOS`. El retry usa la misma `idempotency_key` y no repite
+  efectos ya comprobados.
+
+### Diario durable de F9-A.2
+
+La preparación aditiva TEST-only crea `OPERACIONES_PEDIDOS` y agrega
+`operacion_id` a `MOVIMIENTOS_STOCK`. La función manual
+`prepararOperacionesPedidosTest()` valida `APP_ENV=TEST` y el nombre exacto de la
+Sheet, no borra ni reordena datos históricos y puede repetirse. **No se ejecutó
+remotamente en este lote.**
+
+Los estados del diario son:
+
+- `PREPARADA`: intención, hash y plan persistidos y leídos de vuelta.
+- `APLICANDO`: los efectos se aplican o reanudan de forma idempotente.
+- `COMPLETADA`: pedido, stock y movimientos coinciden con el plan en readback.
+- `REQUIERE_REVISION`: existe una diferencia que impide continuar automáticamente.
+
+`diagnosticarOperacionPedidoTest(operacionId)` inspecciona una operación en TEST
+y clasifica el estado real sin hacer reparaciones. Una operación activa o en
+revisión bloquea confirmar, cancelar, pasar a listo o entregar el mismo pedido.
+Google Sheets no ofrece transacciones ACID: este mecanismo es serializado,
+idempotente, durable y verificable, no una garantía de atomicidad multitabla.
 
 ---
 
@@ -187,5 +217,9 @@ PRODUCTOS vía `listarProductos`, por lo que el `id` que recibe la tienda es el
 
 ### Pendiente
 
-- **Proteger `/api/admin/*`:** hoy sin autenticación de servidor (deuda técnica).
-- Probar el flujo real end-to-end con la Web App desplegada.
+- `/api/admin/*` está protegido por sesión HMAC, middleware y capacidades; cada
+  ruta de escritura vuelve a fijar acción, token y actor en el servidor.
+- Revisar F9-A.2 y luego preparar la hoja, desplegar y validar el flujo
+  exclusivamente en TEST.
+- Documentar evidencia del readback y cualquier `REQUIERE_REVISION` antes de
+  considerar el lote validado remotamente.

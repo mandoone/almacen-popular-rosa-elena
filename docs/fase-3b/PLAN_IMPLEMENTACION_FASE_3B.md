@@ -82,7 +82,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 ## Etapa 3 — Entorno TEST con copias de Sheets/Apps Script
 
 - **Objetivo:** disponer de una copia identificada de Sheet y Apps Script,
-  igual que exige el backend atómico de Fase 3A, para poder probar
+  igual que exige el backend durable de Fase 3A, para poder probar
   `APERTURAS` y los campos nuevos de `PEDIDOS` contra datos reales sin tocar
   producción.
 - **Archivos/módulos probables:** `src/lib/env.ts` (guardrails puros) y
@@ -114,7 +114,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   e idempotente `prepararHojaAperturasTest` se ejecutó con guard
   `APP_ENV=TEST` y las siete aperturas oficiales quedaron operativas.
 - **Dependencia:** esta etapa **es la misma** que ya bloquea el backend
-  atómico de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
+  durable de Fase 3A — no se duplica el trabajo, se reutiliza el mismo entorno
   TEST para ambas fases.
 
 ---
@@ -127,7 +127,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Archivos/módulos probables:** `src/app/admin/`, nuevas rutas
   `src/app/api/admin/aperturas[/[id]]`, helper de servidor equivalente a
   `src/lib/appsScriptPedidos.ts` para `APERTURAS`.
-- **Riesgos:** mismos riesgos de atomicidad que el backend de pedidos
+- **Riesgos:** mismos riesgos de consistencia multitabla que el backend de pedidos
   (`DECISIONES_BACKEND_ATOMICO_FASE_3A.md` §2.5) — un cambio de calendario a
   medias (por ejemplo, `estado_apertura` actualizado pero
   `pedidos_anticipados_estado` no) deja la web pública en un estado
@@ -183,7 +183,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Riesgos:** el mismo problema de concurrencia de stock que Fase 3A
   (`PLAN_BACKEND_ATOMICO_FASE_3A.md` §10, "casos de concurrencia"), agravado
   porque ahora puede haber pedidos anticipados y presenciales compitiendo por
-  el mismo stock al mismo tiempo. Debe reusar el núcleo atómico de cambio de
+  el mismo stock al mismo tiempo. Debe reusar el núcleo durable de cambio de
   estado, no crear uno paralelo.
 - **Criterios de aceptación:** una comanda presencial QR se puede armar,
   enviar, confirmar y descontar stock en TEST, con `origen_pedido =
@@ -208,7 +208,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
 - **Riesgos:** F.1 ya está aprobada como criterio (nace en `listo`,
   `docs/fase-3b/DECISIONES_PENDIENTES_FASE_3B.md` §0), pero esta etapa sigue
   bloqueada por la falta del contrato de backend que la implemente: crear un
-  pedido que compromete stock en el mismo paso es una operación atómica nueva,
+  pedido que compromete stock en el mismo paso es una operación durable nueva,
   no una variante de `crearPedido_` (ver §1.4 de esa misma decisión).
 - **Criterios de aceptación:** una venta asistida queda registrada con
   `origen_pedido` correcto, `responsable_entrega`/`responsable_pago`
@@ -219,7 +219,7 @@ pendientes de `MODELO_DATOS_APERTURAS_PEDIDOS_FASE_3B.md` §F que la afecten.
   sesión admin compartida existente.
 - **Estado:** ⬜ pendiente. Criterio F.1 aprobado y contrato de backend
   diseñado; falta implementarlo.
-- **Contrato previo listo:** la operación atómica propuesta ya está definida en
+- **Contrato previo listo:** la operación durable propuesta ya está definida en
   el Modelo §H; falta implementarla y probarla exclusivamente en TEST.
 
 ---
@@ -273,6 +273,6 @@ Etapa 4 (admin) → Etapa 5 (web pública) → Etapa 6 (QR) → Etapa 7 (asistid
 Etapa 8 (validación Almacén) → Etapa 9 (producción, solo con aprobación)
 ```
 
-Etapa 3 es compartida con el backend atómico de Fase 3A: no tiene sentido
+Etapa 3 es compartida con el backend durable de Fase 3A: no tiene sentido
 crear un entorno TEST solo para calendario y otro solo para pedidos. Ambas
 fases se prueban sobre la misma copia identificada.

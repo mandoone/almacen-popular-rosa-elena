@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-21.
+> tarea que cambie el estado. Última actualización: 2026-09-22.
 
 ---
 
@@ -17,8 +17,13 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Próxima prioridad:** resolver las decisiones y datos bloqueantes del
-  checklist F9/F10 antes de un Go/No-Go humano. Producción sigue fuera de alcance.
+- **Lote F9-A.2 preparado localmente para revisión:** roles/capacidades
+  genéricos, sesión con identidad y rol, autorización backend/UI, DTOs de
+  escritura, IDs robustos y diario durable de confirmación/cancelación. El
+  código y la migración aditiva existen solo localmente: Apps Script no fue
+  desplegado, la Sheet TEST no fue migrada y no se escribieron datos remotos.
+- **Próxima prioridad:** revisar F9-A y resolver las decisiones y datos
+  bloqueantes del checklist F9/F10. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -97,8 +102,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ **Envío de pedido por WhatsApp** con mensaje pre-armado (`wa.me`).
 - ✅ **Imágenes de producto** por convención de nombre, con fallback.
 - ✅ **Pedidos reales compartidos** en Google Sheets, visibles entre dispositivos.
-- ✅ **Panel `/admin` protegido** con login real, cookie `httpOnly`, middleware y
-  rutas administrativas con autenticación de servidor.
+- ✅ **Panel `/admin` protegido** con login real, cookie `httpOnly`, middleware,
+  sesión HMAC con actor/rol y autorización por capacidad en páginas y APIs.
 - ✅ **Flujo end-to-end** tienda → pedido → base operativa → admin → stock probado.
 - ✅ **Proxy admin Fase 3A** rechaza transiciones peligrosas antes de reenviar al
   backend.
@@ -108,8 +113,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
-- 🔄 **Fase 9:** cierre técnico completado; validación editorial, fuentes,
-  contactos y derechos/créditos de imágenes siguen pendientes.
+- 🔄 **Fase 9:** preparación técnica local en curso; F9-A.2 queda pendiente de
+  revisión, despliegue y validación TEST, y decisiones humanas del Almacén.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
   loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
@@ -123,10 +128,15 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ Apertura activa y pedidos anticipados públicos validados en TEST: las
   columnas mínimas de `PEDIDOS` están preparadas, Apps Script TEST fue
   desplegado y un pedido real de prueba quedó asociado, verificado y cancelado.
-- Implementar y probar en TEST la creación en `recibido` sin descontar stock.
-- Implementar el cambio de estado atómico con `estado_esperado`, idempotencia y
-  reconciliación de fallos parciales.
-- Probar stock, concurrencia y rollback antes de definir cualquier migración.
+- ✅ **F9A-02 preparada localmente:** confirmación y cancelación usan
+  `OPERACIONES_PEDIDOS` como intención durable, claves idempotentes, plan previo,
+  aplicación reanudable y readback de pedido, stock y movimientos. Una diferencia
+  queda `REQUIERE_REVISION` y bloquea nuevas mutaciones incompatibles.
+- ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: el diseño es
+  serializado, idempotente, durable y verificable; no promete atomicidad
+  multitabla. La creación conserva su compensación acotada separada.
+- ⬜ Desplegar y validar esa versión exclusivamente en Apps Script/Sheet TEST
+  después de aprobación humana del diff; no repetir E2E F4–F8.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.
@@ -151,6 +161,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 **Cerrar decisiones humanas F9/F10 y datos reales bloqueantes.** Cualquier
 intervención productiva requiere autorización y Go/No-Go separados.
+
+La arquitectura técnica de roles usa `venta`, `operacion` y `administracion` con
+herencia explícita de capacidades. La matriz es provisional, definida por Omar;
+la asignación de personas y la aceptación del Almacén siguen pendientes. El login
+compartido crea temporalmente `legacy-admin`/`administracion` solo en TEST.
 
 ---
 

@@ -93,7 +93,7 @@ se prueban en TEST y luego se muestran ya funcionando.
 5. **Entorno TEST** — sigue siendo requisito previo a cualquier cambio
    productivo (T3 de `PENDIENTES_CAROLINA_NADIA.md`). El calendario y el
    modo presencial se prueban en TEST antes de producción, igual que el
-   backend atómico de Fase 3A.
+   backend durable y verificable de Fase 3A.
 6. **Calendario editable de aperturas** — ver §3.
 7. **Separación entre pedido anticipado y venta presencial** — ver §4.
 8. **Modo presencial QR** — ver §4.
@@ -236,7 +236,7 @@ pedido anticipado de la venta presencial.
 
 - Implementación de código, cambios en Google Sheets, Apps Script o Vercel.
 - Rol vendedor con login propio (sigue en FASE 2 del backlog, `TASKS.md`).
-- Migración del backend atómico de Fase 3A (sigue su propio plan en
+- Migración del backend durable de Fase 3A (sigue su propio plan en
   `docs/fase-3a/PLAN_IMPLEMENTACION_FASE_3A.md`).
 
 ---

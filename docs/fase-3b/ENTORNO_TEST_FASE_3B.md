@@ -21,7 +21,7 @@
 > un entorno TEST solo para pedidos y otro solo para calendario — es la misma
 > Sheet, el mismo Apps Script, el mismo despliegue. Complementa, sin
 > reemplazar, `docs/fase-3a/CHECKLIST_ENTORNO_TEST_FASE_3A.md` (checklist ya
-> aprobado, centrado en el backend atómico) y
+> aprobado, centrado en el backend durable) y
 > `docs/fase-3a/DECISIONES_BACKEND_ATOMICO_FASE_3A.md` §2.6 (diseño de
 > `ENVIRONMENT`/`EXPECTED_SPREADSHEET_NAME` en Apps Script, ya definido, no
 > implementado). Este documento agrega lo que faltaba: el diagnóstico de
@@ -69,7 +69,7 @@ riesgo de Fase 3A **ya existe hoy**, con o sin Fase 3B.
 Permitir probar, sin tocar datos reales del Almacén:
 
 - creación de pedidos;
-- confirmación de pedidos (`recibido → pendiente/listo`);
+- confirmación de pedidos (`recibido → pendiente`);
 - cancelación de pedidos (con devolución de stock);
 - movimientos de stock (descuento, devolución, insuficiencia);
 - el calendario de aperturas (crear, editar, cancelar, cerrar/reabrir
@@ -223,7 +223,7 @@ archivo del repo.
 El pedido de prueba nació en `pendiente` y descontó stock **al crearse**, no
 en `recibido` sin descuento. Esto es **el comportamiento actual del Apps
 Script ya desplegado en producción**, copiado tal cual a TEST — no el modelo
-atómico nuevo de `docs/fase-3a/MODELO_ESTADOS_PEDIDOS.md` ni el contrato
+durable nuevo de `docs/fase-3a/MODELO_ESTADOS_PEDIDOS.md` ni el contrato
 propuesto en `docs/fase-3a/CONTRATO_APPS_SCRIPT_PROPUESTO.md`, que todavía no
 se implementó en ningún Apps Script, ni productivo ni TEST. La prueba
 confirma que **TEST replica fielmente el comportamiento real actual**, que es

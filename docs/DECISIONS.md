@@ -8,6 +8,36 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D23 — Diario durable para mutaciones multitabla de pedidos
+
+- **Contexto:** Google Sheets no ofrece transacciones entre hojas; un fallo entre
+  stock, movimientos y pedido podía dejar un resultado ambiguo y un retry podía
+  repetir efectos.
+- **Decisión:** confirmar y cancelar se serializan con `ScriptLock` y una intención
+  previa en `OPERACIONES_PEDIDOS`. La operación guarda key, hash y plan mínimo,
+  pasa por `PREPARADA`/`APLICANDO`, aplica cada efecto idempotentemente y solo queda
+  `COMPLETADA` tras readback exacto. Diferencias quedan `REQUIERE_REVISION`.
+- **Consecuencias:** una key completada devuelve su resultado sin reescribir; una
+  operación activa o incierta bloquea mutaciones incompatibles y puede
+  diagnosticarse de forma determinista. Esto no convierte Sheets en ACID ni
+  garantiza atomicidad multitabla; la preparación/migración sigue local y TEST-only.
+
+## D22 — Roles por capacidades y stock al confirmar pedidos
+
+- **Contexto:** la contraseña compartida no distinguía actores ni permisos y el
+  pedido web descontaba stock antes de que una persona lo confirmara.
+- **Decisión:** modelar roles genéricos jerárquicos (`venta`, `operacion`,
+  `administracion`) mediante capacidades explícitas; firmar identidad/rol en la
+  sesión; autorizar en backend; crear pedidos en `recibido` y mover stock solo
+  bajo `LockService` al confirmar o cancelar según el estado.
+- **Consecuencias:** dobles clics/retries no repiten movimientos y el actor se
+  toma de la sesión, no del navegador. La matriz es provisional de Omar y la
+  asignación humana sigue pendiente del Almacén. El login compartido queda como
+  compatibilidad `PROVISORIO_TEST`, bloqueada en producción; no es una solución
+  productiva multiusuario. Las escrituras Next usan DTOs allowlist y no aceptan
+  acción, token, actor ni rol del navegador. D23 complementa esta decisión con
+  consistencia durable verificable para confirmación y cancelación.
+
 ## D20 — SEO dependiente de un origen público explícito
 
 - **Contexto:** no existe un dominio público definitivo aprobado y no se debe

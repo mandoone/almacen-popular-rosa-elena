@@ -126,14 +126,15 @@ ni secretos, revisados y commiteados en la rama de fase.
 - ✅ Validaciones de transiciones en el proxy admin.
 - ✅ Acciones visibles del panel alineadas con `transicionesPosibles()`.
 - ✅ Modo demo local aislado y QA visual aprobado sin llamadas al backend real.
-- ✅ Plan y decisiones técnicas del backend atómico documentados.
-- ⬜ Crear entorno TEST con copias separadas de Sheet y Apps Script.
-- ⬜ Implementar y validar el backend atómico exclusivamente en TEST.
+- ✅ Plan y decisiones técnicas del backend durable documentados.
+- ✅ Entorno TEST con copias separadas de Sheet y Apps Script disponible.
+- 🔄 Backend durable preparado localmente; faltan migración, despliegue y
+  validación remota exclusivamente en TEST.
 - ⬜ Migración y cambios productivos pendientes; producción no fue tocada por
   estos avances de Fase 3A.
 
-**Siguiente bloque:** entorno TEST, pruebas de stock/concurrencia y backend
-atómico antes de cualquier cambio productivo.
+**Siguiente bloque:** revisión humana, migración aditiva, despliegue y pruebas
+remotas del backend durable en TEST antes de cualquier cambio productivo.
 
 ---
 
@@ -207,8 +208,8 @@ atómico antes de cualquier cambio productivo.
   productivos: variables, Apps Script, Sheet y despliegue.
 - 🔄 Fase 4: catálogo público preparado; validación de productos, stock,
   precios e imágenes pendiente con el Almacén.
-- 🔄 Fase 9: cierre técnico completado; revisión editorial, fuentes, contactos
-  y derechos/créditos pendientes con el Almacén.
+- 🔄 Fase 9: preparación técnica local en curso; F9-A.2, despliegue/validación
+  TEST, revisión editorial y decisiones humanas siguen pendientes.
 - ✅ Fase 5 + 6 cerradas técnicamente en TEST; piloto integral PASS.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
@@ -298,12 +299,42 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ⬜ Validar textos e imágenes públicas finales con el Almacén —
   `docs/GO_NO_GO_FASE_9_10.md`.
 
+### Lote F9-A — seguridad, roles y pedidos
+
+- ✅ Arquitectura genérica `venta` / `operacion` / `administracion` y matriz de
+  capacidades implementadas con tests unitarios.
+- ✅ Sesión HMAC preparada para `actor_id`, nombre opcional, rol y expiración;
+  el login compartido conserva compatibilidad provisoria TEST como
+  `legacy-admin`/`administracion`.
+- ✅ Autorización real por capacidad en middleware/API; `403` para sesión válida
+  sin permiso, navegación/acciones filtradas y endpoint mínimo `/auth/me`.
+- ✅ DTOs de escritura por allowlist: navegador no controla `action`, token,
+  actor, responsable ni rol; acción/token se fijan en helpers de servidor y el
+  actor proviene de la sesión HMAC validada.
+- ✅ Código local de Apps Script: pedido nuevo `recibido` sin stock; confirmación
+  y cancelación bajo lock, relectura, validación total y actor. La creación
+  compensa filas parciales y eleva `CONSISTENCIA_INCIERTA` si no puede hacerlo.
+- ✅ IDs nuevos `PED`/`MOV` combinan fecha legible y sufijo UUID; se retiró
+  `listo → pendiente`; rutas usan fronteras exactas y la caché UI es invalidable.
+- ✅ **F9A-02 preparada localmente:** diario `OPERACIONES_PEDIDOS`, intención
+  persistida antes de datos críticos, idempotencia, aplicación reanudable,
+  readback y bloqueo por `REQUIERE_REVISION`. No se considera ACID ni una
+  transacción multitabla.
+- ✅ Migración aditiva TEST-only preparada: hoja de operaciones y columna
+  `operacion_id` en movimientos; todavía no fue ejecutada remotamente.
+- ⬜ Revisión humana final del diff F9-A.2 por Omar.
+- ⬜ Despliegue y validación de F9-A en Apps Script/Sheet TEST, sin reutilizar los
+  E2E de escritura cerrados F4–F8.
+- ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
+  roles. No declarar F9 cerrada antes de esa aceptación.
+
 ## FASE 10 — Preparación Go/No-Go
 
 - ✅ Metadata por página, Open Graph/Twitter y favicon revisados.
 - ✅ Sitemap y robots preparados con `SITE_URL` configurable; admin/API excluidos.
 - ✅ 404, error global, loading, fallback/reintento de tienda y health check.
-- ✅ Headers, sesión/rutas admin, CI mínimo y secrets scan revisados.
+- ✅ Headers, sesión con identidad/rol, autorización de rutas admin, CI mínimo y
+  secrets scan revisados.
 - ✅ Backup/rollback y `npm run preflight:go-no-go` consolidados.
 - ⬜ Resolver decisiones, datos reales y bloqueos del checklist único en
   `docs/GO_NO_GO_FASE_9_10.md` antes de producción.

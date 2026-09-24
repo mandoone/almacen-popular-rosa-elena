@@ -1,6 +1,8 @@
 # PLAN_BACKEND_ATOMICO_FASE_3A.md — Diseño técnico previo a implementación
 
-> Estado: **propuesta, no implementada**
+> Estado histórico: **propuesta original**. La implementación local F9-A.2 usa
+> operación serializada, idempotente y durable con readback; no promete una
+> transacción ACID entre hojas.
 >
 > Fecha: **2026-08-11**
 >
@@ -13,7 +15,8 @@
 
 ## 1. Objetivo
 
-Convertir el cambio de estado de un pedido en una única operación atómica que:
+Convertir el cambio de estado de un pedido en una operación serializada y
+verificable que:
 
 1. lea el pedido y su detalle;
 2. compare el estado real con el `estado_esperado` del cliente;
@@ -30,7 +33,7 @@ pero Apps Script debe convertirse en la autoridad final.
 ## 2. Invariantes del modelo
 
 - Un pedido web nuevo nace en `recibido` y no compromete stock.
-- El stock se compromete al pasar desde `recibido` a `pendiente` o `listo`.
+- El stock se compromete al pasar desde `recibido` a `pendiente`.
 - `fecha_confirmacion` vacía significa que el pedido todavía no descontó stock.
 - `fecha_confirmacion` con valor significa que el pedido ya descontó stock.
 - Todo movimiento de stock y su cambio de estado se confirman juntos o no se
@@ -163,17 +166,15 @@ La fuente de verdad es `src/lib/fase3a/estados.ts`.
 | Desde | Hacia | Impacto de stock |
 |---|---|---|
 | `recibido` | `pendiente` | Descuenta |
-| `recibido` | `listo` | Descuenta |
 | `recibido` | `cancelado` | Ninguno; no devuelve |
 | `pendiente` | `listo` | Ninguno |
 | `pendiente` | `cancelado` | Devuelve |
-| `listo` | `pendiente` | Ninguno |
 | `listo` | `entregado` | Ninguno |
 | `listo` | `cancelado` | Devuelve |
 | `entregado` | cualquiera | Inválida; terminal |
 | `cancelado` | cualquiera | Inválida; terminal |
 
-Confirmar `recibido → pendiente/listo` exige stock suficiente para **todas** las
+Confirmar `recibido → pendiente` exige stock suficiente para **todas** las
 líneas. Si falta una unidad en cualquier producto, no se descuenta ninguno y el
 pedido permanece en `recibido`.
 
@@ -227,7 +228,7 @@ Reglas de compatibilidad:
 
 Las acciones antiguas `actualizarEstadoPedido` y `cancelarPedido` pueden existir
 como alias temporales, pero nunca deben saltarse el lock ni la matriz. Durante la
-compatibilidad deben delegar en el mismo núcleo atómico. Los alias se eliminan en
+compatibilidad deben delegar en el mismo núcleo durable. Los alias se eliminan en
 un despliegue posterior, cuando ningún frontend activo los utilice.
 
 ## 9. Plan de migración
@@ -245,7 +246,7 @@ un despliegue posterior, cuando ningún frontend activo los utilice.
 
 6. Migrar pagos heredados y marcar casos dudosos para revisión.
 7. Poblar `fecha_confirmacion` en pedidos heredados.
-8. Implementar el núcleo atómico en la copia de Apps Script.
+8. Implementar el núcleo serializado, idempotente y durable en la copia de Apps Script.
 9. Probar el contrato desde un entorno Next.js apuntado solo a la copia.
 10. Comparar inventario inicial, movimientos y resultado después de cada caso.
 

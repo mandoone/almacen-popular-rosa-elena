@@ -56,14 +56,14 @@ comprometer stock (§E de `MODELO_DATOS...md`).
 ### 1.1 Las tres opciones
 
 **Opción A — nace en `recibido`, se confirma después.**
-Mismo camino que un pedido web: `recibido → pendiente/listo`. Cero cambios en
+Mismo camino que un pedido web: `recibido → pendiente → listo`. Cero cambios en
 `estados.ts` ni en el contrato de creación; reutiliza `crearPedido_` tal cual.
 
 **Opción B — nace directamente en `pendiente` o `listo`.**
 Requiere un nuevo camino de creación (una variante de `crearPedido_` que
 descuenta stock al crear, no al confirmar), pero no toca la matriz de
 transiciones: el pedido sigue siendo reversible (puede cancelarse y devuelve
-stock, puede pasar por `pendiente ↔ listo`).
+stock y puede avanzar de `pendiente` a `listo`).
 
 **Opción C — nace directamente en `entregado`.**
 Requiere el mismo nuevo camino de creación que B, más la validación de pago
@@ -98,7 +98,7 @@ Por qué no A ni C tal cual:
 - **No A:** un pedido que ya se cobró y hoy no está reflejado en el sistema es
   el peor escenario para caja — es exactamente el tipo de "ventana ciega"
   que todos los documentos de Fase 3A intentan evitar (`DECISIONES_BACKEND_ATOMICO_FASE_3A.md`
-  §2.5 sobre atomicidad). Además, quedaría bloqueado por el mismo admin-only de
+  §2.5 sobre consistencia durable). Además, quedaría bloqueado por el mismo admin-only de
   confirmación que ya rige para pedidos anticipados (§1.3 de
   `DECISIONES_OPERATIVAS_FASE_3B.md`), lo cual es una fricción mayor cuando
   exista el rol vendedor.
@@ -114,7 +114,7 @@ Por qué no A ni C tal cual:
 
 ### 1.4 Riesgos de la recomendación
 
-1. Requiere una nueva operación atómica de creación en el backend ("crear +
+1. Requiere una nueva operación durable de creación en el backend ("crear +
    comprometer stock + registrar pago" en un solo paso), que no existe hoy ni
    en `crearPedido_` ni en el contrato propuesto de
    `CONTRATO_APPS_SCRIPT_PROPUESTO.md`. Es trabajo nuevo, no reutilización.
@@ -138,7 +138,7 @@ abstracto ahora.
 ### 1.6 Qué puede decidir desarrollo sin bloquear al Almacén
 
 Todo lo de esta sección: la elección entre A/B/C es un asunto de modelado de
-datos y atomicidad, no una pregunta operativa para Carolina/Nadia. Desarrollo
+datos y consistencia, no una pregunta operativa para Carolina/Nadia. Desarrollo
 puede aprobar y avanzar el diseño de la Etapa 7 sin esperar respuesta externa.
 
 ### 1.7 Impacto en la próxima etapa (demo local)

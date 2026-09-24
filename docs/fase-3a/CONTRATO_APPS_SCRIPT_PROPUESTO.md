@@ -102,11 +102,11 @@ de aceptación**: el `.gs` debe comportarse igual en los 25 pares.
 
 | Desde | Hacia permitidos | Impacto |
 |---|---|---|
-| `recibido` | `pendiente`, `listo` | descuenta |
+| `recibido` | `pendiente` | descuenta |
 | `recibido` | `cancelado` | ninguno |
 | `pendiente` | `listo` | ninguno |
 | `pendiente` | `cancelado` | devuelve |
-| `listo` | `pendiente`, `entregado` | ninguno |
+| `listo` | `entregado` | ninguno |
 | `listo` | `cancelado` | devuelve |
 | `entregado` | — | — |
 | `cancelado` | — | — |

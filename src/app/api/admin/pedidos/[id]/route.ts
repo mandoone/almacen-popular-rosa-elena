@@ -10,6 +10,9 @@ import {
   decidirCancelacion,
   type DecisionProxy,
 } from '@/lib/fase3a/proxyAdmin';
+import { actorIdFromRequest, sesionTieneCapacidad } from '@/lib/session';
+import { capacidadParaCambioPedido } from '@/lib/fase9/autorizacion';
+import { idempotencyKeyValida } from '@/lib/fase8/apiAdmin';
 
 // Proxy admin por pedido:
 //   GET    -> detalle (cabecera + lineas)
@@ -23,10 +26,8 @@ import {
 // decide con las funciones puras de `@/lib/fase3a/proxyAdmin`. Cierra por el lado
 // de Next.js los hallazgos 3, 4 y 5 de docs/fase-3a/DIAGNOSTICO_ACTUAL.md.
 //
-// LIMITACION CONOCIDA: es un leer-luego-escribir en dos llamadas HTTP, asi que
-// queda una ventana de carrera entre el GET y la escritura. Es una mitigacion
-// fuerte, no una garantia; la garantia exige el bloqueo optimista dentro de Apps
-// Script (ver docs/fase-3a/CONTRATO_APPS_SCRIPT_PROPUESTO.md §2).
+// La lectura previa mejora el mensaje al usuario; la autoridad real vive dentro
+// de Apps Script, que relee bajo LockService y verifica el plan durable por readback.
 export const dynamic = 'force-dynamic';
 
 function manejarError(err: unknown) {
@@ -87,11 +88,24 @@ export async function PATCH(
       const decision = decidirPatchEstado(estadoActual, body.estado_pedido);
       if (!decision.permitido) return rechazo(decision);
     }
+    if (body.estado_pedido && !idempotencyKeyValida(body.idempotency_key)) {
+      return NextResponse.json(
+        { ok: false, error: 'Falta una idempotency_key válida.' },
+        { status: 400 }
+      );
+    }
+
+    const capacidad = capacidadParaCambioPedido(body.estado_pedido);
+    if (!sesionTieneCapacidad(req, capacidad)) {
+      return NextResponse.json({ ok: false, error: 'Acceso denegado.' }, { status: 403 });
+    }
 
     const data = await actualizarEstadoPedido({
       id_pedido: id,
       estado_pedido: String(body.estado_pedido || ''),
       estado_pago: body.estado_pago ? String(body.estado_pago) : undefined,
+      actor: actorIdFromRequest(req),
+      idempotency_key: String(body.idempotency_key || ''),
     });
     return NextResponse.json({ ok: true, data });
   } catch (err) {
@@ -100,16 +114,27 @@ export async function PATCH(
 }
 
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
   try {
+    const body = await req.json().catch(() => ({}));
+    if (!idempotencyKeyValida(body.idempotency_key)) {
+      return NextResponse.json(
+        { ok: false, error: 'Falta una idempotency_key válida.' },
+        { status: 400 }
+      );
+    }
     const estadoActual = await leerEstadoActual(id);
     const decision = decidirCancelacion(estadoActual);
     if (!decision.permitido) return rechazo(decision);
 
-    const data = await cancelarPedido(id);
+    const data = await cancelarPedido(
+      id,
+      actorIdFromRequest(req),
+      String(body.idempotency_key)
+    );
     return NextResponse.json({ ok: true, data });
   } catch (err) {
     return manejarError(err);

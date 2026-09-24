@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AppsScriptError, cambiarEstadoApertura } from '@/lib/appsScriptPedidos';
+import { actorIdFromRequest } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       estado_apertura: 'cerrada',
       actualizado_en_esperado: body.actualizado_en_esperado,
       idempotency_key: body.idempotency_key,
+      actor: actorIdFromRequest(req),
     });
     return NextResponse.json({ ok: true, data: apertura });
   } catch (err) {

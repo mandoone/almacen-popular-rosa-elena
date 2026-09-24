@@ -155,7 +155,7 @@ acciones de estado, el modo demo y su QA local no dependieron de esa migración.
 - ✅ Cancelar usa POST; las demás transiciones usan PATCH.
 - ✅ Modo demo local aislado con seis estados representativos.
 - ✅ QA visual local aprobado sin solicitudes a `/api/admin/pedidos`.
-- ✅ Plan y decisiones del backend atómico documentados.
+- ✅ Plan y decisiones del backend durable documentados.
 - ⬜ Panel de alertas con `alertasDePedido()` (§7.3).
 - ⬜ Filtro “Recibido”, pendiente hasta que el backend real emita ese estado.
 
@@ -190,5 +190,5 @@ ETAPA 6 ◀── respuestas P1 y P2
 ```
 
 **Próximo bloque recomendado:** crear el entorno TEST y validar allí el backend
-atómico, stock, concurrencia y rollback. ETAPAS 2–4 y cualquier cambio productivo
+durable, stock, concurrencia y recuperación. ETAPAS 2–4 y cualquier cambio productivo
 continúan pendientes.

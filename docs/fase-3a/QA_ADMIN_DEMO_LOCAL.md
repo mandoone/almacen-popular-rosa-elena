@@ -51,9 +51,9 @@ El fixture presentó un pedido por cada caso necesario:
 
 | Estado | Acciones visibles | Resultado |
 |---|---|---|
-| `recibido` | Confirmar pendiente · Marcar listo · Cancelar | Correcto |
+| `recibido` | Confirmar pendiente · Cancelar | Correcto |
 | `pendiente` | Marcar listo · Cancelar | Correcto |
-| `listo` | Volver a pendiente · Entregado · Cancelar | Correcto |
+| `listo` | Entregado · Cancelar | Correcto |
 | `entregado` | Ninguna acción de estado | Correcto |
 | `cancelado` | Ninguna acción de estado | Correcto |
 | `revision_manual` | Ninguna acción de estado | Correcto |

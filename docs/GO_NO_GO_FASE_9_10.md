@@ -1,6 +1,6 @@
 # Fases 9–10 — inventario, decisiones y Go/No-Go
 
-**Fecha de corte:** 2026-09-21  
+**Fecha de corte:** 2026-09-22
 **Alcance:** preparación técnica y editorial; producción no autorizada ni tocada.  
 **Estado global:** **NO-GO productivo** hasta resolver los bloqueos humanos indicados.
 
@@ -113,7 +113,8 @@ existe monitoreo manual y responsable asignado.
 ### Seguridad focalizada
 
 - Cookie admin `httpOnly`, `Secure` en producción, `SameSite=Lax`, expiración de
-  ocho horas y firma HMAC; middleware protege páginas y APIs admin.
+  ocho horas y firma HMAC; el payload validado contiene actor, rol, emisión y
+  expiración. Middleware protege páginas y APIs por capacidad.
 - Headers: `nosniff`, anti-clickjacking, referrer policy y permissions policy.
 - CSP no se agregó sin inventariar primero scripts/estilos de Next y orígenes
   productivos; una política especulativa podría romper el sitio.
@@ -122,9 +123,10 @@ existe monitoreo manual y responsable asignado.
 - Pendiente antes de producción: confirmar secreto de sesión fuerte, contraseña
   administrada, responsable de rotación y mitigación de intentos repetidos de login.
 
-**Pendiente humano F10-02:** definir modelo de roles/accesos y protección de
-login (control de plataforma o mecanismo acordado). **Bloquea producción: SÍ**
-si habrá más de una persona operadora o no existe control de intentos.
+**Pendiente humano F10-02:** la arquitectura técnica y la matriz provisional de
+roles están preparadas en TEST, pero falta confirmación del Almacén, asignación
+de personas, identidad multiusuario real y protección de intentos de login.
+**Bloquea producción: SÍ**.
 
 ### Vulnerabilidades npm
 
@@ -167,7 +169,7 @@ escrituras ni despliegues. Durante desarrollo se admite
 | Imágenes, derechos y créditos | HUMAN_DECISION_REQUIRED | SÍ para publicar cada imagen; se puede lanzar sin ellas. |
 | Stock mínimo y prioridades | PENDING | NO para catálogo/pedidos; SÍ para recomendaciones de abastecimiento fiables. |
 | Saldo bancario y efectivo | PENDING | NO para sitio público; SÍ antes de usar caja/abastecimiento productivo. |
-| Modelo de roles | HUMAN_DECISION_REQUIRED | SÍ para operación multiusuario segura. |
+| Modelo de roles | PREPARADO_TEST / HUMAN_DECISION_REQUIRED | SÍ: falta aceptación y asignación de personas. |
 
 ## 5. Checklist final
 
@@ -179,6 +181,9 @@ escrituras ni despliegues. Durante desarrollo se admite
   fallbacks revisados.
 - Metadata por página, robots, sitemap configurable, 404, error, loading y health.
 - Headers, sesión admin, rutas admin, CI mínimo, secrets scan y preflight consolidados.
+- Arquitectura F9-A.2 de roles, autorización, DTOs, IDs y diario durable preparada
+  localmente; pendiente de revisión, migración aditiva, despliegue y validación
+  exclusivos de TEST. No se declara atomicidad ACID multitabla.
 - Procedimiento de backup/rollback preparado sin ejecutarlo.
 
 ### PENDING
@@ -196,5 +201,5 @@ escrituras ni despliegues. Durante desarrollo se admite
 ### HUMAN_DECISION_REQUIRED
 
 - F9-01 a F9-04.
-- Dominio `SITE_URL`, modelo de roles/protección de login, datos reales y
+- Dominio `SITE_URL`, asignación humana de roles/protección de login, datos reales y
   responsables/ventana de backup y rollback.

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,11 +17,11 @@ import {
 } from '@/lib/fase3a/adminDemo';
 import CalendarioAperturasDemo from './components/CalendarioAperturasDemo';
 import CalendarioAperturasAdmin from './components/CalendarioAperturasAdmin';
+import { useSesionAdmin } from '@/lib/fase9/useSesionAdmin';
+import { invalidarSesionAdmin } from '@/lib/fase9/cacheSesionAdmin';
 
-// 'recibido' aún NO lo emite el backend (Apps Script crea los pedidos en
-// 'pendiente'), pero se declara desde ya para que el panel no se rompa el día que
-// la migración de FASE 3A lo empiece a devolver.
-// Ver docs/fase-3a/DIAGNOSTICO_ACTUAL.md (hallazgo 11).
+// Apps Script crea pedidos en `recibido`; solo la confirmación bajo lock los
+// mueve a `pendiente` y descuenta stock.
 type Filtro = 'todos' | EstadoPedido;
 
 interface Pedido {
@@ -95,11 +95,20 @@ function AdminPanel({
   onLogout: () => void;
   modoDemo: boolean;
 }) {
+  const { tiene } = useSesionAdmin(!modoDemo);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [filtro, setFiltro] = useState<Filtro>('todos');
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accionId, setAccionId] = useState<string | null>(null); // pedido con accion en curso
+  const clavesOperacion = useRef<Record<string, string>>({});
+
+  const claveIdempotencia = (clave: string) => {
+    if (!clavesOperacion.current[clave]) {
+      clavesOperacion.current[clave] = crypto.randomUUID();
+    }
+    return clavesOperacion.current[clave];
+  };
 
   // Detalle por pedido (cargado bajo demanda).
   const [detalles, setDetalles] = useState<Record<string, LineaDetalle[]>>({});
@@ -174,15 +183,20 @@ function AdminPanel({
         return;
       }
 
+      const claveOperacion = `estado:${pedido.id_pedido}:${estado}`;
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ estado_pedido: estado }),
+        body: JSON.stringify({
+          estado_pedido: estado,
+          idempotency_key: claveIdempotencia(claveOperacion),
+        }),
       });
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.ok) throw new Error(json?.error || 'No se pudo actualizar el estado.');
       setPedidos((prev) => prev.map((p) =>
         p.id_pedido === pedido.id_pedido ? { ...p, estado_pedido: estado } : p));
+      delete clavesOperacion.current[claveOperacion];
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Error al actualizar.');
     } finally {
@@ -199,16 +213,22 @@ function AdminPanel({
         return;
       }
 
+      const claveOperacion = `pago:${pedido.id_pedido}:${estadoPago}`;
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         // El backend exige estado_pedido: reenviamos el actual.
-        body: JSON.stringify({ estado_pedido: pedido.estado_pedido, estado_pago: estadoPago }),
+        body: JSON.stringify({
+          estado_pedido: pedido.estado_pedido,
+          estado_pago: estadoPago,
+          idempotency_key: claveIdempotencia(claveOperacion),
+        }),
       });
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.ok) throw new Error(json?.error || 'No se pudo actualizar el pago.');
       setPedidos((prev) => prev.map((p) =>
         p.id_pedido === pedido.id_pedido ? { ...p, estado_pago: estadoPago } : p));
+      delete clavesOperacion.current[claveOperacion];
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Error al actualizar el pago.');
     } finally {
@@ -226,13 +246,19 @@ function AdminPanel({
         return;
       }
 
+      const claveOperacion = `cancelar:${pedido.id_pedido}`;
       const res = await fetch(`/api/admin/pedidos/${encodeURIComponent(pedido.id_pedido)}`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idempotency_key: claveIdempotencia(claveOperacion),
+        }),
       });
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.ok) throw new Error(json?.error || 'No se pudo cancelar el pedido.');
       setPedidos((prev) => prev.map((p) =>
         p.id_pedido === pedido.id_pedido ? { ...p, estado_pedido: 'cancelado' } : p));
+      delete clavesOperacion.current[claveOperacion];
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Error al cancelar.');
     } finally {
@@ -263,27 +289,13 @@ function AdminPanel({
           <div className="flex items-center gap-4">
             {!modoDemo && (
               <>
-                <Link href="/admin/vendedor" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Vendedor
-                </Link>
-                <Link href="/admin/caja" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Caja
-                </Link>
-                <Link href="/admin/compras" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Compras
-                </Link>
-                <Link href="/admin/gastos" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Gastos
-                </Link>
-                <Link href="/admin/abastecimiento" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Abastecimiento
-                </Link>
-                <Link href="/admin/historiales" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Historiales
-                </Link>
-                <Link href="/admin/productos" className="text-sm text-primary hover:text-primary-dark transition-colors">
-                  Productos
-                </Link>
+                {tiene('venta_presencial:registrar') && <Link href="/admin/vendedor" className="text-sm text-primary hover:text-primary-dark transition-colors">Vendedor</Link>}
+                {tiene('caja:gestionar') && <Link href="/admin/caja" className="text-sm text-primary hover:text-primary-dark transition-colors">Caja</Link>}
+                {tiene('compras:gestionar') && <Link href="/admin/compras" className="text-sm text-primary hover:text-primary-dark transition-colors">Compras</Link>}
+                {tiene('gastos:gestionar') && <Link href="/admin/gastos" className="text-sm text-primary hover:text-primary-dark transition-colors">Gastos</Link>}
+                {tiene('abastecimiento:gestionar') && <Link href="/admin/abastecimiento" className="text-sm text-primary hover:text-primary-dark transition-colors">Abastecimiento</Link>}
+                {tiene('reportes:ver') && <Link href="/admin/historiales" className="text-sm text-primary hover:text-primary-dark transition-colors">Historiales</Link>}
+                {tiene('stock:ver') && <Link href="/admin/productos" className="text-sm text-primary hover:text-primary-dark transition-colors">Productos</Link>}
               </>
             )}
             <button onClick={cargarPedidos} className="text-sm text-primary hover:text-primary-dark transition-colors">
@@ -478,7 +490,9 @@ function AdminPanel({
           )
         )}
 
-        {modoDemo ? <CalendarioAperturasDemo /> : <CalendarioAperturasAdmin />}
+        {modoDemo
+          ? <CalendarioAperturasDemo />
+          : tiene('configuracion:gestionar') ? <CalendarioAperturasAdmin /> : null}
       </div>
     </div>
   );
@@ -501,6 +515,7 @@ export default function AdminPage() {
     if (!modoDemo) {
       await fetch('/api/admin/auth/logout', { method: 'POST' });
     }
+    invalidarSesionAdmin();
     router.push('/admin/login');
   };
 

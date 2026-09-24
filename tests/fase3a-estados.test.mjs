@@ -51,7 +51,7 @@ const MATRIZ = [
   // desde        hacia         valido  impacto
   ['recibido', 'recibido', false, 'ninguno'],
   ['recibido', 'pendiente', true, 'descuenta'],
-  ['recibido', 'listo', true, 'descuenta'],
+  ['recibido', 'listo', false, 'ninguno'],
   ['recibido', 'entregado', false, 'ninguno'],
   ['recibido', 'cancelado', true, 'ninguno'],
 
@@ -62,7 +62,7 @@ const MATRIZ = [
   ['pendiente', 'cancelado', true, 'devuelve'],
 
   ['listo', 'recibido', false, 'ninguno'],
-  ['listo', 'pendiente', true, 'ninguno'],
+  ['listo', 'pendiente', false, 'ninguno'],
   ['listo', 'listo', false, 'ninguno'],
   ['listo', 'entregado', true, 'ninguno'],
   ['listo', 'cancelado', true, 'devuelve'],
@@ -102,7 +102,6 @@ test('el stock nunca se descuenta dos veces por el mismo pedido', () => {
   // recibido -> pendiente descuenta; desde ahí ninguna transición vuelve a descontar.
   assert.equal(evaluarTransicion('recibido', 'pendiente').impacto, 'descuenta');
   assert.equal(evaluarTransicion('pendiente', 'listo').impacto, 'ninguno');
-  assert.equal(evaluarTransicion('listo', 'pendiente').impacto, 'ninguno');
   assert.equal(evaluarTransicion('listo', 'entregado').impacto, 'ninguno');
 });
 

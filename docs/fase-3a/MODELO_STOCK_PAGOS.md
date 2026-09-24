@@ -13,10 +13,10 @@
 | Momento | Movimiento | Tipo en MOVIMIENTOS_STOCK |
 |---|---|---|
 | Se crea el pedido web (`recibido`) | **ninguno** | — |
-| Se confirma (`recibido → pendiente/listo`) | resta | `salida` / origen `pedido` |
+| Se confirma (`recibido → pendiente`) | resta | `salida` / origen `pedido` |
 | Se cancela desde `pendiente` o `listo` | suma | `devolucion` / origen `cancelacion` |
 | Se cancela desde `recibido` | **ninguno** | — |
-| Cambios entre `pendiente`/`listo`/`entregado` | **ninguno** | — |
+| Avances `pendiente → listo → entregado` | **ninguno** | — |
 | Corrección manual de administración | suma o resta | `ajuste` / origen `correccion` |
 
 Este es el cambio más grande respecto de hoy: actualmente el descuento ocurre al

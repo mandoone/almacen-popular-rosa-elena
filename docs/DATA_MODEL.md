@@ -15,7 +15,9 @@
     Script; expone a la tienda `{ id, nombre, precio }` con `id = id_producto`
     (`PROD-001…`).
   - **Pedidos:** se crean/consultan vía la Web App (ver `docs/APPS_SCRIPT_PEDIDOS.md`),
-    escribiendo en PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y MOVIMIENTOS_STOCK.
+    escribiendo en PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y MOVIMIENTOS_STOCK. La
+    versión F9-A.2 prepara además un diario `OPERACIONES_PEDIDOS` exclusivamente
+    para TEST; todavía no fue migrado ni validado remotamente.
 - **Planilla antigua (retirada):** la Google Sheet publicada como CSV (hoja "WEB") se
   usó **solo como fuente de datos inicial** y **ya no alimenta** el catálogo ni la
   operación. La hoja PRODUCTOS de la base nueva se **cargó manualmente** con **53
@@ -149,6 +151,30 @@ Parámetros globales del sistema (clave/valor).
 | `tipo` | `entrada` · `salida` · `reserva` · `devolucion` · `ajuste`. |
 | `cantidad` | cantidad (positiva/negativa según tipo). |
 | `origen` | referencia (pedido, venta, compra, ajuste manual). |
+| `stock_anterior` | saldo observado antes del movimiento. |
+| `stock_resultante` | saldo esperado después del movimiento. |
+| `usuario` | actor validado que originó la acción. |
+| `operacion_id` | vínculo aditivo al diario durable de confirmación/cancelación. |
+
+### OPERACIONES_PEDIDOS (preparada localmente, TEST-only)
+
+Diario de intención y verificación para confirmación/cancelación. No reemplaza
+`MOVIMIENTOS_STOCK` ni constituye una transacción ACID.
+
+| campo | descripción |
+|-------|-------------|
+| `operacion_id`* | identificador UUID con prefijo legible de la operación. |
+| `idempotency_key`* | clave del intento; no puede reutilizarse con otro payload. |
+| `tipo_operacion` | `CONFIRMAR` o `CANCELAR`. |
+| `id_pedido` | pedido afectado. |
+| `actor` | identidad obtenida de la sesión validada. |
+| `estado_operacion` | `PREPARADA`, `APLICANDO`, `COMPLETADA` o `REQUIERE_REVISION`. |
+| `paso` | último punto durable alcanzado. |
+| `payload_hash` | hash canónico para detectar conflictos de idempotencia. |
+| `snapshot_json` | plan mínimo: estados y saldos antes/después esperados. |
+| `resultado_json` | respuesta estable de una operación completada. |
+| `error_codigo` / `error_detalle` | diagnóstico acotado, sin secretos. |
+| `creado_en` / `actualizado_en` | marcas temporales de auditoría. |
 
 ---
 
@@ -162,10 +188,11 @@ Parámetros globales del sistema (clave/valor).
 ### Stock
 - El stock se descuenta/registra mediante **MOVIMIENTOS_STOCK** (fuente de verdad
   del inventario); `PRODUCTOS.stock` refleja el saldo.
-- **Reserva:** al crear un pedido, se genera un movimiento `reserva` que compromete
-  stock sin venderlo.
-- **Devolución:** al cancelar un pedido reservado, se genera un movimiento
-  `devolucion` que libera el stock.
+- **Pedido recibido:** crear no modifica stock ni genera movimiento.
+- **Confirmación:** `recibido → pendiente` descuenta stock y registra una salida
+  verificable ligada a `operacion_id`.
+- **Devolución:** cancelar desde `pendiente`/`listo` repone una vez; cancelar desde
+  `recibido` no mueve stock.
 - **Salida:** al concretar la venta/entrega, la reserva se convierte en `salida`.
 - **Entrada:** las compras generan movimientos `entrada`.
 
@@ -179,12 +206,11 @@ Parámetros globales del sistema (clave/valor).
 - Mecanismo de escritura: **Google Apps Script** (Web App `doPost`/`doGet`) que
   recibe los datos y los anexa a las hojas correspondientes. Ver `docs/DECISIONS.md`.
   Implementado en `scripts/apps-script-pedidos.gs` (guía en `docs/APPS_SCRIPT_PEDIDOS.md`):
-  crea pedidos (PEDIDOS + DETALLE_PEDIDOS), descuenta/devuelve stock en PRODUCTOS y
-  registra cada cambio en MOVIMIENTOS_STOCK (`salida`/origen `pedido` al crear,
-  `devolucion`/origen `cancelacion` al cancelar). El backend lee las hojas **por
-  nombre de encabezado**, robusto ante reordenamientos de columnas. **El flujo real
-  ya fue validado** manualmente contra las hojas PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y
-  MOVIMIENTOS_STOCK. *(Pendiente: conectar la web.)*
+  crea pedidos (PEDIDOS + DETALLE_PEDIDOS) sin tocar stock; al confirmar/cancelar,
+  prepara `OPERACIONES_PEDIDOS`, aplica PRODUCTOS/MOVIMIENTOS_STOCK/PEDIDOS y
+  verifica el resultado por readback. El backend lee las hojas **por nombre de
+  encabezado**, robusto ante reordenamientos de columnas. Este contrato F9-A.2
+  está preparado localmente y pendiente de migración/despliegue/validación TEST.
 - Los identificadores y relaciones (`*_id`) se mantienen simples (texto/numérico)
   por tratarse de una hoja de cálculo, no una base relacional.
 - Snapshots de `nombre`/`precio` en los detalles para preservar el histórico aunque
