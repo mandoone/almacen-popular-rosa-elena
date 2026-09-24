@@ -5,6 +5,27 @@
 
 ---
 
+## F9-A — respuesta HTTP ambigua e idempotencia end-to-end (2026-09-24)
+
+Pruebas locales automatizadas:
+
+1. Solo un POST con redirect, 404, HTML y destino `googleusercontent` recibe la
+   categoría `RESPUESTA_POST_MUTACION_AMBIGUA`; 403, 500 JSON, otro origen,
+   JSON inválido genérico y fallos de red no la reciben.
+2. Confirmación y cancelación hacen como máximo un replay con la misma clausura
+   (pedido, actor, payload y key); dos respuestas ambiguas no producen un tercer
+   POST.
+3. Un pedido ya cancelado llega al diario: la misma key recupera el resultado y
+   una key nueva falla; ENTREGADO continúa sin poder cancelarse.
+4. PENDIENTE → LISTO y LISTO → ENTREGADO nunca repiten POST. Tras la firma
+   ambigua solo reconcilian si el readback confirma ID, estado y actor; cualquier
+   divergencia conserva el error.
+5. Los errores no incluyen URL efímera, query, HTML, token ni cookies; la UI
+   mantiene la key hasta un éxito confirmado o reconciliado.
+
+Pendiente remoto: desplegar la corrección después de revisión y repetir solo el
+E2E F9-A en TEST. El E2E actual permanece FAIL; no se valida Producción.
+
 ## F9-A.1 — seguridad, sesión, autorización e IDs (2026-09-22)
 
 Pruebas locales automatizadas:

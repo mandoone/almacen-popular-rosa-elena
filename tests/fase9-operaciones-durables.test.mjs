@@ -511,6 +511,31 @@ test('F9A-02 M/N: cancelación durable y retry devuelven stock una sola vez', as
   assert.equal(estadoOperacion(caso), 'COMPLETADA');
 });
 
+test('F9 HTTP ambiguo: cancelado con key nueva se rechaza, misma key recupera resultado', async () => {
+  const caso = await crearEscenario({ estado: 'pendiente', stocks: [8] });
+  const primero = cancelar(caso, 'cancelacion_original', 'actor-test');
+  const retry = cancelar(caso, 'cancelacion_original', 'actor-test');
+  assert.equal(JSON.stringify(retry), JSON.stringify(primero));
+  assert.throws(
+    () => cancelar(caso, 'cancelacion_nueva', 'actor-test'),
+    /IDEMPOTENCY_CONFLICT/
+  );
+  assert.deepEqual(stocks(caso), [10]);
+  assert.equal(caso.movimientos.filas.length, 1);
+  assert.equal(caso.operaciones.filas.length, 1);
+});
+
+test('F9 HTTP ambiguo: entregado sigue rechazando cancelación', async () => {
+  const caso = await crearEscenario({ estado: 'entregado', stocks: [8] });
+  assert.throws(
+    () => cancelar(caso, 'cancelar_entregado', 'actor-test'),
+    /no permitida/
+  );
+  assert.deepEqual(stocks(caso), [8]);
+  assert.equal(caso.movimientos.filas.length, 0);
+  assert.equal(caso.operaciones.filas.length, 0);
+});
+
 test('F9A-02 O: cancelación con fallo intermedio continúa sin doble devolución', async () => {
   const caso = await crearEscenario({ estado: 'listo', stocks: [8, 8, 8] });
   caso.control.fallarUnaVez({ hoja: 'MOVIMIENTOS_STOCK', operacion: 'appendRow', numero: 2 });
@@ -556,8 +581,8 @@ test('F9A-02 HTTP: Next exige y propaga idempotency_key en confirmar/cancelar', 
   );
   assert.match(ruta, /body\.estado_pedido && !idempotencyKeyValida\(body\.idempotency_key\)/);
   assert.match(ruta, /POST[\s\S]*?!idempotencyKeyValida\(body\.idempotency_key\)/);
-  assert.match(ruta, /actor: actorIdFromRequest\(req\)[\s\S]*?idempotency_key:/);
-  assert.match(ruta, /cancelarPedido\([\s\S]*?actorIdFromRequest\(req\)[\s\S]*?body\.idempotency_key/);
+  assert.match(ruta, /const actor = actorIdFromRequest\(req\)[\s\S]*?actor,[\s\S]*?idempotency_key:/);
+  assert.match(ruta, /const idempotencyKey = String\(body\.idempotency_key\)[\s\S]*?cancelarPedido\(id, actor, idempotencyKey\)/);
   assert.match(helper, /action: 'actualizarEstadoPedido'[\s\S]*?token: adminToken\(\)/);
   assert.match(helper, /action: 'cancelarPedido'[\s\S]*?idempotency_key: idempotencyKey/);
 });

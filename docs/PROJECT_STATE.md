@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-22.
+> tarea que cambie el estado. Última actualización: 2026-09-24.
 
 ---
 
@@ -17,13 +17,15 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **Lote F9-A.2 preparado localmente para revisión:** roles/capacidades
-  genéricos, sesión con identidad y rol, autorización backend/UI, DTOs de
-  escritura, IDs robustos y diario durable de confirmación/cancelación. El
-  código y la migración aditiva existen solo localmente: Apps Script no fue
-  desplegado, la Sheet TEST no fue migrada y no se escribieron datos remotos.
-- **Próxima prioridad:** revisar F9-A y resolver las decisiones y datos
-  bloqueantes del checklist F9/F10. Producción sigue fuera de alcance.
+- **F9-A en TEST, todavía no validada:** la migración aditiva se ejecutó en la
+  Sheet TEST y Apps Script TEST está en v11. El primer E2E dejó datos
+  consistentes, pero terminó FAIL porque dos respuestas de ContentService se
+  perdieron como 404 HTML tras el redirect de Google. La mitigación local
+  clasifica solo esa firma, recupera operaciones durables con la misma key y
+  reconcilia transiciones simples por readback; está pendiente de deploy y
+  retest TEST.
+- **Próxima prioridad:** revisar, desplegar y repetir el E2E F9-A exclusivamente
+  en TEST. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -113,8 +115,9 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
-- 🔄 **Fase 9:** preparación técnica local en curso; F9-A.2 queda pendiente de
-  revisión, despliegue y validación TEST, y decisiones humanas del Almacén.
+- 🔄 **Fase 9:** F9-A está implementada y desplegada en TEST v11, pero el E2E
+  continúa FAIL hasta desplegar y validar la mitigación local de respuesta HTTP
+  ambigua. Las decisiones humanas del Almacén siguen pendientes.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
   loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
@@ -128,15 +131,15 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ Apertura activa y pedidos anticipados públicos validados en TEST: las
   columnas mínimas de `PEDIDOS` están preparadas, Apps Script TEST fue
   desplegado y un pedido real de prueba quedó asociado, verificado y cancelado.
-- ✅ **F9A-02 preparada localmente:** confirmación y cancelación usan
+- ✅ **F9A-02 implementada y desplegada en TEST:** confirmación y cancelación usan
   `OPERACIONES_PEDIDOS` como intención durable, claves idempotentes, plan previo,
   aplicación reanudable y readback de pedido, stock y movimientos. Una diferencia
   queda `REQUIERE_REVISION` y bloquea nuevas mutaciones incompatibles.
 - ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: el diseño es
   serializado, idempotente, durable y verificable; no promete atomicidad
   multitabla. La creación conserva su compensación acotada separada.
-- ⬜ Desplegar y validar esa versión exclusivamente en Apps Script/Sheet TEST
-  después de aprobación humana del diff; no repetir E2E F4–F8.
+- ⬜ Desplegar la mitigación de respuesta HTTP ambigua y repetir exclusivamente
+  el E2E F9-A en TEST; no repetir E2E F4–F8.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.

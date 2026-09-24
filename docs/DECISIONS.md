@@ -8,6 +8,21 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D24 — Recuperación conservadora de respuestas post-mutación ambiguas
+
+- **Contexto:** ContentService puede completar una mutación y luego perder su
+  respuesta en el redirect, terminando en un 404 HTML de `googleusercontent`.
+  Un 502 del proxy no demuestra entonces que la escritura haya fallado.
+- **Decisión:** clasificar únicamente la firma observada (POST, redirect, destino
+  `googleusercontent`, 404 y HTML). Confirmación/cancelación permiten un solo
+  replay con el mismo payload, actor y key para que el diario durable decida.
+  LISTO/ENTREGADO no repiten POST: solo responden éxito si un readback confirma
+  pedido, estado objetivo y actor.
+- **Consecuencias:** no existen retries genéricos ni éxito supuesto ante cualquier
+  error. Un segundo resultado ambiguo o un readback no concluyente conserva 502.
+  La corrección está preparada localmente y requiere deploy/retest TEST; v11 y el
+  E2E vigente aún no incorporan esa validación.
+
 ## D23 — Diario durable para mutaciones multitabla de pedidos
 
 - **Contexto:** Google Sheets no ofrece transacciones entre hojas; un fallo entre

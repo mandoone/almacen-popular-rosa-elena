@@ -37,8 +37,12 @@ import type { VentaPresencialInput } from './fase5/ventaPresencial';
 import { payloadAdminFase78 } from './fase9/dtoAdmin';
 import {
   diagnosticarRespuestaNoJson,
+  clasificarFalloRespuestaNoJson,
   esCodigoTransitorioAppsScript,
   mensajeRespuestaNoJsonSeguro,
+  mensajePostMutacionAmbiguaSeguro,
+  RESPUESTA_POST_MUTACION_AMBIGUA,
+  type TipoFalloAppsScript,
 } from './appsScriptRespuesta';
 
 const MAX_INTENTOS_GET = 2;
@@ -132,11 +136,18 @@ export interface AperturaAdmin extends AperturaInput {
 export class AppsScriptError extends Error {
   status: number;
   transitorioLectura: boolean;
-  constructor(message: string, status = 502, transitorioLectura = false) {
+  tipoFallo?: TipoFalloAppsScript;
+  constructor(
+    message: string,
+    status = 502,
+    transitorioLectura = false,
+    tipoFallo?: TipoFalloAppsScript
+  ) {
     super(message);
     this.name = 'AppsScriptError';
     this.status = status;
     this.transitorioLectura = transitorioLectura;
+    this.tipoFallo = tipoFallo;
   }
 }
 
@@ -220,7 +231,11 @@ function adminToken(): string {
   return resolucion.valor;
 }
 
-async function leerRespuesta<T>(res: Response, operacion: string): Promise<T> {
+async function leerRespuesta<T>(
+  res: Response,
+  operacion: string,
+  metodo: 'GET' | 'POST'
+): Promise<T> {
   const texto = await res.text();
   let json: ScriptResponse<T>;
   try {
@@ -233,10 +248,14 @@ async function leerRespuesta<T>(res: Response, operacion: string): Promise<T> {
       responseUrl: res.url,
       cuerpo: texto,
     });
+    const tipoFallo = clasificarFalloRespuestaNoJson(metodo, diagnostico);
     throw new AppsScriptError(
-      mensajeRespuestaNoJsonSeguro(operacion, diagnostico),
+      tipoFallo === RESPUESTA_POST_MUTACION_AMBIGUA
+        ? mensajePostMutacionAmbiguaSeguro(operacion)
+        : mensajeRespuestaNoJsonSeguro(operacion, diagnostico),
       502,
-      diagnostico.transitorioLectura
+      diagnostico.transitorioLectura,
+      tipoFallo
     );
   }
   if (!json.ok) {
@@ -277,7 +296,7 @@ async function postScript<T>(body: Record<string, unknown>): Promise<T> {
     redirect: 'follow',
     cache: 'no-store',
   });
-  return leerRespuesta<T>(res, `POST ${nombreAccionSeguro(body.action)}`);
+  return leerRespuesta<T>(res, `POST ${nombreAccionSeguro(body.action)}`, 'POST');
 }
 
 async function getScript<T>(params: Record<string, string>): Promise<T> {
@@ -293,7 +312,7 @@ async function getScript<T>(params: Record<string, string>): Promise<T> {
         redirect: 'follow',
         cache: 'no-store',
       });
-      return await leerRespuesta<T>(res, `GET ${accion}`);
+      return await leerRespuesta<T>(res, `GET ${accion}`, 'GET');
     } catch (error) {
       ultimoError = error;
       if (!esFalloReintentableGet(error) || intento === MAX_INTENTOS_GET) {

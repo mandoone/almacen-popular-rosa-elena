@@ -2,9 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
+  clasificarFalloRespuestaNoJson,
   diagnosticarRespuestaNoJson,
+  esDiagnosticoPostMutacionAmbigua,
   esCodigoTransitorioAppsScript,
   mensajeRespuestaNoJsonSeguro,
+  mensajePostMutacionAmbiguaSeguro,
 } from '../src/lib/appsScriptRespuesta.ts';
 
 test('Apps Script GET: 404 HTML redirigido a googleusercontent es transitorio', () => {
@@ -44,6 +47,42 @@ test('Apps Script GET: 404 HTML en googleusercontent es transitorio aunque fetch
   });
   assert.equal(diagnostico.destino, 'googleusercontent');
   assert.equal(diagnostico.transitorioLectura, true);
+  assert.equal(esDiagnosticoPostMutacionAmbigua(diagnostico), false);
+});
+
+test('Apps Script POST: solo 404 HTML redirigido a googleusercontent es ambiguo', () => {
+  const base = {
+    httpStatus: 404,
+    contentType: 'text/html; charset=utf-8',
+    redirected: true,
+    responseUrl: 'https://script.googleusercontent.com/macros/echo?token=no-mostrar',
+    cuerpo: '<!doctype html><p>cookie=no-mostrar</p>',
+  };
+  const diagnosticoAmbiguo = diagnosticarRespuestaNoJson(base);
+  assert.equal(esDiagnosticoPostMutacionAmbigua(diagnosticoAmbiguo), true);
+  assert.equal(
+    clasificarFalloRespuestaNoJson('POST', diagnosticoAmbiguo),
+    'RESPUESTA_POST_MUTACION_AMBIGUA'
+  );
+  assert.equal(clasificarFalloRespuestaNoJson('GET', diagnosticoAmbiguo), undefined);
+
+  for (const variante of [
+    { ...base, httpStatus: 500 },
+    { ...base, httpStatus: 403 },
+    { ...base, redirected: false },
+    { ...base, responseUrl: 'https://script.google.com/macros/s/deployment/exec' },
+    { ...base, responseUrl: 'https://example.invalid/error' },
+    { ...base, contentType: 'application/json', cuerpo: '{json roto' },
+  ]) {
+    assert.equal(
+      esDiagnosticoPostMutacionAmbigua(diagnosticarRespuestaNoJson(variante)),
+      false
+    );
+  }
+
+  const mensaje = mensajePostMutacionAmbiguaSeguro('POST cancelarPedido');
+  assert.match(mensaje, /Resultado ambiguo.+POST cancelarPedido/);
+  assert.doesNotMatch(mensaje, /googleusercontent|token|cookie|<!doctype|macros\/echo/i);
 });
 
 test('Apps Script GET: códigos funcionales 4xx no son transitorios', () => {

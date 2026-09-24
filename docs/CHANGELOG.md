@@ -5,6 +5,25 @@
 
 ---
 
+## [F9-A HTTP] — Respuesta ambigua e idempotencia end-to-end (2026-09-24)
+
+### Corregido localmente
+
+- La firma exacta 404/HTML posterior al redirect de ContentService se clasifica
+  sin conservar ni exponer URL efímera, cuerpo o secretos.
+- Confirmación y cancelación permiten un único replay con payload/key/actor
+  idénticos para recuperar el resultado del diario durable.
+- Una cancelación ya completada con la misma key llega al diario; una key nueva
+  sobre CANCELADO falla. LISTO/ENTREGADO se reconcilian solo mediante readback
+  de pedido, estado y actor, sin repetir POST.
+
+### Estado
+
+- F9-A está desplegada en TEST v11, pero esta corrección solo existe localmente.
+  El E2E TEST continúa FAIL hasta nuevo deploy y retest controlado.
+- No hubo deploy, E2E, escrituras remotas, commit ni push en este lote;
+  Producción permanece intacta.
+
 ## [F9-A final] — Fail-closed y readback numérico estricto (2026-09-23)
 
 ### Corregido

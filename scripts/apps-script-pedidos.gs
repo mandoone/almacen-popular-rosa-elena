@@ -1293,7 +1293,8 @@ function cancelarPedido_(body) {
       var pedido = obtenerPedidoParaOperacion_(ss, idPedido);
       if (pedido.estado === 'cancelado') {
         exigirSinOperacionPedidoBloqueante_(ss, idPedido, '');
-        return { id_pedido: idPedido, estado_pedido: 'cancelado', ya_cancelado: true };
+        lanzarOperacionPedido_('IDEMPOTENCY_CONFLICT',
+          'El pedido ya está cancelado y la idempotency_key no corresponde a su operación.', 409);
       }
       impactoTransicionPedido_(pedido.estado, 'cancelado');
     }

@@ -13,6 +13,12 @@ import {
 import { actorIdFromRequest, sesionTieneCapacidad } from '@/lib/session';
 import { capacidadParaCambioPedido } from '@/lib/fase9/autorizacion';
 import { idempotencyKeyValida } from '@/lib/fase8/apiAdmin';
+import {
+  ejecutarMutacionDurableConReplay,
+  ejecutarTransicionSimpleConReadback,
+  esConfirmacionDurableReintentable,
+  esTransicionSimpleReconciliable,
+} from '@/lib/fase9/resilienciaPedidos';
 
 // Proxy admin por pedido:
 //   GET    -> detalle (cabecera + lineas)
@@ -49,11 +55,6 @@ function rechazo(decision: DecisionProxy) {
  * Usa la accion `obtenerPedido`, que YA existe en el Apps Script desplegado: no
  * hace falta ninguna accion nueva ni columna nueva para validar transiciones.
  */
-async function leerEstadoActual(idPedido: string): Promise<string> {
-  const { pedido } = await obtenerPedido(idPedido);
-  return String(pedido?.estado_pedido ?? '');
-}
-
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -83,8 +84,10 @@ export async function PATCH(
 
     // Solo se consulta el estado actual si la peticion pretende cambiarlo; una
     // actualizacion de pago sola no necesita la llamada extra a Apps Script.
+    let estadoActual = '';
     if (body.estado_pedido) {
-      const estadoActual = await leerEstadoActual(id);
+      const lecturaActual = await obtenerPedido(id);
+      estadoActual = String(lecturaActual.pedido?.estado_pedido ?? '');
       const decision = decidirPatchEstado(estadoActual, body.estado_pedido);
       if (!decision.permitido) return rechazo(decision);
     }
@@ -100,13 +103,38 @@ export async function PATCH(
       return NextResponse.json({ ok: false, error: 'Acceso denegado.' }, { status: 403 });
     }
 
-    const data = await actualizarEstadoPedido({
+    const actor = actorIdFromRequest(req);
+    const estadoObjetivo = String(body.estado_pedido || '');
+    const input = {
       id_pedido: id,
-      estado_pedido: String(body.estado_pedido || ''),
+      estado_pedido: estadoObjetivo,
       estado_pago: body.estado_pago ? String(body.estado_pago) : undefined,
-      actor: actorIdFromRequest(req),
+      actor,
       idempotency_key: String(body.idempotency_key || ''),
-    });
+    };
+    const ejecutar = () => actualizarEstadoPedido(input);
+    let data: unknown;
+    if (esConfirmacionDurableReintentable(
+      estadoActual,
+      estadoObjetivo,
+      Boolean(body.estado_pago)
+    )) {
+      data = await ejecutarMutacionDurableConReplay(ejecutar);
+    } else if (esTransicionSimpleReconciliable(
+      estadoActual,
+      estadoObjetivo,
+      Boolean(body.estado_pago)
+    )) {
+      data = await ejecutarTransicionSimpleConReadback({
+        ejecutar,
+        leerPedido: () => obtenerPedido(id),
+        idPedido: id,
+        estadoObjetivo,
+        actor,
+      });
+    } else {
+      data = await ejecutar();
+    }
     return NextResponse.json({ ok: true, data });
   } catch (err) {
     return manejarError(err);
@@ -126,14 +154,17 @@ export async function POST(
         { status: 400 }
       );
     }
-    const estadoActual = await leerEstadoActual(id);
+    const lecturaActual = await obtenerPedido(id);
+    const estadoActual = String(lecturaActual.pedido?.estado_pedido ?? '');
     const decision = decidirCancelacion(estadoActual);
-    if (!decision.permitido) return rechazo(decision);
+    // CANCELADO puede ser el resultado de una primera llamada cuya respuesta se
+    // perdió. Se delega al diario para distinguir la misma key de una key nueva.
+    if (!decision.permitido && estadoActual !== 'cancelado') return rechazo(decision);
 
-    const data = await cancelarPedido(
-      id,
-      actorIdFromRequest(req),
-      String(body.idempotency_key)
+    const actor = actorIdFromRequest(req);
+    const idempotencyKey = String(body.idempotency_key);
+    const data = await ejecutarMutacionDurableConReplay(() =>
+      cancelarPedido(id, actor, idempotencyKey)
     );
     return NextResponse.json({ ok: true, data });
   } catch (err) {

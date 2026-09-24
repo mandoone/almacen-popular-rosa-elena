@@ -316,15 +316,18 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   compensa filas parciales y eleva `CONSISTENCIA_INCIERTA` si no puede hacerlo.
 - ✅ IDs nuevos `PED`/`MOV` combinan fecha legible y sufijo UUID; se retiró
   `listo → pendiente`; rutas usan fronteras exactas y la caché UI es invalidable.
-- ✅ **F9A-02 preparada localmente:** diario `OPERACIONES_PEDIDOS`, intención
+- ✅ **F9A-02 implementada:** diario `OPERACIONES_PEDIDOS`, intención
   persistida antes de datos críticos, idempotencia, aplicación reanudable,
   readback y bloqueo por `REQUIERE_REVISION`. No se considera ACID ni una
   transacción multitabla.
-- ✅ Migración aditiva TEST-only preparada: hoja de operaciones y columna
-  `operacion_id` en movimientos; todavía no fue ejecutada remotamente.
-- ⬜ Revisión humana final del diff F9-A.2 por Omar.
-- ⬜ Despliegue y validación de F9-A en Apps Script/Sheet TEST, sin reutilizar los
-  E2E de escritura cerrados F4–F8.
+- ✅ Migración aditiva ejecutada en Sheet TEST y F9-A desplegada en Apps Script
+  TEST v11; Producción permanece intacta.
+- ✅ Diagnóstico del E2E: datos consistentes, pero respuesta post-mutación
+  ocasionalmente perdida como 404 HTML en el redirect de ContentService.
+- ✅ Mitigación local preparada: clasificación exacta, un replay máximo para
+  confirmar/cancelar con la misma key y readback sin replay para LISTO/ENTREGADO.
+- ⬜ Revisar y desplegar la mitigación exclusivamente en TEST; repetir solo el
+  E2E F9-A. Hasta entonces el E2E TEST sigue FAIL.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 
