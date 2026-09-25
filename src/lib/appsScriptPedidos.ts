@@ -38,11 +38,11 @@ import { payloadAdminFase78 } from './fase9/dtoAdmin';
 import {
   diagnosticarRespuestaNoJson,
   clasificarFalloRespuestaNoJson,
-  esCodigoTransitorioAppsScript,
   mensajeRespuestaNoJsonSeguro,
   mensajePostMutacionAmbiguaSeguro,
   RESPUESTA_POST_MUTACION_AMBIGUA,
   type TipoFalloAppsScript,
+  type DestinoAppsScript,
 } from './appsScriptRespuesta';
 
 const MAX_INTENTOS_GET = 2;
@@ -137,21 +137,33 @@ export interface AperturaAdmin extends AperturaInput {
 }
 
 /** Error con código HTTP propagable hacia el route handler. */
+export interface DiagnosticoAppsScriptSeguro {
+  clasificacion: 'RESPUESTA_NO_JSON' | 'ERROR_JSON_LOGICO';
+  httpStatus: number;
+  backendCodigo?: number;
+  contentType: 'text/html' | 'application/json' | 'text/plain' | 'otro';
+  redireccion: boolean;
+  destino: DestinoAppsScript;
+}
+
 export class AppsScriptError extends Error {
   status: number;
   transitorioLectura: boolean;
   tipoFallo?: TipoFalloAppsScript;
+  diagnostico?: DiagnosticoAppsScriptSeguro;
   constructor(
     message: string,
     status = 502,
     transitorioLectura = false,
-    tipoFallo?: TipoFalloAppsScript
+    tipoFallo?: TipoFalloAppsScript,
+    diagnostico?: DiagnosticoAppsScriptSeguro
   ) {
     super(message);
     this.name = 'AppsScriptError';
     this.status = status;
     this.transitorioLectura = transitorioLectura;
     this.tipoFallo = tipoFallo;
+    this.diagnostico = diagnostico;
   }
 }
 
@@ -160,6 +172,39 @@ interface ScriptResponse<T> {
   data?: T;
   error?: string;
   codigo?: number;
+}
+
+function contentTypeParaRegistro(valor: string | null): DiagnosticoAppsScriptSeguro['contentType'] {
+  const tipo = String(valor || '').split(';', 1)[0].trim().toLowerCase();
+  return tipo === 'text/html' || tipo === 'application/json' || tipo === 'text/plain'
+    ? tipo
+    : 'otro';
+}
+
+function registrarFalloGetSeguro(
+  accion: string,
+  intento: number,
+  reintentara: boolean,
+  duracionMs: number,
+  error: unknown
+): void {
+  const clasificacion = error instanceof AppsScriptError
+    ? error.diagnostico?.clasificacion ?? 'ERROR_APPS_SCRIPT'
+    : error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name)
+      ? 'TIMEOUT'
+      : error instanceof TypeError ? 'TRANSPORTE' : 'DESCONOCIDO';
+  const diagnostico = error instanceof AppsScriptError ? error.diagnostico : undefined;
+  console.warn(JSON.stringify({
+    evento: 'apps_script_get_fallo', accion, intento,
+    intentos_maximos: MAX_INTENTOS_GET, reintentara,
+    duracion_ms: Math.max(0, duracionMs), clasificacion,
+    status_proxy: error instanceof AppsScriptError ? error.status : undefined,
+    http_status: diagnostico?.httpStatus,
+    codigo_backend: diagnostico?.backendCodigo,
+    content_type: diagnostico?.contentType,
+    redireccion: diagnostico?.redireccion,
+    destino: diagnostico?.destino,
+  }));
 }
 
 function entornoActual() {
@@ -259,7 +304,14 @@ async function leerRespuesta<T>(
         : mensajeRespuestaNoJsonSeguro(operacion, diagnostico),
       502,
       diagnostico.transitorioLectura,
-      tipoFallo
+      tipoFallo,
+      {
+        clasificacion: 'RESPUESTA_NO_JSON',
+        httpStatus: diagnostico.httpStatus,
+        contentType: contentTypeParaRegistro(diagnostico.contentType),
+        redireccion: diagnostico.redireccion,
+        destino: diagnostico.destino,
+      }
     );
   }
   if (!json.ok) {
@@ -267,7 +319,17 @@ async function leerRespuesta<T>(
     throw new AppsScriptError(
       json.error || 'Error en el backend de pedidos.',
       codigo,
-      esCodigoTransitorioAppsScript(codigo)
+      // Un JSON de error de Apps Script es lógico: no se reintenta solo por 5xx.
+      false,
+      undefined,
+      {
+        clasificacion: 'ERROR_JSON_LOGICO',
+        httpStatus: res.status,
+        backendCodigo: codigo,
+        contentType: contentTypeParaRegistro(res.headers.get('content-type')),
+        redireccion: res.redirected,
+        destino: 'desconocido',
+      }
     );
   }
   return json.data as T;
@@ -307,6 +369,7 @@ async function getScript<T>(params: Record<string, string>): Promise<T> {
   const accion = nombreAccionSeguro(params.action);
   let ultimoError: unknown;
   for (let intento = 1; intento <= MAX_INTENTOS_GET; intento++) {
+    const inicio = Date.now();
     try {
       const url = new URL(baseUrl());
       url.searchParams.set('_request_id', crypto.randomUUID());
@@ -319,7 +382,9 @@ async function getScript<T>(params: Record<string, string>): Promise<T> {
       return await leerRespuesta<T>(res, `GET ${accion}`, 'GET');
     } catch (error) {
       ultimoError = error;
-      if (!esFalloReintentableGet(error) || intento === MAX_INTENTOS_GET) {
+      const reintentara = esFalloReintentableGet(error) && intento < MAX_INTENTOS_GET;
+      registrarFalloGetSeguro(accion, intento, reintentara, Date.now() - inicio, error);
+      if (!reintentara) {
         throw errorRedSeguro(error);
       }
       await new Promise((resolve) => setTimeout(resolve, ESPERA_REINTENTO_GET_MS));

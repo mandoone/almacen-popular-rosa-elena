@@ -5,6 +5,7 @@ import {
   type CarritoItem,
 } from '@/lib/appsScriptPedidos';
 import { exigirAperturaActivaParaCrearPedidoTest } from '@/lib/fase3b/aperturaActivaServer';
+import { ejecutarEtapaPedido, registrarEventoEtapaPedido } from '@/lib/fase3b/observabilidadPedido';
 import { pedidosAnticipadosConCalendarioHabilitados } from '@/lib/fase3b/pedidosAnticipados';
 import {
   idempotencyKeyCreacionValida,
@@ -45,10 +46,13 @@ export async function POST(req: Request) {
       );
     }
 
+    const trazaId = crypto.randomUUID();
+    const observar = (evento: Parameters<typeof registrarEventoEtapaPedido>[1]) =>
+      registrarEventoEtapaPedido(trazaId, evento);
     const apertura = pedidosAnticipadosConCalendarioHabilitados(
       process.env.NEXT_PUBLIC_APP_ENV
     )
-      ? await exigirAperturaActivaParaCrearPedidoTest()
+      ? await exigirAperturaActivaParaCrearPedidoTest(observar)
       : null;
 
     const input = {
@@ -66,7 +70,8 @@ export async function POST(req: Request) {
         : {}),
       idempotency_key: String(body.idempotency_key),
     };
-    const result = await ejecutarMutacionDurableConReplay(() => crearPedido(input));
+    const result = await ejecutarEtapaPedido('CREAR_PEDIDO',
+      () => ejecutarMutacionDurableConReplay(() => crearPedido(input)), observar);
 
     return NextResponse.json({ ok: true, data: result });
   } catch (err) {

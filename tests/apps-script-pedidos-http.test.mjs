@@ -102,5 +102,6 @@ test('Apps Script GET: el cliente usa anticaché y como máximo un retry', async
   assert.match(fuente, /const ESPERA_REINTENTO_GET_MS = 1000/);
   assert.match(fuente, /searchParams\.set\('_request_id', crypto\.randomUUID\(\)\)/);
   assert.match(fuente, /for \(let intento = 1; intento <= MAX_INTENTOS_GET; intento\+\+\)/);
-  assert.doesNotMatch(fuente, /console\.(?:log|warn|error)/);
+  assert.doesNotMatch(fuente, /console\.log/);
+  assert.match(fuente, /registrarFalloGetSeguro/);
 });

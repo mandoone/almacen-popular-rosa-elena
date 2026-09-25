@@ -17,14 +17,15 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A en TEST, todavía no validada:** Apps Script TEST está en v14. La
-  creación durable y la preservación del teléfono textual quedaron desplegadas,
-  pero dos intentos TEST permanecen `REQUIERE_REVISION`. El último detectó una
-  validación antigua de `PEDIDOS.estado_pedido` que rechaza `recibido`. La
-  migración y el preflight del contrato están preparados localmente, pendientes
-  de deploy, aplicación y retest TEST.
-- **Próxima prioridad:** alinear la validación de Sheet TEST y repetir un único
-  retest F9-A. Producción sigue fuera de alcance.
+- **F9-A en TEST, todavía no validada:** Apps Script TEST está en v15; la
+  validación de `PEDIDOS.estado_pedido` ya admite los cinco estados y el preflight
+  remoto pasó. Dos operaciones históricas siguen `REQUIERE_REVISION` como evidencia.
+  Un POST posterior devolvió 503 antes de llegar a `doPost`, sin crear pedido ni
+  modificar stock; su causa upstream exacta no quedó registrada. Se preparó
+  localmente observabilidad saneada por etapa y se acotó el retry de GET a fallos
+  de transporte/respuesta transitoria, sin ampliar el replay del POST.
+- **Próxima prioridad:** desplegar el runtime Next local TEST actualizado y hacer
+  un único retest F9-A. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió

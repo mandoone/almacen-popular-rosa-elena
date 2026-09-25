@@ -5,6 +5,22 @@
 
 ---
 
+## F9-A — precondiciones F3B read-only (2026-09-25)
+
+1. Simular fallo transitorio del GET de aperturas/capacidad seguido de éxito:
+   máximo dos GET y creación posterior una sola vez.
+2. Dos fallos transitorios: 503 de precondición, sin POST de creación.
+   403, JSON lógico y contrato inválido no disparan retry.
+3. Revisar logs saneados: etapa `PRECONDICION_APERTURA`,
+   `PRECONDICION_CAPACIDAD` o `CREAR_PEDIDO`, sin token, URL efímera, HTML,
+   cookies ni datos personales.
+4. Retest remoto único: apertura sintética TEST, un pedido con teléfono textual,
+   retry de creación con la misma key, conflicto de payload, confirmación,
+   LISTO, cancelación y retry. Stock final igual al baseline y apertura cerrada.
+
+El 503 previo ocurrió antes de `doPost` sin escrituras; la causa upstream exacta
+continúa indeterminada. F9-A aún no está validada remotamente.
+
 ## F9-A — contrato de estados en Sheet TEST (2026-09-25)
 
 1. Preflight read-only: `PEDIDOS.estado_pedido` debe tener en cada fila de datos

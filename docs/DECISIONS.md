@@ -8,6 +8,19 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D27 — Precondiciones de creación observables sin reintentar POST
+
+- **Contexto:** un POST público terminó en 503 tras aproximadamente 61 s, sin
+  `doPost` de creación ni escrituras en Sheet TEST. El tramo de precondiciones
+  F3B ocultaba la lectura exacta que había fallado.
+- **Decisión:** registrar únicamente etapa, status y metadatos de transporte
+  permitidos; mantener como máximo dos GET ante fallos transitorios. Un JSON
+  lógico de error no se reintenta. `CREAR_PEDIDO` conserva solo su replay durable
+  específico ante la firma ambigua conocida, sin retry genérico de POST.
+- **Consecuencia:** el siguiente retest podrá separar apertura, capacidad y
+  creación sin registrar URL efímeras, tokens ni datos del cliente. La causa
+  upstream del 503 anterior permanece indeterminada.
+
 ## D26 — Validación de estados de PEDIDOS alineada con F9-A
 
 - **Contexto:** la validación estricta heredada de Sheet TEST admitía cuatro

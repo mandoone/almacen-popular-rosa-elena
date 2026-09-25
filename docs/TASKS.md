@@ -332,8 +332,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   los intentos fallidos quedaron identificados como evidencia sin tocar stock.
 - ✅ Preparar localmente migración idempotente y preflight read-only de
   `PEDIDOS.estado_pedido` para los cinco estados F9-A.
-- ⬜ Desplegar el contrato, migrar exclusivamente Sheet TEST y repetir un solo
-  retest F9-A. Hasta entonces el E2E TEST sigue FAIL.
+- ✅ Contrato desplegado en Apps Script TEST v15, validación de Sheet TEST
+  migrada dos veces sin cambios acumulativos y preflight remoto PASS.
+- ✅ El POST posterior con 503 no produjo escritura ni ejecución `doPost`;
+  observabilidad saneada por apertura/capacidad/creación y retry READ-ONLY
+  delimitado preparados localmente.
+- ⬜ Retest único F9-A en TEST; hasta su resultado el E2E sigue FAIL.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 

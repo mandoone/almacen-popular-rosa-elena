@@ -5,6 +5,16 @@
 
 ---
 
+## [F9-A precondiciones] — Diagnóstico READ-ONLY preparado (2026-09-25)
+
+- Apps Script TEST v15 y validación de estados de Sheet TEST ya activos; el
+  preflight remoto pasó. Un POST posterior devolvió 503 antes de `doPost`, sin
+  mutaciones, con causa upstream no determinada.
+- El runtime Next registra etapas de apertura, capacidad y creación con
+  metadatos saneados. Los GET conservan máximo un reintento ante transporte o
+  respuesta transitoria; errores JSON lógicos no se reintentan. El POST de
+  creación no recibe retry genérico. Retest TEST pendiente; F9-A sigue FAIL.
+
 ## [F9-A contrato Sheet] — Validación de estados preparada (2026-09-25)
 
 - El retest TEST v14 confirmó el teléfono `000000000` como texto, pero la regla
