@@ -346,8 +346,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Hardening local: rate limit en memoria por IP+actor, errores genéricos,
   límite de body, cookie `SameSite=Strict`, control de origen, CSP/HSTS/COOP,
   configuración productiva obligatoria y tests de escalada/revocación.
-- ⬜ Configurar cuentas técnicas en TEST y ejecutar QA manual de los tres roles;
-  no usar nombres reales hasta recibir la asignación del Almacén.
+- ✅ Configurar y probar tres cuentas sintéticas en Next TEST local: login,
+  permisos positivos/negativos, revocación, cambio temporal de rol, spoofing,
+  legacy, headers y origen. Baseline restaurado; sin contraseñas persistidas.
+- ⬜ QA visual autenticada/logout y cuentas humanas definitivas cuando el
+  Almacén asigne personas y apruebe la matriz. Las claves sintéticas efímeras
+  deben regenerarse si se repite un login interactivo; no son cuentas operativas.
 - ⬜ Configurar protección distribuida de intentos en la plataforma antes de
   Producción; el limitador por instancia es defensa local, no garantía global.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a

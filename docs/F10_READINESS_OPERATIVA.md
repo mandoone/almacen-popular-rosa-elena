@@ -19,6 +19,10 @@ secretos y no reemplaza el Go/No-Go humano de `GO_NO_GO_FASE_9_10.md`.
 
 ### 1. Identidad, roles y canales públicos
 
+- La QA con `test-admin`, `test-operacion` y `test-venta` es solo
+  `PROVISORIO_TEST`: las contraseñas aleatorias se descartan al terminar y
+  el archivo local ignorado conserva solo hashes/secreto TEST. No representa
+  cuentas humanas ni sustituye un ensayo visual autenticado con usuarios reales.
 - El Almacén aprueba la matriz de capacidades y asigna cada persona a un rol.
 - Se crean actores técnicos individuales con `npm run auth:credential -- --actor
   <id> --role <rol>`; el comando pide la contraseña sin mostrarla.

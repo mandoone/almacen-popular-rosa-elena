@@ -11,7 +11,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 
 | Pendiente | Estado real | Bloquea Producción | Decisión humana | Implementable ahora |
 |---|---|---:|---:|---:|
-| Identidad individual | Implementada local: PBKDF2, actor/rol, revocación y fail-closed; sin cuentas reales | SÍ, hasta configurar y probar | SÍ, asignación | Parte técnica CERRADA |
+| Identidad individual | Tres actores sintéticos validados en Next TEST local; sin cuentas reales ni QA visual autenticada | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST validada |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
 | Protección de login | Rate limit local por IP+actor implementado | SÍ, falta capa distribuida productiva | SÍ, configuración de plataforma | Local CERRADO |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
@@ -24,8 +24,8 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 | Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
 | Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
 
-Clasificación actual: `CERRADO` solo para preparación técnica local;
-`PENDIENTE_TECNICO` para rate limiting distribuido y QA de cuentas TEST;
+Clasificación actual: `CERRADO` para QA técnica sintética local;
+`PENDIENTE_TECNICO` para rate limiting distribuido, QA visual autenticada y dominio/CSP final;
 `PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
 `BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
@@ -157,8 +157,9 @@ existe monitoreo manual y responsable asignado.
 
 **Pendiente humano F10-02:** la arquitectura técnica, identidad multiusuario y
 matriz provisional están preparadas localmente, pero falta confirmación del
-Almacén, asignación de personas, QA TEST de cuentas y protección distribuida de
-intentos de login.
+Almacén, asignación de personas, QA TEST de las cuentas humanas finales y
+protección distribuida de intentos de login. Los actores sintéticos locales ya
+pasaron su QA técnica; no constituyen la asignación humana.
 **Bloquea producción: SÍ**.
 
 ### Vulnerabilidades npm

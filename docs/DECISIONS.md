@@ -8,6 +8,20 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D29 — Transporte seguro del registro TEST en archivos de entorno
+
+- **Contexto:** el cargador de variables de Next expandió los signos `$` de
+  los hashes PBKDF2 al leer `ADMIN_USERS_JSON` desde `.env.development.local`,
+  dejando cuentas inválidas pese a un JSON original correcto.
+- **Decisión:** `ADMIN_USERS_JSON` acepta además el prefijo `base64url:` con el
+  JSON codificado. La validación estricta de actores, roles, estado, versión y
+  hashes es exactamente la misma después de decodificar. JSON directo sigue
+  compatible. El QA local usa este transporte en el archivo TEST ignorado.
+- **Consecuencias:** la codificación evita expansión de entorno, **no cifra**
+  hashes ni concede privilegios. Las contraseñas de los tres actores sintéticos
+  viven solo en el proceso de QA; no se guardan ni se asignan personas reales.
+  Producción permanece sin cambios y F9 global abierta.
+
 ## D28 — Identidad individual local sin proveedor externo
 
 - **Contexto:** F9-A firmaba actor/rol, pero el login compartido no identificaba

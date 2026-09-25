@@ -5,6 +5,30 @@
 
 ---
 
+## F9 global — activación sintética en Next TEST local (2026-09-25)
+
+`node scripts/qa-identidad-test.mjs` genera tres claves aleatorias solo en
+memoria, guarda hashes/secret TEST en `.env.development.local` ignorado y
+restaura al final `test-admin=administracion`, `test-operacion=operacion`,
+`test-venta=venta`, todos activos y con `session_version=1`.
+
+Resultado observado: login y `/me` de los tres, cookies HTTP local, accesos
+positivos/negativos, no enumeración, payload extra rechazado, actor/rol y token
+falsificados rechazados, revocación y cambio temporal de rol con invalidación
+de sesión, legacy apagado, rate limit local por IP/actor, rotación actual+
+anterior, CSP/headers y origen cross-site: PASS. No hubo mutaciones de datos
+de Apps Script ni Sheet. Navegador: formulario y error de credenciales visibles
+sin overlay ni errores de consola; sesión autenticada y logout solo por HTTP.
+Las claves no se conservan; para reingresar interactivamente se regeneran.
+
+Pendiente: rate limit distribuido, dominio/CSP finales, QA visual autenticada,
+asignación humana de roles y Go/No-Go. F9 global y F10 no están cerradas.
+La batería posterior pasó: 392/392 tests, lint, build, secrets scan (261
+archivos), preflight técnico y `check:go-no-go` en estado PENDING esperado.
+`npm audit` conserva dos alertas conocidas (una moderada, una alta; ninguna
+crítica) en Next/PostCSS; no se forzó una actualización mayor en este bloque.
+
+
 ## F9 global/F10 — identidad y hardening local (2026-09-25)
 
 1. Configuración de cuentas: JSON ausente/inválido/duplicado, actor canónico,

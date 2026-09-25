@@ -78,7 +78,10 @@ export function leerUsuariosAdmin(valor: string | undefined): ConfiguracionUsuar
   if (!valor?.trim()) return { estado: 'ausente', usuarios: [] };
   let json: unknown;
   try {
-    json = JSON.parse(valor);
+    const texto = valor.startsWith('base64url:')
+      ? new TextDecoder('utf-8', { fatal: true }).decode(base64UrlABytes(valor.slice(10)) ?? new Uint8Array())
+      : valor;
+    json = JSON.parse(texto);
   } catch {
     return { estado: 'invalida', usuarios: [], error: 'ADMIN_USERS_JSON no es JSON válido.' };
   }

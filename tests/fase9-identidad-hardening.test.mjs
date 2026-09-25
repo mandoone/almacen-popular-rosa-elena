@@ -59,6 +59,20 @@ test('F9 global: configuración inválida o duplicada falla cerrada', () => {
   assert.equal(leerUsuariosAdmin(config({ campo_extra: true })).estado, 'invalida');
 });
 
+test('F9 global: ADMIN_USERS_JSON admite transporte base64url sin expansión de $', async () => {
+  const json = config();
+  const encoded = `base64url:${Buffer.from(json).toString('base64url')}`;
+  const usuarios = leerUsuariosAdmin(encoded);
+  assert.equal(usuarios.estado, 'valida');
+  assert.equal((await autenticarUsuarioAdmin(
+    usuarios, 'usuario-test-01', 'password-test-segura'
+  ))?.rol, 'operacion');
+  assert.equal(leerUsuariosAdmin('base64url:!').estado, 'invalida');
+  assert.equal(leerUsuariosAdmin('base64url:e30').estado, 'invalida');
+  const duplicate = JSON.stringify([JSON.parse(json)[0], JSON.parse(json)[0]]);
+  assert.equal(leerUsuariosAdmin(`base64url:${Buffer.from(duplicate).toString('base64url')}`).estado, 'invalida');
+});
+
 test('F9 global: revocar, cambiar rol o subir session_version invalida la sesión', () => {
   const sesion = { actor_id: 'usuario-test-01', rol: 'operacion', session_version: 1 };
   assert.equal(sesionCorrespondeAUsuario(leerUsuariosAdmin(config()), sesion), true);

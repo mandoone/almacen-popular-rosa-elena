@@ -5,6 +5,21 @@
 
 ---
 
+## [F9 global] — QA sintética de identidad en Next TEST local (2026-09-25)
+
+- Tres actores sintéticos por rol pasaron login, `/me`, autorizaciones,
+  revocación, cambio temporal de rol, spoofing, legacy, origen y headers.
+- `ADMIN_USERS_JSON` acepta transporte `base64url:` para evitar la expansión
+  de `$` en hashes PBKDF2 por el cargador de entorno; JSON directo sigue válido.
+- Script reproducible genera contraseñas en memoria y deja únicamente hashes y
+  secreto TEST en `.env.development.local` ignorado. Baseline de roles restaurado.
+- QA visual de formulario/error PASS; autenticación/logout comprobados por HTTP.
+  No se tocaron Apps Script, Sheet ni Producción. F9 global/F10 siguen NO-GO.
+- Batería: 392/392 tests, lint, build, secrets scan (261 archivos), preflight
+  técnico y Go/No-Go técnico PASS; Go/No-Go operativo continúa PENDING. La
+  auditoría de dependencias conserva una alerta moderada y una alta conocidas,
+  sin críticas; el remedio propuesto implica un upgrade mayor de Next.
+
 ## [F9 global + F10] — Identidad y readiness preparadas localmente (2026-09-25)
 
 ### Añadido

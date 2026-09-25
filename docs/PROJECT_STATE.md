@@ -26,13 +26,19 @@ sábados de apertura.
   se conservan intactas como evidencia. El 503 anterior a `doPost` no tiene
   causa upstream exacta demostrada; en este retest se observó y recuperó un
   404 HTML transitorio en GET `listarAperturas`.
-- **Próxima prioridad:** decisiones humanas de roles, identidad multiusuario y
-  hardening para F9 global/F10. Producción sigue fuera de alcance.
+- **Próxima prioridad:** asignación humana de roles, protección distribuida de
+  login y preparación operativa F10. Producción sigue fuera de alcance.
 - **F9 global — avance local:** identidad individual por configuración, hashes
   PBKDF2, revocación/versionado, rotación acotada de secreto, rate limit local,
   control de origen, cookie `SameSite=Strict` y CSP quedaron implementados y
-  probados localmente. No hay cuentas reales ni despliegue; el rate limit
-  distribuido de la plataforma sigue siendo requisito productivo.
+  probados localmente. Tres actores sintéticos `test-admin`, `test-operacion` y
+  `test-venta` pasaron login, capacidades, revocación, cambio de rol y rechazo
+  de suplantación en Next TEST local; el baseline quedó restaurado en un archivo
+  de entorno ignorado. Sus contraseñas aleatorias no se conservaron, por lo
+  que requieren regeneración para un próximo login interactivo. No hay cuentas
+  reales ni despliegue; el rate limit distribuido sigue siendo requisito
+  productivo. QA visual del formulario/error PASS; vista autenticada y logout
+  se comprobaron por HTTP, no visualmente.
 - **F10 — readiness local:** existe un manifiesto de 20 checks y un runbook para
   datos, stock, caja/saldos, costos, capacitación, backup, rollback y Go/No-Go.
   Todos los checks operativos reales continúan pendientes.
@@ -174,8 +180,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Configurar/validar identidades TEST, cerrar decisiones humanas F9/F10 y cargar
-datos reales solo durante la puesta en marcha autorizada.** Cualquier
+**Cerrar decisiones humanas F9/F10 y cargar datos reales solo durante la puesta
+en marcha autorizada.** La identidad sintética TEST ya fue probada; cualquier
 intervención productiva requiere autorización y Go/No-Go separados.
 
 La arquitectura técnica de roles usa `venta`, `operacion` y `administracion` con
