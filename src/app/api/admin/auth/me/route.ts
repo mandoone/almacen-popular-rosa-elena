@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   if (!actorId || !esRolOperativo(rol)) {
     return NextResponse.json({ ok: false, error: 'No autorizado.' }, { status: 401 });
   }
-  return NextResponse.json({
+  const response = NextResponse.json({
     ok: true,
     data: {
       actor_id: actorId,
@@ -22,4 +22,6 @@ export async function GET(request: Request) {
       capacidades: CAPACIDADES_POR_ROL[rol],
     },
   });
+  response.headers.set('Cache-Control', 'no-store');
+  return response;
 }

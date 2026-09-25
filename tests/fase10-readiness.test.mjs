@@ -53,12 +53,16 @@ test('Fase 10: preflight Go/No-Go consolida controles sin escrituras remotas', a
   assert.doesNotMatch(fuente, /apps-script:test:deploy|piloto:test['"]|--write-test/);
 });
 
-test('Fase 10: cabeceras defensivas no incluyen una CSP especulativa', async () => {
+test('Fase 10: cabeceras defensivas incluyen CSP cerrada para los orígenes inventariados', async () => {
   const fuente = await leer('next.config.mjs');
   assert.match(fuente, /X-Content-Type-Options/);
   assert.match(fuente, /X-Frame-Options/);
   assert.match(fuente, /Referrer-Policy/);
-  assert.doesNotMatch(fuente, /Content-Security-Policy/);
+  assert.match(fuente, /Content-Security-Policy/);
+  assert.match(fuente, /default-src 'self'/);
+  assert.match(fuente, /object-src 'none'/);
+  assert.match(fuente, /frame-ancestors 'none'/);
+  assert.doesNotMatch(fuente, /https:\/\//);
 });
 
 test('Fase 10: preflight consolidado no carga env ni ejecuta escrituras', async () => {

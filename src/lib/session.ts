@@ -18,6 +18,8 @@ export interface SessionIdentity {
   actor_id: string;
   nombre?: string;
   rol: RolOperativo;
+  session_version?: number;
+  secret_version?: string;
 }
 
 export interface SessionPayload extends SessionIdentity {
@@ -34,10 +36,13 @@ export const LEGACY_TEST_IDENTITY: Readonly<SessionIdentity> = {
 
 export function permiteLoginLegacy(
   nodeEnv: string | undefined,
-  appEnv: string | undefined
+  appEnv: string | undefined,
+  usuariosConfigurados = false,
+  recuperacionExplicita = false
 ): boolean {
   const entornoApp = String(appEnv ?? '').trim().toLowerCase();
-  return nodeEnv !== 'production' || entornoApp === 'test' || entornoApp === 'local';
+  const entornoSeguro = nodeEnv !== 'production' || entornoApp === 'test' || entornoApp === 'local';
+  return entornoSeguro && (!usuariosConfigurados || recuperacionExplicita);
 }
 
 async function importKey(secret: string): Promise<CryptoKey> {
@@ -83,10 +88,18 @@ function payloadValido(valor: unknown, ahora: number): valor is SessionPayload {
   if (!valor || typeof valor !== 'object') return false;
   const payload = valor as Partial<SessionPayload>;
   if (typeof payload.actor_id !== 'string' ||
-      !/^[A-Za-z0-9._@-]{1,100}$/.test(payload.actor_id)) return false;
+      !/^[a-z0-9][a-z0-9._@-]{0,99}$/.test(payload.actor_id)) return false;
   if (payload.nombre !== undefined &&
-      (typeof payload.nombre !== 'string' || payload.nombre.length > 120)) return false;
+      (typeof payload.nombre !== 'string' || payload.nombre !== payload.nombre.trim() ||
+       payload.nombre.length < 1 || payload.nombre.length > 120 ||
+       /[\u0000-\u001f\u007f]/.test(payload.nombre))) return false;
   if (!esRolOperativo(payload.rol)) return false;
+  if (payload.session_version !== undefined &&
+      (!Number.isSafeInteger(payload.session_version) || payload.session_version < 1)) return false;
+  if (payload.secret_version !== undefined &&
+      (typeof payload.secret_version !== 'string' ||
+       !/^[A-Za-z0-9._-]{1,32}$/.test(payload.secret_version))) return false;
+  if ((payload.session_version === undefined) !== (payload.secret_version === undefined)) return false;
   if (!Number.isSafeInteger(payload.iat) || !Number.isSafeInteger(payload.exp)) return false;
   if (payload.exp! <= payload.iat!) return false;
   if (payload.exp! - payload.iat! > SESSION_MAX_AGE_MS) return false;
@@ -107,6 +120,8 @@ export async function makeSessionToken(
     actor_id: identity.actor_id,
     ...(identity.nombre ? { nombre: identity.nombre } : {}),
     rol: identity.rol,
+    ...(identity.session_version ? { session_version: identity.session_version } : {}),
+    ...(identity.secret_version ? { secret_version: identity.secret_version } : {}),
     iat: ahora,
     exp: ahora + SESSION_MAX_AGE_MS,
   };
@@ -114,6 +129,81 @@ export async function makeSessionToken(
   const key = await importKey(secret);
   const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(encoded));
   return `${encoded}.${bytesToHex(new Uint8Array(signature))}`;
+}
+
+export interface SessionKeyring {
+  current: { version: string; secret: string };
+  previous?: { version: string; secret: string };
+}
+
+export type ResultadoKeyring =
+  | { ok: true; keyring: SessionKeyring }
+  | { ok: false; error: string };
+
+export function crearSessionKeyring(config: {
+  currentSecret?: string;
+  currentVersion?: string;
+  previousSecret?: string;
+  previousVersion?: string;
+}): ResultadoKeyring {
+  const currentSecret = config.currentSecret ?? '';
+  const currentVersion = config.currentVersion?.trim() || 'v1';
+  if (currentSecret.length < 32 || !/^[A-Za-z0-9._-]{1,32}$/.test(currentVersion)) {
+    return { ok: false, error: 'Configuración de sesión actual inválida.' };
+  }
+  const tieneSecretAnterior = Boolean(config.previousSecret);
+  const tieneVersionAnterior = Boolean(config.previousVersion?.trim());
+  if (tieneSecretAnterior !== tieneVersionAnterior) {
+    return { ok: false, error: 'La rotación anterior de sesión está incompleta.' };
+  }
+  if (!tieneSecretAnterior) {
+    return { ok: true, keyring: { current: { version: currentVersion, secret: currentSecret } } };
+  }
+  const previousSecret = config.previousSecret!;
+  const previousVersion = config.previousVersion!.trim();
+  if (previousSecret.length < 32 ||
+      !/^[A-Za-z0-9._-]{1,32}$/.test(previousVersion) ||
+      previousVersion === currentVersion ||
+      previousSecret === currentSecret) {
+    return { ok: false, error: 'Configuración de rotación de sesión inválida.' };
+  }
+  return {
+    ok: true,
+    keyring: {
+      current: { version: currentVersion, secret: currentSecret },
+      previous: { version: previousVersion, secret: previousSecret },
+    },
+  };
+}
+
+function versionSinVerificar(token: string): string | undefined {
+  try {
+    const encoded = token.split('.')[0];
+    const payload = JSON.parse(decodeBase64Url(encoded)) as { secret_version?: unknown };
+    return typeof payload.secret_version === 'string' ? payload.secret_version : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function readSessionTokenConRotacion(
+  token: string,
+  keyring: SessionKeyring,
+  ahora = Date.now()
+): Promise<SessionPayload | null> {
+  const version = versionSinVerificar(token);
+  const clave = version === undefined
+    ? keyring.current
+    : version === keyring.current.version
+      ? keyring.current
+      : version === keyring.previous?.version
+        ? keyring.previous
+        : null;
+  if (!clave) return null;
+  const payload = await readSessionToken(token, clave.secret, ahora);
+  if (!payload) return null;
+  if (payload.secret_version !== undefined && payload.secret_version !== clave.version) return null;
+  return payload;
 }
 
 export async function readSessionToken(
@@ -148,7 +238,7 @@ export async function verifySessionToken(token: string, secret: string): Promise
 
 export function actorIdFromRequest(request: Request): string {
   const actor = request.headers.get(SESSION_ACTOR_HEADER) ?? '';
-  if (!/^[A-Za-z0-9._@-]{1,100}$/.test(actor)) {
+  if (!/^[a-z0-9][a-z0-9._@-]{0,99}$/.test(actor)) {
     throw new Error('La sesión autenticada no contiene un actor válido.');
   }
   return actor;
@@ -163,8 +253,9 @@ export function cookieOptions(maxAge: number) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    sameSite: 'strict' as const,
     path: '/',
     maxAge,
+    priority: 'high' as const,
   };
 }

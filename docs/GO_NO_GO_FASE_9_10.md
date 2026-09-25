@@ -1,11 +1,34 @@
 # Fases 9–10 — inventario, decisiones y Go/No-Go
 
-**Fecha de corte:** 2026-09-22
+**Fecha de corte:** 2026-09-25
 **Alcance:** preparación técnica y editorial; producción no autorizada ni tocada.  
 **Estado global:** **NO-GO productivo** hasta resolver los bloqueos humanos indicados.
 
 Este documento es la fuente de verdad para el cierre de F9/F10. No reabre las
 validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
+
+## 0. Auditoría ejecutiva F9/F10
+
+| Pendiente | Estado real | Bloquea Producción | Decisión humana | Implementable ahora |
+|---|---|---:|---:|---:|
+| Identidad individual | Implementada local: PBKDF2, actor/rol, revocación y fail-closed; sin cuentas reales | SÍ, hasta configurar y probar | SÍ, asignación | Parte técnica CERRADA |
+| `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
+| Protección de login | Rate limit local por IP+actor implementado | SÍ, falta capa distribuida productiva | SÍ, configuración de plataforma | Local CERRADO |
+| Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
+| Capacidades | Matriz `venta`/`operacion`/`administracion` probada | SÍ, aceptación/asignación pendientes | SÍ, Almacén | No hardcodear personas |
+| CSP/orígenes/headers | CSP same-origin, control cross-site, HSTS/COOP y fail-closed local | SÍ, validar dominio final | SÍ, dominio | Código CERRADO |
+| Contenido/contactos/derechos | F9-01 a F9-04 pendientes | SÍ | SÍ, Almacén | NO sin fuente/aprobación |
+| Stock/precios/costos | TEST técnico listo; valores reales no validados | SÍ por flujo | SÍ, Almacén | NO cargar aún |
+| Caja/saldos | Corte real no informado | SÍ para caja/abastecimiento | SÍ, Almacén | NO cargar aún |
+| Backup/rollback | Procedimiento y manifiesto listos; evidencia productiva no ejecutada | SÍ | SÍ, responsables/ventana | Preparación CERRADA |
+| Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
+| Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
+
+Clasificación actual: `CERRADO` solo para preparación técnica local;
+`PENDIENTE_TECNICO` para rate limiting distribuido y QA de cuentas TEST;
+`PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
+`REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
+`BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
 
 ## 1. Inventario público F9
 
@@ -112,20 +135,30 @@ existe monitoreo manual y responsable asignado.
 
 ### Seguridad focalizada
 
-- Cookie admin `httpOnly`, `Secure` en producción, `SameSite=Lax`, expiración de
-  ocho horas y firma HMAC; el payload validado contiene actor, rol, emisión y
-  expiración. Middleware protege páginas y APIs por capacidad.
-- Headers: `nosniff`, anti-clickjacking, referrer policy y permissions policy.
-- CSP no se agregó sin inventariar primero scripts/estilos de Next y orígenes
-  productivos; una política especulativa podría romper el sitio.
+- Cookie admin `httpOnly`, `Secure` en producción, `SameSite=Strict`, expiración
+  de ocho horas y firma HMAC. El payload contiene actor, rol, versión de cuenta,
+  versión de secreto, emisión y expiración; el middleware revalida la cuenta.
+- Identidad individual sin proveedor externo: registro de entorno con hashes
+  PBKDF2, revocación y rotación de secreto actual+anterior. No hay personas
+  hardcodeadas. `legacy-admin` queda solo para TEST/local.
+- Login con límite local de cinco fallos por ventana para IP y actor, respuesta
+  genérica, límite de body y `Retry-After`. Las mutaciones admin rechazan origen
+  cross-site. Esta defensa por instancia no sustituye rate limiting distribuido.
+- Headers: `nosniff`, anti-clickjacking, referrer policy, permissions policy,
+  COOP, HSTS y CSP limitada a `self`/recursos locales inventariados.
+- `check:go-no-go` exige en entorno productivo dominio HTTPS, cuentas
+  individuales, al menos una administración activa, secreto/versionado válido y
+  recuperación legacy deshabilitada.
 - CI tiene `contents: read`, instalación reproducible, QA, secrets scan y audit
   crítico. No ejecuta E2E remoto ni deploy.
-- Pendiente antes de producción: confirmar secreto de sesión fuerte, contraseña
-  administrada, responsable de rotación y mitigación de intentos repetidos de login.
+- Pendiente antes de producción: configurar/validar las cuentas en TEST, confirmar
+  responsables de revocación/rotación y activar rate limiting distribuido en la
+  plataforma elegida. No se configuró infraestructura externa en este lote.
 
-**Pendiente humano F10-02:** la arquitectura técnica y la matriz provisional de
-roles están preparadas en TEST, pero falta confirmación del Almacén, asignación
-de personas, identidad multiusuario real y protección de intentos de login.
+**Pendiente humano F10-02:** la arquitectura técnica, identidad multiusuario y
+matriz provisional están preparadas localmente, pero falta confirmación del
+Almacén, asignación de personas, QA TEST de cuentas y protección distribuida de
+intentos de login.
 **Bloquea producción: SÍ**.
 
 ### Vulnerabilidades npm
@@ -158,6 +191,11 @@ informados como `PENDING` si falta conectividad/configuración; nunca habilita
 escrituras ni despliegues. Durante desarrollo se admite
 `npm run preflight:go-no-go -- --allow-dirty --skip-npm-ci`.
 
+El readiness operativo complementario vive en `F10_READINESS_OPERATIVA.md`.
+`npm run preflight:f10` valida un manifiesto local ignorado por Git; `--strict`
+solo admite READY cuando los 20 checks tienen evidencia `ready` o una decisión
+`not_applicable`. El ejemplo versionado permanece íntegramente `pending`.
+
 ## 4. Datos reales pendientes
 
 | Dato | Estado | ¿Bloquea producción? |
@@ -181,6 +219,8 @@ escrituras ni despliegues. Durante desarrollo se admite
   fallbacks revisados.
 - Metadata por página, robots, sitemap configurable, 404, error, loading y health.
 - Headers, sesión admin, rutas admin, CI mínimo, secrets scan y preflight consolidados.
+- Identidad individual, revocación/rotación, CSP, control de origen y rate limit
+  local preparados y probados sin cuentas reales.
 - Arquitectura F9-A de roles, autorización, DTOs, IDs y diario durable validada
   en TEST con Apps Script v15 y Next local `43a51a9`; retest focalizado PASS.
   F9 global sigue abierta. No se declara atomicidad ACID multitabla.
@@ -191,6 +231,7 @@ escrituras ni despliegues. Durante desarrollo se admite
 - Resolver dos advisories npm ligados a Next 15 cuando exista una corrección sin
   migración mayor aceptada, o planificar la migración separada.
 - Completar mínimos/prioridades, saldo/efectivo y observabilidad externa opcional.
+- Configurar rate limiting distribuido y ejecutar QA TEST de las cuentas finales.
 
 ### BLOCKED
 
@@ -201,5 +242,5 @@ escrituras ni despliegues. Durante desarrollo se admite
 ### HUMAN_DECISION_REQUIRED
 
 - F9-01 a F9-04.
-- Dominio `SITE_URL`, asignación humana de roles/protección de login, datos reales y
-  responsables/ventana de backup y rollback.
+- Dominio `SITE_URL`, asignación humana de roles, elección/configuración de la
+  protección distribuida, datos reales y responsables/ventana de backup y rollback.

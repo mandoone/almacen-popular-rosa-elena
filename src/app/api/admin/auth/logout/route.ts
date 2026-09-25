@@ -3,6 +3,7 @@ import { COOKIE_NAME, cookieOptions } from '@/lib/session';
 
 export async function POST() {
   const res = NextResponse.json({ ok: true });
+  res.headers.set('Cache-Control', 'no-store');
   res.cookies.set(COOKIE_NAME, '', cookieOptions(0));
   return res;
 }

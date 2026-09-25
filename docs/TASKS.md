@@ -128,8 +128,8 @@ ni secretos, revisados y commiteados en la rama de fase.
 - ✅ Modo demo local aislado y QA visual aprobado sin llamadas al backend real.
 - ✅ Plan y decisiones técnicas del backend durable documentados.
 - ✅ Entorno TEST con copias separadas de Sheet y Apps Script disponible.
-- 🔄 Backend durable preparado localmente; faltan migración, despliegue y
-  validación remota exclusivamente en TEST.
+- ✅ Backend durable migrado, desplegado y validado exclusivamente en TEST;
+  retest F9-A PASS con Apps Script v15.
 - ⬜ Migración y cambios productivos pendientes; producción no fue tocada por
   estos avances de Fase 3A.
 
@@ -208,8 +208,8 @@ remotas del backend durable en TEST antes de cualquier cambio productivo.
   productivos: variables, Apps Script, Sheet y despliegue.
 - 🔄 Fase 4: catálogo público preparado; validación de productos, stock,
   precios e imágenes pendiente con el Almacén.
-- 🔄 Fase 9: F9-A requiere alinear la validación de estados en Sheet TEST y
-  completar el retest; revisión editorial y decisiones humanas siguen pendientes.
+- 🔄 Fase 9: F9-A validada en TEST; revisión editorial, identidad operativa y
+  decisiones humanas de F9 global siguen pendientes.
 - ✅ Fase 5 + 6 cerradas técnicamente en TEST; piloto integral PASS.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
@@ -340,7 +340,16 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Retest único F9-A PASS en TEST: `PED-20260925-091712-debc0442`, creación,
   confirmación y cancelación `COMPLETADA`; LISTO reconciliado por readback;
   stock 5.5 → 5.4 → 5.5 kg, apertura `APE-20260929` cerrada.
-- ⬜ F9 global: identidad multiusuario, hardening final y pendientes F10.
+- ✅ F9 global técnico local: cuentas individuales por entorno, PBKDF2, actor/
+  rol, revocación por `active`/`session_version`, rotación actual+anterior,
+  fail-closed y generador de credenciales sin dependencia externa.
+- ✅ Hardening local: rate limit en memoria por IP+actor, errores genéricos,
+  límite de body, cookie `SameSite=Strict`, control de origen, CSP/HSTS/COOP,
+  configuración productiva obligatoria y tests de escalada/revocación.
+- ⬜ Configurar cuentas técnicas en TEST y ejecutar QA manual de los tres roles;
+  no usar nombres reales hasta recibir la asignación del Almacén.
+- ⬜ Configurar protección distribuida de intentos en la plataforma antes de
+  Producción; el limitador por instancia es defensa local, no garantía global.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 
@@ -352,6 +361,8 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Headers, sesión con identidad/rol, autorización de rutas admin, CI mínimo y
   secrets scan revisados.
 - ✅ Backup/rollback y `npm run preflight:go-no-go` consolidados.
+- ✅ Runbook operativo, manifiesto local de 20 checks y
+  `npm run preflight:f10 [-- --strict]` preparados sin datos reales.
 - ⬜ Resolver decisiones, datos reales y bloqueos del checklist único en
   `docs/GO_NO_GO_FASE_9_10.md` antes de producción.
 

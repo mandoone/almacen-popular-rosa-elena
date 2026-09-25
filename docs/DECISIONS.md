@@ -8,6 +8,24 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D28 — Identidad individual local sin proveedor externo
+
+- **Contexto:** F9-A firmaba actor/rol, pero el login compartido no identificaba
+  personas, no permitía revocación individual y no tenía protección de intentos.
+  Elegir un proveedor externo ampliaría arquitectura y operación antes de saber
+  la nómina final.
+- **Decisión:** usar un registro acotado `ADMIN_USERS_JSON` administrado como
+  secreto de entorno, con `actor_id` técnico, rol, estado, versión de sesión y
+  hash PBKDF2-SHA256. El middleware revalida cuenta/rol/versión en cada request;
+  la sesión acepta una clave actual y una anterior durante rotación. El acceso
+  compartido queda solo en TEST/local y se apaga al existir cuentas salvo opt-in
+  de recuperación. Se agrega rate limit local por IP+actor y control de origen.
+- **Consecuencias:** no se instala base de datos ni proveedor de identidad y se
+  obtiene trazabilidad/revocación con el stack actual. Cambiar rol, desactivar la
+  cuenta o incrementar `session_version` invalida sesiones. La asignación humana
+  sigue pendiente; antes de Producción se requiere rate limiting distribuido de
+  plataforma porque la memoria de una instancia no coordina réplicas.
+
 ## D27 — Precondiciones de creación observables sin reintentar POST
 
 - **Contexto:** un POST público terminó en 503 tras aproximadamente 61 s, sin

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "fecha_corte": "2026-09-25",
+  "checks": {
+    "identidad_cuentas": { "estado": "pending", "evidencia": "Asignación humana pendiente." },
+    "roles_aprobados": { "estado": "pending", "evidencia": "Matriz provisional; falta aprobación del Almacén." },
+    "contenido_editorial": { "estado": "pending", "evidencia": "Decisiones F9-01 a F9-04 pendientes." },
+    "derechos_imagenes": { "estado": "pending", "evidencia": "Créditos y permisos pendientes." },
+    "contactos_publicos": { "estado": "pending", "evidencia": "Canales públicos por confirmar." },
+    "dominio_https": { "estado": "pending", "evidencia": "SITE_URL definitivo pendiente." },
+    "stock_fisico": { "estado": "pending", "evidencia": "Conteo físico no cargado." },
+    "precios_venta": { "estado": "pending", "evidencia": "Validación comercial pendiente." },
+    "costos_iniciales": { "estado": "pending", "evidencia": "Costos reales pendientes." },
+    "saldo_efectivo": { "estado": "pending", "evidencia": "Corte de caja pendiente." },
+    "saldo_bancario": { "estado": "pending", "evidencia": "Conciliación pendiente." },
+    "minimos_prioridades": { "estado": "pending", "evidencia": "Parámetros de abastecimiento pendientes." },
+    "backup_sheet": { "estado": "pending", "evidencia": "Copia productiva no autorizada todavía." },
+    "version_apps_script": { "estado": "pending", "evidencia": "Versión productiva por registrar en canal seguro." },
+    "rollback_web": { "estado": "pending", "evidencia": "Commit estable y responsable por confirmar." },
+    "responsable_ventana": { "estado": "pending", "evidencia": "Responsable y ventana de cambio pendientes." },
+    "capacitacion_venta": { "estado": "pending", "evidencia": "Capacitación pendiente." },
+    "capacitacion_operacion": { "estado": "pending", "evidencia": "Capacitación pendiente." },
+    "capacitacion_administracion": { "estado": "pending", "evidencia": "Capacitación pendiente." },
+    "ensayo_test": { "estado": "pending", "evidencia": "Ensayo final posterior a configurar identidades y datos." }
+  }
+}

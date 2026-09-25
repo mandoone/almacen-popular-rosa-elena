@@ -5,6 +5,27 @@
 
 ---
 
+## F9 global/F10 — identidad y hardening local (2026-09-25)
+
+1. Configuración de cuentas: JSON ausente/inválido/duplicado, actor canónico,
+   roles cerrados, PBKDF2 y credenciales incorrectas/desconocidas.
+2. Revocación: `active=false`, cambio de rol o aumento de `session_version`
+   invalidan una sesión ya firmada.
+3. Rotación: solo versión actual/anterior válida; secreto corto, par incompleto o
+   versión desconocida fallan cerrados.
+4. Legacy: bloqueado en Producción y al existir usuarios, salvo recuperación
+   explícita en TEST/local.
+5. Login: quinto fallo por IP o actor activa 429/`Retry-After`; respuestas no
+   enumeran usuarios. Mutaciones cross-site se rechazan.
+6. Headers: CSP limitada a orígenes inventariados, cookies estrictas, HSTS y
+   configuración productiva obligatoria.
+7. F10: el manifiesto exige los 20 checks y evidencia; el modo estricto no puede
+   dar READY mientras existan pendientes.
+
+Resultado local final: **391/391 PASS**, `git diff --check`, lint, build,
+secrets scan y preflight técnico PASS. No se ejecutaron E2E remotos ni
+escrituras; F9-A no fue reabierta.
+
 ## F9-A — precondiciones F3B read-only (2026-09-25)
 
 1. Simular fallo transitorio del GET de aperturas/capacidad seguido de éxito:
@@ -256,8 +277,8 @@ secrets scan. La evidencia final de esta sesión se registra en
 
 ## Notas
 
-- Estas son pruebas **manuales**; no hay suite automatizada (coherente con el arnés
-  liviano, ver `docs/DECISIONS.md`).
+- T1–T14 son pruebas manuales históricas; la suite automatizada vigente se
+  ejecuta con `npm test` y se amplía con cada cambio técnico.
 - Antes de cada apertura real conviene ejecutar T1–T9 como checklist mínima.
 
 ---

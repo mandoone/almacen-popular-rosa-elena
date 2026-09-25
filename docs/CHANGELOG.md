@@ -5,6 +5,30 @@
 
 ---
 
+## [F9 global + F10] — Identidad y readiness preparadas localmente (2026-09-25)
+
+### Añadido
+
+- Login individual configurable con PBKDF2, actor/rol, revocación, versión de
+  sesión y rotación de secreto actual+anterior; sin proveedor ni dependencia.
+- Rate limit local por IP+actor, errores genéricos, control de origen, cookie
+  estricta, CSP/HSTS/COOP y validación obligatoria de configuración productiva.
+- Generador interactivo de credenciales sin eco de contraseña.
+- Runbook F10, manifiesto de 20 evidencias y preflight normal/estricto para
+  identidad, editorial, stock, precios, costos, caja/saldos, capacitación,
+  backup, rollback, responsables y ensayo.
+
+### Estado
+
+- Batería final PASS: `git diff --check`, 391/391 tests, lint, build, secrets
+  scan (260 archivos) y preflight técnico. Audit conserva las dos alertas ya
+  aceptadas de Next 15/PostCSS, con cero críticas.
+- F9 técnica avanzó, pero F9 global continúa abierta por asignación/aprobación de
+  roles, QA de cuentas TEST y rate limiting distribuido productivo.
+- F10 sigue NO-GO: no se cargaron datos reales ni se ejecutaron backups/deploys.
+  Producción no fue tocada; F9-A y sus dos operaciones históricas permanecen
+  intactas.
+
 ## [F9-A validación TEST] — Retest focalizado PASS (2026-09-25)
 
 - Next local `43a51a9` registró etapas saneadas y recuperó un GET transitorio

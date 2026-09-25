@@ -46,3 +46,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Evidencia local de puesta en marcha (puede referenciar datos operativos privados)
+/config/f10-readiness.local.json

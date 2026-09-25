@@ -28,6 +28,14 @@ sábados de apertura.
   404 HTML transitorio en GET `listarAperturas`.
 - **Próxima prioridad:** decisiones humanas de roles, identidad multiusuario y
   hardening para F9 global/F10. Producción sigue fuera de alcance.
+- **F9 global — avance local:** identidad individual por configuración, hashes
+  PBKDF2, revocación/versionado, rotación acotada de secreto, rate limit local,
+  control de origen, cookie `SameSite=Strict` y CSP quedaron implementados y
+  probados localmente. No hay cuentas reales ni despliegue; el rate limit
+  distribuido de la plataforma sigue siendo requisito productivo.
+- **F10 — readiness local:** existe un manifiesto de 20 checks y un runbook para
+  datos, stock, caja/saldos, costos, capacitación, backup, rollback y Go/No-Go.
+  Todos los checks operativos reales continúan pendientes.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -106,8 +114,10 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ✅ **Envío de pedido por WhatsApp** con mensaje pre-armado (`wa.me`).
 - ✅ **Imágenes de producto** por convención de nombre, con fallback.
 - ✅ **Pedidos reales compartidos** en Google Sheets, visibles entre dispositivos.
-- ✅ **Panel `/admin` protegido** con login real, cookie `httpOnly`, middleware,
-  sesión HMAC con actor/rol y autorización por capacidad en páginas y APIs.
+- ✅ **Panel `/admin` protegido** con cookie `httpOnly`, middleware, sesión HMAC
+  con actor/rol y autorización por capacidad. La rama incluye login individual;
+  TEST conserva `legacy-admin` como recuperación provisoria hasta configurar
+  actores técnicos.
 - ✅ **Flujo end-to-end** tienda → pedido → base operativa → admin → stock probado.
 - ✅ **Proxy admin Fase 3A** rechaza transiciones peligrosas antes de reenviar al
   backend.
@@ -120,7 +130,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - 🔄 **Fase 9:** F9-A validada en TEST con Apps Script v15 y Next local
   `43a51a9`; F9 global sigue abierta por decisiones humanas y hardening.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
-  loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
+  loading, health, CSP/headers, CI, secrets scan, backup/rollback, manifiesto de
+  readiness y preflights locales.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
 
 ---
@@ -163,13 +174,17 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 
 ## Prioridad actual
 
-**Cerrar decisiones humanas F9/F10 y datos reales bloqueantes.** Cualquier
+**Configurar/validar identidades TEST, cerrar decisiones humanas F9/F10 y cargar
+datos reales solo durante la puesta en marcha autorizada.** Cualquier
 intervención productiva requiere autorización y Go/No-Go separados.
 
 La arquitectura técnica de roles usa `venta`, `operacion` y `administracion` con
 herencia explícita de capacidades. La matriz es provisional, definida por Omar;
-la asignación de personas y la aceptación del Almacén siguen pendientes. El login
-compartido crea temporalmente `legacy-admin`/`administracion` solo en TEST.
+la asignación de personas y la aceptación del Almacén siguen pendientes. Las
+cuentas individuales se suministran por entorno sin nombres hardcodeados. El
+login compartido crea temporalmente `legacy-admin`/`administracion` solo en
+TEST/local y queda deshabilitado al configurar usuarios, salvo recuperación
+TEST explícita.
 
 ---
 

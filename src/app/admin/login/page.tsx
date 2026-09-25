@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { invalidarSesionAdmin } from '@/lib/fase9/cacheSesionAdmin';
 
 export default function LoginPage() {
+  const [actorId, setActorId] = useState('');
   const [pass, setPass] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,14 +20,14 @@ export default function LoginPage() {
       const res = await fetch('/api/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass }),
+        body: JSON.stringify({ actor_id: actorId.trim().toLowerCase(), password: pass }),
       });
       if (res.ok) {
         invalidarSesionAdmin();
         router.push('/admin');
       } else {
         const json = await res.json().catch(() => null);
-        setError(json?.error ?? 'Contraseña incorrecta');
+        setError(json?.error ?? 'No fue posible iniciar sesión.');
         setPass('');
       }
     } catch {
@@ -49,15 +50,36 @@ export default function LoginPage() {
         Panel de Administración
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
+        <label className="flex flex-col gap-1 text-sm font-medium text-white">
+          Usuario
+          <input
+            type="text"
+            value={actorId}
+            onChange={(e) => { setActorId(e.target.value); setError(''); }}
+            className="px-4 py-3 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-light"
+            autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
+            maxLength={100}
+            autoFocus
+            disabled={loading}
+          />
+        </label>
+        <p className="-mt-2 text-xs text-gray-300">
+          El acceso compartido sin usuario se reserva exclusivamente para recuperación TEST/local.
+        </p>
+        <label className="flex flex-col gap-1 text-sm font-medium text-white">
+          Contraseña
         <input
           type="password"
-          placeholder="Contraseña"
           value={pass}
           onChange={(e) => { setPass(e.target.value); setError(''); }}
-          className="px-4 py-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
-          autoFocus
+          className="px-4 py-3 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-light"
+          autoComplete="current-password"
+          maxLength={256}
           disabled={loading}
         />
+        </label>
         {error && (
           <p className="text-red-300 text-sm text-center">{error}</p>
         )}

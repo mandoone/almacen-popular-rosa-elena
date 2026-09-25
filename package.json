@@ -22,6 +22,8 @@
     "audit:catalogo:test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/audit-catalogo-test.mjs",
     "catalogo:test:validar-plan": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/validate-catalogo-test-plan.mjs",
     "preflight:tecnico": "node scripts/preflight-tecnico.mjs",
+    "auth:credential": "node scripts/generar-credencial-admin.mjs",
+    "preflight:f10": "node scripts/preflight-f10-readiness.mjs",
     "preflight:test": "node scripts/preflight-tecnico.mjs --include-test",
     "scan:secrets": "node scripts/scan-secrets.mjs",
     "check:go-no-go": "node scripts/check-go-no-go.mjs",
