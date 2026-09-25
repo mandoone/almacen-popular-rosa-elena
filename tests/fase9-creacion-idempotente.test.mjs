@@ -41,10 +41,18 @@ class HojaMock {
     this.filas = filas.map((fila) => [...fila]);
     this.control = control;
     this.historialEstados = [];
+    this.formatos = new Map();
+    this.maxFilas = 1000;
   }
   getName() { return this.nombre; }
   getLastRow() { return this.filas.length + 1; }
+  getMaxRows() { return this.maxFilas; }
+  insertRowsAfter(_fila, cantidad) { this.maxFilas += cantidad; }
   getLastColumn() { return this.headers.length; }
+  valorCelda(valor, fila, columna) {
+    if (this.formatos.get(`${fila}:${columna}`) === '@') return String(valor);
+    return typeof valor === 'string' && /^\d+$/.test(valor) ? Number(valor) : valor;
+  }
   getRange(fila, columna, cantidadFilas = 1, cantidadColumnas = 1) {
     return {
       getValues: () => Array.from({ length: cantidadFilas }, (_, i) =>
@@ -55,11 +63,22 @@ class HojaMock {
         )
       ),
       setValue: (valor) => { this.filas[fila - 2][columna - 1] = valor; },
+      setNumberFormat: (formato) => {
+        for (let i = 0; i < cantidadFilas; i++) {
+          for (let j = 0; j < cantidadColumnas; j++) {
+            this.formatos.set(`${fila + i}:${columna + j}`, formato);
+          }
+        }
+      },
       setValues: (valores) => {
         this.control.ejecutar(this.nombre, 'setValues');
         for (let i = 0; i < valores.length; i++) {
           if (fila + i === 1) this.headers.splice(columna - 1, valores[i].length, ...valores[i]);
-          else this.filas[fila + i - 2].splice(columna - 1, valores[i].length, ...valores[i]);
+          else {
+            if (!this.filas[fila + i - 2]) this.filas[fila + i - 2] = Array(this.headers.length).fill('');
+            this.filas[fila + i - 2].splice(columna - 1, valores[i].length,
+              ...valores[i].map((valor, j) => this.valorCelda(valor, fila + i, columna + j)));
+          }
         }
         this.registrarEstado(valores[0]);
       },
@@ -67,7 +86,8 @@ class HojaMock {
   }
   appendRow(fila) {
     this.control.ejecutar(this.nombre, 'appendRow');
-    this.filas.push([...fila]);
+    const siguiente = this.getLastRow() + 1;
+    this.filas.push(fila.map((valor, i) => this.valorCelda(valor, siguiente, i + 1)));
     this.registrarEstado(fila);
   }
   registrarEstado(fila) {
@@ -187,6 +207,29 @@ test('CREAR_PEDIDO normal persiste PREPARADA/APLICANDO/COMPLETADA sin stock ni m
   assert.equal(operacion.estado_operacion, 'COMPLETADA');
   assert.deepEqual(caso.operaciones.historialEstados, ['PREPARADA', 'APLICANDO', 'COMPLETADA']);
 });
+
+for (const telefono of ['000000000', '+56912345678', '001234']) {
+  test(`CREAR_PEDIDO preserva telefono textual ${telefono} sin convertir números reales`, async () => {
+    const caso = await crearEscenario();
+    caso.body.telefono = telefono;
+    const stockAntes = caso.productos.filas.map((fila) => fila.at(-1));
+    const resultado = caso.contexto.crearPedido_(caso.body);
+    const cabecera = objetoFila(caso.pedidos);
+    const detalle = objetoFila(caso.detalles);
+    assert.equal(cabecera.telefono, telefono);
+    assert.equal(typeof cabecera.telefono, 'string');
+    assert.equal(caso.pedidos.formatos.get('2:6'), '@');
+    assert.equal(typeof cabecera.total, 'number');
+    assert.equal(typeof detalle.cantidad, 'number');
+    assert.equal(typeof detalle.precio_unitario, 'number');
+    assert.equal(typeof detalle.subtotal, 'number');
+    assert.equal(objetoFila(caso.operaciones).estado_operacion, 'COMPLETADA');
+    assert.equal(caso.contexto.crearPedido_(caso.body).id_pedido, resultado.id_pedido);
+    assert.equal(caso.pedidos.filas.length, 1);
+    assert.deepEqual(caso.productos.filas.map((fila) => fila.at(-1)), stockAntes);
+    assert.equal(caso.movimientos.filas.length, 0);
+  });
+}
 
 test('misma key y payload devuelve el mismo pedido sin duplicar cabecera ni detalles', async () => {
   const caso = await crearEscenario();

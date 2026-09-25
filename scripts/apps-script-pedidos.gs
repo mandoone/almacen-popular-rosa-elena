@@ -589,7 +589,7 @@ function aplicarPlanCreacionPedido_(ss, operacion, plan) {
   if (diagnostico.estado === 'CONSISTENTE_COMPLETADA') return;
 
   var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
-  if (!diagnostico.cabecera_existe) agregarFila_(pedidos, plan.cabecera);
+  if (!diagnostico.cabecera_existe) agregarCabeceraPedidoCreacion_(pedidos, plan.cabecera);
 
   var detalles = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
   var actuales = filasCreacionPorPedido_(detalles, plan.id_pedido);
@@ -3721,6 +3721,30 @@ function agregarFila_(hoja, obj) {
     fila.push(obj[nombre] !== undefined ? obj[nombre] : '');
   }
   hoja.sheet.appendRow(fila);
+}
+
+/** Preserva los campos de texto de una cabecera nueva antes de escribir valores. */
+function agregarCabeceraPedidoCreacion_(hoja, cabecera) {
+  var fila = hoja.sheet.getLastRow() + 1;
+  if (fila > hoja.sheet.getMaxRows()) {
+    hoja.sheet.insertRowsAfter(hoja.sheet.getMaxRows(), 1);
+  }
+  var camposTexto = {
+    id_pedido: true, canal: true, id_cliente: true, nombre_cliente: true,
+    telefono: true, estado_pedido: true, estado_pago: true, forma_pago: true,
+    observaciones: true, vendedor_admin: true, fecha_entrega: true,
+    apertura_id: true, origen_pedido: true
+  };
+  var valores = hoja.headers.map(function (campo, indice) {
+    var valor = cabecera[campo] !== undefined ? cabecera[campo] : '';
+    if (camposTexto[campo]) {
+      hoja.sheet.getRange(fila, indice + 1).setNumberFormat('@');
+      return String(valor);
+    }
+    return valor;
+  });
+  SpreadsheetApp.flush();
+  hoja.sheet.getRange(fila, 1, 1, hoja.headers.length).setValues([valores]);
 }
 
 /**
