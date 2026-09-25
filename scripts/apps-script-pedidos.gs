@@ -59,6 +59,8 @@ var ESTADOS_OPERACION_PEDIDO = [
   'PREPARADA', 'APLICANDO', 'COMPLETADA', 'REQUIERE_REVISION'
 ];
 
+var ESTADOS_PEDIDO = ['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'];
+
 var COLUMNAS_APERTURAS = [
   'apertura_id',
   'fecha_apertura',
@@ -160,6 +162,9 @@ function doGet(e) {
       case 'obtenerPedido':
         exigirToken_(params.token);
         return jsonOk_(obtenerPedido_(params.id_pedido));
+      case 'verificarContratoPedidosF9Test':
+        exigirToken_(params.token);
+        return jsonOk_(verificarContratoPedidosF9Test());
       case 'listarAperturas':
         exigirToken_(params.token);
         validarEntornoTestCalendario_();
@@ -275,6 +280,9 @@ function doPost(e) {
       case 'cancelarPedido':
         exigirToken_(body.token);
         return jsonOk_(cancelarPedido_(body));
+      case 'prepararValidacionEstadosPedidosTest':
+        exigirToken_(body.token);
+        return jsonOk_(prepararValidacionEstadosPedidosTest());
       case 'crearApertura':
         exigirToken_(body.token);
         validarEntornoTestCalendario_();
@@ -372,6 +380,7 @@ function construirPayloadCanonicoCreacionPedido_(body) {
 }
 
 function construirPlanCreacionPedido_(ss, payload, ahora) {
+  exigirContratoPedidosF9Test_(ss);
   var contextoApertura = validarPedidoAnticipadoTest_(ss, payload, ahora);
   var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
 
@@ -676,6 +685,7 @@ function registrarFalloCreacionPedido_(ss, operacion, err) {
 }
 
 function continuarCreacionPedido_(ss, operacion) {
+  exigirContratoPedidosF9Test_(ss);
   var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
   try {
     operacion = actualizarOperacionPedido_(ss, operacion.operacion_id, {
@@ -1489,7 +1499,7 @@ function actualizarEstadoPedido_(body) {
   var actor = limpiar_(body.actor) || 'legacy-admin'; // PROVISORIO_TEST
   if (!idPedido) lanzar_('Falta id_pedido.', 400);
   if (!estadoPedido) lanzar_('Falta estado_pedido.', 400);
-  if (['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'].indexOf(estadoPedido) === -1) {
+  if (ESTADOS_PEDIDO.indexOf(estadoPedido) === -1) {
     lanzar_('estado_pedido invalido: "' + estadoPedido + '".', 400);
   }
   if (estadoPedido === 'cancelado') lanzar_('Usa cancelarPedido para cancelar.', 400);
@@ -3562,6 +3572,100 @@ function validarDestinoOperacionesPedidosTest_(ss) {
   if (!ss || typeof ss.getName !== 'function' ||
       ss.getName() !== NOMBRE_SHEET_TEST_E2E) {
     lanzar_('El diario de pedidos solo puede operar sobre la Sheet TEST autorizada.', 403);
+  }
+}
+
+function columnaUnicaContrato_(sheet, nombre) {
+  if (!sheet || sheet.getLastColumn() < 1) {
+    lanzar_('CONTRATO_SHEET_PEDIDOS_INVALIDO: falta una hoja o encabezados.', 409);
+  }
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(limpiar_);
+  var indice = headers.indexOf(nombre);
+  if (indice === -1 || headers.lastIndexOf(nombre) !== indice) {
+    lanzar_('CONTRATO_SHEET_PEDIDOS_INVALIDO: falta o se repite ' + nombre + '.', 409);
+  }
+  return indice + 1;
+}
+
+function reglaEstadosPedidoCorrecta_(regla) {
+  if (!regla || regla.getAllowInvalid() ||
+      regla.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST) return false;
+  var criterios = regla.getCriteriaValues();
+  var valores = criterios && criterios[0];
+  return Array.isArray(valores) && valores.length === ESTADOS_PEDIDO.length &&
+    ESTADOS_PEDIDO.every(function (estado, indice) { return valores[indice] === estado; });
+}
+
+function inspeccionarValidacionEstadosPedidosTest_(ss) {
+  validarDestinoOperacionesPedidosTest_(ss);
+  var sheet = ss.getSheetByName(HOJAS.PEDIDOS);
+  var columna = columnaUnicaContrato_(sheet, 'estado_pedido');
+  var filas = sheet.getMaxRows() - 1;
+  if (filas < 1) lanzar_('CONTRATO_SHEET_PEDIDOS_INVALIDO: PEDIDOS no tiene filas de datos.', 409);
+  var rango = sheet.getRange(2, columna, filas, 1);
+  var reglas = rango.getDataValidations();
+  var correctas = 0;
+  for (var i = 0; i < filas; i++) {
+    if (reglas[i] && reglaEstadosPedidoCorrecta_(reglas[i][0])) correctas++;
+  }
+  return { rango: rango, columna: columna, filas: filas, correctas: correctas };
+}
+
+/** Lectura de contrato, sin alterar datos ni reglas. */
+function exigirContratoPedidosF9Test_(ss) {
+  var validacion = inspeccionarValidacionEstadosPedidosTest_(ss);
+  var operaciones = ss.getSheetByName(HOJAS.OPERACIONES_PEDIDOS);
+  var movimientos = ss.getSheetByName(HOJAS.MOVIMIENTOS_STOCK);
+  columnaUnicaContrato_(operaciones, 'operacion_id');
+  columnaUnicaContrato_(movimientos, 'operacion_id');
+  if (validacion.correctas !== validacion.filas) {
+    lanzar_('CONTRATO_SHEET_PEDIDOS_INVALIDO: estado_pedido no admite los cinco estados F9-A en todas las filas.', 409);
+  }
+  return {
+    entorno: 'TEST', hoja: HOJAS.PEDIDOS,
+    columna_estado_pedido: validacion.columna,
+    filas_validadas: validacion.correctas,
+    estados: ESTADOS_PEDIDO.slice(),
+    diario: HOJAS.OPERACIONES_PEDIDOS,
+    columna_movimiento: 'operacion_id'
+  };
+}
+
+function verificarContratoPedidosF9Test() {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    return exigirContratoPedidosF9Test_(ss);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Migración de DataValidation, idempotente y exclusiva de la Sheet TEST. */
+function prepararValidacionEstadosPedidosTest() {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var antes = inspeccionarValidacionEstadosPedidosTest_(ss);
+    columnaUnicaContrato_(ss.getSheetByName(HOJAS.OPERACIONES_PEDIDOS), 'operacion_id');
+    columnaUnicaContrato_(ss.getSheetByName(HOJAS.MOVIMIENTOS_STOCK), 'operacion_id');
+    var actualizada = antes.correctas !== antes.filas;
+    if (actualizada) {
+      var regla = SpreadsheetApp.newDataValidation()
+        .requireValueInList(ESTADOS_PEDIDO, true)
+        .setAllowInvalid(false)
+        .setHelpText('Valores permitidos: ' + ESTADOS_PEDIDO.join(' / '))
+        .build();
+      antes.rango.setDataValidation(regla);
+      SpreadsheetApp.flush();
+    }
+    var contrato = exigirContratoPedidosF9Test_(ss);
+    contrato.actualizada = actualizada;
+    return contrato;
+  } finally {
+    lock.releaseLock();
   }
 }
 

@@ -5,6 +5,17 @@
 
 ---
 
+## [F9-A contrato Sheet] — Validación de estados preparada (2026-09-25)
+
+- El retest TEST v14 confirmó el teléfono `000000000` como texto, pero la regla
+  heredada de `PEDIDOS.estado_pedido` rechazó `recibido`. La operación quedó
+  `REQUIERE_REVISION` sin stock ni movimientos; la apertura se cerró.
+- Se prepararon un preflight read-only del contrato y una migración TEST
+  idempotente que actualiza solo la validación de la columna. Crear comprueba
+  el contrato antes de escribir datos.
+- Pendientes: deploy, migración y retest TEST. Producción no autorizada; F9
+  global abierta.
+
 ## [F9-A creación durable] — Idempotencia de alta de pedidos (2026-09-24)
 
 ### Implementado localmente

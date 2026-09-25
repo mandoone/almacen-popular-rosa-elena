@@ -208,8 +208,8 @@ remotas del backend durable en TEST antes de cualquier cambio productivo.
   productivos: variables, Apps Script, Sheet y despliegue.
 - 🔄 Fase 4: catálogo público preparado; validación de productos, stock,
   precios e imágenes pendiente con el Almacén.
-- 🔄 Fase 9: preparación técnica local en curso; F9-A.2, despliegue/validación
-  TEST, revisión editorial y decisiones humanas siguen pendientes.
+- 🔄 Fase 9: F9-A requiere alinear la validación de estados en Sheet TEST y
+  completar el retest; revisión editorial y decisiones humanas siguen pendientes.
 - ✅ Fase 5 + 6 cerradas técnicamente en TEST; piloto integral PASS.
 - ⬜ Procedimiento de fotos de productos: identificar, seleccionar, renombrar,
   asociar, editar y validar con el Almacén (`PENDIENTES_ALMACEN_FASE_3B.md` §6).
@@ -328,8 +328,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ `CREAR_PEDIDO` durable implementado localmente sobre el diario existente:
   key/hash previos, ID planificado, aplicación reanudable de cabecera/detalles y
   `COMPLETADA` solo tras readback. Crear no toca stock ni movimientos.
-- ⬜ Desplegar Apps Script TEST v13 y repetir solo el retest F9-A. Hasta entonces
-  el E2E TEST sigue FAIL.
+- ✅ Desplegar `CREAR_PEDIDO` durable y preservar texto en Apps Script TEST v14;
+  los intentos fallidos quedaron identificados como evidencia sin tocar stock.
+- ✅ Preparar localmente migración idempotente y preflight read-only de
+  `PEDIDOS.estado_pedido` para los cinco estados F9-A.
+- ⬜ Desplegar el contrato, migrar exclusivamente Sheet TEST y repetir un solo
+  retest F9-A. Hasta entonces el E2E TEST sigue FAIL.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 

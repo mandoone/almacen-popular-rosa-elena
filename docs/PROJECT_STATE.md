@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-24.
+> tarea que cambie el estado. Última actualización: 2026-09-25.
 
 ---
 
@@ -17,13 +17,14 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A en TEST, todavía no validada:** la migración aditiva está aplicada y
-  Apps Script TEST está en v12 con la mitigación de respuestas ambiguas. El
-  retest detectó que la creación pública aún no era idempotente; la corrección
-  local incorpora `CREAR_PEDIDO` al diario durable, con key previa, hash,
-  reanudación y readback, pendiente de deploy v13 y retest TEST.
-- **Próxima prioridad:** desplegar y validar la creación idempotente
-  exclusivamente en TEST. Producción sigue fuera de alcance.
+- **F9-A en TEST, todavía no validada:** Apps Script TEST está en v14. La
+  creación durable y la preservación del teléfono textual quedaron desplegadas,
+  pero dos intentos TEST permanecen `REQUIERE_REVISION`. El último detectó una
+  validación antigua de `PEDIDOS.estado_pedido` que rechaza `recibido`. La
+  migración y el preflight del contrato están preparados localmente, pendientes
+  de deploy, aplicación y retest TEST.
+- **Próxima prioridad:** alinear la validación de Sheet TEST y repetir un único
+  retest F9-A. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -113,9 +114,9 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
-- 🔄 **Fase 9:** F9-A está desplegada en TEST v12; la creación idempotente está
-  implementada localmente y pendiente de v13/retest. Las decisiones humanas del
-  Almacén siguen pendientes.
+- 🔄 **Fase 9:** F9-A está desplegada en TEST v14; su preflight y migración de
+  estados están preparados localmente. Las decisiones humanas del Almacén
+  siguen pendientes.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
   loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
@@ -136,8 +137,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: confirmación,
   cancelación y creación usan operaciones serializadas, idempotentes, durables
   y verificables; no se promete atomicidad multitabla.
-- ⬜ Desplegar `CREAR_PEDIDO` durable como Apps Script TEST v13 y repetir solo el
-  retest F9-A; no repetir E2E F4–F8.
+- ⬜ Desplegar el contrato de estados, migrar solo la validación de Sheet TEST
+  y repetir el retest F9-A; conservar las dos operaciones fallidas como evidencia.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.

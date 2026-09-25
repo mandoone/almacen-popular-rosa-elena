@@ -16,8 +16,8 @@
     (`PROD-001…`).
   - **Pedidos:** se crean/consultan vía la Web App (ver `docs/APPS_SCRIPT_PEDIDOS.md`),
     escribiendo en PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y MOVIMIENTOS_STOCK. La
-    versión F9-A.2 prepara además un diario `OPERACIONES_PEDIDOS` exclusivamente
-    para TEST; todavía no fue migrado ni validado remotamente.
+    versión F9-A.2 usa además un diario `OPERACIONES_PEDIDOS` en TEST, ya
+    preparado; la validación de estados de `PEDIDOS` requiere alineación.
 - **Planilla antigua (retirada):** la Google Sheet publicada como CSV (hoja "WEB") se
   usó **solo como fuente de datos inicial** y **ya no alimenta** el catálogo ni la
   operación. La hoja PRODUCTOS de la base nueva se **cargó manualmente** con **53
@@ -92,7 +92,12 @@ Parámetros globales del sistema (clave/valor).
 | `nombre` | nombre del cliente. |
 | `telefono` | teléfono del cliente. |
 | `total` | total del pedido. |
-| `estado` | `pendiente` · `listo` · `entregado` · `cancelado`. |
+| `estado` | `recibido` · `pendiente` · `listo` · `entregado` · `cancelado`. |
+
+En TEST, `PEDIDOS.estado_pedido` debe tener una validación estricta para esos
+cinco valores desde la fila 2 hasta el final de la columna operativa. La regla
+heredada de cuatro estados sigue pendiente de migración. La validación de
+transiciones permanece en el backend; el dropdown solo restringe valores.
 
 ### DETALLE_PEDIDOS
 | campo | descripción |
@@ -156,16 +161,16 @@ Parámetros globales del sistema (clave/valor).
 | `usuario` | actor validado que originó la acción. |
 | `operacion_id` | vínculo aditivo al diario durable de confirmación/cancelación. |
 
-### OPERACIONES_PEDIDOS (preparada localmente, TEST-only)
+### OPERACIONES_PEDIDOS (preparada en TEST)
 
-Diario de intención y verificación para confirmación/cancelación. No reemplaza
+Diario de intención y verificación para creación/confirmación/cancelación. No reemplaza
 `MOVIMIENTOS_STOCK` ni constituye una transacción ACID.
 
 | campo | descripción |
 |-------|-------------|
 | `operacion_id`* | identificador UUID con prefijo legible de la operación. |
 | `idempotency_key`* | clave del intento; no puede reutilizarse con otro payload. |
-| `tipo_operacion` | `CONFIRMAR` o `CANCELAR`. |
+| `tipo_operacion` | `CREAR_PEDIDO`, `CONFIRMAR` o `CANCELAR`. |
 | `id_pedido` | pedido afectado. |
 | `actor` | identidad obtenida de la sesión validada. |
 | `estado_operacion` | `PREPARADA`, `APLICANDO`, `COMPLETADA` o `REQUIERE_REVISION`. |
@@ -209,8 +214,8 @@ Diario de intención y verificación para confirmación/cancelación. No reempla
   crea pedidos (PEDIDOS + DETALLE_PEDIDOS) sin tocar stock; al confirmar/cancelar,
   prepara `OPERACIONES_PEDIDOS`, aplica PRODUCTOS/MOVIMIENTOS_STOCK/PEDIDOS y
   verifica el resultado por readback. El backend lee las hojas **por nombre de
-  encabezado**, robusto ante reordenamientos de columnas. Este contrato F9-A.2
-  está preparado localmente y pendiente de migración/despliegue/validación TEST.
+  encabezado**, robusto ante reordenamientos de columnas. El diario está en
+  TEST; la validación de estados de Sheet requiere migración y retest F9-A.
 - Los identificadores y relaciones (`*_id`) se mantienen simples (texto/numérico)
   por tratarse de una hoja de cálculo, no una base relacional.
 - Snapshots de `nombre`/`precio` en los detalles para preservar el histórico aunque

@@ -17,6 +17,7 @@
  */
 
 var NOMBRE_PLANILLA = 'BD_WEB_ALMACEN_ROSA_ELENA_MORALES';
+var ESTADOS_PEDIDO = ['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'];
 
 /**
  * Definicion de cada hoja: nombre + encabezados (fila 1).
@@ -119,7 +120,7 @@ var VALIDACIONES = {
     permite_decimal: ['SI', 'NO']
   },
   PEDIDOS: {
-    estado_pedido: ['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'],
+    estado_pedido: ESTADOS_PEDIDO,
     estado_pago: ['pendiente', 'pagado_transferencia', 'pagado_efectivo', 'anulado'],
     forma_pago: ['transferencia', 'efectivo_al_retirar']
   },

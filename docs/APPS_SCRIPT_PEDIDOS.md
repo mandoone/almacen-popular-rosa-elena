@@ -5,9 +5,10 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 
 - **Script:** `scripts/apps-script-pedidos.gs`
 - **Modelo de datos:** `docs/DATA_MODEL.md`
-- **Estado:** F9-A HTTP está desplegada en Apps Script TEST v12. La idempotencia
-  durable de creación está preparada localmente para v13 y pendiente de retest.
-  Producción queda fuera de alcance.
+- **Estado:** Apps Script TEST v14 incluye creación durable y preservación del
+  teléfono textual. F9-A continúa FAIL por una validación antigua de
+  `PEDIDOS.estado_pedido`; la migración y el preflight están preparados
+  localmente, pendientes de deploy y retest. Producción queda fuera de alcance.
 
 > Las pruebas manuales históricas corresponden al contrato anterior. F9-A cambia
 > el flujo: `crearPedido` deja el pedido `recibido` y no toca stock; confirmar a
@@ -159,11 +160,18 @@ curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
 
 ### Diario durable de F9-A.2
 
-La preparación aditiva TEST-only crea `OPERACIONES_PEDIDOS` y agrega
-`operacion_id` a `MOVIMIENTOS_STOCK`. La función manual
+La preparación aditiva TEST-only creó `OPERACIONES_PEDIDOS` y agregó
+`operacion_id` a `MOVIMIENTOS_STOCK`. La función
 `prepararOperacionesPedidosTest()` valida `APP_ENV=TEST` y el nombre exacto de la
-Sheet, no borra ni reordena datos históricos y puede repetirse. **No se ejecutó
-remotamente en este lote.**
+Sheet, no borra ni reordena datos históricos y puede repetirse.
+
+El contrato F9-A exige que la validación estricta de `PEDIDOS.estado_pedido`
+admita `recibido`, `pendiente`, `listo`, `entregado`, `cancelado`. La acción GET
+con token `verificarContratoPedidosF9Test` revisa la columna completa, el diario
+y `MOVIMIENTOS_STOCK.operacion_id` sin escribir. La acción POST con token
+`prepararValidacionEstadosPedidosTest` cambia únicamente esa DataValidation en
+la Sheet TEST y verifica el readback; repetirla no vuelve a escribir si ya está
+correcta. Ambas acciones están pendientes de deploy v15 y ejecución TEST.
 
 Los estados del diario son:
 

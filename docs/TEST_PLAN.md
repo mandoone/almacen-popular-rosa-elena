@@ -5,6 +5,22 @@
 
 ---
 
+## F9-A — contrato de estados en Sheet TEST (2026-09-25)
+
+1. Preflight read-only: `PEDIDOS.estado_pedido` debe tener en cada fila de datos
+   una validación estricta con exactamente `recibido`, `pendiente`, `listo`,
+   `entregado`, `cancelado`; también deben existir `OPERACIONES_PEDIDOS` y
+   `MOVIMIENTOS_STOCK.operacion_id`.
+2. Con la regla antigua de cuatro estados, el preflight y una creación nueva
+   fallan antes de escribir cabecera, detalle o diario.
+3. Migrar solo Sheet TEST; repetir la migración debe ser un no-op. Comparar
+   encabezados, filas y las dos operaciones `REQUIERE_REVISION` antes/después.
+4. Retest único con teléfono `000000000`: crear `RECIBIDO`, retry con misma key,
+   conflicto con payload distinto, confirmar, pasar a LISTO y cancelar. Verificar
+   diario, movimientos y stock final igual al baseline; cerrar la apertura TEST.
+
+Pendiente: deploy del contrato, migración TEST y retest remoto. F9-A continúa FAIL.
+
 ## F9-A — creación durable e idempotente (2026-09-24)
 
 Pruebas locales automatizadas:

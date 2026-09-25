@@ -10,12 +10,22 @@ import {
 } from '../src/lib/fase9/idempotenciaCreacionPedido.ts';
 import { ejecutarMutacionDurableConReplay } from '../src/lib/fase9/resilienciaPedidos.ts';
 import { RESPUESTA_POST_MUTACION_AMBIGUA } from '../src/lib/appsScriptRespuesta.ts';
+import { ESTADOS_PEDIDO as ESTADOS_PEDIDO_NEXT } from '../src/lib/fase3a/estados.ts';
 
 const OPERACIONES = [
   'operacion_id', 'idempotency_key', 'tipo_operacion', 'id_pedido', 'actor',
   'estado_operacion', 'paso', 'payload_hash', 'snapshot_json', 'resultado_json',
   'error_codigo', 'error_detalle', 'creado_en', 'actualizado_en',
 ];
+const ESTADOS_PEDIDO = ['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'];
+
+function reglaLista(valores, permiteInvalidos = false) {
+  return {
+    getCriteriaType: () => 'VALUE_IN_LIST',
+    getCriteriaValues: () => [[...valores], true],
+    getAllowInvalid: () => permiteInvalidos,
+  };
+}
 
 class ControlFallos {
   reglas = [];
@@ -43,6 +53,9 @@ class HojaMock {
     this.historialEstados = [];
     this.formatos = new Map();
     this.maxFilas = 1000;
+    this.validaciones = new Map();
+    this.validacionPorDefecto = nombre === 'PEDIDOS' ? reglaLista(ESTADOS_PEDIDO) : null;
+    this.escriturasValidacion = 0;
   }
   getName() { return this.nombre; }
   getLastRow() { return this.filas.length + 1; }
@@ -67,6 +80,19 @@ class HojaMock {
         for (let i = 0; i < cantidadFilas; i++) {
           for (let j = 0; j < cantidadColumnas; j++) {
             this.formatos.set(`${fila + i}:${columna + j}`, formato);
+          }
+        }
+      },
+      getDataValidations: () => Array.from({ length: cantidadFilas }, (_, i) =>
+        Array.from({ length: cantidadColumnas }, (_, j) =>
+          this.validaciones.get(`${fila + i}:${columna + j}`) ??
+          (this.nombre === 'PEDIDOS' && columna + j === 8 && fila + i >= 2
+            ? this.validacionPorDefecto : null))),
+      setDataValidation: (regla) => {
+        this.escriturasValidacion++;
+        for (let i = 0; i < cantidadFilas; i++) {
+          for (let j = 0; j < cantidadColumnas; j++) {
+            this.validaciones.set(`${fila + i}:${columna + j}`, regla);
           }
         }
       },
@@ -158,7 +184,21 @@ async function crearEscenario() {
   };
   const contexto = {
     LockService: { getScriptLock: () => lock },
-    SpreadsheetApp: { openById: () => spreadsheet, flush() {} },
+    SpreadsheetApp: {
+      openById: () => spreadsheet,
+      flush() {},
+      DataValidationCriteria: { VALUE_IN_LIST: 'VALUE_IN_LIST' },
+      newDataValidation: () => {
+        let valores = [];
+        let permitir = true;
+        return {
+          requireValueInList(v) { valores = [...v]; return this; },
+          setAllowInvalid(v) { permitir = v; return this; },
+          setHelpText() { return this; },
+          build() { return reglaLista(valores, permitir); },
+        };
+      },
+    },
     PropertiesService: {
       getScriptProperties: () => ({ getProperty: (nombre) => nombre === 'APP_ENV' ? 'TEST' : '' }),
     },
@@ -206,6 +246,60 @@ test('CREAR_PEDIDO normal persiste PREPARADA/APLICANDO/COMPLETADA sin stock ni m
   assert.equal(operacion.tipo_operacion, 'CREAR_PEDIDO');
   assert.equal(operacion.estado_operacion, 'COMPLETADA');
   assert.deepEqual(caso.operaciones.historialEstados, ['PREPARADA', 'APLICANDO', 'COMPLETADA']);
+});
+
+test('contrato F9-A falla con validación antigua antes de escribir pedido o diario', async () => {
+  const caso = await crearEscenario();
+  caso.pedidos.validacionPorDefecto = reglaLista(['pendiente', 'listo', 'entregado', 'cancelado']);
+  assert.throws(() => caso.contexto.verificarContratoPedidosF9Test(),
+    /CONTRATO_SHEET_PEDIDOS_INVALIDO/);
+  assert.throws(() => caso.contexto.crearPedido_(caso.body),
+    /CONTRATO_SHEET_PEDIDOS_INVALIDO/);
+  assert.equal(caso.pedidos.filas.length, 0);
+  assert.equal(caso.detalles.filas.length, 0);
+  assert.equal(caso.operaciones.filas.length, 0);
+});
+
+test('migración TEST de validación es idempotente y conserva filas existentes', async () => {
+  const caso = await crearEscenario();
+  caso.pedidos.validacionPorDefecto = reglaLista(['pendiente', 'listo', 'entregado', 'cancelado']);
+  caso.pedidos.filas.push(['PED-HIST', 'fecha', 'web', '', 'Histórico', '001234',
+    100, 'pendiente', 'pendiente', 'efectivo_al_retirar', '', '', '', '', '']);
+  const historico = structuredClone(caso.pedidos.filas);
+  const primera = caso.contexto.prepararValidacionEstadosPedidosTest();
+  const segunda = caso.contexto.prepararValidacionEstadosPedidosTest();
+  assert.equal(primera.actualizada, true);
+  assert.equal(segunda.actualizada, false);
+  assert.equal(primera.columna_estado_pedido, 8);
+  assert.equal(primera.filas_validadas, 999);
+  assert.deepEqual(Array.from(primera.estados), ESTADOS_PEDIDO);
+  assert.equal(caso.pedidos.escriturasValidacion, 1);
+  assert.deepEqual(caso.pedidos.filas, historico);
+  assert.equal(caso.contexto.verificarContratoPedidosF9Test().entorno, 'TEST');
+});
+
+test('preflight exige diario y operacion_id y comparte el vocabulario de estados', async () => {
+  const caso = await crearEscenario();
+  assert.deepEqual(Array.from(caso.contexto.ESTADOS_PEDIDO), ESTADOS_PEDIDO_NEXT);
+  const setup = {};
+  vm.runInNewContext(await readFile(new URL('../scripts/setup-google-sheet.gs', import.meta.url), 'utf8'), setup);
+  assert.deepEqual(Array.from(setup.ESTADOS_PEDIDO), ESTADOS_PEDIDO_NEXT);
+  assert.equal(caso.contexto.verificarContratoPedidosF9Test().filas_validadas, 999);
+  caso.movimientos.headers.splice(caso.movimientos.headers.indexOf('operacion_id'), 1);
+  assert.throws(() => caso.contexto.verificarContratoPedidosF9Test(),
+    /CONTRATO_SHEET_PEDIDOS_INVALIDO/);
+});
+
+test('migración y preflight se bloquean fuera de TEST', async () => {
+  const caso = await crearEscenario();
+  caso.contexto.PropertiesService.getScriptProperties = () => ({
+    getProperty: () => 'PRODUCTION',
+  });
+  assert.throws(() => caso.contexto.prepararValidacionEstadosPedidosTest(),
+    /fuera de TEST/);
+  assert.throws(() => caso.contexto.verificarContratoPedidosF9Test(),
+    /fuera de TEST/);
+  assert.equal(caso.pedidos.escriturasValidacion, 0);
 });
 
 for (const telefono of ['000000000', '+56912345678', '001234']) {

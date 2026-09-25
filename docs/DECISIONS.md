@@ -8,6 +8,21 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D26 — Validación de estados de PEDIDOS alineada con F9-A
+
+- **Contexto:** la validación estricta heredada de Sheet TEST admitía cuatro
+  estados y rechazó `recibido`; un intento de creación dejó una cabecera parcial
+  y una operación `REQUIERE_REVISION`. El teléfono textual sí quedó preservado.
+- **Decisión:** el contrato F9-A exige `recibido`, `pendiente`, `listo`,
+  `entregado`, `cancelado`. Un preflight TEST de solo lectura inspecciona toda la
+  columna por encabezado y el diario; una migración TEST idempotente reemplaza
+  solo la regla de validación, sin modificar valores. La creación comprueba ese
+  contrato antes de preparar o reanudar escrituras.
+- **Consecuencias:** una validación obsoleta falla antes de crear un pedido
+  nuevo. Las dos operaciones TEST inciertas permanecen como evidencia y no se
+  convierten artificialmente en `COMPLETADA`. Deploy, migración y retest siguen
+  pendientes; F9 global permanece abierta.
+
 ## D25 — Creación pública durable e idempotente
 
 - **Contexto:** una respuesta perdida de `crearPedido` no permitía distinguir un
