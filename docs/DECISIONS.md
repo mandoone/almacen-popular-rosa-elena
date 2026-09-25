@@ -8,6 +8,23 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D30 — Versiones de sesión monotónicas y QA segura de Preview
+
+- **Contexto:** la QA remota necesitó revocar una sesión sintética y cambiar
+  temporalmente un rol. Restaurar `session_version=1` habría revalidado cookies
+  anteriores. Además, el wrapper interactivo de `npx` mostró una cookie TEST en
+  un título de proceso durante la prueba.
+- **Decisión:** al restaurar los roles, mantener `session_version` incrementada
+  para cada actor afectado. No pasar cookies por un wrapper que pueda emitirlas
+  en títulos o logs. La contención del incidente fue rotar solo el secreto TEST,
+  redeplegar Preview y retirar el deployment anterior. No se reutilizaron
+  secretos productivos.
+- **Consecuencias:** `test-operacion` terminó en versión 3 y `test-venta` en 2;
+  el rol de los tres actores volvió a la matriz provisional. Las sesiones
+  antiguas no se reactivan por restaurar la configuración. Production quedó
+  intacta; rate limiting distribuido, cuentas humanas y dominio final siguen
+  pendientes antes de Go/No-Go.
+
 ## D29 — Transporte seguro del registro TEST en archivos de entorno
 
 - **Contexto:** el cargador de variables de Next expandió los signos `$` de

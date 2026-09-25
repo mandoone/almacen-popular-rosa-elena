@@ -5,6 +5,22 @@
 
 ---
 
+## [F9 global] — Identidad sintética activada en Vercel Preview TEST (2026-09-25)
+
+- Preview del proyecto `almacen-popular-rosa-elena-7m17` desplegado desde
+  `4c8608b7d74c136efc294587743626fc31d99dd5` con variables exclusivas de
+  `feature/fase-3a-operativa`; Production conservó su configuración original.
+- QA HTTP remota PASS de los tres actores, permisos, no enumeración, suplantación,
+  legacy, revocación, cambio temporal de rol, restauración, cookies, headers,
+  origen y logout. Sin mutaciones comerciales. QA visual autenticada aún espera
+  login manual de Vercel en el navegador protegido.
+- Incidente saneado: una cookie TEST apareció en un título de proceso; se rotó
+  el secreto TEST, se retiró el deployment anterior y se validó un Preview nuevo.
+  El auxiliar temporal y el token OIDC local se retiraron. Ver evidencia y
+  límites en `docs/TEST_PLAN.md` y decisión D30.
+- F9 global sigue abierta y F10 NO-GO por asignación humana, rate limiting
+  distribuido, dominio/CSP final y datos/validaciones de puesta en marcha.
+
 ## [F9 global] — QA sintética de identidad en Next TEST local (2026-09-25)
 
 - Tres actores sintéticos por rol pasaron login, `/me`, autorizaciones,

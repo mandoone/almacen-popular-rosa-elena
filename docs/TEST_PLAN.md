@@ -5,6 +5,41 @@
 
 ---
 
+## F9 global — identidad sintética en Vercel Preview TEST (2026-09-25)
+
+Proyecto `almacen-popular-rosa-elena-7m17`, entorno Preview restringido a
+`feature/fase-3a-operativa`, código
+`4c8608b7d74c136efc294587743626fc31d99dd5`. El deployment final está
+Ready; `/api/health` informó `test` y el catálogo leyó 54 productos del
+backend Apps Script TEST sin escribir datos comerciales. Production conservó
+sus cuatro variables originales; las siete variables nuevas son exclusivas
+de Preview y de esta rama. No se copiaron secretos productivos.
+
+QA HTTP remota PASS: login, `/me` y cookies de `test-admin=administracion`,
+`test-operacion=operacion` y `test-venta=venta`; permisos positivos y negativos;
+respuesta equivalente ante clave incorrecta/actor inexistente; rechazo de
+campos extras y suplantación de actor, rol, capacidad y token; legacy-admin
+bloqueado; revocación de sesión de `test-venta`; cambio temporal de
+`test-operacion` a `venta` con invalidación de sesión y reducción de permisos;
+restauración de los tres roles; logout y origen cross-site; CSP, HSTS,
+`nosniff`, anti-clickjacking, COOP, Permissions-Policy y cookie `HttpOnly`,
+`Secure`, `SameSite=Strict`. No se ejecutaron mutaciones comerciales.
+
+Las versiones finales son monotónicas (`test-admin=1`, `test-operacion=3`,
+`test-venta=2`) para no revivir sesiones anteriores al restaurar roles. La QA
+visual autenticada del Preview permanece pendiente del login manual de Vercel.
+El rate limit por instancia se cubrió localmente; no se hizo carga remota y la
+capa distribuida continúa `BLOQUEANTE_PRODUCCION`. Dominio/CSP productivos y
+asignación humana siguen pendientes; F9 global abierta y F10 NO-GO.
+
+Durante la QA, una cookie de sesión TEST apareció en el título de un proceso.
+Se detuvo ese transporte, se rotó el secreto TEST, se redeplegó el mismo commit
+en Preview y se retiró el deployment anterior que podía aceptar la cookie.
+La sesión quedó invalidada y no se afectó Production. Las contraseñas nunca se
+guardaron en Git/docs; el auxiliar temporal y un token OIDC local añadido por
+la CLI se retiraron. Para futuras pruebas, no pasar cookies por el wrapper de
+`npx` en una consola interactiva.
+
 ## F9 global — activación sintética en Next TEST local (2026-09-25)
 
 `node scripts/qa-identidad-test.mjs` genera tres claves aleatorias solo en

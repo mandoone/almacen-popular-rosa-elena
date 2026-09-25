@@ -349,7 +349,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Configurar y probar tres cuentas sintéticas en Next TEST local: login,
   permisos positivos/negativos, revocación, cambio temporal de rol, spoofing,
   legacy, headers y origen. Baseline restaurado; sin contraseñas persistidas.
-- ⬜ QA visual autenticada/logout y cuentas humanas definitivas cuando el
+- ✅ Activar tres cuentas sintéticas en Vercel Preview de la rama operativa:
+  QA HTTP remota de login, permisos, suplantación, revocación, cambio de rol,
+  legacy, cookies, headers y origen PASS. Roles restaurados con versiones de
+  sesión monotónicas; Producción intacta. Evidencia en `docs/TEST_PLAN.md`.
+- ⬜ QA visual autenticada/logout en Preview protegido por Vercel y cuentas
+  humanas definitivas cuando el
   Almacén asigne personas y apruebe la matriz. Las claves sintéticas efímeras
   deben regenerarse si se repite un login interactivo; no son cuentas operativas.
 - ⬜ Configurar protección distribuida de intentos en la plataforma antes de

@@ -23,6 +23,9 @@ secretos y no reemplaza el Go/No-Go humano de `GO_NO_GO_FASE_9_10.md`.
   `PROVISORIO_TEST`: las contraseñas aleatorias se descartan al terminar y
   el archivo local ignorado conserva solo hashes/secreto TEST. No representa
   cuentas humanas ni sustituye un ensayo visual autenticado con usuarios reales.
+  Los tres actores pasaron QA HTTP en Vercel Preview de la rama operativa; la
+  QA visual de ese Preview aún requiere acceso manual por Vercel. Detalle en
+  `TEST_PLAN.md`.
 - El Almacén aprueba la matriz de capacidades y asigna cada persona a un rol.
 - Se crean actores técnicos individuales con `npm run auth:credential -- --actor
   <id> --role <rol>`; el comando pide la contraseña sin mostrarla.

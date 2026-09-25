@@ -11,12 +11,12 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 
 | Pendiente | Estado real | Bloquea Producción | Decisión humana | Implementable ahora |
 |---|---|---:|---:|---:|
-| Identidad individual | Tres actores sintéticos validados en Next TEST local; sin cuentas reales ni QA visual autenticada | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST validada |
+| Identidad individual | Tres actores sintéticos validados localmente y por HTTP en Vercel Preview TEST; QA visual autenticada pendiente | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota validada por HTTP |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
 | Protección de login | Rate limit local por IP+actor implementado | SÍ, falta capa distribuida productiva | SÍ, configuración de plataforma | Local CERRADO |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
 | Capacidades | Matriz `venta`/`operacion`/`administracion` probada | SÍ, aceptación/asignación pendientes | SÍ, Almacén | No hardcodear personas |
-| CSP/orígenes/headers | CSP same-origin, control cross-site, HSTS/COOP y fail-closed local | SÍ, validar dominio final | SÍ, dominio | Código CERRADO |
+| CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
 | Contenido/contactos/derechos | F9-01 a F9-04 pendientes | SÍ | SÍ, Almacén | NO sin fuente/aprobación |
 | Stock/precios/costos | TEST técnico listo; valores reales no validados | SÍ por flujo | SÍ, Almacén | NO cargar aún |
 | Caja/saldos | Corte real no informado | SÍ para caja/abastecimiento | SÍ, Almacén | NO cargar aún |
@@ -24,7 +24,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 | Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
 | Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
 
-Clasificación actual: `CERRADO` para QA técnica sintética local;
+Clasificación actual: `CERRADO` para QA técnica sintética local y HTTP en Preview;
 `PENDIENTE_TECNICO` para rate limiting distribuido, QA visual autenticada y dominio/CSP final;
 `PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
@@ -151,15 +151,17 @@ existe monitoreo manual y responsable asignado.
   recuperación legacy deshabilitada.
 - CI tiene `contents: read`, instalación reproducible, QA, secrets scan y audit
   crítico. No ejecuta E2E remoto ni deploy.
-- Pendiente antes de producción: configurar/validar las cuentas en TEST, confirmar
-  responsables de revocación/rotación y activar rate limiting distribuido en la
-  plataforma elegida. No se configuró infraestructura externa en este lote.
+- Pendiente antes de producción: completar QA visual del Preview protegido,
+  asignar y validar cuentas humanas en TEST, confirmar responsables de
+  revocación/rotación y activar rate limiting distribuido en la plataforma
+  elegida. Las variables sintéticas se configuraron solo en Preview de la rama;
+  Production conservó sus variables originales.
 
 **Pendiente humano F10-02:** la arquitectura técnica, identidad multiusuario y
 matriz provisional están preparadas localmente, pero falta confirmación del
 Almacén, asignación de personas, QA TEST de las cuentas humanas finales y
-protección distribuida de intentos de login. Los actores sintéticos locales ya
-pasaron su QA técnica; no constituyen la asignación humana.
+protección distribuida de intentos de login. Los actores sintéticos ya pasaron
+su QA técnica local y remota por HTTP; no constituyen la asignación humana.
 **Bloquea producción: SÍ**.
 
 ### Vulnerabilidades npm
@@ -221,7 +223,8 @@ solo admite READY cuando los 20 checks tienen evidencia `ready` o una decisión
 - Metadata por página, robots, sitemap configurable, 404, error, loading y health.
 - Headers, sesión admin, rutas admin, CI mínimo, secrets scan y preflight consolidados.
 - Identidad individual, revocación/rotación, CSP, control de origen y rate limit
-  local preparados y probados sin cuentas reales.
+  local preparados y probados sin cuentas reales; tres actores sintéticos
+  también pasaron QA HTTP en Vercel Preview de la rama operativa.
 - Arquitectura F9-A de roles, autorización, DTOs, IDs y diario durable validada
   en TEST con Apps Script v15 y Next local `43a51a9`; retest focalizado PASS.
   F9 global sigue abierta. No se declara atomicidad ACID multitabla.
