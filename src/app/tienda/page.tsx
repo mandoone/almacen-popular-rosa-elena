@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import {
   formatearCierreApertura,
@@ -16,6 +16,10 @@ import {
   rutaImagenProducto,
 } from '@/lib/fase4/catalogo';
 import { CONTACTO_WHATSAPP_NUMERO } from '@/lib/fase9/contenidoPublico';
+import {
+  obtenerIntentoCreacionPedido,
+  type IntentoCreacionPedido,
+} from '@/lib/fase9/idempotenciaCreacionPedido';
 
 function ImagenProducto({ producto }: { producto: Producto }) {
   const [error, setError] = useState(false);
@@ -228,6 +232,7 @@ export default function TiendaPage() {
   const [categoriaActiva, setCategoriaActiva] = useState('todas');
   const [enviando, setEnviando] = useState(false);
   const [apertura, setApertura] = useState<AperturaPublicaPedidos | null>(null);
+  const intentoCreacion = useRef<IntentoCreacionPedido | null>(null);
   const [cargandoApertura, setCargandoApertura] = useState(usaCalendarioTest);
   const [errorApertura, setErrorApertura] = useState<string | null>(null);
 
@@ -333,6 +338,22 @@ export default function TiendaPage() {
 
     setEnviando(true);
     try {
+      const payloadIntento = {
+        nombre_cliente: nombre.trim(),
+        telefono: telefono.trim(),
+        forma_pago: 'efectivo_al_retirar',
+        observaciones: '',
+        apertura_id: apertura?.apertura_id,
+        carrito: carrito.map((i) => ({
+          id_producto: i.producto.id,
+          cantidad: i.cantidad,
+        })),
+      };
+      intentoCreacion.current = obtenerIntentoCreacionPedido(
+        intentoCreacion.current,
+        payloadIntento,
+        () => crypto.randomUUID()
+      );
       // 1) Registrar el pedido REAL en la base operativa (vía proxy interno de Next).
       //    El servidor valida stock y recalcula precios desde la hoja PRODUCTOS.
       const res = await fetch('/api/pedidos', {
@@ -342,6 +363,7 @@ export default function TiendaPage() {
           nombre_cliente: nombre.trim(),
           telefono: telefono.trim(),
           forma_pago: 'efectivo_al_retirar',
+          idempotency_key: intentoCreacion.current.idempotencyKey,
           carrito: carrito.map((i) => ({
             id_producto: i.producto.id,
             cantidad: i.cantidad,
@@ -359,6 +381,7 @@ export default function TiendaPage() {
 
       const idPedido: string = json.data.id_pedido;
       const totalReal: number = json.data.total ?? total;
+      intentoCreacion.current = null;
 
       // 2) Abrir WhatsApp con el resumen, incluyendo el N° de pedido real.
       const lista = carrito

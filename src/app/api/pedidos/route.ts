@@ -6,6 +6,10 @@ import {
 } from '@/lib/appsScriptPedidos';
 import { exigirAperturaActivaParaCrearPedidoTest } from '@/lib/fase3b/aperturaActivaServer';
 import { pedidosAnticipadosConCalendarioHabilitados } from '@/lib/fase3b/pedidosAnticipados';
+import {
+  idempotencyKeyCreacionValida,
+} from '@/lib/fase9/idempotenciaCreacionPedido';
+import { ejecutarMutacionDurableConReplay } from '@/lib/fase9/resilienciaPedidos';
 
 // Proxy publico: la tienda llama aqui; el servidor reenvia a Apps Script.
 // No requiere token (crearPedido es publico). El token admin nunca toca esta ruta.
@@ -34,6 +38,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    if (!idempotencyKeyCreacionValida(body.idempotency_key)) {
+      return NextResponse.json(
+        { ok: false, error: 'idempotency_key inválida o ausente.' },
+        { status: 400 }
+      );
+    }
 
     const apertura = pedidosAnticipadosConCalendarioHabilitados(
       process.env.NEXT_PUBLIC_APP_ENV
@@ -41,7 +51,7 @@ export async function POST(req: Request) {
       ? await exigirAperturaActivaParaCrearPedidoTest()
       : null;
 
-    const result = await crearPedido({
+    const input = {
       nombre_cliente: String(body.nombre_cliente),
       telefono: String(body.telefono),
       forma_pago: String(body.forma_pago || 'efectivo_al_retirar'),
@@ -54,7 +64,9 @@ export async function POST(req: Request) {
       ...(apertura
         ? { apertura_id: apertura.apertura_id, origen_pedido: 'online_anticipado' as const }
         : {}),
-    });
+      idempotency_key: String(body.idempotency_key),
+    };
+    const result = await ejecutarMutacionDurableConReplay(() => crearPedido(input));
 
     return NextResponse.json({ ok: true, data: result });
   } catch (err) {

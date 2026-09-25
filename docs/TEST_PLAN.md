@@ -5,6 +5,23 @@
 
 ---
 
+## F9-A — creación durable e idempotente (2026-09-24)
+
+Pruebas locales automatizadas:
+
+1. `CREAR_PEDIDO` recorre `PREPARADA → APLICANDO → COMPLETADA`, crea una sola
+   cabecera `recibido` y sus detalles, sin stock ni movimientos.
+2. Misma key/payload devuelve el mismo pedido; payload distinto falla 409.
+3. Fallo tras cabecera o durante detalles reanuda solo líneas faltantes; una fila
+   incompatible queda `REQUIERE_REVISION`.
+4. Dos solicitudes serializadas con la misma key no duplican el pedido.
+5. La UI conserva la key ante resultado incierto, la rota al cambiar datos y la
+   elimina tras éxito; una respuesta ambigua permite solo un replay idéntico.
+6. Snapshot y resultado no contienen tokens, cookies ni secretos.
+
+Pendiente remoto: desplegar Apps Script TEST v13 y ejecutar un único retest F9-A.
+Producción permanece fuera de alcance.
+
 ## F9-A — respuesta HTTP ambigua e idempotencia end-to-end (2026-09-24)
 
 Pruebas locales automatizadas:
@@ -23,8 +40,8 @@ Pruebas locales automatizadas:
 5. Los errores no incluyen URL efímera, query, HTML, token ni cookies; la UI
    mantiene la key hasta un éxito confirmado o reconciliado.
 
-Pendiente remoto: desplegar la corrección después de revisión y repetir solo el
-E2E F9-A en TEST. El E2E actual permanece FAIL; no se valida Producción.
+La corrección HTTP está desplegada en TEST v12. El E2E permanece FAIL hasta
+desplegar y validar la creación durable; no se valida Producción.
 
 ## F9-A.1 — seguridad, sesión, autorización e IDs (2026-09-22)
 

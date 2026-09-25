@@ -5,6 +5,22 @@
 
 ---
 
+## [F9-A creación durable] — Idempotencia de alta de pedidos (2026-09-24)
+
+### Implementado localmente
+
+- La tienda genera y conserva una `idempotency_key` UUID por intento lógico.
+- `CREAR_PEDIDO` reutiliza `OPERACIONES_PEDIDOS`: intención previa, hash
+  canónico, ID planificado, cabecera/detalles reanudables y readback final.
+- Misma key/payload recupera el mismo pedido; payload distinto falla 409.
+- La creación continúa en `recibido`, sin descontar stock ni crear movimientos.
+- Una respuesta HTTP ambigua admite como máximo un replay con la misma key.
+
+### Estado
+
+- Validación local preparada; pendiente Apps Script TEST v13 y retest remoto.
+- F9 global sigue abierta y Producción permanece fuera de alcance.
+
 ## [F9-A HTTP] — Respuesta ambigua e idempotencia end-to-end (2026-09-24)
 
 ### Corregido localmente
@@ -19,10 +35,8 @@
 
 ### Estado
 
-- F9-A está desplegada en TEST v11, pero esta corrección solo existe localmente.
-  El E2E TEST continúa FAIL hasta nuevo deploy y retest controlado.
-- No hubo deploy, E2E, escrituras remotas, commit ni push en este lote;
-  Producción permanece intacta.
+- La corrección HTTP está desplegada en Apps Script TEST v12. El E2E continúa
+  FAIL hasta desplegar y validar la creación durable.
 
 ## [F9-A final] — Fail-closed y readback numérico estricto (2026-09-23)
 

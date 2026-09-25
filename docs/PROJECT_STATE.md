@@ -17,15 +17,13 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A en TEST, todavía no validada:** la migración aditiva se ejecutó en la
-  Sheet TEST y Apps Script TEST está en v11. El primer E2E dejó datos
-  consistentes, pero terminó FAIL porque dos respuestas de ContentService se
-  perdieron como 404 HTML tras el redirect de Google. La mitigación local
-  clasifica solo esa firma, recupera operaciones durables con la misma key y
-  reconcilia transiciones simples por readback; está pendiente de deploy y
-  retest TEST.
-- **Próxima prioridad:** revisar, desplegar y repetir el E2E F9-A exclusivamente
-  en TEST. Producción sigue fuera de alcance.
+- **F9-A en TEST, todavía no validada:** la migración aditiva está aplicada y
+  Apps Script TEST está en v12 con la mitigación de respuestas ambiguas. El
+  retest detectó que la creación pública aún no era idempotente; la corrección
+  local incorpora `CREAR_PEDIDO` al diario durable, con key previa, hash,
+  reanudación y readback, pendiente de deploy v13 y retest TEST.
+- **Próxima prioridad:** desplegar y validar la creación idempotente
+  exclusivamente en TEST. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -115,9 +113,9 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
-- 🔄 **Fase 9:** F9-A está implementada y desplegada en TEST v11, pero el E2E
-  continúa FAIL hasta desplegar y validar la mitigación local de respuesta HTTP
-  ambigua. Las decisiones humanas del Almacén siguen pendientes.
+- 🔄 **Fase 9:** F9-A está desplegada en TEST v12; la creación idempotente está
+  implementada localmente y pendiente de v13/retest. Las decisiones humanas del
+  Almacén siguen pendientes.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
   loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
@@ -135,11 +133,11 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `OPERACIONES_PEDIDOS` como intención durable, claves idempotentes, plan previo,
   aplicación reanudable y readback de pedido, stock y movimientos. Una diferencia
   queda `REQUIERE_REVISION` y bloquea nuevas mutaciones incompatibles.
-- ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: el diseño es
-  serializado, idempotente, durable y verificable; no promete atomicidad
-  multitabla. La creación conserva su compensación acotada separada.
-- ⬜ Desplegar la mitigación de respuesta HTTP ambigua y repetir exclusivamente
-  el E2E F9-A en TEST; no repetir E2E F4–F8.
+- ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: confirmación,
+  cancelación y creación usan operaciones serializadas, idempotentes, durables
+  y verificables; no se promete atomicidad multitabla.
+- ⬜ Desplegar `CREAR_PEDIDO` durable como Apps Script TEST v13 y repetir solo el
+  retest F9-A; no repetir E2E F4–F8.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.

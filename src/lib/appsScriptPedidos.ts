@@ -62,6 +62,7 @@ export interface CrearPedidoInput {
   carrito: CarritoItem[];
   apertura_id?: string;
   origen_pedido?: 'online_anticipado';
+  idempotency_key: string;
 }
 
 export interface CrearPedidoResult {
@@ -71,6 +72,9 @@ export interface CrearPedidoResult {
   items: number;
   apertura_id?: string;
   origen_pedido?: string;
+  operacion_id?: string;
+  idempotency_key?: string;
+  consistencia?: string;
   resumen: Array<{
     id_producto: string;
     nombre_producto: string;
@@ -359,6 +363,7 @@ export function crearPedido(input: CrearPedidoInput): Promise<CrearPedidoResult>
     })),
     apertura_id: input.apertura_id,
     origen_pedido: input.origen_pedido,
+    idempotency_key: input.idempotency_key,
     action: 'crearPedido',
   });
 }

@@ -5,9 +5,9 @@ Script, sobre la base operativa `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
 
 - **Script:** `scripts/apps-script-pedidos.gs`
 - **Modelo de datos:** `docs/DATA_MODEL.md`
-- **Estado:** la versión F9-A.2 del archivo local está preparada para TEST, pero
-  no fue desplegada, migrada ni validada remotamente. Producción queda fuera de
-  alcance.
+- **Estado:** F9-A HTTP está desplegada en Apps Script TEST v12. La idempotencia
+  durable de creación está preparada localmente para v13 y pendiente de retest.
+  Producción queda fuera de alcance.
 
 > Las pruebas manuales históricas corresponden al contrato anterior. F9-A cambia
 > el flujo: `crearPedido` deja el pedido `recibido` y no toca stock; confirmar a
@@ -91,6 +91,7 @@ curl -L -X POST "URL_WEB_APP" \
     "telefono": "56950807172",
     "forma_pago": "efectivo_al_retirar",
     "observaciones": "pedido de prueba",
+    "idempotency_key": "UUID_CREACION_TEST_12345678",
     "carrito": [
       { "id_producto": "PROD-001", "cantidad": 2 },
       { "id_producto": "PROD-002", "cantidad": 1 }
@@ -105,6 +106,8 @@ Respuesta esperada en TEST, después de aprobar y desplegar F9-A: `ok: true` con
 - líneas en **DETALLE_PEDIDOS**;
 - `stock_actual` sin cambios en **PRODUCTOS**;
 - ningún movimiento nuevo en **MOVIMIENTOS_STOCK** hasta confirmar.
+- una operación `CREAR_PEDIDO` en **OPERACIONES_PEDIDOS**, `COMPLETADA` tras
+  readback de cabecera y detalles.
 
 > El backend **ignora** cualquier precio enviado por el cliente: usa siempre el
 > `precio_venta` de la hoja PRODUCTOS.
@@ -150,10 +153,9 @@ curl -L -X POST "URL_WEB_APP" -H "Content-Type: application/json" \
   sobre HTTPS (las URL de Apps Script lo son).
 - `crearPedido` es público a propósito (lo usará la tienda). Valida todo en el
   servidor: existencia/estado del producto, stock y precios.
-- Concurrencia: confirmación y cancelación releen estado/stock bajo el mismo
-  `LockService`; antes de tocar datos críticos persisten una intención en
-  `OPERACIONES_PEDIDOS`. El retry usa la misma `idempotency_key` y no repite
-  efectos ya comprobados.
+- Concurrencia: creación, confirmación y cancelación operan bajo `LockService` y
+  persisten una intención en `OPERACIONES_PEDIDOS`. El retry usa la misma
+  `idempotency_key` y no repite efectos ya comprobados.
 
 ### Diario durable de F9-A.2
 
@@ -167,7 +169,8 @@ Los estados del diario son:
 
 - `PREPARADA`: intención, hash y plan persistidos y leídos de vuelta.
 - `APLICANDO`: los efectos se aplican o reanudan de forma idempotente.
-- `COMPLETADA`: pedido, stock y movimientos coinciden con el plan en readback.
+- `COMPLETADA`: los efectos aplicables coinciden con el plan en readback; para
+  `CREAR_PEDIDO` son cabecera/detalles y no incluye stock ni movimientos.
 - `REQUIERE_REVISION`: existe una diferencia que impide continuar automáticamente.
 
 `diagnosticarOperacionPedidoTest(operacionId)` inspecciona una operación en TEST

@@ -175,9 +175,10 @@ async function escenarioCreacion(fallarDetalleEn = null, fallarCompensacion = fa
 
 test('F9 stock: crear pedido queda recibido y no escribe stock ni movimientos', async () => {
   const { contexto } = await escenario();
-  const funcion = contexto.crearPedido_.toString();
-  assert.match(funcion, /estado_pedido:\s*'recibido'/);
-  assert.doesNotMatch(funcion, /registrarMovimiento_|stock_resultante|\.setValue\(/);
+  const plan = contexto.construirPlanCreacionPedido_.toString();
+  const aplicar = contexto.aplicarPlanCreacionPedido_.toString();
+  assert.match(plan, /estado_pedido:\s*'recibido'/);
+  assert.doesNotMatch(aplicar, /registrarMovimiento_|stock_resultante|\.setValue\(/);
 });
 
 test('F9 stock: recibido -> pendiente descuenta una sola vez y registra actor', async () => {
@@ -251,35 +252,9 @@ test('F9 stock: listo -> pendiente queda rechazado también por Apps Script', as
   assert.equal(listo.pedidos.filas[0][1], 'listo');
 });
 
-test('F9 pedidos: dos creaciones en el mismo segundo reciben ids únicos', async () => {
-  const caso = await escenarioCreacion();
-  const primero = caso.contexto.crearPedido_(caso.body);
-  const segundo = caso.contexto.crearPedido_(caso.body);
-  assert.notEqual(primero.id_pedido, segundo.id_pedido);
-  assert.match(primero.id_pedido, /^PED-20260922-120000-[a-f0-9]{8}$/);
-  assert.match(segundo.id_pedido, /^PED-20260922-120000-[a-f0-9]{8}$/);
-  assert.equal(new Set(caso.pedidos.filas.map((fila) => fila[0])).size, 2);
-});
-
-for (const [nombre, intento] of [['primera', 1], ['intermedia', 2], ['última', 3]]) {
-  test(`F9 pedidos: fallo en línea ${nombre} compensa detalle y cabecera`, async () => {
-    const caso = await escenarioCreacion(intento);
-    assert.throws(() => caso.contexto.crearPedido_(caso.body), /fallo append simulado/);
-    assert.equal(caso.pedidos.filas.length, 0);
-    assert.equal(caso.detalles.filas.length, 0);
-    caso.habilitarTest();
-    assert.throws(
-      () => caso.contexto.actualizarEstadoPedido_({
-        id_pedido: 'PED-20260922-120000-00000001',
-        estado_pedido: 'pendiente',
-        actor: 'actor-test',
-      }),
-      /Pedido no encontrado/
-    );
-  });
-}
-
-test('F9 pedidos: si falla la compensación se informa CONSISTENCIA_INCIERTA', async () => {
-  const caso = await escenarioCreacion(2, true);
-  assert.throws(() => caso.contexto.crearPedido_(caso.body), /CONSISTENCIA_INCIERTA/);
+test('F9 pedidos: creación usa el diario durable y continúa sin tocar stock', async () => {
+  const { contexto } = await escenario();
+  const funcion = contexto.crearPedido_.toString();
+  assert.match(funcion, /ejecutarCreacionPedidoDurable_/);
+  assert.doesNotMatch(funcion, /registrarMovimiento_|stock_resultante|\.setValue\(/);
 });

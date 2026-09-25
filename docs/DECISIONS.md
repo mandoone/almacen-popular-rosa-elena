@@ -8,6 +8,20 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D25 — Creación pública durable e idempotente
+
+- **Contexto:** una respuesta perdida de `crearPedido` no permitía distinguir un
+  fallo de una creación completada; repetir el POST podía generar dos pedidos.
+- **Decisión:** la tienda genera una key UUID por intento lógico y la conserva
+  hasta éxito. Apps Script registra `CREAR_PEDIDO` en `OPERACIONES_PEDIDOS` antes
+  de escribir cabecera/detalles, liga la key a un hash canónico, reanuda solo
+  efectos faltantes y completa después de readback exacto. La firma HTTP ambigua
+  admite como máximo un replay idéntico.
+- **Consecuencias:** misma key/payload devuelve el mismo `id_pedido`; payload
+  distinto falla 409; divergencias quedan `REQUIERE_REVISION`. Crear sigue en
+  `recibido`, sin stock ni movimientos, y no requiere ampliar el esquema actual.
+  La implementación local aún requiere deploy y retest TEST.
+
 ## D24 — Recuperación conservadora de respuestas post-mutación ambiguas
 
 - **Contexto:** ContentService puede completar una mutación y luego perder su
@@ -20,8 +34,8 @@ Formato: **contexto → decisión → consecuencias**.
   pedido, estado objetivo y actor.
 - **Consecuencias:** no existen retries genéricos ni éxito supuesto ante cualquier
   error. Un segundo resultado ambiguo o un readback no concluyente conserva 502.
-  La corrección está preparada localmente y requiere deploy/retest TEST; v11 y el
-  E2E vigente aún no incorporan esa validación.
+  La corrección está desplegada en Apps Script TEST v12; el cierre de F9-A queda
+  pendiente del deploy/retest de D25.
 
 ## D23 — Diario durable para mutaciones multitabla de pedidos
 

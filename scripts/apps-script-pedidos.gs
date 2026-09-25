@@ -333,12 +333,7 @@ function doPost(e) {
 
 // ============================== ACCIONES =======================================
 
-/**
- * Crea un pedido recibido. Precios y validaciones SIEMPRE desde PRODUCTOS (no
- * se confia en los precios enviados por el frontend). La disponibilidad se
- * informa al crear, pero NO se reserva ni descuenta stock en este paso.
- */
-function crearPedido_(body) {
+function construirPayloadCanonicoCreacionPedido_(body) {
   var nombreCliente = limpiar_(body.nombre_cliente);
   var telefono = limpiar_(body.telefono);
   var formaPago = limpiar_(body.forma_pago);
@@ -348,150 +343,415 @@ function crearPedido_(body) {
   if (!nombreCliente) lanzar_('Falta nombre_cliente.', 400);
   if (!telefono) lanzar_('Falta telefono.', 400);
   if (!carrito || !carrito.length) lanzar_('El carrito esta vacio.', 400);
+  exigirIdempotencyKey_(body.idempotency_key);
 
-  var lock = LockService.getScriptLock();
-  lock.waitLock(30000); // hasta 30s esperando el turno
-  try {
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var ahora = new Date();
-    var contextoApertura = validarPedidoAnticipadoTest_(ss, body, ahora);
-    var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var lineas = carrito.map(function (item, indice) {
+    item = item || {};
+    var idProducto = limpiar_(item.id_producto);
+    var cantidad = parseNum_(item.cantidad);
+    if (!idProducto) lanzar_('Item ' + (indice + 1) + ': falta id_producto.', 400);
+    if (!(cantidad > 0)) lanzar_('Item "' + idProducto + '": cantidad invalida.', 400);
+    return { id_producto: idProducto, cantidad: cantidad };
+  });
+  lineas.sort(function (a, b) {
+    if (a.id_producto < b.id_producto) return -1;
+    if (a.id_producto > b.id_producto) return 1;
+    return a.cantidad - b.cantidad;
+  });
 
-    var cId = col_(prod, 'id_producto');
-    var cActivo = col_(prod, 'activo');
-    var cNombre = col_(prod, 'nombre');
-    var cUnidad = col_(prod, 'unidad_medida');
-    var cDecimal = col_(prod, 'permite_decimal');
-    var cPrecio = col_(prod, 'precio_venta');
-    var cStock = col_(prod, 'stock_actual');
+  return {
+    version: 1,
+    nombre_cliente: nombreCliente,
+    telefono: telefono,
+    forma_pago: formaPago,
+    observaciones: observaciones,
+    apertura_id: limpiar_(body.apertura_id),
+    origen_pedido: limpiar_(body.origen_pedido),
+    carrito: lineas
+  };
+}
 
-    // Indexar productos por id para acceso rapido.
-    var indicePorId = {};
-    for (var i = 0; i < prod.filas.length; i++) {
-      var idP = limpiar_(prod.filas[i][cId]);
-      if (idP) indicePorId[idP] = i;
+function construirPlanCreacionPedido_(ss, payload, ahora) {
+  var contextoApertura = validarPedidoAnticipadoTest_(ss, payload, ahora);
+  var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+
+  var cId = col_(prod, 'id_producto');
+  var cActivo = col_(prod, 'activo');
+  var cNombre = col_(prod, 'nombre');
+  var cUnidad = col_(prod, 'unidad_medida');
+  var cDecimal = col_(prod, 'permite_decimal');
+  var cPrecio = col_(prod, 'precio_venta');
+  var cStock = col_(prod, 'stock_actual');
+
+  var indicePorId = {};
+  for (var i = 0; i < prod.filas.length; i++) {
+    var idP = limpiar_(prod.filas[i][cId]);
+    if (idP) indicePorId[idP] = i;
+  }
+
+  var lineas = [];
+  var total = 0;
+  for (var k = 0; k < payload.carrito.length; k++) {
+    var item = payload.carrito[k];
+    var idProd = item.id_producto;
+    var cant = item.cantidad;
+    var fi = indicePorId[idProd];
+    if (fi === undefined) lanzar_('Producto no existe: "' + idProd + '".', 400);
+
+    var fila = prod.filas[fi];
+    if (String(fila[cActivo]).toUpperCase() !== 'SI') {
+      lanzar_('Producto inactivo: "' + idProd + '".', 400);
     }
-
-    // Validar items y preparar lineas (precio desde la hoja).
-    var lineas = [];
-    var total = 0;
-    for (var k = 0; k < carrito.length; k++) {
-      var item = carrito[k] || {};
-      var idProd = limpiar_(item.id_producto);
-      var cant = parseNum_(item.cantidad);
-
-      if (!idProd) lanzar_('Item ' + (k + 1) + ': falta id_producto.', 400);
-      if (!(cant > 0)) lanzar_('Item "' + idProd + '": cantidad invalida.', 400);
-
-      var fi = indicePorId[idProd];
-      if (fi === undefined) lanzar_('Producto no existe: "' + idProd + '".', 400);
-
-      var fila = prod.filas[fi];
-      if (String(fila[cActivo]).toUpperCase() !== 'SI') {
-        lanzar_('Producto inactivo: "' + idProd + '".', 400);
-      }
-
-      var permiteDecimal = String(fila[cDecimal]).toUpperCase() === 'SI';
-      if (!permiteDecimal && Math.floor(cant) !== cant) {
-        lanzar_('Producto "' + idProd + '" no permite decimales (cantidad ' + cant + ').', 400);
-      }
-
-      var stockActual = parseNum_(fila[cStock]);
-      if (cant > stockActual) {
-        lanzar_('Stock insuficiente de "' + idProd + '": disponible ' + stockActual +
-          ', solicitado ' + cant + '.', 409);
-      }
-
-      var precio = parseNum_(fila[cPrecio]);
-      var subtotal = redondear2_(precio * cant);
-      total += subtotal;
-
-      lineas.push({
-        filaProducto: fi,
-        id_producto: idProd,
-        nombre_producto: limpiar_(fila[cNombre]),
-        unidad_medida: limpiar_(fila[cUnidad]),
-        cantidad: cant,
-        precio_unitario: precio,
-        subtotal: subtotal,
-        stock_disponible_al_crear: stockActual
-      });
+    var permiteDecimal = String(fila[cDecimal]).toUpperCase() === 'SI';
+    if (!permiteDecimal && Math.floor(cant) !== cant) {
+      lanzar_('Producto "' + idProd + '" no permite decimales (cantidad ' + cant + ').', 400);
     }
-    total = redondear2_(total);
-
-    var ped = leerHoja_(ss, HOJAS.PEDIDOS);
-    var det = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
-    var idPedido = generarIdUnicoEnHoja_(ped, 'id_pedido', 'PED', ahora);
-    var ultimaFilaPedidos = ped.sheet.getLastRow();
-    var ultimaFilaDetalles = det.sheet.getLastRow();
-    var filasPedidoCreadas = 0;
-    var filasDetalleCreadas = 0;
-    try {
-      // 1) Escribir cabecera en PEDIDOS.
-      agregarFila_(ped, {
-        id_pedido: idPedido,
-        fecha_hora: marca_(ahora),
-        canal: CANAL_WEB,
-        id_cliente: '',
-        nombre_cliente: nombreCliente,
-        telefono: telefono,
-        total: total,
-        estado_pedido: 'recibido',
-        estado_pago: 'pendiente',
-        forma_pago: formaPago,
-        observaciones: observaciones,
-        vendedor_admin: '',
-        fecha_entrega: '',
-        apertura_id: contextoApertura.apertura_id,
-        origen_pedido: contextoApertura.origen_pedido
-      });
-      filasPedidoCreadas++;
-
-      // 2) Escribir lineas en DETALLE_PEDIDOS.
-      for (var d = 0; d < lineas.length; d++) {
-        var ln = lineas[d];
-        agregarFila_(det, {
-          id_pedido: idPedido,
-          id_producto: ln.id_producto,
-          nombre_producto: ln.nombre_producto,
-          cantidad: ln.cantidad,
-          unidad_medida: ln.unidad_medida,
-          precio_unitario: ln.precio_unitario,
-          subtotal: ln.subtotal
-        });
-        filasDetalleCreadas++;
-      }
-
-      SpreadsheetApp.flush();
-    } catch (err) {
-      var compensada = compensarCreacionPedido_(
-        ped.sheet, ultimaFilaPedidos, filasPedidoCreadas,
-        det.sheet, ultimaFilaDetalles, filasDetalleCreadas
-      );
-      if (!compensada) {
-        lanzar_('CONSISTENCIA_INCIERTA: fallo al crear y compensar el pedido "' +
-          idPedido + '". Requiere revision manual.', 500);
-      }
-      throw err;
+    var stockActual = parseNum_(fila[cStock]);
+    if (cant > stockActual) {
+      lanzar_('Stock insuficiente de "' + idProd + '": disponible ' + stockActual +
+        ', solicitado ' + cant + '.', 409);
     }
+    var precio = parseNum_(fila[cPrecio]);
+    var subtotal = redondear2_(precio * cant);
+    total += subtotal;
+    lineas.push({
+      id_producto: idProd,
+      nombre_producto: limpiar_(fila[cNombre]),
+      unidad_medida: limpiar_(fila[cUnidad]),
+      cantidad: cant,
+      precio_unitario: precio,
+      subtotal: subtotal,
+      stock_disponible_al_crear: stockActual
+    });
+  }
+  total = redondear2_(total);
 
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  var idPedido = generarIdUnicoEnHoja_(pedidos, 'id_pedido', 'PED', ahora);
+  var cabecera = {
+    id_pedido: idPedido,
+    fecha_hora: marca_(ahora),
+    canal: CANAL_WEB,
+    id_cliente: '',
+    nombre_cliente: payload.nombre_cliente,
+    telefono: payload.telefono,
+    total: total,
+    estado_pedido: 'recibido',
+    estado_pago: 'pendiente',
+    forma_pago: payload.forma_pago,
+    observaciones: payload.observaciones,
+    vendedor_admin: '',
+    fecha_entrega: '',
+    apertura_id: contextoApertura.apertura_id,
+    origen_pedido: contextoApertura.origen_pedido
+  };
+  var detalles = lineas.map(function (linea) {
     return {
+      id_pedido: idPedido,
+      id_producto: linea.id_producto,
+      nombre_producto: linea.nombre_producto,
+      cantidad: linea.cantidad,
+      unidad_medida: linea.unidad_medida,
+      precio_unitario: linea.precio_unitario,
+      subtotal: linea.subtotal
+    };
+  });
+  return {
+    version: 1,
+    tipo_operacion: 'CREAR_PEDIDO',
+    actor: 'web-publico',
+    id_pedido: idPedido,
+    payload: payload,
+    cabecera: cabecera,
+    detalles: detalles,
+    resultado: {
       id_pedido: idPedido,
       total: total,
       estado_pedido: 'recibido',
       items: lineas.length,
       apertura_id: contextoApertura.apertura_id || undefined,
       origen_pedido: contextoApertura.origen_pedido || undefined,
-      resumen: lineas.map(function (l) {
+      resumen: lineas.map(function (linea) {
         return {
-          id_producto: l.id_producto,
-          nombre_producto: l.nombre_producto,
-          cantidad: l.cantidad,
-          precio_unitario: l.precio_unitario,
-          subtotal: l.subtotal
+          id_producto: linea.id_producto,
+          nombre_producto: linea.nombre_producto,
+          cantidad: linea.cantidad,
+          precio_unitario: linea.precio_unitario,
+          subtotal: linea.subtotal
         };
       })
+    }
+  };
+}
+
+function filasCreacionPorPedido_(hoja, idPedido) {
+  var cPedido = col_(hoja, 'id_pedido');
+  var filas = [];
+  for (var i = 0; i < hoja.filas.length; i++) {
+    if (limpiar_(hoja.filas[i][cPedido]) === idPedido) {
+      filas.push(filaAObjeto_(hoja, hoja.filas[i]));
+    }
+  }
+  return filas;
+}
+
+function registroCreacionCoincide_(actual, esperado, camposNumero) {
+  camposNumero = camposNumero || [];
+  var numericos = {};
+  camposNumero.forEach(function (campo) { numericos[campo] = true; });
+  var campos = Object.keys(esperado);
+  for (var i = 0; i < campos.length; i++) {
+    var campo = campos[i];
+    if (numericos[campo]) {
+      if (!numerosOperacionIguales_(actual[campo], esperado[campo])) return false;
+    } else if (limpiar_(actual[campo]) !== limpiar_(esperado[campo])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function cabeceraCreacionCoincide_(actual, esperada) {
+  var campos = [
+    'id_pedido', 'canal', 'id_cliente', 'nombre_cliente', 'telefono', 'total',
+    'estado_pedido', 'estado_pago', 'forma_pago', 'observaciones',
+    'vendedor_admin', 'fecha_entrega', 'apertura_id', 'origen_pedido'
+  ];
+  var subconjunto = {};
+  campos.forEach(function (campo) { subconjunto[campo] = esperada[campo]; });
+  return Boolean(actual.fecha_hora) &&
+    registroCreacionCoincide_(actual, subconjunto, ['total']);
+}
+
+function analizarDetallesCreacion_(actuales, esperados) {
+  var usados = [];
+  var incompatibles = [];
+  for (var i = 0; i < actuales.length; i++) {
+    var encontrado = -1;
+    for (var e = 0; e < esperados.length; e++) {
+      if (usados[e]) continue;
+      if (registroCreacionCoincide_(actuales[i], esperados[e],
+          ['cantidad', 'precio_unitario', 'subtotal'])) {
+        encontrado = e;
+        break;
+      }
+    }
+    if (encontrado === -1) incompatibles.push(actuales[i]);
+    else usados[encontrado] = true;
+  }
+  var faltantes = [];
+  for (var j = 0; j < esperados.length; j++) {
+    if (!usados[j]) faltantes.push(esperados[j]);
+  }
+  return { faltantes: faltantes, incompatibles: incompatibles };
+}
+
+function diagnosticarCreacionPedido_(ss, operacion) {
+  var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
+  if (!plan || plan.tipo_operacion !== 'CREAR_PEDIDO' ||
+      plan.id_pedido !== operacion.id_pedido || !plan.cabecera ||
+      !Array.isArray(plan.detalles) || !plan.resultado) {
+    return { estado: 'REQUIERE_REVISION', diferencias: ['snapshot_creacion_invalido'] };
+  }
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  var cabeceras = filasCreacionPorPedido_(pedidos, plan.id_pedido);
+  var detalles = filasCreacionPorPedido_(
+    leerHoja_(ss, HOJAS.DETALLE_PEDIDOS), plan.id_pedido
+  );
+  var diferencias = [];
+  var cabeceraCorrecta = cabeceras.length === 1 &&
+    cabeceraCreacionCoincide_(cabeceras[0], plan.cabecera);
+  if (cabeceras.length > 1) diferencias.push('cabecera_duplicada');
+  else if (cabeceras.length === 1 && !cabeceraCorrecta) diferencias.push('cabecera_incompatible');
+  if (cabeceras.length === 0 && detalles.length) diferencias.push('detalle_sin_cabecera');
+
+  var analisis = analizarDetallesCreacion_(detalles, plan.detalles);
+  if (analisis.incompatibles.length) diferencias.push('detalle_incompatible_o_extra');
+  if (diferencias.length) {
+    return { estado: 'REQUIERE_REVISION', diferencias: diferencias };
+  }
+  var completa = cabeceraCorrecta && analisis.faltantes.length === 0 &&
+    detalles.length === plan.detalles.length;
+  return {
+    estado: completa ? 'CONSISTENTE_COMPLETADA' : 'PUEDE_CONTINUAR',
+    diferencias: [],
+    cabecera_existe: cabeceras.length === 1,
+    detalles_faltantes: analisis.faltantes.length
+  };
+}
+
+function aplicarPlanCreacionPedido_(ss, operacion, plan) {
+  var diagnostico = diagnosticarCreacionPedido_(ss, operacion);
+  if (diagnostico.estado === 'REQUIERE_REVISION') {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'Los datos existentes de la creación divergen del snapshot durable.', 500);
+  }
+  if (diagnostico.estado === 'CONSISTENTE_COMPLETADA') return;
+
+  var pedidos = leerHoja_(ss, HOJAS.PEDIDOS);
+  if (!diagnostico.cabecera_existe) agregarFila_(pedidos, plan.cabecera);
+
+  var detalles = leerHoja_(ss, HOJAS.DETALLE_PEDIDOS);
+  var actuales = filasCreacionPorPedido_(detalles, plan.id_pedido);
+  var analisis = analizarDetallesCreacion_(actuales, plan.detalles);
+  if (analisis.incompatibles.length) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'Existe un detalle incompatible con el snapshot durable.', 500);
+  }
+  for (var i = 0; i < analisis.faltantes.length; i++) {
+    agregarFila_(detalles, analisis.faltantes[i]);
+  }
+  SpreadsheetApp.flush();
+}
+
+function resultadoCreacionPedido_(operacion, plan) {
+  var resultado = {};
+  Object.keys(plan.resultado).forEach(function (campo) {
+    resultado[campo] = plan.resultado[campo];
+  });
+  resultado.operacion_id = operacion.operacion_id;
+  resultado.idempotency_key = operacion.idempotency_key;
+  resultado.consistencia = 'VERIFICADA_POR_READBACK';
+  return resultado;
+}
+
+function completarCreacionPedido_(ss, operacion, plan) {
+  var resultado = resultadoCreacionPedido_(operacion, plan);
+  try {
+    actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: 'COMPLETADA',
+      paso: 'READBACK_OK',
+      resultado_json: JSON.stringify(resultado),
+      error_codigo: '',
+      error_detalle: ''
+    });
+  } catch (err) {
+    lanzarOperacionPedido_('OPERACION_EN_CURSO',
+      'El pedido coincide, pero no se pudo cerrar el registro durable. Reintenta con la misma key. ' +
+      detalleOperacionError_(err), 503);
+  }
+  return resultado;
+}
+
+function registrarFalloCreacionPedido_(ss, operacion, err) {
+  var diagnostico;
+  try {
+    diagnostico = diagnosticarCreacionPedido_(ss, operacion);
+  } catch (diagError) {
+    diagnostico = {
+      estado: 'REQUIERE_REVISION',
+      diferencias: ['fallo_diagnostico:' + detalleOperacionError_(diagError)]
     };
+  }
+  if (diagnostico.estado === 'CONSISTENTE_COMPLETADA') {
+    var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
+    completarCreacionPedido_(ss, operacion, plan);
+    lanzarOperacionPedido_('OPERACION_EN_CURSO',
+      'La creación fue reconciliada después de un fallo. Reintenta con la misma key.', 503);
+  }
+  var estadoDurable = diagnostico.estado === 'PUEDE_CONTINUAR'
+    ? 'APLICANDO' : 'REQUIERE_REVISION';
+  var codigo = codigoOperacionError_(err, 'FALLO_CREACION');
+  try {
+    actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: estadoDurable,
+      paso: diagnostico.estado === 'PUEDE_CONTINUAR'
+        ? 'INTERRUMPIDA_RECUPERABLE' : 'READBACK_INCONSISTENTE',
+      error_codigo: codigo,
+      error_detalle: detalleOperacionError_(err) +
+        (diagnostico.diferencias.length ? ' | ' + diagnostico.diferencias.join(',') : '')
+    });
+  } catch (registroError) {
+    lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+      'Error original: ' + codigo + ' - ' + detalleOperacionError_(err) +
+      '. Además no se pudo registrar el estado durable: ' +
+      detalleOperacionError_(registroError), 500);
+  }
+  if (estadoDurable === 'REQUIERE_REVISION') {
+    lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+      'La creación no coincide con el plan durable.', 409);
+  }
+  lanzarOperacionPedido_('OPERACION_EN_CURSO',
+    'La creación quedó recuperable. Reintenta con la misma idempotency_key.', 503);
+}
+
+function continuarCreacionPedido_(ss, operacion) {
+  var plan = parseJsonOperacion_(operacion.snapshot_json, 'snapshot');
+  try {
+    operacion = actualizarOperacionPedido_(ss, operacion.operacion_id, {
+      estado_operacion: 'APLICANDO',
+      paso: 'APLICANDO_CREACION',
+      error_codigo: '',
+      error_detalle: ''
+    });
+    aplicarPlanCreacionPedido_(ss, operacion, plan);
+    var diagnostico = diagnosticarCreacionPedido_(ss, operacion);
+    if (diagnostico.estado !== 'CONSISTENTE_COMPLETADA') {
+      lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
+        'El readback final de la creación no coincide con el plan.', 500);
+    }
+    return completarCreacionPedido_(ss, operacion, plan);
+  } catch (err) {
+    return registrarFalloCreacionPedido_(ss, operacion, err);
+  }
+}
+
+function ejecutarCreacionPedidoDurable_(ss, payload, key) {
+  var hash = hashPayload_(payload);
+  var existente = buscarOperacionPedidoPor_(ss, 'idempotency_key', key);
+  if (existente) {
+    if (existente.tipo_operacion !== 'CREAR_PEDIDO' || existente.payload_hash !== hash) {
+      lanzarOperacionPedido_('IDEMPOTENCY_CONFLICT',
+        'La idempotency_key ya fue usada con otra operación o payload.', 409);
+    }
+    var estado = exigirEstadoOperacionPedidoValido_(existente.estado_operacion);
+    if (estado === 'COMPLETADA') {
+      return parseJsonOperacion_(existente.resultado_json, 'resultado');
+    }
+    if (estado === 'REQUIERE_REVISION') {
+      lanzarOperacionPedido_('OPERACION_REQUIERE_REVISION',
+        'La creación requiere reconciliación administrativa.', 409);
+    }
+    return continuarCreacionPedido_(ss, existente);
+  }
+
+  var ahora = new Date();
+  var plan = construirPlanCreacionPedido_(ss, payload, ahora);
+  var diario = leerHoja_(ss, HOJAS.OPERACIONES_PEDIDOS);
+  var operacionId = generarIdUnicoEnHoja_(diario, 'operacion_id', 'OPE', ahora);
+  var marca = marcaIso_(ahora);
+  var operacion = persistirOperacionPreparada_(ss, {
+    operacion_id: operacionId,
+    idempotency_key: key,
+    tipo_operacion: 'CREAR_PEDIDO',
+    id_pedido: plan.id_pedido,
+    actor: plan.actor,
+    estado_operacion: 'PREPARADA',
+    paso: 'INTENCION_PERSISTIDA',
+    payload_hash: hash,
+    snapshot_json: JSON.stringify(plan),
+    resultado_json: '',
+    error_codigo: '',
+    error_detalle: '',
+    creado_en: marca,
+    actualizado_en: marca
+  });
+  return continuarCreacionPedido_(ss, operacion);
+}
+
+/**
+ * Crea un pedido recibido mediante el diario durable. Precios y validaciones
+ * permanecen del lado servidor; crear no reserva stock ni genera movimientos.
+ */
+function crearPedido_(body) {
+  var payload = construirPayloadCanonicoCreacionPedido_(body);
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000); // hasta 30s esperando el turno
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    validarDestinoOperacionesPedidosTest_(ss);
+    return ejecutarCreacionPedidoDurable_(ss, payload, limpiar_(body.idempotency_key));
   } finally {
     lock.releaseLock();
   }
@@ -726,8 +986,11 @@ function actualizarOperacionPedido_(ss, operacionId, cambios) {
   escribirObjetoEnFila_(hoja, indice, obj);
   SpreadsheetApp.flush();
   var leida = buscarOperacionPedidoPor_(ss, 'operacion_id', operacionId);
-  if (!leida || (cambios.estado_operacion &&
-      leida.estado_operacion !== cambios.estado_operacion)) {
+  var cambioNoConfirmado = !leida || Object.keys(cambios).some(function (campo) {
+    return String(leida[campo] === undefined ? '' : leida[campo]) !==
+      String(cambios[campo] === undefined ? '' : cambios[campo]);
+  });
+  if (cambioNoConfirmado) {
     lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
       'El cambio de estado durable no superó el readback.', 500);
   }
@@ -741,6 +1004,9 @@ function persistirOperacionPreparada_(ss, registro) {
     SpreadsheetApp.flush();
     var leida = buscarOperacionPedidoPor_(ss, 'operacion_id', registro.operacion_id);
     if (!leida || leida.estado_operacion !== 'PREPARADA' ||
+        leida.idempotency_key !== registro.idempotency_key ||
+        leida.tipo_operacion !== registro.tipo_operacion ||
+        leida.id_pedido !== registro.id_pedido || leida.actor !== registro.actor ||
         leida.payload_hash !== registro.payload_hash ||
         leida.snapshot_json !== registro.snapshot_json) {
       lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',

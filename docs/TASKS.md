@@ -312,22 +312,24 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   actor, responsable ni rol; acción/token se fijan en helpers de servidor y el
   actor proviene de la sesión HMAC validada.
 - ✅ Código local de Apps Script: pedido nuevo `recibido` sin stock; confirmación
-  y cancelación bajo lock, relectura, validación total y actor. La creación
-  compensa filas parciales y eleva `CONSISTENCIA_INCIERTA` si no puede hacerlo.
+  y cancelación bajo lock, relectura, validación total y actor.
 - ✅ IDs nuevos `PED`/`MOV` combinan fecha legible y sufijo UUID; se retiró
   `listo → pendiente`; rutas usan fronteras exactas y la caché UI es invalidable.
 - ✅ **F9A-02 implementada:** diario `OPERACIONES_PEDIDOS`, intención
   persistida antes de datos críticos, idempotencia, aplicación reanudable,
   readback y bloqueo por `REQUIERE_REVISION`. No se considera ACID ni una
   transacción multitabla.
-- ✅ Migración aditiva ejecutada en Sheet TEST y F9-A desplegada en Apps Script
-  TEST v11; Producción permanece intacta.
+- ✅ Migración aditiva ejecutada en Sheet TEST y mitigación HTTP desplegada en
+  Apps Script TEST v12; Producción permanece intacta.
 - ✅ Diagnóstico del E2E: datos consistentes, pero respuesta post-mutación
   ocasionalmente perdida como 404 HTML en el redirect de ContentService.
-- ✅ Mitigación local preparada: clasificación exacta, un replay máximo para
-  confirmar/cancelar con la misma key y readback sin replay para LISTO/ENTREGADO.
-- ⬜ Revisar y desplegar la mitigación exclusivamente en TEST; repetir solo el
-  E2E F9-A. Hasta entonces el E2E TEST sigue FAIL.
+- ✅ Mitigación HTTP implementada: clasificación exacta, un replay máximo para
+  mutaciones durables y readback sin replay para LISTO/ENTREGADO.
+- ✅ `CREAR_PEDIDO` durable implementado localmente sobre el diario existente:
+  key/hash previos, ID planificado, aplicación reanudable de cabecera/detalles y
+  `COMPLETADA` solo tras readback. Crear no toca stock ni movimientos.
+- ⬜ Desplegar Apps Script TEST v13 y repetir solo el retest F9-A. Hasta entonces
+  el E2E TEST sigue FAIL.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 
