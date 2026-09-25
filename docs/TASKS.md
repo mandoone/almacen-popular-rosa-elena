@@ -334,10 +334,13 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   `PEDIDOS.estado_pedido` para los cinco estados F9-A.
 - ✅ Contrato desplegado en Apps Script TEST v15, validación de Sheet TEST
   migrada dos veces sin cambios acumulativos y preflight remoto PASS.
-- ✅ El POST posterior con 503 no produjo escritura ni ejecución `doPost`;
-  observabilidad saneada por apertura/capacidad/creación y retry READ-ONLY
-  delimitado preparados localmente.
-- ⬜ Retest único F9-A en TEST; hasta su resultado el E2E sigue FAIL.
+- ✅ El POST previo con 503 no produjo escritura ni ejecución `doPost`;
+  su causa upstream exacta sigue indeterminada. Observabilidad saneada por
+  apertura/capacidad/creación y retry READ-ONLY delimitado en Next `43a51a9`.
+- ✅ Retest único F9-A PASS en TEST: `PED-20260925-091712-debc0442`, creación,
+  confirmación y cancelación `COMPLETADA`; LISTO reconciliado por readback;
+  stock 5.5 → 5.4 → 5.5 kg, apertura `APE-20260929` cerrada.
+- ⬜ F9 global: identidad multiusuario, hardening final y pendientes F10.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 

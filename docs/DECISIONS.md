@@ -17,9 +17,11 @@ Formato: **contexto → decisión → consecuencias**.
   permitidos; mantener como máximo dos GET ante fallos transitorios. Un JSON
   lógico de error no se reintenta. `CREAR_PEDIDO` conserva solo su replay durable
   específico ante la firma ambigua conocida, sin retry genérico de POST.
-- **Consecuencia:** el siguiente retest podrá separar apertura, capacidad y
-  creación sin registrar URL efímeras, tokens ni datos del cliente. La causa
-  upstream del 503 anterior permanece indeterminada.
+- **Consecuencia:** el retest separó apertura, capacidad y creación sin
+  registrar URL efímeras, tokens ni datos del cliente. Un 404 HTML transitorio
+  en GET `listarAperturas` se recuperó en el segundo intento y LISTO se
+  reconcilió por readback. La causa upstream exacta del 503 anterior permanece
+  indeterminada; F9-A pasó en TEST, no en Producción.
 
 ## D26 — Validación de estados de PEDIDOS alineada con F9-A
 
@@ -33,8 +35,8 @@ Formato: **contexto → decisión → consecuencias**.
   contrato antes de preparar o reanudar escrituras.
 - **Consecuencias:** una validación obsoleta falla antes de crear un pedido
   nuevo. Las dos operaciones TEST inciertas permanecen como evidencia y no se
-  convierten artificialmente en `COMPLETADA`. Deploy, migración y retest siguen
-  pendientes; F9 global permanece abierta.
+  convierten artificialmente en `COMPLETADA`. Deploy v15, migración idempotente
+  y retest TEST pasaron; F9 global permanece abierta.
 
 ## D25 — Creación pública durable e idempotente
 

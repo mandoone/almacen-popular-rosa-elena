@@ -17,15 +17,17 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A en TEST, todavía no validada:** Apps Script TEST está en v15; la
-  validación de `PEDIDOS.estado_pedido` ya admite los cinco estados y el preflight
-  remoto pasó. Dos operaciones históricas siguen `REQUIERE_REVISION` como evidencia.
-  Un POST posterior devolvió 503 antes de llegar a `doPost`, sin crear pedido ni
-  modificar stock; su causa upstream exacta no quedó registrada. Se preparó
-  localmente observabilidad saneada por etapa y se acotó el retry de GET a fallos
-  de transporte/respuesta transitoria, sin ampliar el replay del POST.
-- **Próxima prioridad:** desplegar el runtime Next local TEST actualizado y hacer
-  un único retest F9-A. Producción sigue fuera de alcance.
+- **F9-A VALIDADA EN TEST:** Apps Script TEST v15 y la validación de los cinco
+  estados siguen activos. El runtime Next local `43a51a9` registró etapas
+  saneadas y completó el E2E focalizado con un único pedido: creación durable,
+  retry y conflicto de key, confirmación, LISTO reconciliado tras respuesta
+  ambigua, cancelación y retry. Stock 5.5 → 5.4 → 5.5 kg; apertura sintética
+  `APE-20260929` cerrada. Las dos operaciones históricas `REQUIERE_REVISION`
+  se conservan intactas como evidencia. El 503 anterior a `doPost` no tiene
+  causa upstream exacta demostrada; en este retest se observó y recuperó un
+  404 HTML transitorio en GET `listarAperturas`.
+- **Próxima prioridad:** decisiones humanas de roles, identidad multiusuario y
+  hardening para F9 global/F10. Producción sigue fuera de alcance.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -115,9 +117,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
   `/api/admin/pedidos`, Google Sheets ni Apps Script.
 - ✅ **Contenido público Fase 9:** funcionamiento, historia, Rosa Elena,
   comunidad, participación, aportes y siete próximas aperturas 2026.
-- 🔄 **Fase 9:** F9-A está desplegada en TEST v14; su preflight y migración de
-  estados están preparados localmente. Las decisiones humanas del Almacén
-  siguen pendientes.
+- 🔄 **Fase 9:** F9-A validada en TEST con Apps Script v15 y Next local
+  `43a51a9`; F9 global sigue abierta por decisiones humanas y hardening.
 - ✅ **Fase 10 técnica:** metadata, sitemap configurable, robots, errores,
   loading, health, headers, CI, secrets scan, backup/rollback y preflight único.
   El estado Go/No-Go y decisiones están en `docs/GO_NO_GO_FASE_9_10.md`.
@@ -138,8 +139,8 @@ Detalle de datos en `docs/DATA_MODEL.md`.
 - ⚠️ Google Sheets sigue sin ofrecer transacciones ACID: confirmación,
   cancelación y creación usan operaciones serializadas, idempotentes, durables
   y verificables; no se promete atomicidad multitabla.
-- ⬜ Desplegar el contrato de estados, migrar solo la validación de Sheet TEST
-  y repetir el retest F9-A; conservar las dos operaciones fallidas como evidencia.
+- ✅ Contrato de estados migrado en Sheet TEST y retest F9-A PASS; conservar las
+  dos operaciones históricas `REQUIERE_REVISION` como evidencia.
 - Separar estado de pago y método de pago según el plan aprobado.
 - Reemplazar datos temporales de CONFIG por información oficial del Almacén.
 - Resolver la nomenclatura de fases entre el plan histórico y los informes v0.2.

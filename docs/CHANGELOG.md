@@ -5,6 +5,18 @@
 
 ---
 
+## [F9-A validación TEST] — Retest focalizado PASS (2026-09-25)
+
+- Next local `43a51a9` registró etapas saneadas y recuperó un GET transitorio
+  `listarAperturas`; Apps Script TEST permaneció en v15, sin deploy adicional.
+- Pedido `PED-20260925-091712-debc0442`: creación, confirmación y cancelación
+  durables `COMPLETADA`; retry con misma key sin duplicación, payload distinto
+  y key nueva sobre cancelado rechazados. LISTO se reconcilió por readback.
+- Stock TEST del fixture 5.5 → 5.4 → 5.5 kg, un movimiento de salida y uno de
+  devolución. Apertura sintética `APE-20260929` cerrada. Dos operaciones
+  históricas `REQUIERE_REVISION` conservadas. F9-A validada en TEST; F9 global
+  y Producción siguen abiertas/no autorizadas, respectivamente.
+
 ## [F9-A precondiciones] — Diagnóstico READ-ONLY preparado (2026-09-25)
 
 - Apps Script TEST v15 y validación de estados de Sheet TEST ya activos; el

@@ -181,9 +181,9 @@ escrituras ni despliegues. Durante desarrollo se admite
   fallbacks revisados.
 - Metadata por página, robots, sitemap configurable, 404, error, loading y health.
 - Headers, sesión admin, rutas admin, CI mínimo, secrets scan y preflight consolidados.
-- Arquitectura F9-A.2 de roles, autorización, DTOs, IDs y diario durable preparada
-  localmente; pendiente de revisión, migración aditiva, despliegue y validación
-  exclusivos de TEST. No se declara atomicidad ACID multitabla.
+- Arquitectura F9-A de roles, autorización, DTOs, IDs y diario durable validada
+  en TEST con Apps Script v15 y Next local `43a51a9`; retest focalizado PASS.
+  F9 global sigue abierta. No se declara atomicidad ACID multitabla.
 - Procedimiento de backup/rollback preparado sin ejecutarlo.
 
 ### PENDING

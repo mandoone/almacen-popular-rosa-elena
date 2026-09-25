@@ -18,8 +18,12 @@
    retry de creación con la misma key, conflicto de payload, confirmación,
    LISTO, cancelación y retry. Stock final igual al baseline y apertura cerrada.
 
-El 503 previo ocurrió antes de `doPost` sin escrituras; la causa upstream exacta
-continúa indeterminada. F9-A aún no está validada remotamente.
+Resultado: 382/382 tests locales PASS y retest remoto focalizado PASS con
+`PED-20260925-091712-debc0442`. El GET de aperturas se recuperó de un 404
+HTML transitorio; LISTO respondió 200 reconciliado. Tres operaciones durables
+`COMPLETADA`, dos movimientos, stock final igual a 5.5 kg y apertura cerrada.
+El 503 histórico ocurrió antes de `doPost` sin escrituras; su causa upstream
+exacta continúa indeterminada. No se repitieron E2E F4–F8.
 
 ## F9-A — contrato de estados en Sheet TEST (2026-09-25)
 
@@ -35,7 +39,8 @@ continúa indeterminada. F9-A aún no está validada remotamente.
    conflicto con payload distinto, confirmar, pasar a LISTO y cancelar. Verificar
    diario, movimientos y stock final igual al baseline; cerrar la apertura TEST.
 
-Pendiente: deploy del contrato, migración TEST y retest remoto. F9-A continúa FAIL.
+Deploy v15, migración TEST idempotente y retest remoto: PASS. F9 global sigue
+abierta; Producción no autorizada.
 
 ## F9-A — creación durable e idempotente (2026-09-24)
 
