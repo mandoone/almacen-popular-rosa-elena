@@ -7,14 +7,21 @@ secretos y no reemplaza el Go/No-Go humano de `GO_NO_GO_FASE_9_10.md`.
 
 1. Copiar `config/f10-readiness.example.json` como
    `config/f10-readiness.local.json` (ignorado por Git).
-2. Cambiar cada estado solo cuando exista evidencia verificable. No registrar
+2. Cambiar cada resultado solo cuando exista evidencia verificable. No registrar
    montos, credenciales, IDs privados, enlaces de Sheets ni nombres de personas.
 3. Ejecutar `npm run preflight:f10`. Durante la preparación informa pendientes
    sin habilitar nada. El candidato final usa `npm run preflight:f10 -- --strict`.
 
-`ready` significa comprobado; `pending`, aún no ejecutado; `blocked`, impedido;
-`not_applicable`, descartado mediante una decisión humana registrada en
-`decision_ref`. El preflight devuelve `READY`, `PENDING` o `FAIL` y enumera los
+El manifiesto **v2** usa el ID fijo de cada check como clave y los campos
+`resultado`, `fecha`, `responsable`, `evidencia`, `observaciones` y `referencia`.
+`PENDING` significa aún no comprobado; `READY`, comprobado; `FAIL`, diferencia
+o bloqueo; `NOT_APPLICABLE`, excepción aprobada por una persona. Para cualquier
+resultado distinto de `PENDING` se exigen fecha real, función responsable,
+descripción breve y referencia no sensible de la evidencia. Una excepción
+exige además justificación en `observaciones`. `fecha_corte` puede ser `null`
+durante la preparación, pero necesita fecha real antes de `READY` global.
+Migrar cualquier manifiesto local v1 a v2 manualmente, sin promover sus estados
+ni inventar referencias. El preflight devuelve `READY`, `PENDING` o `FAIL` y enumera los
 checks no listos sin imprimir la evidencia. `READY` valida estructura y estados:
 **no equivale a aprobación humana de Go ni verifica por sí solo documentos externos**.
 
@@ -52,14 +59,14 @@ ausencia de respaldo verificable o rechazo del responsable.
 
 La protección distribuida de login, monitoreo y secretos productivos se revisan
 además en el Go/No-Go técnico: los 20 estados no los sustituyen. Para cualquier
-`not_applicable`, registrar la decisión humana y su referencia; nunca usarlo
+`NOT_APPLICABLE`, registrar la decisión humana y su referencia; nunca usarlo
 para ocultar un requisito crítico sin una alternativa aprobada.
 
 ## Vista operativa de los 20 checks
 
 Esta clasificación ordena el **siguiente trabajo**, no cambia el estado de
-ningún check: los 20 del ejemplo siguen `pending` y ninguno puede pasar a
-`ready` solo con una plantilla técnica.
+ningún check: los 20 del ejemplo siguen `PENDING` y ninguno puede pasar a
+`READY` solo con una plantilla técnica.
 
 | Grupo | Checks / trabajo siguiente |
 |---|---|
@@ -149,9 +156,9 @@ costos y saldos. No cargar datos reales sin autorización de su entorno.
 
 ## Criterio Go/No-Go
 
-Solo puede proponerse **GO** cuando los 20 checks del manifiesto están `ready` o
-`not_applicable`, el preflight estricto pasa desde el commit candidato limpio y
-existe autorización explícita de Producción. Cualquier `pending`, `blocked`,
+Solo puede proponerse **GO** cuando los 20 checks del manifiesto están `READY` o
+`NOT_APPLICABLE`, el preflight estricto pasa desde el commit candidato limpio y
+existe autorización explícita de Producción. Cualquier `PENDING`, `FAIL`,
 preflight fallido, diferencia de inventario/caja, identidad compartida o ausencia
 de backup verificable implica **NO-GO**.
 

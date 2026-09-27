@@ -8,6 +8,8 @@ Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones p
 | Apps Script | Versión y deployment estable registrados en gestor seguro | Antes del corte; responsable técnico | Confirmar versión y lectura no mutante contra entorno correcto |
 | Web | Commit/tag inmutables y deployment estable/candidato | Antes del cambio; responsable técnico | Resolver SHA/tag y consultar metadata de deployment |
 | Secretos/configuración | Nombres, scopes, versiones y custodia en gestor seguro; no exportar valores a Git | Antes del cambio; custodio de secretos | Dos personas comprueban scopes y recuperación sin revelar valores |
+| Identidades | Snapshot seguro del registro de actores y versiones de sesión, más inventario de deployments históricos | Antes de rotar, revocar o cambiar rol; custodio + segundo revisor | Readback de roles/active/version sin imprimir hashes; verificar que URLs antiguas no acepten credenciales retiradas |
+| Firewall | Configuración WAF aplicada y borradores existentes, mediante metadata/captura segura; no crear ni publicar reglas | Antes de cualquier activación futura; responsable técnico | Comparar diff completo y conservar ruta de restauración; ver `RATE_LIMIT_WAF_RUNBOOK.md` |
 
 La ventana y sus responsables/suplentes se acuerdan con el Almacén. No hay
 backup productivo ejecutado todavía.
@@ -24,6 +26,10 @@ backup productivo ejecutado todavía.
 6. Ejecutar tests, lint, build y el checklist TEST desde el commit candidato.
 7. Registrar el identificador del deployment web vigente y del candidato, la
    persona responsable, la ventana y los criterios de abortar/revertir.
+8. Registrar dónde está la evidencia de respaldo y quién verificó su lectura;
+   no basta con haber iniciado una exportación. Confirmar también el estado
+   vigente de identidades, URLs históricas y Firewall antes de un cambio de
+   seguridad. El backup no autoriza por sí mismo la restauración.
 
 **Disparadores de aborto/rollback:** entorno o commit equivocado; autenticación
 o capacidad indebida; diferencia de stock/caja; escritura duplicada o ambigua
@@ -55,6 +61,17 @@ evidencia y consulta al segundo revisor antes de restaurar datos.
 2. Comparar contra la copia previa por IDs y movimientos.
 3. Corregir mediante movimientos compensatorios auditables, no editando historia silenciosamente.
 4. Toda restauración productiva requiere aprobación humana explícita y un segundo revisor.
+
+## Rollback de identidad y Firewall
+
+- Revocar o cambiar credenciales exige incrementar `session_version` y
+  comprobar los deployments históricos. Un rollback web no debe reinstalar
+  un snapshot antiguo de secretos o usuarios que reabra una credencial. Si
+  hay duda, cerrar acceso admin hasta confirmar el estado vigente.
+- Para una regla WAF futura, conservar la versión previa y los criterios de
+  falso positivo antes de publicar. La reversión también requiere publicación
+  autorizada y verificación de login legítimo/429; el runbook exacto está en
+  `RATE_LIMIT_WAF_RUNBOOK.md`. Nada de esto se ejecutó todavía.
 
 ## Verificación posterior
 

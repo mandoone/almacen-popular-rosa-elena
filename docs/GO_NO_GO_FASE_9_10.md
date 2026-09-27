@@ -232,10 +232,11 @@ escrituras ni despliegues. Durante desarrollo se admite
 `npm run preflight:go-no-go -- --allow-dirty --skip-npm-ci`.
 
 El readiness operativo complementario vive en `F10_READINESS_OPERATIVA.md`.
-`npm run preflight:f10` valida un manifiesto local ignorado por Git y distingue
+`npm run preflight:f10` valida un manifiesto local v2 ignorado por Git y distingue
 READY/PENDING/FAIL con los nombres de checks no listos; `--strict` exige READY.
-Las excepciones `not_applicable` requieren `decision_ref` humana. El ejemplo
-versionado permanece íntegramente `pending`; un READY estructural no reemplaza
+Las excepciones `NOT_APPLICABLE` requieren decisión humana con fecha, responsable,
+referencia y justificación. El ejemplo versionado permanece íntegramente
+`PENDING`; un READY estructural no reemplaza
 la revisión de evidencia ni la aprobación de Producción.
 
 ## 4. Datos reales pendientes

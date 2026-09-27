@@ -8,6 +8,20 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D34 — Evidencia F10 v2 sin aprobación automática
+
+- **Contexto:** el manifiesto v1 permitía `ready` con un texto libre de
+  evidencia, sin fecha, responsable ni referencia comprobable.
+- **Decisión:** migrar el ejemplo y preflight a v2: `resultado` entre
+  `READY/PENDING/FAIL/NOT_APPLICABLE`; todo check resuelto exige fecha,
+  responsable, evidencia breve y referencia no sensible; una excepción exige
+  además justificación. La fecha de corte puede ser nula mientras se prepara,
+  pero es obligatoria antes de `READY` global.
+- **Consecuencias:** manifests locales v1 deben migrarse manualmente sin
+  promover checks por reflejo. El verificador solo valida estructura: no lee
+  actas externas, no aprueba excepciones y no concede Go productivo. D32 se
+  conserva como antecedente del primer preflight.
+
 ## D33 — Especificación WAF local sin activación productiva
 
 - **Contexto:** la defensa de cinco fallos por IP/actor en 15 minutos vive en

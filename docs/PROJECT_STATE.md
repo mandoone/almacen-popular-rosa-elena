@@ -63,7 +63,10 @@ sábados de apertura.
   autenticada y logout se validaron visualmente en Preview remoto.
 - **F10 — readiness local:** existe un manifiesto de 20 checks y un runbook para
   datos, stock, caja/saldos, costos, capacitación, backup, rollback y Go/No-Go.
-  Todos los checks operativos reales continúan pendientes.
+  El esquema v2 exige fecha, responsable y referencia para resolver un check;
+  `fecha_corte` permanece nula hasta existir corte real. Los guiones de ingesta
+  y ensayo TEST están preparados, no ejecutados. Todos los checks operativos
+  reales continúan pendientes.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió

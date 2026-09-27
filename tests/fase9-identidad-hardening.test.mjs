@@ -153,21 +153,36 @@ test('F10: manifiesto exige evidencia para todos los checks de puesta en marcha'
   const resultado = validarManifiestoF10(ejemplo);
   assert.equal(resultado.valido, true);
   assert.equal(resultado.estado, 'PENDING');
-  assert.equal(resultado.resumen.pending, CHECKS_F10.length);
-  assert.equal(validarManifiestoF10({ version: 1, fecha_corte: '2026-09-25', checks: {} }).valido, false);
+  assert.equal(resultado.resumen.PENDING, CHECKS_F10.length);
+  assert.equal(validarManifiestoF10({ version: 2, fecha_corte: null, checks: {} }).valido, false);
   assert.equal(validarManifiestoF10({ ...ejemplo, fecha_corte: '2026-02-30' }).estado, 'FAIL');
   const listo = structuredClone(ejemplo);
   for (const check of Object.values(listo.checks)) {
-    check.estado = 'ready';
+    check.resultado = 'READY';
+    check.fecha = '2026-09-27';
+    check.responsable = 'Responsable autorizado';
     check.evidencia = 'Acta y readback revisados por responsable.';
+    check.referencia = 'Acta interna de ensayo';
   }
-  assert.equal(validarManifiestoF10(listo).estado, 'READY');
-  listo.checks.saldo_bancario.estado = 'blocked';
-  assert.equal(validarManifiestoF10(listo).estado, 'FAIL');
-  listo.checks.saldo_bancario.estado = 'not_applicable';
   assert.equal(validarManifiestoF10(listo).valido, false);
-  listo.checks.saldo_bancario.decision_ref = 'Acta institucional de excepción';
+  listo.fecha_corte = '2026-09-27';
   assert.equal(validarManifiestoF10(listo).estado, 'READY');
+  listo.checks.saldo_bancario.resultado = 'FAIL';
+  assert.equal(validarManifiestoF10(listo).estado, 'FAIL');
+  listo.checks.saldo_bancario.resultado = 'NOT_APPLICABLE';
+  assert.equal(validarManifiestoF10(listo).valido, false);
+  listo.checks.saldo_bancario.observaciones = 'Excepción aprobada por el Almacén';
+  assert.equal(validarManifiestoF10(listo).estado, 'READY');
+  delete listo.checks.stock_fisico.referencia;
+  assert.equal(validarManifiestoF10(listo).valido, false);
+  listo.checks.stock_fisico.referencia = 'Acta de conteo';
+  listo.checks.stock_fisico.campo_desconocido = 'no permitido';
+  assert.equal(validarManifiestoF10(listo).valido, false);
+  const sinRuta = spawnSync(process.execPath, ['scripts/preflight-f10-readiness.mjs', '--file'], {
+    cwd: process.cwd(), encoding: 'utf8',
+  });
+  assert.equal(sinRuta.status, 1);
+  assert.match(sinRuta.stderr, /--file exige una ruta/);
 });
 
 test('F10: Go/No-Go productivo acepta base64url y rechaza registro inválido', () => {

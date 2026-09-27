@@ -383,9 +383,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Runbook operativo, manifiesto local de 20 checks y
   `npm run preflight:f10 [-- --strict]` preparados sin datos reales.
 - ✅ Definir evidencia, responsable funcional, fuente y PASS/FAIL para los 20
-  checks; preflight READY/PENDING/FAIL y `not_applicable` con referencia humana.
+  checks; preflight READY/PENDING/FAIL y excepción con referencia humana.
 - ✅ Preparar vista operativa de los 20 checks y mensaje mínimo no enviado para
   asignar roles, validadores de datos y responsables; ningún check pasó a READY.
+- ✅ Endurecer manifiesto F10 v2: fecha, función responsable, referencia y
+  justificación de excepción para un check resuelto; fecha de corte nula
+  mientras no exista corte real. Preparar guion final TEST e ingesta por etapas.
 - ✅ Unificar validación productiva de `ADMIN_USERS_JSON` con el parser runtime,
   incluso transporte `base64url:`, y exigir `SITE_URL` como origen HTTPS puro.
 - ⬜ Completar evidencias reales, dominio/CSP final, ensayo, backup, capacitación

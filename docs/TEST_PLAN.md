@@ -8,10 +8,11 @@
 ## F9/F10 — preflight y preparación local (2026-09-27)
 
 - Rate limiter actual: cinco fallos/15 min por IP y actor en `Map` de instancia;
-  no se declarará distribuido. Vercel Hobby no tenía reglas WAF activas o en
-  borrador al auditar. No se publicaron reglas ni se hizo carga remota.
+  no se declarará distribuido. El dashboard mostró cero reglas WAF
+  personalizadas activas; los borradores remotos no se verificaron de modo
+  independiente. No se publicaron reglas ni se hizo carga remota.
 - Casos locales del manifiesto: 20 pendientes del ejemplo, fecha imposible,
-  todos listos, un check bloqueado y `not_applicable` sin/con referencia humana.
+  todos listos, un check bloqueado y excepción sin/con referencia humana.
   `READY` solo indica consistencia estructural; no aprueba el Go/No-Go.
 - Go/No-Go técnico: cuenta administrativa sintética válida en `base64url:` pasa
   parser compartido; registro inválido, rotación inconsistente y `SITE_URL`
@@ -110,6 +111,11 @@ crítica) en Next/PostCSS; no se forzó una actualización mayor en este bloque.
    configuración productiva obligatoria.
 7. F10: el manifiesto exige los 20 checks y evidencia; el modo estricto no puede
    dar READY mientras existan pendientes.
+
+Actualización F10 v2 (2026-09-27): prueba focalizada de los 20 `PENDING`, fecha
+de corte nula, fecha calendario inválida, campos desconocidos, referencia
+obligatoria, excepción justificada y `FAIL` explícito. El ensayo funcional
+posterior se guiará por `ENSAYO_FINAL_F10_TEST.md`; no se ejecutó ahora.
 
 Resultado local final: **391/391 PASS**, `git diff --check`, lint, build,
 secrets scan y preflight técnico PASS. No se ejecutaron E2E remotos ni

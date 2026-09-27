@@ -5,6 +5,15 @@
 
 ---
 
+## [F9/F10] — Guiones de corte y evidencia estructurada (2026-09-27)
+
+- Preflight F10 v2 exige fecha, responsable y referencia por check resuelto,
+  con justificación adicional para excepciones; el ejemplo conserva 20
+  pendientes y ninguna fecha de corte ficticia.
+- Preparados guiones de ingesta y ensayo final TEST, y completada la matriz de
+  respaldo para identidades y WAF. No se ejecutó carga ni ensayo real.
+- Sin cambios de aplicación, variables, WAF o Production.
+
 ## [F9/F10] — WAF especificada sin activar y paquete mínimo al Almacén (2026-09-27)
 
 - Dashboard Firewall Hobby leído sin mutaciones: cero reglas personalizadas

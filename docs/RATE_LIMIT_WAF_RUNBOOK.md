@@ -14,6 +14,9 @@ configuración Firewall. El gate de seguridad productiva sigue abierto.
 - El login es `POST /api/admin/auth/login`. `proteccionLogin.ts` mantiene un
   `Map` por proceso: cinco **fallos** por IP y por actor en 15 minutos,
   bloqueo de 15 minutos. Una instancia no comparte ese mapa con las demás.
+  Vercel [normaliza `x-forwarded-for` en su plataforma](https://vercel.com/docs/headers/request-headers),
+  por lo que el encabezado que usa la aplicación no es directamente el valor
+  arbitrario enviado por un cliente a Vercel; esto no vuelve global al mapa.
 - Según la [documentación WAF de Vercel](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting),
   Hobby ofrece una regla de rate limit por proyecto (hasta tres reglas WAF
   personalizadas en total), ventana fija entre 10 segundos y 10 minutos,
