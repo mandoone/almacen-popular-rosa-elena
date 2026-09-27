@@ -5,6 +5,15 @@
 
 ---
 
+## [F9/F10] — WAF especificada sin activar y paquete mínimo al Almacén (2026-09-27)
+
+- Dashboard Firewall Hobby leído sin mutaciones: cero reglas personalizadas
+  activas. Runbook local para regla de login por IP, observación, QA y rollback;
+  `PREPARADO_PARA_ACTIVACION`, no publicado ni suficiente aún para cerrar F9.
+- F10 conserva 20 checks pendientes y ahora separa preparación técnica,
+  respuestas del Almacén y cierre al final. Mensaje breve preparado, no enviado.
+- No se cambiaron dependencias, aplicación, Production ni variables remotas.
+
 ## [F9 global + F10] — Auditoría de límites y proceso de evidencias (2026-09-27)
 
 - Auditado rate limit local y WAF nativa sin activar reglas: la decisión sobre

@@ -8,6 +8,20 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D33 — Especificación WAF local sin activación productiva
+
+- **Contexto:** la defensa de cinco fallos por IP/actor en 15 minutos vive en
+  memoria de cada instancia; Hobby permite una regla WAF de rate limit por IP
+  con ventana máxima de 10 minutos y contadores regionales. Publicar Firewall
+  afecta la configuración del proyecto que sirve Production.
+- **Decisión:** conservar intacto el limitador local y preparar únicamente la
+  especificación/runbook en `RATE_LIMIT_WAF_RUNBOOK.md`. No crear borrador ni
+  modificar Firewall remoto sin autorización productiva explícita.
+- **Consecuencias:** `PREPARADO_PARA_ACTIVACION` no significa protección
+  distribuida activa ni cierre de F9. Suficiencia, umbral final, cuota y
+  aceptación del riesgo residual quedan como decisión humana; si se exige
+  límite global exacto por actor/IP, hará falta contador central.
+
 ## D32 — Preflight F10 estructural, no aprobación humana automática
 
 - **Contexto:** el manifiesto F10 distinguía estados internos, pero no devolvía

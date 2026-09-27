@@ -13,7 +13,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 |---|---|---:|---:|---:|
 | Identidad individual | Tres actores sintéticos validados localmente, por HTTP y visualmente en Vercel Preview TEST; cuentas finales selladas | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota CERRADA |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
-| Protección de login | 5 fallos/15 min por IP+actor, solo memoria de instancia; Vercel Hobby sin regla WAF activa ni borrador | SÍ, falta capa distribuida productiva | SÍ, alcance/costo de plataforma | Local CERRADO; distribuido PENDIENTE_TECNICO |
+| Protección de login | 5 fallos/15 min por IP+actor, solo memoria de instancia; Vercel Hobby con 0 reglas personalizadas activas; especificación WAF local preparada, no activada | SÍ, falta capa distribuida productiva | SÍ, suficiencia, cuota y publicación | Local CERRADO; distribuido PREPARADO_PARA_ACTIVACION, no PASS |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
 | Capacidades | Matriz `venta`/`operacion`/`administracion` probada | SÍ, aceptación/asignación pendientes | SÍ, Almacén | No hardcodear personas |
 | CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
@@ -25,7 +25,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 | Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
 
 Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visual en Preview;
-`PENDIENTE_TECNICO` para rate limiting distribuido y dominio/CSP final;
+`PENDIENTE_TECNICO` para activar y comprobar rate limiting distribuido y para dominio/CSP final;
 `PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
 `BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
@@ -158,13 +158,11 @@ existe monitoreo manual y responsable asignado.
   genérica, límite de body y `Retry-After`. Las mutaciones admin rechazan origen
   cross-site. Esta defensa por instancia no sustituye rate limiting distribuido.
 - Auditoría 2026-09-27: `proteccionLogin.ts` usa un `Map` por proceso; serverless
-  puede repartir solicitudes entre instancias. El proyecto Vercel está en Hobby
-  y no tiene configuración WAF activa ni borrador. Una regla nativa WAF para
-  `POST /api/admin/auth/login` contaría por IP **cada request**, no solo fallos
-  ni por actor; el contador es por región y en Hobby la ventana máxima es 10
-  minutos, no los 15 locales. Hobby incluye una regla y 1M requests permitidos
-  por mes; el tratamiento del exceso depende del plan y debe confirmarse antes
-  de activar. No se creó ni publicó regla.
+  puede repartir solicitudes entre instancias. El dashboard del proyecto Hobby
+  mostró cero reglas personalizadas activas. El diseño concreto, límites,
+  riesgos, umbral candidato y runbook de activación futura viven en
+  `RATE_LIMIT_WAF_RUNBOOK.md`. No se creó borrador ni publicó regla en este
+  bloque; la existencia de borradores previos no quedó verificada por CLI.
 
 **HUMAN_GATE — protección distribuida:**
 
@@ -173,11 +171,13 @@ existe monitoreo manual y responsable asignado.
 | A. Vercel WAF + limitador local | Una regla por IP, método y ruta, primero observada en modo log; luego Preview y Production por etapas | Sin dependencia ni servicio nuevo; protección compartida entre instancias | Cuenta requests y regiones por separado; posible costo y falsos positivos por IP compartida. Requiere aceptar protección aproximada y autorizar publicación de regla sobre proyecto que también sirve Production. |
 | B. Almacén central transaccional para fallos | Servicio de contador atómico por IP+actor con expiración de 15 min, consultado por cada login | Semántica de fallos/actor y límite global más preciso | Nuevo proveedor/credencial/dependencia, latencia y costo; requiere elección y política fail-closed ante caída. |
 
-No usar Runtime Cache como contador de seguridad: es caché regional sin operación
-atómica de incremento. La [guía oficial de rate limiting WAF](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting)
-y la [explicación oficial de contadores por región](https://vercel.com/i/rate-limiting-algorithms)
-fundamentan estas diferencias. La selección y cualquier cambio de Firewall
-quedan pendientes de autorización humana; **no se declara resuelto F9 global**.
+La especificación local se clasifica `PREPARADO_PARA_ACTIVACION`, **no** como
+protección productiva vigente. Sin perfil de tráfico y aceptación del riesgo
+residual no puede concluirse que WAF + límite local sea suficiente. Si se
+requiere el máximo global exacto de fallos por actor/IP, hace falta contador
+central. La selección y cualquier cambio de Firewall quedan pendientes de
+autorización humana; **no se declara resuelto F9 global**.
+
 - Headers: `nosniff`, anti-clickjacking, referrer policy, permissions policy,
   COOP, HSTS y CSP limitada a `self`/recursos locales inventariados.
 - `check:go-no-go` exige en entorno productivo dominio HTTPS, cuentas

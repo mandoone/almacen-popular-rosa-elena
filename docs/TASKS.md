@@ -362,7 +362,11 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   Producción; el limitador por instancia es defensa local, no garantía global.
 - ✅ Auditar WAF nativa y límite local: equipo Hobby sin reglas; documentar dos
   opciones y límites de región/ventana/costo. No se activó Firewall.
-- ⬜ Elegir protección distribuida y acordar ensayo/monitoreo; HUMAN_GATE.
+- ✅ Preparar especificación y runbook local WAF por IP para login, con umbral
+  candidato, observación, QA y rollback: `docs/RATE_LIMIT_WAF_RUNBOOK.md`.
+  `PREPARADO_PARA_ACTIVACION`, **no publicado** y sin mutación Firewall.
+- ⬜ Decidir suficiencia de WAF + limitador local frente al riesgo real,
+  verificar cuota/costo y autorizar eventual publicación/ensayo; HUMAN_GATE.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
 - ✅ Preparar procedimiento de alta, cambio de rol/clave, revocación y retiro;
@@ -380,6 +384,8 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   `npm run preflight:f10 [-- --strict]` preparados sin datos reales.
 - ✅ Definir evidencia, responsable funcional, fuente y PASS/FAIL para los 20
   checks; preflight READY/PENDING/FAIL y `not_applicable` con referencia humana.
+- ✅ Preparar vista operativa de los 20 checks y mensaje mínimo no enviado para
+  asignar roles, validadores de datos y responsables; ningún check pasó a READY.
 - ✅ Unificar validación productiva de `ADMIN_USERS_JSON` con el parser runtime,
   incluso transporte `base64url:`, y exigir `SITE_URL` como origen HTTPS puro.
 - ⬜ Completar evidencias reales, dominio/CSP final, ensayo, backup, capacitación

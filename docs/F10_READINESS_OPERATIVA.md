@@ -55,6 +55,24 @@ además en el Go/No-Go técnico: los 20 estados no los sustituyen. Para cualquie
 `not_applicable`, registrar la decisión humana y su referencia; nunca usarlo
 para ocultar un requisito crítico sin una alternativa aprobada.
 
+## Vista operativa de los 20 checks
+
+Esta clasificación ordena el **siguiente trabajo**, no cambia el estado de
+ningún check: los 20 del ejemplo siguen `pending` y ninguno puede pasar a
+`ready` solo con una plantilla técnica.
+
+| Grupo | Checks / trabajo siguiente |
+|---|---|
+| `PODEMOS_RESOLVER_NOSOTROS` | Preparar guion y referencias técnicas para `dominio_https`, `backup_sheet`, `version_apps_script`, `rollback_web` y `ensayo_test`; no aprobarlos ni ejecutarlos en Producción. **0 checks completos sin participación humana.** |
+| `NECESITA_ALMACEN` | `roles_aprobados`, `identidad_cuentas`, `contenido_editorial`, `derechos_imagenes`, `contactos_publicos`, `stock_fisico`, `precios_venta`, `costos_iniciales`, `saldo_efectivo`, `saldo_bancario`, `minimos_prioridades`, `responsable_ventana` (12). |
+| `SOLO_AL_FINAL` | Cerrar `dominio_https`, `backup_sheet`, `version_apps_script`, `rollback_web`, `capacitacion_venta`, `capacitacion_operacion`, `capacitacion_administracion` y `ensayo_test` (8), tras cuentas, datos y responsables aprobados. |
+
+**Primer check ejecutable al recibir respuestas:** registrar aprobación de
+`roles_aprobados` con matriz persona–rol–acceso; después crear y ensayar las
+cuentas humanas en TEST para `identidad_cuentas`. En paralelo, los validadores
+designados podrán preparar actas de contenido/contactos, inventario/precios/
+costos y saldos. No cargar datos reales sin autorización de su entorno.
+
 ## Secuencia operativa
 
 ### 1. Identidad, roles y canales públicos
@@ -137,17 +155,32 @@ existe autorización explícita de Producción. Cualquier `pending`, `blocked`,
 preflight fallido, diferencia de inventario/caja, identidad compartida o ausencia
 de backup verificable implica **NO-GO**.
 
-## Preguntas mínimas al Almacén (borrador; no enviadas)
+## Paquete mínimo al Almacén (borrador; no enviado)
 
-**Bloque A — ahora.** (1) ¿Aprueban la matriz `venta`/`operacion`/
-`administracion`? Para cada acceso, completar **PERSONA | ROL | NECESITA_ACCESO
-(sí/no)** en un canal privado; no enviar contraseñas. (2) ¿Quién valida textos,
-contactos y permisos de las imágenes que se publicarán?
+La matriz de capacidades continúa **provisional**; esta tabla no asigna
+personas ni presupone aprobación.
 
-**Bloque B — antes de Producción.** (3) ¿Cuál será el dominio HTTPS definitivo y
-quién lo administra? (4) ¿Quién entrega y revisa el conteo físico, precios,
-costos, mínimos/proveedores y corte de caja/banco? (5) ¿Quién lidera la ventana,
-backup/rollback, capacitación y decisión final Go/No-Go?
+| PERSONA | ROL (`venta` / `operacion` / `administracion`) | NECESITA_ACCESO (sí/no) |
+|---|---|---|
+| Por completar | Por confirmar | Por confirmar |
+| Por completar | Por confirmar | Por confirmar |
+| Por completar | Por confirmar | Por confirmar |
 
-**Bloque C — puede esperar.** (6) ¿Desean alertas/monitoreo externo y datos
-adicionales de proveedores después del primer corte? No bloquea preparar TEST.
+- `venta`: pedidos y venta presencial, con consulta de productos/stock.
+- `operacion`: lo de venta, más ajustes de stock, compras, abastecimiento, caja,
+  gastos y reportes.
+- `administracion`: lo de operación, más productos, precios, usuarios y
+  configuración sensible.
+
+**Mensaje corto para WhatsApp o reunión — NO ENVIADO:** “Para preparar el
+Almacén, ¿nos indican (1) quién necesita acceso, con rol venta/operación/
+administración, y si aprueban esa matriz; (2) quién valida textos y contactos,
+quién valida inventario/precios/costos, y quién valida caja y saldo inicial;
+(3) quién será responsable principal de la puesta en marcha y quién su
+reemplazo? Basta responder con nombres/funciones; no envíen contraseñas ni
+montos por WhatsApp.”
+
+**Antes de Producción, no ahora:** dominio/HTTPS, respaldo y rollback
+verificados, capacitación, ensayo y decisión Go/No-Go. **Puede esperar:**
+monitoreo externo opcional y ampliaciones del catálogo/proveedores que no
+formen parte del corte inicial.
