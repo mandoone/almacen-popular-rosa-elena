@@ -1,6 +1,6 @@
 # Fases 9–10 — inventario, decisiones y Go/No-Go
 
-**Fecha de corte:** 2026-09-25
+**Fecha de corte:** 2026-09-27
 **Alcance:** preparación técnica y editorial; producción no autorizada ni tocada.  
 **Estado global:** **NO-GO productivo** hasta resolver los bloqueos humanos indicados.
 
@@ -11,7 +11,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 
 | Pendiente | Estado real | Bloquea Producción | Decisión humana | Implementable ahora |
 |---|---|---:|---:|---:|
-| Identidad individual | Tres actores sintéticos validados localmente y por HTTP en Vercel Preview TEST; QA visual autenticada pendiente | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota validada por HTTP |
+| Identidad individual | Tres actores sintéticos validados localmente, por HTTP y visualmente en Vercel Preview TEST; cuentas finales selladas | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota CERRADA |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
 | Protección de login | Rate limit local por IP+actor implementado | SÍ, falta capa distribuida productiva | SÍ, configuración de plataforma | Local CERRADO |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
@@ -24,8 +24,8 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 | Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
 | Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
 
-Clasificación actual: `CERRADO` para QA técnica sintética local y HTTP en Preview;
-`PENDIENTE_TECNICO` para rate limiting distribuido, QA visual autenticada y dominio/CSP final;
+Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visual en Preview;
+`PENDIENTE_TECNICO` para rate limiting distribuido y dominio/CSP final;
 `PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
 `BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
@@ -151,8 +151,8 @@ existe monitoreo manual y responsable asignado.
   recuperación legacy deshabilitada.
 - CI tiene `contents: read`, instalación reproducible, QA, secrets scan y audit
   crítico. No ejecuta E2E remoto ni deploy.
-- Pendiente antes de producción: completar QA visual del Preview protegido,
-  asignar y validar cuentas humanas en TEST, confirmar responsables de
+- Pendiente antes de producción: asignar y validar cuentas humanas en TEST,
+  confirmar responsables de
   revocación/rotación y activar rate limiting distribuido en la plataforma
   elegida. Las variables sintéticas se configuraron solo en Preview de la rama;
   Production conservó sus variables originales.

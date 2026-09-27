@@ -5,6 +5,16 @@
 
 ---
 
+## [F9 global] — QA visual remota y sellado de identidad TEST (2026-09-27)
+
+- Identidad sintética TEST remoto VALIDADA COMPLETAMENTE: QA HTTP previa y QA
+  visual autenticada de panel, navegación READ-ONLY, logout y consola PASS.
+- Se retiró exclusivamente el Preview que conservaba la credencial efímera
+  usada en QA; su URL respondió 404. El Preview final sellado siguió Ready.
+  Tres cuentas activas con roles originales, claves aleatorias no conservadas
+  y versiones de sesión monotónicas. Portapapeles y auxiliar temporal limpios.
+- Production y `main` intactas. F9 global sigue ABIERTA; F10 permanece NO-GO.
+
 ## [F9 global] — Identidad sintética activada en Vercel Preview TEST (2026-09-25)
 
 - Preview del proyecto `almacen-popular-rosa-elena-7m17` desplegado desde
@@ -12,8 +22,8 @@
   `feature/fase-3a-operativa`; Production conservó su configuración original.
 - QA HTTP remota PASS de los tres actores, permisos, no enumeración, suplantación,
   legacy, revocación, cambio temporal de rol, restauración, cookies, headers,
-  origen y logout. Sin mutaciones comerciales. QA visual autenticada aún espera
-  login manual de Vercel en el navegador protegido.
+  origen y logout. Sin mutaciones comerciales. La QA visual se cerró en el hito
+  posterior de 2026-09-27.
 - Incidente saneado: una cookie TEST apareció en un título de proceso; se rotó
   el secreto TEST, se retiró el deployment anterior y se validó un Preview nuevo.
   El auxiliar temporal y el token OIDC local se retiraron. Ver evidencia y

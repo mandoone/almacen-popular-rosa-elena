@@ -8,6 +8,19 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D31 — Sellado de credenciales sintéticas y retiro del Preview de QA
+
+- **Contexto:** cada deployment Preview conserva su configuración de entorno
+  y URL única. Sellar cuentas en un deployment nuevo no invalida por sí solo
+  la credencial efímera del deployment usado para QA visual.
+- **Decisión:** con autorización explícita, retirar exclusivamente el Preview
+  de QA tras comprobar panel, navegación y logout. Mantener el Preview final
+  con tres cuentas sintéticas activas, roles originales, claves aleatorias no
+  conservadas y versiones de sesión aumentadas de forma monotónica.
+- **Consecuencias:** la credencial visual quedó invalidada operativamente al
+  desaparecer el deployment de QA (URL 404); el Preview final permaneció Ready.
+  No se modificaron variables de Production, `main` ni otros deployments.
+
 ## D30 — Versiones de sesión monotónicas y QA segura de Preview
 
 - **Contexto:** la QA remota necesitó revocar una sesión sintética y cambiar
@@ -19,8 +32,9 @@ Formato: **contexto → decisión → consecuencias**.
   en títulos o logs. La contención del incidente fue rotar solo el secreto TEST,
   redeplegar Preview y retirar el deployment anterior. No se reutilizaron
   secretos productivos.
-- **Consecuencias:** `test-operacion` terminó en versión 3 y `test-venta` en 2;
-  el rol de los tres actores volvió a la matriz provisional. Las sesiones
+- **Consecuencias:** en esa etapa, `test-operacion` terminó en versión 3 y
+  `test-venta` en 2; el rol de los tres actores volvió a la matriz provisional.
+  Las sesiones
   antiguas no se reactivan por restaurar la configuración. Production quedó
   intacta; rate limiting distribuido, cuentas humanas y dominio final siguen
   pendientes antes de Go/No-Go.

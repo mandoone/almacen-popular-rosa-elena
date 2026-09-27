@@ -5,12 +5,13 @@
 
 ---
 
-## F9 global — identidad sintética en Vercel Preview TEST (2026-09-25)
+## F9 global — identidad sintética en Vercel Preview TEST (2026-09-27)
 
 Proyecto `almacen-popular-rosa-elena-7m17`, entorno Preview restringido a
 `feature/fase-3a-operativa`, código
-`4c8608b7d74c136efc294587743626fc31d99dd5`. El deployment final está
-Ready; `/api/health` informó `test` y el catálogo leyó 54 productos del
+`4c8608b7d74c136efc294587743626fc31d99dd5`. El deployment final sellado
+`dpl_4EKLnVxXc9pbaDCGX4wSuxGWey2g` está Ready; `/api/health` informó `test`
+y el catálogo leyó 54 productos del
 backend Apps Script TEST sin escribir datos comerciales. Production conservó
 sus cuatro variables originales; las siete variables nuevas son exclusivas
 de Preview y de esta rama. No se copiaron secretos productivos.
@@ -25,9 +26,20 @@ restauración de los tres roles; logout y origen cross-site; CSP, HSTS,
 `nosniff`, anti-clickjacking, COOP, Permissions-Policy y cookie `HttpOnly`,
 `Secure`, `SameSite=Strict`. No se ejecutaron mutaciones comerciales.
 
-Las versiones finales son monotónicas (`test-admin=1`, `test-operacion=3`,
-`test-venta=2`) para no revivir sesiones anteriores al restaurar roles. La QA
-visual autenticada del Preview permanece pendiente del login manual de Vercel.
+QA visual autenticada PASS en navegador: formulario y login de `test-admin`,
+panel visible, navegación READ-ONLY por Productos, Compras, Abastecimiento e
+Historiales, logout y redirección de ruta protegida al login. Consola sin
+errores ni advertencias relevantes. No hubo mutaciones comerciales.
+
+El deployment de QA visual `dpl_GVgHzjh24uN38S8i5bZk1fWhbYNB` fue retirado
+con autorización expresa: Vercel dejó de encontrarlo y su URL respondió 404.
+Así, la credencial efímera de QA quedó invalidada operativamente. El Preview
+final mantiene los actores `test-admin=administracion` (versión 6),
+`test-operacion=operacion` (versión 8) y `test-venta=venta` (versión 7), todos
+activos y con contraseñas aleatorias nuevas no conservadas. Las versiones son
+monotónicas para no revivir sesiones anteriores. Se borró el auxiliar temporal
+y se vació el portapapeles local.
+
 El rate limit por instancia se cubrió localmente; no se hizo carga remota y la
 capa distribuida continúa `BLOQUEANTE_PRODUCCION`. Dominio/CSP productivos y
 asignación humana siguen pendientes; F9 global abierta y F10 NO-GO.
@@ -56,8 +68,8 @@ de Apps Script ni Sheet. Navegador: formulario y error de credenciales visibles
 sin overlay ni errores de consola; sesión autenticada y logout solo por HTTP.
 Las claves no se conservan; para reingresar interactivamente se regeneran.
 
-Pendiente: rate limit distribuido, dominio/CSP finales, QA visual autenticada,
-asignación humana de roles y Go/No-Go. F9 global y F10 no están cerradas.
+Pendiente: rate limit distribuido, dominio/CSP finales, asignación humana de
+roles y Go/No-Go. F9 global y F10 no están cerradas.
 La batería posterior pasó: 392/392 tests, lint, build, secrets scan (261
 archivos), preflight técnico y `check:go-no-go` en estado PENDING esperado.
 `npm audit` conserva dos alertas conocidas (una moderada, una alta; ninguna

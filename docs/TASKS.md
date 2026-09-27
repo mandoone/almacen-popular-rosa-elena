@@ -353,10 +353,11 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   QA HTTP remota de login, permisos, suplantación, revocación, cambio de rol,
   legacy, cookies, headers y origen PASS. Roles restaurados con versiones de
   sesión monotónicas; Producción intacta. Evidencia en `docs/TEST_PLAN.md`.
-- ⬜ QA visual autenticada/logout en Preview protegido por Vercel y cuentas
-  humanas definitivas cuando el
-  Almacén asigne personas y apruebe la matriz. Las claves sintéticas efímeras
-  deben regenerarse si se repite un login interactivo; no son cuentas operativas.
+- ✅ QA visual autenticada en Preview: panel, cuatro vistas READ-ONLY, logout,
+  ruta protegida y consola PASS. Deployment con credencial efímera retirado;
+  cuentas TEST finales selladas sin contraseñas conservadas.
+- ⬜ Asignar y ensayar cuentas humanas definitivas cuando el Almacén confirme
+  personas y apruebe la matriz. Las cuentas sintéticas no son operativas.
 - ⬜ Configurar protección distribuida de intentos en la plataforma antes de
   Producción; el limitador por instancia es defensa local, no garantía global.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a

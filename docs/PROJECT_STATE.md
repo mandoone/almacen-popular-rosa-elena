@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-25.
+> tarea que cambie el estado. Última actualización: 2026-09-27.
 
 ---
 
@@ -28,13 +28,15 @@ sábados de apertura.
   404 HTML transitorio en GET `listarAperturas`.
 - **Próxima prioridad:** asignación humana de roles, protección distribuida de
   login y preparación operativa F10. Producción sigue fuera de alcance.
-- **F9 global — identidad TEST remota:** Preview del proyecto
+- **F9 global — identidad TEST remota VALIDADA COMPLETAMENTE:** Preview del proyecto
   `almacen-popular-rosa-elena-7m17`, rama `feature/fase-3a-operativa`, commit
   `4c8608b7d74c136efc294587743626fc31d99dd5`: QA HTTP de los tres
   actores sintéticos, capacidades, revocación, cambio de rol, spoofing,
-  legacy, origen, logout, cookies y headers PASS. Roles restaurados con
-  versiones de sesión monotónicas. La QA visual autenticada está pendiente
-  del acceso manual al Preview protegido por Vercel. Producción no cambió.
+  legacy, origen, logout, cookies y headers PASS. QA visual autenticada de
+  panel, navegación READ-ONLY, logout y consola PASS. El deployment de QA
+  que contenía la credencial efímera fue retirado; el Preview final sellado
+  sigue Ready. Roles restaurados, cuentas activas y versiones de sesión
+  monotónicas; las claves finales no se conservaron. Producción no cambió.
 - **F9 global — avance local:** identidad individual por configuración, hashes
   PBKDF2, revocación/versionado, rotación acotada de secreto, rate limit local,
   control de origen, cookie `SameSite=Strict` y CSP quedaron implementados y
@@ -44,8 +46,8 @@ sábados de apertura.
   de entorno ignorado. Sus contraseñas aleatorias no se conservaron, por lo
   que requieren regeneración para un próximo login interactivo. No hay cuentas
   reales; el rate limit distribuido sigue siendo requisito
-  productivo. QA visual del formulario/error PASS; vista autenticada y logout
-  se comprobaron por HTTP, no visualmente.
+  productivo. La QA visual local de formulario/error fue PASS; la vista
+  autenticada y logout se validaron visualmente en Preview remoto.
 - **F10 — readiness local:** existe un manifiesto de 20 checks y un runbook para
   datos, stock, caja/saldos, costos, capacitación, backup, rollback y Go/No-Go.
   Todos los checks operativos reales continúan pendientes.
