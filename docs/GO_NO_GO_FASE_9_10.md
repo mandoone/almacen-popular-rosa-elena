@@ -13,7 +13,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 |---|---|---:|---:|---:|
 | Identidad individual | Tres actores sintéticos validados localmente, por HTTP y visualmente en Vercel Preview TEST; cuentas finales selladas | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota CERRADA |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
-| Protección de login | Rate limit local por IP+actor implementado | SÍ, falta capa distribuida productiva | SÍ, configuración de plataforma | Local CERRADO |
+| Protección de login | 5 fallos/15 min por IP+actor, solo memoria de instancia; Vercel Hobby sin regla WAF activa ni borrador | SÍ, falta capa distribuida productiva | SÍ, alcance/costo de plataforma | Local CERRADO; distribuido PENDIENTE_TECNICO |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
 | Capacidades | Matriz `venta`/`operacion`/`administracion` probada | SÍ, aceptación/asignación pendientes | SÍ, Almacén | No hardcodear personas |
 | CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
@@ -117,6 +117,19 @@ C. Publicar solo los canales confirmados.
 - Favicon existente conservado. No se añadió structured data porque la entidad
   y sus datos institucionales aún no están aprobados.
 
+**Checklist de dominio/CSP final, sin activación:** el Almacén debe elegir el
+dominio HTTPS canónico, titular DNS y host permitido para administración. Tras
+ello, el equipo técnico puede derivar `SITE_URL` (solo origen, sin ruta ni
+credenciales), canonical, `metadataBase`, sitemap, robots, origen de cookies y
+el host de la política de acceso; debe verificar DNS/TLS, redirección HTTPS,
+HSTS, `form-action 'self'`, `frame-ancestors 'none'`, `connect-src 'self'`,
+callbacks si se incorporan y lectura del backend TEST/Production correcto.
+Hoy la CSP no agrega orígenes externos en el navegador: Apps Script se consume
+del lado servidor. `solicitudAdminMismoOrigen` compara el `Origin` con el URL
+recibido; todavía falta definir y probar cómo impedir login admin por URLs
+históricas de deployment productivo. `check:go-no-go` ya exige un origen HTTPS
+puro; no configura dominio ni cambia Production.
+
 **Pendiente humano F10-01:** confirmar el dominio HTTPS definitivo y configurar
 `SITE_URL`. **Bloquea producción: SÍ** para indexación correcta.
 
@@ -144,24 +157,48 @@ existe monitoreo manual y responsable asignado.
 - Login con límite local de cinco fallos por ventana para IP y actor, respuesta
   genérica, límite de body y `Retry-After`. Las mutaciones admin rechazan origen
   cross-site. Esta defensa por instancia no sustituye rate limiting distribuido.
+- Auditoría 2026-09-27: `proteccionLogin.ts` usa un `Map` por proceso; serverless
+  puede repartir solicitudes entre instancias. El proyecto Vercel está en Hobby
+  y no tiene configuración WAF activa ni borrador. Una regla nativa WAF para
+  `POST /api/admin/auth/login` contaría por IP **cada request**, no solo fallos
+  ni por actor; el contador es por región y en Hobby la ventana máxima es 10
+  minutos, no los 15 locales. Hobby incluye una regla y 1M requests permitidos
+  por mes; el tratamiento del exceso depende del plan y debe confirmarse antes
+  de activar. No se creó ni publicó regla.
+
+**HUMAN_GATE — protección distribuida:**
+
+| Alternativa | Qué cambia | Ventaja | Límite / decisión |
+|---|---|---|---|
+| A. Vercel WAF + limitador local | Una regla por IP, método y ruta, primero observada en modo log; luego Preview y Production por etapas | Sin dependencia ni servicio nuevo; protección compartida entre instancias | Cuenta requests y regiones por separado; posible costo y falsos positivos por IP compartida. Requiere aceptar protección aproximada y autorizar publicación de regla sobre proyecto que también sirve Production. |
+| B. Almacén central transaccional para fallos | Servicio de contador atómico por IP+actor con expiración de 15 min, consultado por cada login | Semántica de fallos/actor y límite global más preciso | Nuevo proveedor/credencial/dependencia, latencia y costo; requiere elección y política fail-closed ante caída. |
+
+No usar Runtime Cache como contador de seguridad: es caché regional sin operación
+atómica de incremento. La [guía oficial de rate limiting WAF](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting)
+y la [explicación oficial de contadores por región](https://vercel.com/i/rate-limiting-algorithms)
+fundamentan estas diferencias. La selección y cualquier cambio de Firewall
+quedan pendientes de autorización humana; **no se declara resuelto F9 global**.
 - Headers: `nosniff`, anti-clickjacking, referrer policy, permissions policy,
   COOP, HSTS y CSP limitada a `self`/recursos locales inventariados.
 - `check:go-no-go` exige en entorno productivo dominio HTTPS, cuentas
   individuales, al menos una administración activa, secreto/versionado válido y
-  recuperación legacy deshabilitada.
+  recuperación legacy deshabilitada. Fuera de ese entorno informa PENDING en
+  vez de confundir preparación incompleta con READY; aun con READY técnico
+  falta aprobación humana.
 - CI tiene `contents: read`, instalación reproducible, QA, secrets scan y audit
   crítico. No ejecuta E2E remoto ni deploy.
 - Pendiente antes de producción: asignar y validar cuentas humanas en TEST,
   confirmar responsables de
   revocación/rotación y activar rate limiting distribuido en la plataforma
-  elegida. Las variables sintéticas se configuraron solo en Preview de la rama;
-  Production conservó sus variables originales.
+  elegida. Antes de cuentas humanas también se debe probar revocación frente a
+  URLs históricas de deployment. Las variables sintéticas se configuraron solo
+  en Preview de la rama; Production conservó sus variables originales.
 
 **Pendiente humano F10-02:** la arquitectura técnica, identidad multiusuario y
 matriz provisional están preparadas localmente, pero falta confirmación del
 Almacén, asignación de personas, QA TEST de las cuentas humanas finales y
 protección distribuida de intentos de login. Los actores sintéticos ya pasaron
-su QA técnica local y remota por HTTP; no constituyen la asignación humana.
+su QA técnica local, remota por HTTP y visual; no constituyen la asignación humana.
 **Bloquea producción: SÍ**.
 
 ### Vulnerabilidades npm
@@ -172,7 +209,7 @@ su QA técnica local y remota por HTTP; no constituyen la asignación humana.
 | `js-yaml` | alta | transitiva, desarrollo (ESLint) | DoS al parsear YAML hostil; no ocurre en runtime | override 4.3.2 | NO, resuelta |
 | `postcss-selector-parser` | baja | transitiva, build (Tailwind) | recursión con CSS hostil; CSS es del repo | override 6.1.3 | NO, resuelta |
 | `postcss` incluido por Next | alta | transitiva de dependencia directa, build | lectura de sourcemaps/CSS hostiles; no hay subida de CSS por usuarios | requiere versión de Next que incorpore PostCSS corregido | NO con el modelo actual; vigilar |
-| `next` | moderada derivada | directa, runtime/build | npm la marca por el PostCSS incluido | hoy propone Next 16.3.5 (major) | NO por sí sola; migración separada |
+| `next` | moderada derivada | directa, runtime/build | npm la marca por el PostCSS incluido | auditoría local propone Next 16.3.6 (major) | NO por sí sola; migración separada |
 
 Resultado actual esperado: **2 alertas (1 alta, 1 moderada), 0 críticas**. No se
 migró a Next 16.
@@ -195,9 +232,11 @@ escrituras ni despliegues. Durante desarrollo se admite
 `npm run preflight:go-no-go -- --allow-dirty --skip-npm-ci`.
 
 El readiness operativo complementario vive en `F10_READINESS_OPERATIVA.md`.
-`npm run preflight:f10` valida un manifiesto local ignorado por Git; `--strict`
-solo admite READY cuando los 20 checks tienen evidencia `ready` o una decisión
-`not_applicable`. El ejemplo versionado permanece íntegramente `pending`.
+`npm run preflight:f10` valida un manifiesto local ignorado por Git y distingue
+READY/PENDING/FAIL con los nombres de checks no listos; `--strict` exige READY.
+Las excepciones `not_applicable` requieren `decision_ref` humana. El ejemplo
+versionado permanece íntegramente `pending`; un READY estructural no reemplaza
+la revisión de evidencia ni la aprobación de Producción.
 
 ## 4. Datos reales pendientes
 
@@ -224,7 +263,7 @@ solo admite READY cuando los 20 checks tienen evidencia `ready` o una decisión
 - Headers, sesión admin, rutas admin, CI mínimo, secrets scan y preflight consolidados.
 - Identidad individual, revocación/rotación, CSP, control de origen y rate limit
   local preparados y probados sin cuentas reales; tres actores sintéticos
-  también pasaron QA HTTP en Vercel Preview de la rama operativa.
+  también pasaron QA HTTP y visual en Vercel Preview de la rama operativa.
 - Arquitectura F9-A de roles, autorización, DTOs, IDs y diario durable validada
   en TEST con Apps Script v15 y Next local `43a51a9`; retest focalizado PASS.
   F9 global sigue abierta. No se declara atomicidad ACID multitabla.
@@ -235,7 +274,8 @@ solo admite READY cuando los 20 checks tienen evidencia `ready` o una decisión
 - Resolver dos advisories npm ligados a Next 15 cuando exista una corrección sin
   migración mayor aceptada, o planificar la migración separada.
 - Completar mínimos/prioridades, saldo/efectivo y observabilidad externa opcional.
-- Configurar rate limiting distribuido y ejecutar QA TEST de las cuentas finales.
+- Elegir/configurar rate limiting distribuido y ejecutar QA TEST de las cuentas
+  humanas finales, incluida revocación frente a deployments históricos.
 
 ### BLOCKED
 

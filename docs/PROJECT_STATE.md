@@ -28,6 +28,14 @@ sábados de apertura.
   404 HTML transitorio en GET `listarAperturas`.
 - **Próxima prioridad:** asignación humana de roles, protección distribuida de
   login y preparación operativa F10. Producción sigue fuera de alcance.
+- **F9/F10 — preparación actual:** el limitador de login sigue siendo local por
+  instancia. Se auditó la opción Vercel WAF (equipo Hobby, sin reglas activas),
+  pero cuenta por IP/región y requiere decisión humana sobre alcance/costo;
+  no se configuró. El procedimiento de cuentas reales, la checklist de dominio
+  y la matriz de evidencias de los 20 checks F10 están preparados sin asignar
+  personas ni cargar datos. El preflight F10 distingue READY/PENDING/FAIL y
+  `check:go-no-go` valida el mismo formato de cuentas que el runtime. F9 global
+  ABIERTA; F10 NO-GO.
 - **F9 global — identidad TEST remota VALIDADA COMPLETAMENTE:** Preview del proyecto
   `almacen-popular-rosa-elena-7m17`, rama `feature/fase-3a-operativa`, commit
   `4c8608b7d74c136efc294587743626fc31d99dd5`: QA HTTP de los tres

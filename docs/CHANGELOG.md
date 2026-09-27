@@ -5,6 +5,16 @@
 
 ---
 
+## [F9 global + F10] — Auditoría de límites y proceso de evidencias (2026-09-27)
+
+- Auditado rate limit local y WAF nativa sin activar reglas: la decisión sobre
+  contador distribuido, alcance y costo continúa como HUMAN_GATE.
+- Preparados procedimiento de identidades humanas, checklist de dominio/CSP,
+  matriz de 20 evidencias, preguntas mínimas y backup/rollback por componente.
+- Preflight F10 informa READY/PENDING/FAIL y exige referencia para excepciones;
+  Go/No-Go técnico usa el parser de cuentas runtime y exige origen HTTPS puro.
+  Sin datos reales ni cambios remotos. F9 ABIERTA; F10 NO-GO.
+
 ## [F9 global] — QA visual remota y sellado de identidad TEST (2026-09-27)
 
 - Identidad sintética TEST remoto VALIDADA COMPLETAMENTE: QA HTTP previa y QA

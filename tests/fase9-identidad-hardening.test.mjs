@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { pbkdf2Sync } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import {
   autenticarUsuarioAdmin,
   leerUsuariosAdmin,
@@ -150,6 +152,58 @@ test('F10: manifiesto exige evidencia para todos los checks de puesta en marcha'
   ));
   const resultado = validarManifiestoF10(ejemplo);
   assert.equal(resultado.valido, true);
+  assert.equal(resultado.estado, 'PENDING');
   assert.equal(resultado.resumen.pending, CHECKS_F10.length);
   assert.equal(validarManifiestoF10({ version: 1, fecha_corte: '2026-09-25', checks: {} }).valido, false);
+  assert.equal(validarManifiestoF10({ ...ejemplo, fecha_corte: '2026-02-30' }).estado, 'FAIL');
+  const listo = structuredClone(ejemplo);
+  for (const check of Object.values(listo.checks)) {
+    check.estado = 'ready';
+    check.evidencia = 'Acta y readback revisados por responsable.';
+  }
+  assert.equal(validarManifiestoF10(listo).estado, 'READY');
+  listo.checks.saldo_bancario.estado = 'blocked';
+  assert.equal(validarManifiestoF10(listo).estado, 'FAIL');
+  listo.checks.saldo_bancario.estado = 'not_applicable';
+  assert.equal(validarManifiestoF10(listo).valido, false);
+  listo.checks.saldo_bancario.decision_ref = 'Acta institucional de excepción';
+  assert.equal(validarManifiestoF10(listo).estado, 'READY');
+});
+
+test('F10: Go/No-Go productivo acepta base64url y rechaza registro inválido', () => {
+  const env = {
+    ...process.env,
+    NEXT_PUBLIC_APP_ENV: 'production',
+    SITE_URL: 'https://almacen.example.test',
+    ADMIN_SESSION_SECRET: 'secreto-sintetico-de-prueba-con-mas-de-32-caracteres',
+    ADMIN_SESSION_SECRET_VERSION: 'v1',
+    ADMIN_LEGACY_RECOVERY_ENABLED: 'false',
+    ADMIN_USERS_JSON: `base64url:${Buffer.from(config({ rol: 'administracion' })).toString('base64url')}`,
+  };
+  delete env.ADMIN_SESSION_SECRET_PREVIOUS;
+  delete env.ADMIN_SESSION_SECRET_PREVIOUS_VERSION;
+  const ejecutar = (vars) => spawnSync(process.execPath, ['scripts/check-go-no-go.mjs'], {
+    cwd: fileURLToPath(new URL('..', import.meta.url)),
+    env: vars,
+    encoding: 'utf8',
+  });
+  const valido = ejecutar(env);
+  assert.equal(valido.status, 0);
+  assert.match(valido.stdout, /READY \| configuración técnica Go\/No-Go consistente/);
+  const invalido = ejecutar({ ...env, ADMIN_USERS_JSON: 'base64url:!' });
+  assert.notEqual(invalido.status, 0);
+  assert.match(invalido.stderr, /identidades individuales válidas/);
+  const origenInvalido = ejecutar({ ...env, SITE_URL: 'https://almacen.example.test/ruta' });
+  assert.notEqual(origenInvalido.status, 0);
+  assert.match(origenInvalido.stderr, /origen HTTPS puro/);
+  const rotacionInvalida = ejecutar({
+    ...env,
+    ADMIN_SESSION_SECRET_PREVIOUS: env.ADMIN_SESSION_SECRET,
+    ADMIN_SESSION_SECRET_PREVIOUS_VERSION: 'v0',
+  });
+  assert.notEqual(rotacionInvalida.status, 0);
+  assert.match(rotacionInvalida.stderr, /rotación de sesión productiva inválidos/);
+  const preparacion = ejecutar({ ...env, NEXT_PUBLIC_APP_ENV: 'test', SITE_URL: '' });
+  assert.equal(preparacion.status, 0);
+  assert.match(preparacion.stdout, /PENDING \| configuración técnica Go\/No-Go incompleta/);
 });

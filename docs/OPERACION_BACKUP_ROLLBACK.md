@@ -2,6 +2,16 @@
 
 Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones productivas.
 
+| Componente | Qué y cómo se conserva | Cuándo / quién | Verificación |
+|---|---|---|---|
+| Sheet | Copia fechada completa en espacio autorizado, sin URL en Git | Antes del corte; responsable de datos + segundo revisor | Abrir copia, contar pestañas/filas clave y leer IDs de muestra |
+| Apps Script | Versión y deployment estable registrados en gestor seguro | Antes del corte; responsable técnico | Confirmar versión y lectura no mutante contra entorno correcto |
+| Web | Commit/tag inmutables y deployment estable/candidato | Antes del cambio; responsable técnico | Resolver SHA/tag y consultar metadata de deployment |
+| Secretos/configuración | Nombres, scopes, versiones y custodia en gestor seguro; no exportar valores a Git | Antes del cambio; custodio de secretos | Dos personas comprueban scopes y recuperación sin revelar valores |
+
+La ventana y sus responsables/suplentes se acuerdan con el Almacén. No hay
+backup productivo ejecutado todavía.
+
 ## Antes de un despliegue productivo
 
 1. Confirmar Go/No-Go humano, responsable y ventana de cambio.
@@ -15,11 +25,20 @@ Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones p
 7. Registrar el identificador del deployment web vigente y del candidato, la
    persona responsable, la ventana y los criterios de abortar/revertir.
 
+**Disparadores de aborto/rollback:** entorno o commit equivocado; autenticación
+o capacidad indebida; diferencia de stock/caja; escritura duplicada o ambigua
+sin conciliación; error sostenido de lectura/escritura; pérdida de integridad de
+datos o secreto expuesto. El responsable detiene nuevas operaciones, preserva
+evidencia y consulta al segundo revisor antes de restaurar datos.
+
 ## Rollback de la web
 
 1. Detener cambios nuevos y registrar la evidencia del incidente.
 2. Redeployar desde el último commit estable conocido mediante el mecanismo del proveedor.
    Confirmar que el deployment resultante referencia exactamente ese commit.
+   No promover ciegamente un deployment histórico: puede conservar identidades
+   o secretos revocados. El código estable debe usar la configuración vigente
+   y el responsable debe verificarlo antes de abrir acceso admin.
 3. Comprobar páginas públicas, autenticación admin y rutas de lectura.
 4. No reejecutar escrituras fallidas sin determinar primero si surtieron efecto.
 
@@ -45,3 +64,7 @@ Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones p
 - Una consulta de caja no cambia APERTURAS.
 - Logs no contienen credenciales, URLs privadas ni cuerpos sensibles.
 - Se documentan resultado, responsable, commit, hora y cualquier rollback.
+- Confirmar que el dato/caja/stock anterior y posterior concilian con sus IDs;
+  no interpretar una respuesta HTTP ambigua como fallo o éxito sin readback.
+- El responsable funcional firma el retorno al servicio; si alguna lectura o
+  conciliación falla, mantener NO-GO y no reabrir escrituras.

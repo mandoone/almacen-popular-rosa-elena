@@ -1,4 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { leerUsuariosAdmin } from '../src/lib/fase9/identidades.ts';
+import { crearSessionKeyring } from '../src/lib/session.ts';
 
 const requeridos = [
   'src/app/robots.ts',
@@ -43,56 +45,35 @@ for (const nombre of [
 }
 
 const appEnv = String(process.env.NEXT_PUBLIC_APP_ENV ?? '').trim().toLowerCase();
+let pendientes = 0;
 if (appEnv === 'production') {
   const secret = process.env.ADMIN_SESSION_SECRET ?? '';
   const version = process.env.ADMIN_SESSION_SECRET_VERSION ?? '';
-  let users;
-  try {
-    users = JSON.parse(process.env.ADMIN_USERS_JSON ?? '');
-  } catch {
-    users = null;
-  }
-  if (secret.length < 32 || !/^[A-Za-z0-9._-]{1,32}$/.test(version)) {
-    console.error('FAIL | secreto/version de sesión productiva inválidos');
+  const users = leerUsuariosAdmin(process.env.ADMIN_USERS_JSON);
+  const keyring = crearSessionKeyring({
+    currentSecret: secret,
+    currentVersion: version,
+    previousSecret: process.env.ADMIN_SESSION_SECRET_PREVIOUS,
+    previousVersion: process.env.ADMIN_SESSION_SECRET_PREVIOUS_VERSION,
+  });
+  if (!version || !keyring.ok) {
+    console.error('FAIL | secreto/version o rotación de sesión productiva inválidos');
     process.exitCode = 1;
   }
-  if (!Array.isArray(users) || users.length < 1) {
-    console.error('FAIL | Producción exige al menos una identidad individual válida');
+  if (users.estado !== 'valida') {
+    console.error('FAIL | Producción exige identidades individuales válidas');
     process.exitCode = 1;
-  } else {
-    const actores = new Set();
-    const cuentasInvalidas = users.some((user) => {
-      const valido = user && typeof user === 'object' &&
-        /^[a-z0-9][a-z0-9._@-]{0,99}$/.test(user.actor_id ?? '') &&
-        ['venta', 'operacion', 'administracion'].includes(user.rol) &&
-        typeof user.active === 'boolean' &&
-        Number.isSafeInteger(user.session_version) && user.session_version >= 1 &&
-        /^pbkdf2-sha256\$310000\$[A-Za-z0-9_-]{22,}\$[A-Za-z0-9_-]{43}$/.test(user.password_hash ?? '') &&
-        !actores.has(user.actor_id);
-      if (valido) actores.add(user.actor_id);
-      return !valido;
-    });
-    if (cuentasInvalidas) {
-      console.error('FAIL | ADMIN_USERS_JSON contiene una cuenta inválida o duplicada');
-      process.exitCode = 1;
-    }
-    if (!users.some((user) => user.active === true && user.rol === 'administracion')) {
-      console.error('FAIL | Producción exige al menos una cuenta de administración activa');
-      process.exitCode = 1;
-    }
+  } else if (!users.usuarios.some((user) => user.active && user.rol === 'administracion')) {
+    console.error('FAIL | Producción exige al menos una cuenta de administración activa');
+    process.exitCode = 1;
   }
   if (process.env.ADMIN_LEGACY_RECOVERY_ENABLED === 'true') {
     console.error('FAIL | recuperación legacy debe estar deshabilitada en Producción');
     process.exitCode = 1;
   }
-  const previousSecret = process.env.ADMIN_SESSION_SECRET_PREVIOUS ?? '';
-  const previousVersion = process.env.ADMIN_SESSION_SECRET_PREVIOUS_VERSION ?? '';
-  if (Boolean(previousSecret) !== Boolean(previousVersion)) {
-    console.error('FAIL | rotación anterior de sesión incompleta');
-    process.exitCode = 1;
-  }
 } else {
   console.log('PENDING | validación estricta de identidad productiva se activa con NEXT_PUBLIC_APP_ENV=production');
+  pendientes += 1;
 }
 
 const siteUrl = process.env.SITE_URL?.trim();
@@ -102,16 +83,24 @@ if (!siteUrl) {
     process.exitCode = 1;
   } else {
     console.log('HUMAN_DECISION_REQUIRED | SITE_URL definitivo no configurado; canonical y sitemap quedan preparados pero inactivos');
+    pendientes += 1;
   }
 } else {
   try {
     const url = new URL(siteUrl);
-    if (url.protocol !== 'https:') throw new Error('se requiere HTTPS');
+    if (url.protocol !== 'https:' || url.username || url.password ||
+        url.pathname !== '/' || url.search || url.hash || url.port) {
+      throw new Error('se requiere un origen HTTPS sin ruta, credenciales ni puerto alternativo');
+    }
     console.log('PASS | SITE_URL válido para metadata e indexación');
   } catch {
-    console.error('FAIL | SITE_URL debe ser un origen HTTPS válido, sin exponer su valor');
+    console.error('FAIL | SITE_URL debe ser un origen HTTPS puro, sin exponer su valor');
     process.exitCode = 1;
   }
 }
 
-if (!process.exitCode) console.log('PASS | configuración técnica Go/No-Go consistente');
+if (!process.exitCode) {
+  console.log(pendientes
+    ? `PENDING | configuración técnica Go/No-Go incompleta (${pendientes} pendiente(s))`
+    : 'READY | configuración técnica Go/No-Go consistente; falta aprobación humana');
+}

@@ -12,14 +12,20 @@ export const CHECKS_F10 = [
 
 const ESTADOS = new Set(['ready', 'pending', 'blocked', 'not_applicable']);
 
+function fechaValida(valor) {
+  if (typeof valor !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+  const fecha = new Date(`${valor}T00:00:00.000Z`);
+  return !Number.isNaN(fecha.getTime()) && fecha.toISOString().slice(0, 10) === valor;
+}
+
 export function validarManifiestoF10(manifiesto) {
   const errores = [];
   if (!manifiesto || typeof manifiesto !== 'object' || Array.isArray(manifiesto)) {
-    return { valido: false, errores: ['El manifiesto debe ser un objeto JSON.'], resumen: {} };
+    return { valido: false, estado: 'FAIL', errores: ['El manifiesto debe ser un objeto JSON.'], resumen: {} };
   }
   if (manifiesto.version !== 1) errores.push('version debe ser 1.');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(manifiesto.fecha_corte ?? ''))) {
-    errores.push('fecha_corte debe usar yyyy-MM-dd.');
+  if (!fechaValida(manifiesto.fecha_corte)) {
+    errores.push('fecha_corte debe ser una fecha real en formato yyyy-MM-dd.');
   }
   const checks = manifiesto.checks;
   if (!checks || typeof checks !== 'object' || Array.isArray(checks)) {
@@ -36,11 +42,18 @@ export function validarManifiestoF10(manifiesto) {
       errores.push(`${nombre}: evidencia obligatoria (máximo 500 caracteres).`);
       continue;
     }
+    if (check.estado === 'not_applicable' &&
+        (typeof check.decision_ref !== 'string' ||
+         !check.decision_ref.trim() || check.decision_ref.length > 200)) {
+      errores.push(`${nombre}: not_applicable exige decision_ref humana (máximo 200 caracteres).`);
+      continue;
+    }
     resumen[check.estado] += 1;
   }
   const extras = Object.keys(checks ?? {}).filter((nombre) => !CHECKS_F10.includes(nombre));
   if (extras.length) errores.push('checks contiene claves no reconocidas.');
-  return { valido: errores.length === 0, errores, resumen };
+  const estado = errores.length || resumen.blocked ? 'FAIL' : resumen.pending ? 'PENDING' : 'READY';
+  return { valido: errores.length === 0, estado, errores, resumen };
 }
 
 function argumentoArchivo() {
@@ -69,9 +82,12 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
         process.exitCode = 1;
       } else {
         console.log(`F10 | ready=${resultado.resumen.ready} pending=${resultado.resumen.pending} blocked=${resultado.resumen.blocked} n/a=${resultado.resumen.not_applicable}`);
-        const listo = resultado.resumen.ready + resultado.resumen.not_applicable === CHECKS_F10.length;
-        console.log(`${listo ? 'READY' : 'BLOQUEANTE_PRODUCCION'} | manifiesto F10 ${listo ? 'completo' : 'aún no habilita Go'}`);
-        if (estricto && !listo) process.exitCode = 1;
+        const noListos = CHECKS_F10.filter((nombre) =>
+          ['pending', 'blocked'].includes(manifiesto.checks[nombre].estado));
+        console.log(`${resultado.estado} | manifiesto F10 ${resultado.estado === 'READY' ? 'completo; requiere aprobación humana de Go' : `no habilita Go: ${noListos.join(', ')}`}`);
+        if (resultado.estado === 'FAIL' || (estricto && resultado.estado !== 'READY')) {
+          process.exitCode = 1;
+        }
       }
     }
   }

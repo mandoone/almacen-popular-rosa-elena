@@ -5,6 +5,24 @@
 
 ---
 
+## F9/F10 — preflight y preparación local (2026-09-27)
+
+- Rate limiter actual: cinco fallos/15 min por IP y actor en `Map` de instancia;
+  no se declarará distribuido. Vercel Hobby no tenía reglas WAF activas o en
+  borrador al auditar. No se publicaron reglas ni se hizo carga remota.
+- Casos locales del manifiesto: 20 pendientes del ejemplo, fecha imposible,
+  todos listos, un check bloqueado y `not_applicable` sin/con referencia humana.
+  `READY` solo indica consistencia estructural; no aprueba el Go/No-Go.
+- Go/No-Go técnico: cuenta administrativa sintética válida en `base64url:` pasa
+  parser compartido; registro inválido, rotación inconsistente y `SITE_URL`
+  con ruta fallan cerrados. Sin configuración productiva informa PENDING,
+  no READY.
+  No se usaron credenciales reales ni se modificó Production.
+- Batería final: 393/393 tests, lint, build, secrets scan (261 archivos) y
+  preflight técnico PASS. `check:go-no-go` informa PENDING por identidad/dominio
+  productivos; manifiesto de ejemplo 0/20 ready y modo estricto PENDING con
+  salida no cero porque aún no existe el manifiesto operativo local.
+
 ## F9 global — identidad sintética en Vercel Preview TEST (2026-09-27)
 
 Proyecto `almacen-popular-rosa-elena-7m17`, entorno Preview restringido a

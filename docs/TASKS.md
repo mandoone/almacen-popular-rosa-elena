@@ -360,8 +360,13 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   personas y apruebe la matriz. Las cuentas sintéticas no son operativas.
 - ⬜ Configurar protección distribuida de intentos en la plataforma antes de
   Producción; el limitador por instancia es defensa local, no garantía global.
+- ✅ Auditar WAF nativa y límite local: equipo Hobby sin reglas; documentar dos
+  opciones y límites de región/ventana/costo. No se activó Firewall.
+- ⬜ Elegir protección distribuida y acordar ensayo/monitoreo; HUMAN_GATE.
 - ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
   roles. No declarar F9 cerrada antes de esa aceptación.
+- ✅ Preparar procedimiento de alta, cambio de rol/clave, revocación y retiro;
+  registrar riesgo de URLs históricas de deployments antes de cuentas humanas.
 
 ## FASE 10 — Preparación Go/No-Go
 
@@ -373,6 +378,12 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Backup/rollback y `npm run preflight:go-no-go` consolidados.
 - ✅ Runbook operativo, manifiesto local de 20 checks y
   `npm run preflight:f10 [-- --strict]` preparados sin datos reales.
+- ✅ Definir evidencia, responsable funcional, fuente y PASS/FAIL para los 20
+  checks; preflight READY/PENDING/FAIL y `not_applicable` con referencia humana.
+- ✅ Unificar validación productiva de `ADMIN_USERS_JSON` con el parser runtime,
+  incluso transporte `base64url:`, y exigir `SITE_URL` como origen HTTPS puro.
+- ⬜ Completar evidencias reales, dominio/CSP final, ensayo, backup, capacitación
+  y decisión humana Go/No-Go; los 20 checks continúan pending.
 - ⬜ Resolver decisiones, datos reales y bloqueos del checklist único en
   `docs/GO_NO_GO_FASE_9_10.md` antes de producción.
 

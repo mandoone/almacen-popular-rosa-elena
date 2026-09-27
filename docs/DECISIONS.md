@@ -8,6 +8,19 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D32 — Preflight F10 estructural, no aprobación humana automática
+
+- **Contexto:** el manifiesto F10 distinguía estados internos, pero no devolvía
+  READY/PENDING/FAIL; aceptaba `not_applicable` sin referencia de decisión y el
+  Go/No-Go técnico parseaba cuentas de forma distinta al runtime.
+- **Decisión:** devolver estado y nombres de checks no listos sin imprimir su
+  evidencia, exigir `decision_ref` para una excepción, validar fecha real y
+  usar el parser estricto de identidades de la aplicación, incluido
+  `base64url:`. `SITE_URL` productivo debe ser solo origen HTTPS.
+- **Consecuencias:** el preflight detecta inconsistencias antes de la ventana,
+  pero un `READY` estructural no verifica actas externas ni autoriza Producción.
+  Las 20 evidencias reales y el Go/No-Go humano siguen pendientes.
+
 ## D31 — Sellado de credenciales sintéticas y retiro del Preview de QA
 
 - **Contexto:** cada deployment Preview conserva su configuración de entorno
