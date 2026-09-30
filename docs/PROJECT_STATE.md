@@ -1,7 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-27.
+> tarea que cambie el estado. Última actualización: 2026-09-30.
 
 ---
 
@@ -96,7 +96,13 @@ sábados de apertura.
 - ✅ Dos pilotos HTML v0.2 aprobados como referencias visuales.
 - ✅ Fuentes Markdown, templates y CSS documental separados.
 - 🔄 Iteración v0.2.1 en revisión: escala compacta al 70 % y roadmap Fases 0–6.
-- ⬜ Automatización Markdown → HTML → PDF pendiente; no se instalaron dependencias.
+- ✅ Método HTML → PDF definido y validado el 30-09-2026: el HTML aprobado es
+  la fuente visual maestra y `scripts/render-informe-pdf.py` genera A4 con
+  `media="screen"`, fondos, márgenes 0 mm y escala `0.98`.
+- ✅ El QA visual HTML vs PDF es obligatorio antes de marcar un archivo como
+  `FINAL`; procedimiento en `docs/informes/README_GENERACION_PDF.md`.
+- ⬜ Automatización Markdown → HTML pendiente; no se agregaron dependencias a la
+  aplicación Next.js.
 - ⬜ PDF v0.2.1 pendiente de aprobación humana.
 
 ---

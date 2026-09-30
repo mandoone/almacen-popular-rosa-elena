@@ -214,15 +214,14 @@ El color nunca reemplaza el texto: todo badge debe incluir una etiqueta legible.
 
 ## 9. Reglas para PDF
 
-- Tamaño A4 con margen de 14 mm.
-- Activar gráficos de fondo al imprimir.
-- Usar escala 100 %, salvo ajuste visual explícitamente aprobado.
-- No imprimir encabezados ni pies automáticos del navegador.
-- Usar `.report-page-break` solo cuando una sección deba comenzar en página nueva.
-- Usar `.report-avoid-break` para bloques cortos que no deben partirse.
-- Revisar manualmente tablas largas, fases y síntesis antes de aprobar el PDF.
-- Confirmar que el perfil compacto siga legible a tamaño real de impresión.
-- No generar PDF si el HTML todavía está en `BORRADOR` o no fue revisado visualmente.
+El procedimiento operativo oficial y su checklist están en
+`docs/informes/README_GENERACION_PDF.md`. El HTML aprobado es la fuente visual
+maestra y se renderiza exclusivamente con `scripts/render-informe-pdf.py`,
+`media="screen"`, A4, fondos habilitados, márgenes PDF de 0 mm y escala `0.98`.
+
+`@media print` solo puede controlar paginación. No puede modificar la identidad
+visual ni la apariencia de portada, tarjetas, badges o secciones. El QA visual
+HTML vs PDF es obligatorio antes de aprobar un archivo `FINAL`.
 
 ## 10. Convención de nombres
 
@@ -293,7 +292,7 @@ IDs privados ni datos personales de pedidos.
 6. Abrir el HTML en navegador y compararlo con las referencias aprobadas.
 7. Corregir contenido o paginación sin cambiar el brandkit.
 8. Marcar como aprobado.
-9. Generar PDF manualmente cuando el proyecto lo autorice.
+9. Generar el PDF con `scripts/render-informe-pdf.py` desde el HTML aprobado.
 10. Copiar la versión aprobada a Drive.
 
 ## 14. Pendiente de automatización
@@ -302,7 +301,7 @@ La versión 0.1 no define todavía la herramienta definitiva para convertir Mark
 a HTML. Antes de automatizar se debe decidir entre una herramienta externa, como
 Pandoc, o un generador Node aislado del runtime de Next.js.
 
-La automatización futura deberá:
+La automatización futura de Markdown → HTML deberá:
 
 - validar metadata;
 - elegir template por tipo;
@@ -311,7 +310,7 @@ La automatización futura deberá:
 - detectar placeholders sin reemplazar;
 - generar HTML reproducible;
 - ejecutar controles de impresión;
-- generar PDF solo después de aprobación.
+- entregar un HTML aprobado al flujo oficial HTML → PDF.
 
 ---
 

@@ -18,7 +18,8 @@
 - ✅ Incorporar perfil `.report-density-compact` y roadmap completo en templates.
 - ⬜ Elegir herramienta para automatizar Markdown → HTML sin acoplarla a Next.js.
 - ⬜ Implementar validación automática de metadata, rutas y placeholders.
-- ⬜ Implementar generación PDF solo después de aprobar el flujo HTML.
+- ✅ Implementar generación PDF desde el HTML aprobado con el script oficial,
+  `media="screen"`, escala `0.98` y QA visual obligatorio.
 - ⬜ Unificar la nomenclatura de fases: los informes v0.2 llaman FASE 2 a seguridad
   admin y FASE 3 a configuración; este backlog histórico reservaba FASE 2 para
   panel vendedor y FASE 3 para productos/stock.

@@ -5,6 +5,17 @@
 
 ---
 
+## [Sistema documental] — Flujo oficial HTML → PDF (2026-09-30)
+
+- Formalizado el HTML aprobado como fuente visual maestra para los PDF.
+- Añadido `scripts/render-informe-pdf.py`: Chromium/Playwright, `media="screen"`,
+  A4, fondos habilitados, márgenes 0 mm y escala estándar `0.98`.
+- Registrado el QA visual obligatorio y la prohibición de usar `media="print"`
+  como fuente de apariencia.
+- Método validado con
+  `2026-09-30_informe-consolidado_estado-proyecto_v1.8_FINAL`: 6 páginas, radios
+  correctos, sin doble borde y con paridad visual satisfactoria.
+
 ## [F9/F10] — Guiones de corte y evidencia estructurada (2026-09-27)
 
 - Preflight F10 v2 exige fecha, responsable y referencia por check resuelto,

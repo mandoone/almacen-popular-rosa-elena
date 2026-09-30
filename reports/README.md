@@ -40,7 +40,10 @@ humana expresa.
 ## PDF
 
 Los PDF se guardarán en `reports/pdf/<tipo>/` únicamente después de revisar y
-aprobar visualmente el HTML. Los PDF de prueba no se versionan ni se publican.
+aprobar visualmente el HTML. Se generan exclusivamente con
+`scripts/render-informe-pdf.py`, siguiendo
+`docs/informes/README_GENERACION_PDF.md`. Los PDF de prueba no se versionan ni se
+publican.
 
 ## Convención de nombres
 

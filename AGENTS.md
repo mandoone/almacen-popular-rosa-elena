@@ -120,3 +120,18 @@ viva en el mismo trabajo:
 5. `CHANGELOG.md` — anotar el hito.
 
 Documentación desactualizada se considera trabajo incompleto.
+
+---
+
+## Generación de informes HTML → PDF
+
+- El HTML aprobado es la fuente visual maestra.
+- Usar exclusivamente `scripts/render-informe-pdf.py`.
+- `media="screen"` es obligatorio; nunca usar `media="print"` como fuente
+  visual.
+- El estándar es A4, fondos habilitados, márgenes PDF de 0 mm y escala `0.98`.
+- `@media print` se limita a reglas de paginación y no puede cambiar la identidad
+  visual.
+- El QA visual HTML vs PDF es obligatorio antes de marcar un archivo como
+  `FINAL`.
+- Procedimiento completo: `docs/informes/README_GENERACION_PDF.md`.

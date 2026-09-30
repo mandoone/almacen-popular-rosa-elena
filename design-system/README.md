@@ -42,8 +42,9 @@ Markdown fuente
 → copia publicada en Drive
 ```
 
-La versión 0.1 todavía usa composición manual controlada. No existe un pipeline
-automático Markdown → HTML → PDF y no se han instalado dependencias para crearlo.
+La composición Markdown → HTML continúa siendo manual y controlada. La salida
+HTML → PDF ya tiene un script oficial independiente de Next.js; ver
+`docs/informes/README_GENERACION_PDF.md`.
 
 ## Tipos de informe
 
@@ -78,5 +79,5 @@ este flujo.
 
 - HTML: composición manual desde Markdown y templates.
 - Revisión: apertura directa en navegador.
-- PDF: exportación manual pendiente de habilitación.
-- Pipeline automático: pendiente de decisión e implementación.
+- PDF: generación con `scripts/render-informe-pdf.py` desde el HTML aprobado.
+- Pipeline Markdown → HTML: pendiente de decisión e implementación.

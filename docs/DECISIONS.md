@@ -8,6 +8,21 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D35 — HTML como fuente visual maestra para PDF documental (2026-09-30)
+
+- **Contexto:** al generar informes con estilos de impresión se observaron
+  repetidamente doble borde en badges, pérdida de radios, esquinas rectas y
+  otras diferencias respecto del HTML aprobado.
+- **Decisión:** generar los PDF mediante Chromium/Playwright desde el HTML
+  maestro, con `media="screen"`, A4, fondos habilitados, márgenes de 0 mm,
+  `prefer_css_page_size=True` y escala `0.98`. `@media print` queda reservado
+  exclusivamente para paginación y nunca define la apariencia. El QA visual
+  HTML vs PDF es obligatorio antes de marcar una entrega como `FINAL`.
+- **Consecuencias:** `scripts/render-informe-pdf.py` es el único comando oficial.
+  Si el PDF difiere visualmente, se corrige el flujo o el CSS y se regenera; el
+  PDF no se arregla manualmente. El procedimiento completo vive en
+  `docs/informes/README_GENERACION_PDF.md`.
+
 ## D34 — Evidencia F10 v2 sin aprobación automática
 
 - **Contexto:** el manifiesto v1 permitía `ready` con un texto libre de

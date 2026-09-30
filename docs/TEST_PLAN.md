@@ -397,8 +397,8 @@ secrets scan. La evidencia final de esta sesión se registra en
 - ✅ Esperado: mantiene identidad y estructura documental; no parece landing page.
 
 ### TD4 — Impresión A4
-1. Abrir vista previa de impresión con fondos activados, escala 100 % y sin
-   encabezados/pies del navegador.
+1. Generar el PDF con `scripts/render-informe-pdf.py`, `media="screen"`, fondos
+   activados, escala `0.98`, márgenes 0 mm y sin encabezados/pies del navegador.
 2. Revisar saltos, tablas largas, fases y síntesis.
 - ✅ Esperado: contenido legible, sin cortes críticos ni desbordamiento horizontal.
 
@@ -413,3 +413,14 @@ secrets scan. La evidencia final de esta sesión se registra en
 4. Revisar que cada fase indique realizada, prioridad actual o pendiente.
 - ✅ Esperado: documento más compacto, sin desbordes y útil para seguimiento del
   roadmap completo.
+
+### TD7 — QA visual HTML vs PDF
+1. Comparar el HTML aprobado y el PDF página por página.
+2. Confirmar `border-radius` de portada, tarjetas y secciones; badges/chips con
+   un solo borde; colores, fondos, logo e imágenes equivalentes.
+3. Revisar tablas, contenido cortado, desbordes, páginas vacías y cantidad de
+   páginas razonable.
+4. Verificar que versión y fecha coincidan en portada, ficha documental, HTML,
+   PDF y nombre del archivo.
+- ✅ Esperado: paridad visual satisfactoria. Si hay diferencias, corregir el
+  flujo o CSS y regenerar desde el HTML maestro; no editar el PDF manualmente.
