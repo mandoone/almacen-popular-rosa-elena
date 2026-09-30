@@ -96,9 +96,10 @@ sábados de apertura.
 - ✅ Dos pilotos HTML v0.2 aprobados como referencias visuales.
 - ✅ Fuentes Markdown, templates y CSS documental separados.
 - 🔄 Iteración v0.2.1 en revisión: escala compacta al 70 % y roadmap Fases 0–6.
-- ✅ Método HTML → PDF definido y validado el 30-09-2026: el HTML aprobado es
-  la fuente visual maestra y `scripts/render-informe-pdf.py` genera A4 con
-  `media="screen"`, fondos, márgenes 0 mm y escala `0.98`.
+- ✅ Método HTML → PDF validado end-to-end el 30-09-2026: el HTML aprobado es
+  la fuente visual maestra y `scripts/render-informe-pdf.py` reprodujo el
+  informe v1.8 en 6 páginas A4, con paridad visual, radios correctos y sin doble
+  borde, usando `media="screen"`, fondos, márgenes 0 mm y escala `0.98`.
 - ✅ El QA visual HTML vs PDF es obligatorio antes de marcar un archivo como
   `FINAL`; procedimiento en `docs/informes/README_GENERACION_PDF.md`.
 - ⬜ Automatización Markdown → HTML pendiente; no se agregaron dependencias a la

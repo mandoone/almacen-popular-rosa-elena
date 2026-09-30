@@ -20,6 +20,8 @@
 - ⬜ Implementar validación automática de metadata, rutas y placeholders.
 - ✅ Implementar generación PDF desde el HTML aprobado con el script oficial,
   `media="screen"`, escala `0.98` y QA visual obligatorio.
+- ✅ Validar end-to-end el script con el informe v1.8: 6 páginas, paridad visual,
+  radios conservados y badges sin doble borde.
 - ⬜ Unificar la nomenclatura de fases: los informes v0.2 llaman FASE 2 a seguridad
   admin y FASE 3 a configuración; este backlog histórico reservaba FASE 2 para
   panel vendedor y FASE 3 para productos/stock.

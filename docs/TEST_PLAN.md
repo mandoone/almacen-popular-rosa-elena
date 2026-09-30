@@ -424,3 +424,9 @@ secrets scan. La evidencia final de esta sesión se registra en
    PDF y nombre del archivo.
 - ✅ Esperado: paridad visual satisfactoria. Si hay diferencias, corregir el
   flujo o CSS y regenerar desde el HTML maestro; no editar el PDF manualmente.
+
+Resultado de referencia (2026-09-30): **PASS** con
+`2026-09-30_informe-consolidado_estado-proyecto_v1.8_FINAL`. El script oficial
+generó 6 páginas A4; el texto y la geometría coincidieron con el PDF histórico,
+y la revisión visual confirmó radios, bordes, colores, tablas, logo, imágenes y
+paginación sin defectos.

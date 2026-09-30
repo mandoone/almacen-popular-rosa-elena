@@ -15,6 +15,9 @@
 - Método validado con
   `2026-09-30_informe-consolidado_estado-proyecto_v1.8_FINAL`: 6 páginas, radios
   correctos, sin doble borde y con paridad visual satisfactoria.
+- Validación end-to-end PASS: el script oficial generó un PDF nuevo, el
+  preflight confirmó A4, 6 páginas, contenido extraíble y ausencia de cifrado, y
+  la comparación renderizada coincidió con el PDF histórico validado.
 
 ## [F9/F10] — Guiones de corte y evidencia estructurada (2026-09-27)
 
