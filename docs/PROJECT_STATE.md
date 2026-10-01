@@ -9,11 +9,11 @@
 
 Actualización de esta sesión: [granel real](operativa/GRANEL_TEST_2026-10-01.md) implementado en ambas ventas y migrado solo TEST v17 con backup/readback e historia/saldos preservados. 18 referencias acreditadas, diez precios adicionales y once costos adicionales; conteo físico sigue pendiente. Baseline del bloque anterior a continuación; estados nuevos y QA final se consolidan en el [cierre TEST](operativa/CIERRE_TEST_2026-10-01.md).
 
-Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v16. Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
+Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v17. Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
 
-Catálogo: 55 filas auditadas, 18 actualizaciones, 14 precios y 6 costos respaldados; Empanadas creada una vez como POR_APERTURA y no habilitada en aperturas reales. Poroto burro/concentrado históricos inactivos; blanco y detergentes 5L regulares activos. Stock físico pendiente; fuentes comerciales nunca se convierten en stock. 41 fotos inventariadas, revisión/derechos pendientes. F10 local: roles_aprobados READY, 19 PENDING, 0 FAIL. Detalle/evidencia: [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). Producción no autorizada.
+Catálogo: 56 maestros (54 comerciales, dos fixtures), 31 precios corregidos y 30 costos acreditados acumulados desde el precheck de catálogo. Bloque 2: siete precios, trece costos y tres correcciones ortográficas; matriz con 22 PENDING_HUMANO por ID. [Tres preguntas agrupadas](operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). Empanadas POR_APERTURA no habilitada en aperturas reales; Poroto burro/concentrado inactivos e históricos. Stock físico pendiente. 41 fotos inventariadas sin aprobación. F10: 1 READY / 19 PENDING / 0 FAIL. Producción no autorizada.
 
-QA de este bloque: **418/418 PASS, cero fallos**; E2E HTTP/visual y restauración PASS. Lint, build, typecheck, secrets scan y preflight técnico PASS. Dos REQUIERE_REVISION y toda historia preexistente intactas. Audit crítico PASS; cuatro alertas no críticas pendientes de mantenimiento.
+QA de granel: **444/444 PASS**, E2E HTTP/visual y restauración PASS. Lint, build, typecheck, secrets scan y preflight técnico PASS. Catálogo: backup/diff/readback y replay, sin alterar stock ni historia. Dos REQUIERE_REVISION intactas. Cuatro alertas no críticas siguen visibles.
 
 ## Resumen
 

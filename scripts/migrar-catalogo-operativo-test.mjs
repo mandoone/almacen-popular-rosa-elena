@@ -25,6 +25,7 @@ try {
   await cliente.verificar();
   const antes = await cliente.get('obtenerCatalogoOperativoTest');
   await guardar(`catalogo-${modo.slice(2)}-antes`,antes);
+  await guardar(`catalogo-respaldo-${Date.now()}`,antes);
   console.log(`READBACK | ${productos(antes).length} productos; ${antes.integridad.length} pestañas`);
   if (modo === '--prepare-test') {
     const preparado = await cliente.post('prepararDisponibilidadProductosTest');
@@ -77,6 +78,17 @@ try {
     }
     const despues = await cliente.get('obtenerCatalogoOperativoTest');
     asegurarHistoria(antes,despues,['AUDITORIA_PRODUCTOS','HISTORIAL_COSTOS']);
+    for (const p of productos(antes)) {
+      const d = productos(despues).find(d => d.id_producto === p.id_producto);
+      const cambio = plan.actualizaciones.find(c => c.producto_id === p.id_producto);
+      for (const [k,v] of Object.entries(p)) if (!cambio || !Object.hasOwn(cambio.cambios,k)) {
+        assert.deepEqual(d[k],v,`Campo no autorizado: ${p.id_producto}.${k}`);
+      }
+    }
+    for (const nombre of ['AUDITORIA_PRODUCTOS','HISTORIAL_COSTOS']) {
+      const a = antes.hojas.find(h => h.nombre === nombre), d = despues.hojas.find(h => h.nombre === nombre);
+      a.registros.forEach((r,i) => assert.deepEqual(d.registros[i],r,'Historia existente alterada'));
+    }
     for (const cambio of plan.actualizaciones) assert.ok(camposCoinciden(productos(despues).find(p => p.id_producto === cambio.producto_id),cambio.cambios),'Readback distinto');
     for (const nuevo of plan.creaciones) assert.ok(camposCoinciden(productos(despues).find(p => p.id_producto === nuevo.producto_id),nuevo.producto),'Readback de alta distinto');
     await guardar(`catalogo-${hash}-despues`,despues);

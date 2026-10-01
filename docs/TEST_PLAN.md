@@ -1,5 +1,7 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+Bloque catálogo 01/10: 21 actualizaciones sin altas/stock; backup/readback TEST y replay con cero cambios. Campos no autorizados e historia previa comprobados; 25 tests focales y lint PASS. Matriz: 30 costos acreditados / 22 pendientes humanos.
+
 > Pruebas manuales del sistema. Cada caso: **pasos → resultado esperado**. Se amplía
 > al avanzar cada fase. Funcionalidades actuales en `docs/PROJECT_STATE.md`.
 

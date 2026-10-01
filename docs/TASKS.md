@@ -11,12 +11,12 @@
 
 - ✅ Roles definitivos: confirmar todos; cancelar Operación/Admin, Venta DENY en UI/API.
 - ✅ REGULAR/POR_APERTURA/histórico, compatibilidad antigua, validación backend y UI administrativa.
-- ✅ Apps Script TEST v16, backup, migración idempotente y readback de 55 productos.
+- ✅ Apps Script TEST v17, backup, migración idempotente de granel y readback de 56 maestros.
 - ✅ Normalizar porotos/detergentes; Empanadas maestro POR_APERTURA, nunca habilitado para aperturas reales.
-- ✅ Auditoría y cruce de últimas fuentes: 14 precios, 6 costos y 1 alta TEST; resto PENDING por SKU/unidad/faltantes.
+- ✅ Cruce completo con documento Nadia y comanda/diseño: acumulados 31 precios corregidos, 30 costos acreditados y una alta TEST; 22 PENDING_HUMANO por ID, tres preguntas agrupadas.
 - ✅ Inventario READ-ONLY de 41 fotos y matriz privada de 10 actores 2/2/6 sin credenciales.
 - ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
-- ✅ E2E por apertura/roles y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 418/418, lint/build/typecheck/secrets/preflight PASS.
+- ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 444/444, lint/build/typecheck/secrets/preflight PASS.
 - ⬜ Mantenimiento de cuatro alertas no críticas de dependencias antes del corte productivo.
 - ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
 - ⬜ Dominio, backup/rollback/ventana finales y activación productiva solo tras HUMAN GATE.

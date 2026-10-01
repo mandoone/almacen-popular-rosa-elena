@@ -4,6 +4,8 @@ Producción no autorizada. Evidencia privada, backups y cuentas en `operativa.lo
 
 ## Actualización de sesión autónoma
 
+Bloque 2: siete precios, trece costos y tres correcciones de nombres adicionales; 21 maestros actualizados, cero altas. Readback y replay PASS (segunda aplicación cero cambios), stock e historia conservados. [Matriz completa](MATRIZ_CATALOGO_2026-10-01.csv) y [tres preguntas agrupadas](CATALOGO_PENDIENTES_REALES_2026-10-01.md): 30 costos acreditados / 22 PENDING_HUMANO. Lint y 25 tests focales PASS.
+
 [Granel real D40](GRANEL_TEST_2026-10-01.md) supersede las dudas de granel/unidad de la auditoría anterior registrada debajo. Dieciocho maestros actualizados solo TEST v17, diez precios adicionales, once costos adicionales y cinco nombres sin presentación cerrada. Saldos numéricos, IDs, snapshots anteriores y dos REQUIERE_REVISION conservados. Backup Sheet y fuente Apps Script v16 privados; esquema aditivo con repetición sin cambios y readback completo.
 
 E2E HTTP local PASS: Arroz 250 g = $338, precio/modo/referencia hostiles ignorados, creación y replay, confirmación Venta y replay, cancelación Venta 403, Operación cancela y replay, saldo 91 → 90.75 → 91 en base heredada de 1000 g. Un pedido sintético cancelado conservado y apertura sintética APE-20261004 cerrada. Cada fila preexistente de historia permaneció idéntica; cada maestro y saldo terminó idéntico al inicio del E2E; aperturas reales intactas. UI desktop/móvil con agent-browser: referencia /kg y peso libre 150 g = $203, sin overlay ni errores; ajuste de distribución del carrito para conservar nombre legible.

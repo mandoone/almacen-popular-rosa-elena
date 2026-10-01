@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Catálogo consolidado TEST — 2026-10-01
+
+- Documento Nadia y rango B:H de Diseño distinguen unidad comercial/base del costo. Siete precios, trece costos y tres correcciones ortográficas; no fusionar marcas ni formatos dudosos.
+- Matriz de 56 maestros: 30 costos acreditados y 22 PENDING_HUMANO comerciales. Backup/readback y replay sin cambios; stock, IDs e historia conservados.
+
 ## Granel real — 2026-10-01
 
 - Modelo aditivo UNIDAD/GRANEL y cantidades libres en gramos para tienda/presencial; cálculo y snapshots desde maestro, CLP entero, saldo histórico conservado y base congelada.
