@@ -3,8 +3,8 @@
  *
  * Fuente: docs/fase-3a/levantamiento_operativo_fase_3a_consolidado.md (§5, §6.3).
  *
- * Las categorías y unidades de venta NO se fijan aquí: siguen pendientes de
- * Administración. Solo se expone la propuesta base como constante editable.
+ * Categorías heredadas se conservan; modo/referencias se acreditan en maestro
+ * según D40/D41. Las constantes de propuesta no sustituyen esas evidencias.
  */
 
 import { esGranel, cantidadStock, gramosValidos } from '../granel.ts';
@@ -46,7 +46,7 @@ export interface ProductoFase3A {
   precio_venta: number;
   stock_actual: number;
   permite_decimal: boolean;
-  /** Incremento de venta; para granel por kilo, 0.25. */
+  /** Incremento decimal legado; GRANEL explícito usa gramos enteros libres. */
   paso_venta?: number;
   /** §5.9: el costo cambió y el precio público aún no se revisa. */
   requiere_revision_precio?: boolean;
@@ -80,9 +80,8 @@ export interface ResultadoCantidad {
  *
  * Reglas:
  *   - cantidad > 0;
- *   - si el producto no permite decimales, debe ser entera;
- *   - si permite decimales, debe ser múltiplo del paso de venta (0,25 por
- *     defecto para granel);
+ *   - GRANEL explícito: gramos enteros libres y conversión a base de stock;
+ *   - contrato legado: entero, o múltiplo del paso decimal configurado;
  *   - no puede superar el stock disponible.
  *
  * La comparación con el paso se hace en centésimas enteras para evitar los

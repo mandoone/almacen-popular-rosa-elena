@@ -14,6 +14,10 @@ Complemento técnico: conteo físico en kg/1 g convertido a la base histórica; 
 
 Evidencia Nadia entregada por Omar: pesos son referencias de precio; cualquier cantidad a granel, incluido arroz 250 g. Supersede el mínimo/paso 250 g de F3A y cualquier interpretación de 500 g/1 kg como presentaciones cerradas. Modelo aditivo UNIDAD/GRANEL, gramos de referencia y equivalencia de base histórica de stock; backend autoridad y CLP entero. No reinterpretar detalles ni inventar conteo. [Contrato](DATA_MODEL.md) y [migración TEST](operativa/GRANEL_TEST_2026-10-01.md).
 
+## D41 — Jerarquía comercial y pendientes reales (2026-10-01)
+
+Respuesta humana directa más reciente > documento Nadia > comanda/diseño > catálogo histórico > suposición. Complementa D38: comanda da precio público y diseño costo/compras para SKU/unidad inequívocos; no desplazan la respuesta directa ni acreditan stock físico. 18 GRANEL resueltos, 30 costos activos acreditados, 22 pendientes humanos por variante/formato/costo. Ortografía/capitalización no requieren una nueva pregunta comercial. [Matriz y tres preguntas](operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md).
+
 ## D39 — Capas de rate limit elegidas para el primer lanzamiento (2026-10-01)
 
 WAF por IP más limitador local por IP+actor. El riesgo residual regional se acepta para primer lanzamiento; WAF no sustituye un contador global por actor. Supersede la elección abierta de D33; no autoriza publicar reglas ni activar Production.
@@ -224,6 +228,8 @@ Confirmación Almacén/Omar 2026-10-01: Administración incluye Operación y Ven
 
 ## D22 — Roles por capacidades y stock al confirmar pedidos
 
+> Entrada histórica: matriz/asignación provisional supersedidas por D36 (01/10); modelo de stock sigue vigente. No volver a pedir roles ni usernames.
+
 - **Contexto:** la contraseña compartida no distinguía actores ni permisos y el
   pedido web descontaba stock antes de que una persona lo confirmara.
 - **Decisión:** modelar roles genéricos jerárquicos (`venta`, `operacion`,
@@ -248,6 +254,8 @@ Confirmación Almacén/Omar 2026-10-01: Administración incluye Operación y Ven
   humana bloqueante antes de indexar producción.
 
 ## D21 — No migrar automáticamente a Next 16 por npm audit
+
+> Cifras históricas de esta entrada supersedidas por [auditoría 01/10](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md): cuatro alertas, tres altas/una moderada/cero críticas. Política de upgrade separado sigue vigente.
 
 - **Contexto:** las alertas corregibles sin cambio mayor eran transitivas; las
   restantes provienen del PostCSS incluido por Next 15 y npm propone Next 16.

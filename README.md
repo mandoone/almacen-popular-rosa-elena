@@ -4,6 +4,8 @@ Sitio público, tienda de pedidos anticipados y panel operativo del Almacén Pop
 
 ## Desarrollo local
 
+Estado 01/10: operación validada únicamente TEST, Production NO autorizada. GRANEL libre en gramos en tienda/presencial; backend calcula contra maestro. [Cierre TEST](docs/operativa/CIERRE_TEST_2026-10-01.md), [20 gates F10](docs/operativa/REVISION_F10_2026-10-01.md), [conteo/dry-run](docs/operativa/CONTEO_CORTE_TEST.md) y [cutover preparado](docs/operativa/CUTOVER_TECNICO_PREPARADO.md).
+
 Requisitos: Node.js 20 o superior y npm.
 
 ```bash
@@ -37,6 +39,8 @@ npm run test:e2e:fase56
 ```
 
 Las escrituras requieren el opt-in definido por el runner. No se cargan archivos env automáticamente, no existe cleanup remoto y producción queda fuera de este flujo.
+
+Para scripts TEST compatibles, `node scripts/run-test-env.mjs scripts/<runner>.mjs <argumentos>` carga la configuración local Next, exige TEST y excluye variables productivas del proceso hijo. No imprime secretos ni modifica archivos env. Los scripts de activación de cuentas son locales y no activan personas automáticamente.
 
 ## Apps Script TEST
 

@@ -4,6 +4,20 @@ Producción no autorizada. Evidencia privada, backups y cuentas en `operativa.lo
 
 ## Actualización de sesión autónoma
 
+Estado vigente al cierre de bloques 1–9: Apps Script TEST **v18**, fuente/manifest anterior v17 respaldados; 56 maestros/18 GRANEL coinciden con matriz. Readback de las 17 tablas mantiene maestros, saldos e historia idénticos al baseline de preparación de conteo; fotos comerciales vacías y aperturas reales intactas.
+
+Sesión desde c036320: **17 precios adicionales** (10 granel + 7 envasados), **24 costos adicionales** (11 granel + 13 envasados). Acumulado con baseline anterior: 31 precios corregidos, 30 costos activos acreditados y 22 PENDING_HUMANO. No altas nuevas en esta sesión; Empanadas ya existía en HEAD inicial. [Tres preguntas comerciales](CATALOGO_PENDIENTES_REALES_2026-10-01.md).
+
+Preparados y validados: [activación de diez cuentas](ACTIVACION_CUENTAS_TEST.md), tres guías, [ensayo presencial 40 minutos](../ENSAYO_FINAL_F10_TEST.md), [conteo/dry-run/importador](CONTEO_CORTE_TEST.md) y [cutover compatible](CUTOVER_TECNICO_PREPARADO.md). Archivos nominales/hash/comandos/checklists/acta/saldos viven ignorados; no credenciales humanas, conteos ni montos aplicados.
+
+[F10 completo](REVISION_F10_2026-10-01.md): 1 TÉCNICO_RESUELTO, 15 HUMAN_GATE, 4 SOLO_CORTE_PRODUCTIVO; 0 pendiente técnico ejecutable en TEST. Manifiesto conserva 1 READY/19 PENDING/0 FAIL y NO-GO. El contrato productivo requiere habilitación explícita futura: promover Preview o cambiar variables no basta y no autoriza el corte.
+
+[Cuatro alertas npm](AUDITORIA_DEPENDENCIAS_2026-10-01.md) investigadas, sin upgrades/package/lockfile modificados. Dos DEV_ONLY, PostCSS transitiva sin entrada HTTP hostil identificada y Next heredada; mantenimiento separado y reauditoría al corte. Alertas no corregidas ni ocultas.
+
+QA visual adicional de solo lectura: carrito Arroz 150 g / $203 en 390×844 sin truncar nombre/desbordar, referencias /kg, Otra cantidad, UNIT histórico normalizado y formularios Admin válidos; granel muestra gramos libres. Venta no muestra Caja; /me de tres actores sintéticos devuelve su rol. Consola vacía después de reiniciar navegador. No ventas/ajustes en esta revisión. Servidor/navegador cerrados y cookies efímeras retiradas.
+
+Auditoría documental: requisitos de costo+margen automático/reserva al crear corregidos; fuente comercial jerárquica explícita; cuentas/horarios/granel ya resueltos no se reabren. Doce documentos históricos conservan texto original con aviso de supersesión D36/D40 y enlace al estado vigente. El backend, matriz y documentación actual concuerdan.
+
 Bloque 2: siete precios, trece costos y tres correcciones de nombres adicionales; 21 maestros actualizados, cero altas. Readback y replay PASS (segunda aplicación cero cambios), stock e historia conservados. [Matriz completa](MATRIZ_CATALOGO_2026-10-01.csv) y [tres preguntas agrupadas](CATALOGO_PENDIENTES_REALES_2026-10-01.md): 30 costos acreditados / 22 PENDING_HUMANO. Lint y 25 tests focales PASS.
 
 [Granel real D40](GRANEL_TEST_2026-10-01.md) supersede las dudas de granel/unidad de la auditoría anterior registrada debajo. Dieciocho maestros actualizados solo TEST v17, diez precios adicionales, once costos adicionales y cinco nombres sin presentación cerrada. Saldos numéricos, IDs, snapshots anteriores y dos REQUIERE_REVISION conservados. Backup Sheet y fuente Apps Script v16 privados; esquema aditivo con repetición sin cambios y readback completo.

@@ -1,5 +1,7 @@
 # ENTORNO_TEST_FASE_3B.md — Estrategia de entorno TEST (compartido Fase 3A + 3B)
 
+> Nota de continuidad 2026-10-01: documento histórico; su texto original se conserva. Los pasos/presentaciones de granel quedan supersedidos por D40 (gramos enteros libres y peso como referencia de precio); roles/nómina/horario por D36. Ortografía y costos inequívocos ya se consolidaron. Pendientes actuales: [revisión F10](../operativa/REVISION_F10_2026-10-01.md) y [catálogo](../operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). No reabrir preguntas históricas cerradas.
+
 > Estado: **entorno TEST verificado de punta a punta, incluyendo Next.js
 > local (2026-08-19) — ver §G y §H.** Producción no fue tocada en ningún
 > momento. `src/lib/appsScriptPedidos.ts` elige entre variables productivas y

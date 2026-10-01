@@ -1,5 +1,7 @@
 # DIAGNÓSTICO_ACTUAL.md — Qué hace hoy el sistema (FASE 3A)
 
+> Nota de continuidad 2026-10-01: documento histórico; su texto original se conserva. Los pasos/presentaciones de granel quedan supersedidos por D40 (gramos enteros libres y peso como referencia de precio); roles/nómina/horario por D36. Ortografía y costos inequívocos ya se consolidaron. Pendientes actuales: [revisión F10](../operativa/REVISION_F10_2026-10-01.md) y [catálogo](../operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). No reabrir preguntas históricas cerradas.
+
 > Diagnóstico técnico del flujo real de pedidos, pagos y stock, contrastado con
 > `levantamiento_operativo_fase_3a_consolidado.md`.
 > Fecha: 2026-07-29 · Rama: `feature/fase-3a-operativa`

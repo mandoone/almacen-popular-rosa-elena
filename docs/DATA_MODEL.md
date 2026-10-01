@@ -22,7 +22,7 @@ DETALLE_PEDIDOS y DETALLE_VENTAS agregan `modo_venta`, `gramos_solicitados`, `gr
 
 APERTURA_PRODUCTOS: apertura_id + producto_id (pareja única), habilitado SI/NO, actualizado_por y actualizado_en. Sin apertura: REGULAR activos. Con apertura: REGULAR activos + especiales habilitados. Duplicados rechazan el catálogo; valores inválidos no habilitan. Administrador gestiona oferta sin editar Sheet; no hay precio por apertura. Backend valida bajo lock en pedido/venta; snapshots y diario durable conservados.
 
-TEST: 56 maestros (54 comerciales y 2 fixtures), 2 comerciales históricos inactivos y Empanadas POR_APERTURA sin habilitación real. Última comanda es precio público; Diseño de compra es costo y compras, no stock actual. Brand/formato distinguen SKU; nunca fusionar historia.
+TEST: 56 maestros (54 comerciales y 2 fixtures), 2 comerciales históricos inactivos y Empanadas POR_APERTURA sin habilitación real. Jerarquía: respuesta humana directa más reciente > documento Nadia > comanda/diseño > histórico > suposición. Comanda 03/10 acredita precio público; Diseño acredita costo/compras, nunca stock físico actual. Marca/formato distinguen SKU; no fusionar historia. Arroz y demás 18 granel tienen unidad resuelta, sin pendiente de presentación.
 
 ## 1. Estado actual
 
@@ -204,23 +204,22 @@ Diario de intención y verificación para creación/confirmación/cancelación. 
 ## 4. Reglas de negocio
 
 ### Precio de venta
-- Precio vigente explícito en PRODUCTOS; última comanda es referencia pública aprobada.
+- Precio vigente explícito en PRODUCTOS; comanda 03/10 es referencia pública, subordinada a respuesta humana directa/documento Nadia cuando corresponda.
 - Costo + margen (10% de referencia) y redondeo son herramientas de propuesta; nunca reemplazan automáticamente el precio aprobado.
 - DETALLE_PEDIDOS/DETALLE_VENTAS conserva snapshot. Solo coincidencia inequívoca autoriza cambios TEST; dudas de SKU/unidad permanecen PENDING.
 
 ### Stock
-- El stock se descuenta/registra mediante **MOVIMIENTOS_STOCK** (fuente de verdad
-  del inventario); `PRODUCTOS.stock` refleja el saldo.
+- El stock se descuenta/registra mediante **MOVIMIENTOS_STOCK** (auditoría
+  del inventario); `PRODUCTOS.stock_actual` refleja el saldo y el diario verifica operaciones.
 - **Pedido recibido:** crear no modifica stock ni genera movimiento.
 - **Confirmación:** `recibido → pendiente` descuenta stock y registra una salida
   verificable ligada a `operacion_id`.
 - **Devolución:** cancelar desde `pendiente`/`listo` repone una vez; cancelar desde
   `recibido` no mueve stock.
-- **Salida:** al concretar la venta/entrega, la reserva se convierte en `salida`.
+- **Entrega:** cambia estado sin otro movimiento: la salida ya quedó registrada al confirmar.
 - **Entrada:** las compras generan movimientos `entrada`.
 
-> Las reglas de stock se implementan a partir de FASE 3; en FASE 1 solo se persisten
-> pedidos. Se documentan aquí para mantener coherencia del modelo.
+> Estas reglas ya están implementadas y verificadas en TEST; stock físico permanece gate humano.
 
 ---
 

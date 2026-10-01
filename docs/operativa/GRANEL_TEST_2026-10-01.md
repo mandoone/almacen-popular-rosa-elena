@@ -2,7 +2,7 @@
 
 Evidencia humana directa Nadia, entregada por Omar el 01/10: los pesos estipulan el precio; se puede pedir cualquier cantidad a granel, incluido arroz 250 g. Supersede paquetes cerrados, SKU por peso y mínimos/pasos 250 g. Los accesos rápidos son opciones, nunca restricciones.
 
-Contrato dueño: [DATA_MODEL](../DATA_MODEL.md). Código TEST v17. La solicitud pública/presencial lleva `cantidad` en gramos enteros positivos para GRANEL. Precio, modo y referencia se leen del maestro bajo lock. Cero, negativos, fracciones, valores no finitos y datos mal formados se rechazan. Los campos de precio/subtotal/modo/referencia enviados por browser no participan del cálculo ni del hash canónico.
+Contrato dueño: [DATA_MODEL](../DATA_MODEL.md). Implementación granel TEST v17, vigente v18 con precisión/control concurrente. La solicitud pública/presencial lleva `cantidad` en gramos enteros positivos para GRANEL. Precio, modo y referencia se leen del maestro bajo lock. Cero, negativos, fracciones, valores no finitos y datos mal formados se rechazan. Los campos de precio/subtotal/modo/referencia enviados por browser no participan del cálculo ni del hash canónico.
 
 | ID | Producto | Gramos referencia | Precio CLP | Costo TEST por referencia |
 |---|---|---:|---:|---:|

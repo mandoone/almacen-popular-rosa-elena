@@ -1,4 +1,6 @@
 # Levantamiento operativo — Fase 3A / Fase 4
+
+> Nota de continuidad 2026-10-01: documento histórico; su texto original se conserva. Los pasos/presentaciones de granel quedan supersedidos por D40 (gramos enteros libres y peso como referencia de precio); roles/nómina/horario por D36. Ortografía y costos inequívocos ya se consolidaron. Pendientes actuales: [revisión F10](../operativa/REVISION_F10_2026-10-01.md) y [catálogo](../operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). No reabrir preguntas históricas cerradas.
 ## Web Almacén Popular Rosa Elena Morales
 
 **Estado:** levantamiento operativo completo  

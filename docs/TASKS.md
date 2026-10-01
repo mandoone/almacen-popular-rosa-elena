@@ -17,12 +17,12 @@
 
 - ✅ Roles definitivos: confirmar todos; cancelar Operación/Admin, Venta DENY en UI/API.
 - ✅ REGULAR/POR_APERTURA/histórico, compatibilidad antigua, validación backend y UI administrativa.
-- ✅ Apps Script TEST v17, backup, migración idempotente de granel y readback de 56 maestros.
+- ✅ Apps Script TEST v18, backups v16/v17, migración idempotente de granel y readback de 56 maestros.
 - ✅ Normalizar porotos/detergentes; Empanadas maestro POR_APERTURA, nunca habilitado para aperturas reales.
 - ✅ Cruce completo con documento Nadia y comanda/diseño: acumulados 31 precios corregidos, 30 costos acreditados y una alta TEST; 22 PENDING_HUMANO por ID, tres preguntas agrupadas.
 - ✅ Inventario READ-ONLY de 41 fotos y matriz privada de 10 actores 2/2/6 sin credenciales.
 - ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
-- ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 444/444, lint/build/typecheck/secrets/preflight PASS.
+- ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 468/468, lint/build/typecheck/secrets/preflight PASS.
 - ✅ Auditoría concreta de cuatro alertas: dos DEV_ONLY, PostCSS transitiva sin ruta HTTP expuesta y Next heredada; [mantenimiento separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). ⬜ Upgrade separado, sin cambiar paquetes en esta sesión; reauditar al corte.
 - ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
 - ✅ Tres guías por rol y ensayo presencial de 40 minutos preparados, con firma/evidencia por persona y restauración de fixtures; cinco gates humanos siguen PENDING.
@@ -257,16 +257,16 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Crear rutas admin protegidas, panel `/admin/vendedor` y comanda imprimible.
 - ✅ Preparación aditiva, Apps Script TEST, venta por unidad/decimal, stock,
   errores e idempotencia validados.
-- ⬜ Rol vendedor separado de administrador.
-- ⬜ Política segura e idempotente para anular/devolver una venta presencial.
+- ✅ Rol Venta separado; sesión/capacidades con jerarquía 2/2/6 aprobada.
+- ⬜ Mejora posterior al corte inicial: política de devolución de venta presencial terminal. Conservar evidencia y compensación revisada; no equivale a cancelación de pedido implementada ni gate F10 de este alcance.
 
 ---
 
 ## FASE 4 — Productos, stock, precios e imágenes
 
-- ⬜ Gestión de productos desde la Sheet operativa (hoja PRODUCTOS).
-- ⬜ Cálculo de `precio_venta` (costo + margen, redondeo a $10) — ver `docs/DATA_MODEL.md`.
-- ⬜ Control de stock con MOVIMIENTOS_STOCK (reserva/devolución/salida/entrada).
+- ✅ Gestión de productos desde PRODUCTOS y UI/API administrativa TEST.
+- ✅ Precio explícito aprobado; costo/margen solo propuesta. GRANEL proporcional/redondeo CLP, autoridad backend (D38/D40).
+- ✅ Stock auditado: reserva al confirmar, devolución única, compras/ajustes y diario durable.
 - ✅ Preparar categorías largas, filtros, señal de granel, unidad visible y
   placeholder para productos sin imagen, sin alterar datos operativos.
 - ✅ Auditar en modo read-only las 54 filas de `PRODUCTOS` TEST, ampliar el
@@ -277,8 +277,8 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   comparación optimista y readback exclusivo de TEST.
 - ✅ Canonizar categorías y unidades sin modificar nombres, precios, costos,
   stock, mínimos, prioridades, activos ni imágenes.
-- ⬜ Antes de producción: confirmar modelo físico de granel, conteo/mínimos,
-  costos, prioridades, cuatro precios extremos y fotografías/derechos.
+- ✅ Modelo comercial de granel acreditado e implementado (D40).
+- ⬜ Antes de producción: recibir conteo/mínimos/costos/prioridades, resolver variantes/formato comercial y aprobar fotografías/derechos. Precio bajo costo no se cambia sin evidencia comercial.
 
 ---
 
@@ -427,7 +427,7 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 
 ## Pendientes transversales (a vigilar)
 
-- ⬜ Centralizar datos hardcodeados (WhatsApp, dirección, fechas) en CONFIG.
+- ✅ Fuente pública compartida en contenidoPublico.ts para contactos, horario y fechas; traslado a CONFIG editable es mejora posterior, no gate técnico TEST.
 - ✅ Actualizar fechas de apertura del Home con las siete fechas informadas.
-- ⬜ Reescribir `README.md` con descripción real (apuntando a `docs/`).
+- ✅ README describe proyecto real, QA, configuración y documentación vigente.
 - ⬜ Riesgo repo en Dropbox: vigilar conflictos de sincronización de `.git`.

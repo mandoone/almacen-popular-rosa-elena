@@ -102,8 +102,9 @@ Datos comerciales parciales aplicados solo en TEST; [cierre operativo](operativa
    designar titular y suplente para revocar. No guardar nombres/credenciales en Git.
 2. Mantener los actor_id y roles aprobados; no volver a elegirlos.
    Crear una credencial inicial con `npm run auth:credential -- --actor <id>
-   --role <rol>` en terminal privada: el comando pide la clave sin eco, pero
-   muestra el hash; evitar grabaciones, logs y pantalla compartida. Entregar la
+   --role <rol> --name <nombre_visible> --output operativa.local/credenciales/<id>.json`
+   en terminal privada: pide la clave sin eco y guarda el hash sin imprimirlo.
+   Evitar grabaciones/logs/pantalla compartida. Entregar la
    contraseña al titular por canal separado; acordar y verificar su reemplazo.
 3. Construir el registro **completo** `ADMIN_USERS_JSON` en gestor seguro,
    conservando cuentas vigentes y versiones monotónicas; validarlo antes de

@@ -44,9 +44,9 @@ operando el sistema de forma simple, gratuita y sin fines de lucro.
 
 ### FASE 3 — Productos, precios y stock
 - RF-3.1 Gestión de productos desde la Google Sheet operativa.
-- RF-3.2 Precio de venta calculado desde costo + margen, con redondeo (ver
-  `docs/DATA_MODEL.md`).
-- RF-3.3 Control de stock (existencias, reserva al pedir, devolución al cancelar).
+- RF-3.2 Precio público explícito del maestro según fuente comercial aprobada. Costo + margen solo propone; GRANEL calcula proporción por gramos y redondea al CLP entero (D38/D40).
+- RF-3.3 Control de stock: crear pedido no descuenta; confirmar descuenta una vez; cancelar pendiente/listo devuelve una vez; entregar no vuelve a descontar. Mantener historial y replay.
+- RF-3.4 UNIDAD/ENVASADO y GRANEL diferenciados; granel acepta cualquier entero positivo de gramos, con referencia de precio inequívoca y backend como autoridad. Mismo contrato en tienda y presencial.
 
 ### FASE 4 — Compras y abastecimiento
 - RF-4.1 Registro de compras a proveedores.

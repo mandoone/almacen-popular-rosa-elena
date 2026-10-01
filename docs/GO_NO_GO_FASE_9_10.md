@@ -19,14 +19,14 @@ Corte local: roles_aprobados READY, 19 PENDING, 0 FAIL. Asignación 2 Administra
 | Capacidades | Matriz aprobada; todos confirman, solo Operación/Admin cancelan | NO por matriz; SÍ por cuentas sin ensayo | RESUELTA 01/10 | Implementada UI/API; nombres fuera de src |
 | CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
 | Contenido/contactos/derechos | F9-01 a F9-04 pendientes | SÍ | SÍ, Almacén | NO sin fuente/aprobación |
-| Stock/precios/costos | TEST normalizado; 14 precios/6 costos parciales trazables | SÍ por stock/unidades/SKU/costos faltantes | SÍ para faltantes | Backup/diff/readback aplicados solo TEST |
+| Stock/precios/costos | 18 GRANEL acreditados; 31 precios corregidos acumulados, 30 costos activos acreditados | SÍ por conteo/variantes/22 costos pendientes | SÍ para faltantes reales | Backup/diff/readback e idempotencia solo TEST |
 | Caja/saldos | Corte real no informado | SÍ para caja/abastecimiento | SÍ, Almacén | NO cargar aún |
 | Backup/rollback | Procedimiento y manifiesto listos; evidencia productiva no ejecutada | SÍ | SÍ, responsables/ventana | Preparación CERRADA |
 | Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
 | Go/No-Go | Manifiesto de 20 checks preparado; estado actual PENDING | SÍ | SÍ | Automatización CERRADA |
 
 Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visual en Preview;
-`PENDIENTE_TECNICO` para activar y comprobar rate limiting distribuido y para dominio/CSP final;
+`SOLO_CORTE_PRODUCTIVO` para habilitar contrato productivo explícito, activar/verificar WAF y dominio/CSP final;
 `PENDIENTE_ALMACEN` para credenciales/ensayo humanos, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
 `BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
@@ -202,12 +202,10 @@ su QA técnica local, remota por HTTP y visual; no constituyen la asignación hu
 |---|---|---|---|---|---|
 | `minimatch` | alta derivada | transitiva, desarrollo | npm la marca por brace-expansion | mantenimiento transitivo junto con brace-expansion | NO para TEST actual; revisar antes del corte productivo |
 | `brace-expansion` | alta | transitiva, desarrollo | DoS por patrones hostiles; la app no recibe patrones | Audit 01/10 agrega nuevos advisories contra los overrides existentes 1.1.18/5.0.9; mantenimiento pendiente | NO para TEST actual; revisar parche transitivo antes del corte productivo |
-| `js-yaml` | alta | transitiva, desarrollo (ESLint) | DoS al parsear YAML hostil; no ocurre en runtime | override 4.3.2 | NO, resuelta |
-| `postcss-selector-parser` | baja | transitiva, build (Tailwind) | recursión con CSS hostil; CSS es del repo | override 6.1.3 | NO, resuelta |
 | `postcss` incluido por Next | alta | transitiva de dependencia directa, build | lectura de sourcemaps/CSS hostiles; no hay subida de CSS por usuarios | requiere versión de Next que incorpore PostCSS corregido | NO con el modelo actual; vigilar |
 | `next` | moderada derivada | directa, runtime/build | npm la marca por el PostCSS incluido | auditoría 01/10 propone Next 16.3.8 (major) | NO por sí sola; migración separada |
 
-Resultado real al 2026-10-01: **4 alertas (3 altas, 1 moderada), 0 críticas**.
+Detalle dueño: [auditoría de mantenimiento](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md), con versiones instaladas/corregidas, rutas, siete GHSA/CVE y exposición comprobada. Resultado al 2026-10-01: **4 alertas (3 altas, 1 moderada), 0 críticas**. Los overrides de js-yaml/postcss-selector-parser son correcciones históricas y no alertas abiertas de este audit.
 Audit al umbral crítico PASS. No se modificaron dependencias en este bloque: el nuevo
 hallazgo es transitivo de desarrollo sin entrada de patrones del usuario; el PostCSS
 interno de Next requiere evaluar una migración separada. Registrar mantenimiento
@@ -245,7 +243,7 @@ la revisión de evidencia ni la aprobación de Producción.
 | Stock físico | BLOCKED | SÍ: disponibilidad y pedidos reales. |
 | Precios/SKU/unidades pendientes | PENDING; última comanda base aprobada, actualización parcial TEST | SÍ para productos ambiguos. |
 | Costos | HUMAN_DECISION_REQUIRED | SÍ para compras/márgenes; no para catálogo si precios de venta se validan aparte. |
-| Venta física real `PROD-001–019` | HUMAN_DECISION_REQUIRED | SÍ para activar venta presencial de esos productos. |
+| Modelo granel `PROD-001–019` | Resuelto para 18 granel, Poroto burro histórico NO (D40) | NO por modelo; SÍ por conteo/costos reales restantes. |
 | Imágenes, derechos y créditos | HUMAN_DECISION_REQUIRED | SÍ para publicar cada imagen; se puede lanzar sin ellas. |
 | Stock mínimo y prioridades | PENDING | NO para catálogo/pedidos; SÍ para recomendaciones de abastecimiento fiables. |
 | Saldo bancario y efectivo | PENDING | NO para sitio público; SÍ antes de usar caja/abastecimiento productivo. |
@@ -271,8 +269,7 @@ la revisión de evidencia ni la aprobación de Producción.
 
 ### PENDING
 
-- Resolver dos advisories npm ligados a Next 15 cuando exista una corrección sin
-  migración mayor aceptada, o planificar la migración separada.
+- Cuatro alertas npm abiertas (3 altas/1 moderada/0 críticas), exposición y rutas auditadas; [upgrade separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). No dependencias modificadas en esta sesión; reauditar al corte.
 - Completar mínimos/prioridades, saldo/efectivo y observabilidad externa opcional.
 - Activar la WAF por IP elegida solo con gate productivo y ejecutar QA TEST de las cuentas
   humanas finales, incluida revocación frente a deployments históricos.

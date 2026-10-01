@@ -49,7 +49,7 @@ node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/preparar-registro-cu
 
 Tras cada cambio, editar solo el entorno autorizado, tomar nuevo snapshot de deployment y verificar cookie antigua 401, nuevo login y cada URL histórica retirada. Si se perdió contraseña: confirmar identidad por canal previamente acordado, revocar/versionar primero, generar otra en el gestor seguro, entregar al titular, validar login. No recuperar ni volver a entregar la clave antigua.
 
-Rotación de secreto: nueva ADMIN_SESSION_SECRET y ADMIN_SESSION_SECRET_VERSION; ventana previa acotada con SECRET_PREVIOUS/PREVIOUS_VERSION. Retirar anterior al terminar ventana. Para invalidación inmediata/emergencia, no mantener anterior. Conservar evidencia de custodia y comprobar token antiguo/nuevo; clave y valores viven en gestor seguro.
+Rotación de secreto: nueva ADMIN_SESSION_SECRET y ADMIN_SESSION_SECRET_VERSION; ventana previa acotada con ADMIN_SESSION_SECRET_PREVIOUS y ADMIN_SESSION_SECRET_PREVIOUS_VERSION. Retirar anterior al terminar ventana. Para invalidación inmediata/emergencia, no mantener anterior. Conservar evidencia de custodia y comprobar token antiguo/nuevo; clave y valores viven en gestor seguro.
 
 Rollback: restaurar código estable con **registro y secretos vigentes**, nunca un deployment que reinstale cuentas/secretos revocados. Si registro nuevo falla, cerrar acceso admin y corregir configuración validada; rollback de registro conserva versiones monotónicas y revocaciones. No abrir legacy como sustituto.
 

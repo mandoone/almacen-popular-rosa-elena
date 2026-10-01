@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Consistencia final TEST — 2026-10-01
+
+- Readback de 56 maestros/18 GRANEL contra matriz y 17 tablas contra baseline de conteo sin diferencias; no escrituras.
+- Requisitos/precio/stock, estados vigentes, roles/horario y variables de rotación corregidos. Doce documentos históricos marcados supersedidos sin alterar sus fuentes originales. Formularios granel muestran gramos libres y envasados mantienen unidad/paso; QA visual móvil/Admin/Venta PASS.
+
 ## Revisión F10 — 2026-10-01
 
 - Veinte checks con evidencia/faltante exacto: un técnico resuelto, quince humanos y cuatro de corte productivo. Capacitaciones/ensayo se ejecutan en TEST sin exigir Production. Manifiesto conserva 1 READY/19 PENDING y NO-GO.

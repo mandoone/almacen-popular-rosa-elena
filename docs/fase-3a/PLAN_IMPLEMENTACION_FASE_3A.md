@@ -1,5 +1,7 @@
 # PLAN_IMPLEMENTACION_FASE_3A.md — Orden de ejecución
 
+> Nota de continuidad 2026-10-01: documento histórico; su texto original se conserva. Los pasos/presentaciones de granel quedan supersedidos por D40 (gramos enteros libres y peso como referencia de precio); roles/nómina/horario por D36. Ortografía y costos inequívocos ya se consolidaron. Pendientes actuales: [revisión F10](../operativa/REVISION_F10_2026-10-01.md) y [catálogo](../operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). No reabrir preguntas históricas cerradas.
+
 > Plan por etapas, ordenado por riesgo. Cada etapa deja el sistema funcionando.
 > Fuente: `levantamiento_operativo_fase_3a_consolidado.md` §9 (alcance).
 

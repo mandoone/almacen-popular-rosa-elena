@@ -4,6 +4,8 @@ Estado 01/10: TEST validado; Production NO autorizada. Esta secuencia se ejecuta
 
 Este archivo define orden y evidencia del corte. [Backup/rollback](../OPERACION_BACKUP_ROLLBACK.md) define recuperación; [WAF](../RATE_LIMIT_WAF_RUNBOOK.md) define la regla. No copiar configuraciones de TEST a Production.
 
+No copiar saldos técnicos, fixtures ni historia sintética TEST a Production. El corte parte del backup/destino productivo autorizado y datos humanos por ID; comerciales se cruzan sin asumir que los IDs/historiales productivos coinciden con TEST.
+
 ## Hallazgo que condiciona el candidato productivo
 
 El candidato vigente es deliberadamente TEST: Next bloquea calendario/venta/caja/compras fuera de TEST; Apps Script exige APP_ENV=TEST y nombre exacto de la Sheet TEST para el diario durable. **Cambiar variables o promover un Preview no habilita producción correctamente.**

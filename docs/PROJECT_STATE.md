@@ -9,11 +9,11 @@
 
 Actualización de esta sesión: [granel real](operativa/GRANEL_TEST_2026-10-01.md) implementado en ambas ventas y migrado solo TEST v17 con backup/readback e historia/saldos preservados. 18 referencias acreditadas, diez precios adicionales y once costos adicionales; conteo físico sigue pendiente. Baseline del bloque anterior a continuación; estados nuevos y QA final se consolidan en el [cierre TEST](operativa/CIERRE_TEST_2026-10-01.md).
 
-Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v17. Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
+Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v18 (granel v17, precisión/concurrencia/UNIDAD histórica v18). Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
 
 Catálogo: 56 maestros (54 comerciales, dos fixtures), 31 precios corregidos y 30 costos acreditados acumulados desde el precheck de catálogo. Bloque 2: siete precios, trece costos y tres correcciones ortográficas; matriz con 22 PENDING_HUMANO por ID. [Tres preguntas agrupadas](operativa/CATALOGO_PENDIENTES_REALES_2026-10-01.md). Empanadas POR_APERTURA no habilitada en aperturas reales; Poroto burro/concentrado inactivos e históricos. Stock físico pendiente. 41 fotos inventariadas sin aprobación. F10: 1 READY / 19 PENDING / 0 FAIL. Producción no autorizada.
 
-QA de granel: **444/444 PASS**, E2E HTTP/visual y restauración PASS. Lint, build, typecheck, secrets scan y preflight técnico PASS. Catálogo: backup/diff/readback y replay, sin alterar stock ni historia. Dos REQUIERE_REVISION intactas. Cuatro alertas no críticas siguen visibles.
+QA vigente: **468/468 PASS** (baseline granel 444), E2E HTTP/visual y restauración PASS. Lint, build, typecheck, secrets scan y preflight técnico PASS. Catálogo: backup/diff/readback y replay, sin alterar stock ni historia. Dos REQUIERE_REVISION intactas. Cuatro alertas no críticas auditadas y visibles. Activación, capacitación/ensayo, conteo/dry-run y cutover preparados; [20 checks](operativa/REVISION_F10_2026-10-01.md): 1 resuelto, 15 humanos, 4 de corte productivo. Guardrails TEST intactos; habilitación productiva requiere contrato separado después de autorización.
 
 ## Resumen
 
@@ -27,7 +27,7 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A VALIDADA EN TEST:** baseline Apps Script TEST v15 (ahora v16) y la validación de los cinco
+- **F9-A VALIDADA EN TEST:** baseline Apps Script TEST v15 (vigente v18) y la validación de los cinco
   estados siguen activos. El runtime Next local `43a51a9` registró etapas
   saneadas y completó el E2E focalizado con un único pedido: creación durable,
   retry y conflicto de key, confirmación, LISTO reconciliado tras respuesta
