@@ -64,13 +64,16 @@ para ocultar un requisito crítico sin una alternativa aprobada.
 
 ## Vista operativa de los 20 checks
 
+Revisión completa con resuelto/faltante exacto y clasificación: [20 checks al cierre 01/10](operativa/REVISION_F10_2026-10-01.md). 1 técnico resuelto, 15 gates humanos y 4 solo corte productivo; cero pendiente técnico ejecutable en TEST. NO-GO sigue vigente.
+
 Corte 2026-10-01: manifiesto local v2 válido, **1 READY / 19 PENDING / 0 FAIL**. roles_aprobados READY: jerarquía, confirmar/cancelar y asignación 2/2/6 aprobadas con referencia Confirmación Almacén/Omar 2026-10-01. El ejemplo versionado conserva sus veinte PENDING para una instalación nueva.
 
 | Grupo | Checks / trabajo siguiente |
 |---|---|
 | RESUELTO | roles_aprobados; usernames y distribución definidos, sin credenciales |
 | NECESITA_ALMACEN | identidad_cuentas (credenciales/ensayo), contenido_editorial, derechos_imagenes/fotos, contactos restantes (horario 11–15 confirmado), stock_fisico/unidades, precios_venta ambiguos, costos_iniciales incompletos, saldo_efectivo, saldo_bancario, minimos_prioridades, responsable_ventana |
-| SOLO_AL_FINAL | dominio_https, backup_sheet, version_apps_script, rollback_web, tres capacitaciones y ensayo_test con personas, después de datos/cuentas y autorización |
+| HUMAN_GATE_REUNION | Tres capacitaciones y ensayo_test con titulares en TEST; no necesitan Production |
+| SOLO_CORTE_PRODUCTIVO | dominio_https, backup_sheet, version_apps_script, rollback_web; después de datos/personas y autorización |
 
 Datos comerciales parciales aplicados solo en TEST; [cierre operativo](operativa/CIERRE_TEST_2026-10-01.md). Ninguna fuente reconstruye stock físico ni saldos. Identidad usa los diez actores definidos; no volver a pedir usernames, roles ni horario.
 

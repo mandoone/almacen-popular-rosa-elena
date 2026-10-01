@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Revisión F10 — 2026-10-01
+
+- Veinte checks con evidencia/faltante exacto: un técnico resuelto, quince humanos y cuatro de corte productivo. Capacitaciones/ensayo se ejecutan en TEST sin exigir Production. Manifiesto conserva 1 READY/19 PENDING y NO-GO.
+
 ## Cutover preparado — 2026-10-01
 
 - Secuencia única con acción, evidencia previa, resultado, rollback, función responsable y momento; backups de Sheet/fuente/manifest/versiones, web/configuración, dominio, WAF y smoke.

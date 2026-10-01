@@ -7,6 +7,8 @@
 
 ## BLOQUE OPERATIVO 2026-10-01
 
+- ✅ Revisados los 20 checks: 1 técnico resuelto, 15 HUMAN_GATE, 4 SOLO_CORTE_PRODUCTIVO; estados 1 READY/19 PENDING sin promover evidencia. [Detalle exacto](operativa/REVISION_F10_2026-10-01.md).
+
 - ✅ Cutover documental completo y compatible con granel. ⬜ Habilitar/probar contrato productivo únicamente después de autorización; cambiar variables no elude guardrails TEST. [Secuencia](operativa/CUTOVER_TECNICO_PREPARADO.md).
 
 - ✅ Conteo físico: plantilla de 52 activos sin cantidades, dry-run/importador TEST con acta, hash, respaldo, control concurrente y replay. Saldos privados sin montos; gates físicos siguen humanos. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).
