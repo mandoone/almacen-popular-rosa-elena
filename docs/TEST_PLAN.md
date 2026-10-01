@@ -1,5 +1,7 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+QA final de sesión autónoma 01/10 sobre 8c4d6f7: suite **468 PASS**, 50 focales granel/conteo/registro; lint/typecheck/build/secrets (303)/preflight técnico limpio y remoto integral read-only PASS. Nueve CI verdes, dos Previews automáticos build success; smoke remoto protegido por 302 no validado con autenticación (conector INVALID_ARGUMENT). Browser local contra TEST: carrito 150 g/$203 móvil sin desbordes, formularios GRANEL/UNIDAD y Venta sin Caja, tres /me con rol propio; cero escrituras en revisión visual. [Evidencia final](operativa/CIERRE_TEST_2026-10-01.md).
+
 Conteo preparado 01/10: 18 tests nuevos / 44 focales. CSV, unidades y cobertura, costos/precios, precisión de 1 g en tres bases, stock concurrente/replay y modo unitario histórico. Plantilla real de 52 productos sin cantidades; dry-run detecta 178 campos pendientes (incluidos 22 costos), cero escrituras. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).
 
 Capacitación 01/10 preparada: tres guías, 40 minutos y checklist de cinco gates PENDING. Enlace Caja del panel vendedor sigue capacidad real (Venta no lo muestra). Lint/typecheck PASS; ningún ensayo humano ejecutado.

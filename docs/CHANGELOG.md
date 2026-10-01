@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## QA final de sesión autónoma — 2026-10-01
+
+- 468 tests, 50 focales, lint/typecheck/build/scan (303), diff/preflight limpio y backend read-only PASS; nueve CI y dos builds Preview automáticos success. Smoke de Preview protegido por 302 permanece sin validación autenticada; QA actual local contra TEST PASS.
+- F10 1 READY/19 PENDING/0 FAIL conserva NO-GO. Dependencias/historia/saldos físicos/Production intactos; no cuentas humanas activadas ni fotos asociadas.
+
 ## Consistencia final TEST — 2026-10-01
 
 - Readback de 56 maestros/18 GRANEL contra matriz y 17 tablas contra baseline de conteo sin diferencias; no escrituras.
