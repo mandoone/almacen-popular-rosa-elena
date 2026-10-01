@@ -17,7 +17,7 @@
 - ✅ Inventario READ-ONLY de 41 fotos y matriz privada de 10 actores 2/2/6 sin credenciales.
 - ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
 - ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 444/444, lint/build/typecheck/secrets/preflight PASS.
-- ⬜ Mantenimiento de cuatro alertas no críticas de dependencias antes del corte productivo.
+- ✅ Auditoría concreta de cuatro alertas: dos DEV_ONLY, PostCSS transitiva sin ruta HTTP expuesta y Next heredada; [mantenimiento separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). ⬜ Upgrade separado, sin cambiar paquetes en esta sesión; reauditar al corte.
 - ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
 - ⬜ Dominio, backup/rollback/ventana finales y activación productiva solo tras HUMAN GATE.
 

@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Mantenimiento auditado — 2026-10-01
+
+- Cuatro entradas npm investigadas con versiones/rutas, siete GHSA/CVE y exposición de CSS/globs. Dos DEV_ONLY y PostCSS/Next sin ruta HTTP atacante en el flujo vigente. Dependencias intactas; alertas visibles, upgrade separado.
+
 ## Catálogo consolidado TEST — 2026-10-01
 
 - Documento Nadia y rango B:H de Diseño distinguen unidad comercial/base del costo. Siete precios, trece costos y tres correcciones ortográficas; no fusionar marcas ni formatos dudosos.
