@@ -2,6 +2,16 @@
 
 Producción no autorizada. Evidencia privada, backups y cuentas en `operativa.local/` y `config/f10-readiness.local.json`, ignorados por Git. No hay contraseñas humanas ni nombres de personas en `src/`.
 
+## Actualización de sesión autónoma
+
+[Granel real D40](GRANEL_TEST_2026-10-01.md) supersede las dudas de granel/unidad de la auditoría anterior registrada debajo. Dieciocho maestros actualizados solo TEST v17, diez precios adicionales, once costos adicionales y cinco nombres sin presentación cerrada. Saldos numéricos, IDs, snapshots anteriores y dos REQUIERE_REVISION conservados. Backup Sheet y fuente Apps Script v16 privados; esquema aditivo con repetición sin cambios y readback completo.
+
+E2E HTTP local PASS: Arroz 250 g = $338, precio/modo/referencia hostiles ignorados, creación y replay, confirmación Venta y replay, cancelación Venta 403, Operación cancela y replay, saldo 91 → 90.75 → 91 en base heredada de 1000 g. Un pedido sintético cancelado conservado y apertura sintética APE-20261004 cerrada. Cada fila preexistente de historia permaneció idéntica; cada maestro y saldo terminó idéntico al inicio del E2E; aperturas reales intactas. UI desktop/móvil con agent-browser: referencia /kg y peso libre 150 g = $203, sin overlay ni errores; ajuste de distribución del carrito para conservar nombre legible.
+
+QA del primer checkpoint: 444 tests, lint, typecheck, build, scan y preflight; resultados finales de toda la sesión se incorporan al cierre. F10 continúa NO-GO y los saldos TEST no constituyen conteo físico.
+
+## Baseline del bloque anterior (c036320)
+
 ## Permisos aprobados
 
 | Acción | Venta | Operación | Administración |

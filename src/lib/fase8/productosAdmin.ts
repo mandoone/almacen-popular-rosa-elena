@@ -63,6 +63,9 @@ export function prepararAjusteStock(entrada: AjusteStockAdmin): ResultadoAjusteS
 }
 
 export interface CambioProductoAdmin {
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   nombre?: string;
   categoria?: string;
   prioridad?: string;
@@ -80,6 +83,8 @@ export interface CambioProductoAdmin {
 /** Valida edición; stock_actual queda fuera y solo se cambia mediante ajuste auditado. */
 export function validarCambioProducto(cambio: CambioProductoAdmin): string[] {
   const errores: string[] = [];
+  if (cambio.modo_venta !== undefined && !['UNIDAD','GRANEL'].includes(cambio.modo_venta)) errores.push('Modo de venta inválido.');
+  for (const campo of ['gramos_referencia','gramos_unidad_stock'] as const) if (cambio[campo] !== undefined && (!Number.isSafeInteger(cambio[campo]) || Number(cambio[campo]) < 0)) errores.push('Referencia inválida.');
   if ('tipo_disponibilidad' in cambio && !['REGULAR', 'POR_APERTURA'].includes(String(cambio.tipo_disponibilidad))) {
     errores.push('El tipo de disponibilidad no es válido.');
   }

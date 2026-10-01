@@ -6,6 +6,7 @@
  * usando catálogo, stock, precios y apertura obtenidos en el servidor.
  */
 
+import { esGranel, cantidadStock, gramosValidos, subtotalVenta } from '../granel.ts';
 export const FORMAS_PAGO_VENTA_PRESENCIAL = [
   'efectivo',
   'transferencia',
@@ -18,6 +19,9 @@ export type FormaPagoVentaPresencial =
 export type EstadoPagoVentaPresencial = 'pagado' | 'pendiente_de_pago';
 
 export interface ProductoVentaPresencial {
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   id_producto: string;
   nombre: string;
   precio_venta: number;
@@ -49,6 +53,7 @@ export interface AperturaHabilitadaParaVenta {
 }
 
 export interface LineaVentaCalculada {
+  gramos_solicitados?: number;
   producto_id: string;
   nombre_producto: string;
   cantidad: number;
@@ -176,6 +181,12 @@ function validarCantidadProducto(
   cantidad: number
 ): string[] {
   const errores: string[] = [];
+  if (esGranel(producto)) {
+    if (!gramosValidos(cantidad)) return ['Granel requiere gramos enteros positivos.'];
+    try { if (cantidadStock(producto,cantidad) > producto.stock_actual) errores.push('Stock insuficiente.'); }
+    catch { errores.push('Base de stock inválida.'); }
+    return errores;
+  }
 
   if (!Number.isFinite(cantidad) || cantidad <= 0) {
     return ['La cantidad debe ser mayor que cero.'];
@@ -258,13 +269,16 @@ export function validarYCalcularVentaPresencial(
       continue;
     }
 
-    errores.push(...validarCantidadProducto(producto, linea.cantidad));
+    const erroresCantidad = validarCantidadProducto(producto, linea.cantidad);
+    errores.push(...erroresCantidad);
+    if (erroresCantidad.length > 0) continue;
     lineas.push({
       producto_id: producto.id_producto,
       nombre_producto: producto.nombre,
-      cantidad: linea.cantidad,
+      cantidad: cantidadStock(producto, linea.cantidad),
+      ...(esGranel(producto) ? { gramos_solicitados: linea.cantidad } : {}),
       precio_unitario: producto.precio_venta,
-      subtotal: Math.round(producto.precio_venta * linea.cantidad),
+      subtotal: subtotalVenta(producto, producto.precio_venta, linea.cantidad),
     });
   }
 

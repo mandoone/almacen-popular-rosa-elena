@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D40 — Granel real con peso libre y referencias explícitas (2026-10-01)
+
+Evidencia Nadia entregada por Omar: pesos son referencias de precio; cualquier cantidad a granel, incluido arroz 250 g. Supersede el mínimo/paso 250 g de F3A y cualquier interpretación de 500 g/1 kg como presentaciones cerradas. Modelo aditivo UNIDAD/GRANEL, gramos de referencia y equivalencia de base histórica de stock; backend autoridad y CLP entero. No reinterpretar detalles ni inventar conteo. [Contrato](DATA_MODEL.md) y [migración TEST](operativa/GRANEL_TEST_2026-10-01.md).
+
 ## D39 — Capas de rate limit elegidas para el primer lanzamiento (2026-10-01)
 
 WAF por IP más limitador local por IP+actor. El riesgo residual regional se acepta para primer lanzamiento; WAF no sustituye un contador global por actor. Supersede la elección abierta de D33; no autoriza publicar reglas ni activar Production.

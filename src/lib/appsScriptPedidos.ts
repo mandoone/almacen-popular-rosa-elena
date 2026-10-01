@@ -76,6 +76,7 @@ export interface CrearPedidoResult {
   idempotency_key?: string;
   consistencia?: string;
   resumen: Array<{
+    gramos_solicitados?: number;
     id_producto: string;
     nombre_producto: string;
     cantidad: number;
@@ -104,6 +105,7 @@ export interface LineaDetalle {
   id_pedido: string;
   id_producto: string;
   nombre_producto: string;
+  gramos_solicitados?: number | string;
   cantidad: number | string;
   unidad_medida?: string;
   precio_unitario: number | string;
@@ -402,6 +404,9 @@ export interface ProductoCatalogo {
   prioridad: string;
   unidad_medida: string;
   permite_decimal: string;
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   paso_venta: number;
   precio_venta: number;
   stock_actual: number;
@@ -451,6 +456,7 @@ export interface VentaPresencialCabecera {
 }
 
 export interface DetalleVentaPresencial {
+  gramos_solicitados?: number;
   detalle_id: string;
   venta_id: string;
   producto_id: string;

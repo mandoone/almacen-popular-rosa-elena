@@ -33,6 +33,7 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    if (carrito.some(i => typeof i.cantidad !== 'number' || !Number.isFinite(i.cantidad) || i.cantidad <= 0)) return NextResponse.json({ok:false,error:'Cantidad inválida.'},{status:400});
     if (!carrito.length) {
       return NextResponse.json(
         { ok: false, error: 'El carrito esta vacio.' },

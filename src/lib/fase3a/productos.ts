@@ -7,11 +7,12 @@
  * Administración. Solo se expone la propuesta base como constante editable.
  */
 
+import { esGranel, cantidadStock, gramosValidos } from '../granel.ts';
 /** Estado editorial del producto (§5.4, §5.5). */
 export const ESTADOS_PRODUCTO = ['activo', 'inactivo', 'borrador'] as const;
 export type EstadoProducto = (typeof ESTADOS_PRODUCTO)[number];
 
-/** Incremento mínimo para productos a granel por kilo (§5.1). */
+/** Compatibilidad del contrato decimal legado; GRANEL usa gramos libres (D40). */
 export const PASO_GRANEL_KG = 0.25;
 
 /**
@@ -36,6 +37,9 @@ export const UNIDADES_PROPUESTAS = [
 ] as const;
 
 export interface ProductoFase3A {
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   id_producto: string;
   nombre: string;
   estado: EstadoProducto;
@@ -89,6 +93,12 @@ export function validarCantidad(
   cantidad: number
 ): ResultadoCantidad {
   const errores: string[] = [];
+  if (esGranel(producto)) {
+    if (!gramosValidos(cantidad)) return {valido:false, errores:['Granel requiere gramos enteros positivos.']};
+    try { if (cantidadStock(producto,cantidad) > producto.stock_actual) errores.push('Stock insuficiente.'); }
+    catch { errores.push('Base de stock inválida.'); }
+    return {valido:errores.length === 0,errores};
+  }
 
   if (!Number.isFinite(cantidad) || cantidad <= 0) {
     return { valido: false, errores: ['La cantidad debe ser mayor que cero.'] };

@@ -11,7 +11,7 @@ const CAMPOS_PRODUCTO = [
   'stock_minimo',
   'prioridad',
   'activo',
-  'tipo_disponibilidad',
+  'tipo_disponibilidad', 'modo_venta', 'gramos_referencia', 'gramos_unidad_stock',
   'imagen_url',
 ] as const;
 

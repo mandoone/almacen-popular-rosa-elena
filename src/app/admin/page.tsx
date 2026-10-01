@@ -1,4 +1,5 @@
 'use client';
+import { formatoDetalle } from '@/lib/granel';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { capacidadParaCambioPedido } from '@/lib/fase9/autorizacion';
@@ -38,6 +39,7 @@ interface Pedido {
 
 interface LineaDetalle {
   nombre_producto: string;
+  gramos_solicitados?: number;
   cantidad: number;
   precio_unitario: number;
   subtotal: number;
@@ -164,6 +166,7 @@ function AdminPanel({
       const lineas: LineaDetalle[] = (json.data.detalle as Record<string, unknown>[]).map((l) => ({
         nombre_producto: String(l.nombre_producto ?? ''),
         cantidad: num(l.cantidad),
+        gramos_solicitados: num(l.gramos_solicitados),
         precio_unitario: num(l.precio_unitario),
         subtotal: num(l.subtotal),
         unidad_medida: l.unidad_medida ? String(l.unidad_medida) : undefined,
@@ -412,7 +415,7 @@ function AdminPanel({
                           <li className="text-sm text-gray-400">Sin líneas de detalle.</li>
                         ) : detalle.map((item, idx) => (
                           <li key={idx} className="flex justify-between text-sm text-gray-600">
-                            <span>{item.nombre_producto} <span className="text-gray-400">×{item.cantidad}</span></span>
+                            <span>{item.nombre_producto} <span className="text-gray-400">— {formatoDetalle(item)}</span></span>
                             <span>{formatPrecio(item.subtotal)}</span>
                           </li>
                         ))}

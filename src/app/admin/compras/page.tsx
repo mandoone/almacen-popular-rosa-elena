@@ -1,5 +1,6 @@
 'use client';
 
+import { esGranel, formatoPeso } from '@/lib/granel';
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import AdminFase78Nav from '@/components/admin/AdminFase78Nav';
 import type { CompraAdmin, CompraConDetalle, ProductoAdmin } from '@/lib/appsScriptPedidos';
@@ -80,9 +81,9 @@ export default function ComprasPage() {
                 <legend className="sr-only">Producto {indice + 1}</legend>
                 <select required aria-label={`Producto ${indice + 1}`} value={linea.producto_id} onChange={(e) => cambiarLinea(indice, { producto_id: e.target.value })} className="rounded-md border p-2">
                   <option value="">Seleccionar producto</option>
-                  {productos.map((producto) => <option key={producto.id_producto} value={producto.id_producto}>{producto.nombre} · {producto.unidad_medida}</option>)}
+                  {productos.map((producto) => <option key={producto.id_producto} value={producto.id_producto}>{producto.nombre} · {esGranel(producto) ? `referencia de stock ${formatoPeso(Number(producto.gramos_unidad_stock))}` : producto.unidad_medida}</option>)}
                 </select>
-                <input required aria-label={`Cantidad ${indice + 1}`} type="number" min="0.01" step="any" value={linea.cantidad} onChange={(e) => cambiarLinea(indice, { cantidad: Number(e.target.value) })} className="rounded-md border p-2" />
+                <input required aria-label={`Cantidad ${indice + 1}`} type="number" min="0.001" step="any" value={linea.cantidad} onChange={(e) => cambiarLinea(indice, { cantidad: Number(e.target.value) })} className="rounded-md border p-2" />
                 <input required aria-label={`Costo unitario ${indice + 1}`} type="number" min="1" step="1" value={linea.costo_unitario} onChange={(e) => cambiarLinea(indice, { costo_unitario: Number(e.target.value) })} className="rounded-md border p-2" />
                 <button type="button" disabled={lineas.length === 1} onClick={() => setLineas((actuales) => actuales.filter((_, i) => i !== indice))} className="rounded-md border px-3 disabled:opacity-40">Quitar</button>
               </fieldset>

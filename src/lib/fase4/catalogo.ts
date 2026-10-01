@@ -24,6 +24,7 @@ export const CATEGORIAS_CATALOGO = [
 export type CategoriaCatalogoId = (typeof CATEGORIAS_CATALOGO)[number]['id'];
 
 export interface ProductoPresentable {
+  modo_venta?: string;
   nombre: string;
   categoria?: string | null;
   unidad_medida?: string | null;
@@ -67,6 +68,7 @@ export function permiteVentaDecimal(producto: ProductoPresentable): boolean {
 }
 
 export function descripcionFormatoVenta(producto: ProductoPresentable): string {
+  if (producto.modo_venta === 'GRANEL') return 'Elige el peso en gramos';
   const unidad = String(producto.unidad_medida ?? '').trim();
   if (!unidad) return permiteVentaDecimal(producto) ? 'Venta fraccionada' : '';
   return permiteVentaDecimal(producto)

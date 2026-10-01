@@ -153,7 +153,7 @@ test('preparacion TEST es idempotente, con backup anterior y conserva IDs, snaps
   assert.equal(hojas.APERTURA_PRODUCTOS.getLastRow(),1);
   assert.equal(hojas.PRODUCTOS.valores[0].filter(h => h === 'tipo_disponibilidad').length,1);
   assert.deepEqual(['PEDIDOS','DETALLE_PEDIDOS','DETALLE_VENTAS','OPERACIONES_PEDIDOS'].map(n => copia(hojas[n].valores)),historia);
-  assert.equal(primera.readback.hojas.length,2);
+  assert.deepEqual(primera.readback.hojas.map(h => h.nombre).sort(), Object.keys(hojas).sort());
 });
 
 test('migracion rechaza destino no TEST e IDs duplicados antes de backup/escritura', () => {

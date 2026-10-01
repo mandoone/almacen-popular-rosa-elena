@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import CantidadGranel from '@/components/CantidadGranel';
+import { esGranel, subtotalVenta, referenciaPrecio, formatoCantidad } from '@/lib/granel';
 import {
   formatearCierreApertura,
   formatearFechaApertura,
@@ -65,6 +67,9 @@ interface Producto {
   categoria?: string;
   unidad_medida?: string;
   permite_decimal?: string | boolean;
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   paso_venta?: number;
   imagen_url?: string;
   tipo_disponibilidad?: 'REGULAR' | 'POR_APERTURA';
@@ -83,6 +88,7 @@ interface CarritoPanelProps {
   onNombre: (v: string) => void;
   onTelefono: (v: string) => void;
   onAgregar: (p: Producto) => void;
+  onCantidad: (p: Producto, g: number) => void;
   onReducir: (id: string) => void;
   onVaciar: () => void;
   onEnviar: () => void;
@@ -102,6 +108,7 @@ function CarritoPanel({
   onNombre,
   onTelefono,
   onAgregar,
+  onCantidad,
   onReducir,
   onVaciar,
   onEnviar,
@@ -126,17 +133,16 @@ function CarritoPanel({
       {/* Lista de productos */}
       <div className="flex-1 overflow-y-auto space-y-3 mb-4">
         {carrito.map(({ producto, cantidad }) => (
-          <div key={producto.id} className="flex items-center gap-3">
+          <div key={producto.id} className="flex flex-wrap items-center gap-3">
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-800 truncate">
                 {producto.nombre}
               </p>
               <p className="text-xs text-gray-500">
-                {formatPrecio(producto.precio)}
-                {producto.unidad_medida ? ` · ${producto.unidad_medida}` : ''}
+                {referenciaPrecio(producto, producto.precio)}
               </p>
             </div>
-            <div className="flex items-center gap-1 shrink-0">
+            {esGranel(producto) ? <div className="order-3 w-full"><CantidadGranel nombre={producto.nombre} cantidad={cantidad} onCantidad={g => onCantidad(producto, g)} /></div> : <div className="flex items-center gap-1 shrink-0">
               <button
                 type="button"
                 onClick={() => onReducir(producto.id)}
@@ -156,9 +162,9 @@ function CarritoPanel({
               >
                 +
               </button>
-            </div>
+            </div>}
             <p className="text-sm font-semibold text-primary-dark w-20 text-right shrink-0">
-              {formatPrecio(producto.precio * cantidad)}
+              {formatPrecio(subtotalVenta(producto, producto.precio, cantidad))}
             </p>
           </div>
         ))}
@@ -266,7 +272,7 @@ export default function TiendaPage() {
         setProductos(data);
         setCarrito((actual) => actual.flatMap((item) => {
           const vigente = data.find((p) => p.id === item.producto.id);
-          return vigente ? [{ producto: vigente, cantidad: item.cantidad }] : [];
+          return vigente && item.producto.modo_venta === vigente.modo_venta ? [{ producto: vigente, cantidad: item.cantidad }] : [];
         }));
       })
       .catch((err) => {
@@ -299,6 +305,9 @@ export default function TiendaPage() {
   const cantidadEnCarrito = (id: string) =>
     carrito.find((i) => i.producto.id === id)?.cantidad ?? 0;
 
+  const establecerCantidad = (producto: Producto, cantidad: number) => {
+    setCarrito(prev => [...prev.filter(i => i.producto.id !== producto.id), ...(cantidad > 0 ? [{producto, cantidad}] : [])]);
+  };
   const agregar = (producto: Producto) => {
     setCarrito((prev) => {
       const existe = prev.find((i) => i.producto.id === producto.id);
@@ -320,8 +329,8 @@ export default function TiendaPage() {
 
   const vaciarCarrito = () => setCarrito([]);
 
-  const total = carrito.reduce((acc, i) => acc + i.producto.precio * i.cantidad, 0);
-  const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0);
+  const total = carrito.reduce((acc, i) => acc + subtotalVenta(i.producto, i.producto.precio, i.cantidad), 0);
+  const totalItems = carrito.length;
   const categoriasDisponibles = Array.from(
     new Map(
       productos
@@ -392,8 +401,8 @@ export default function TiendaPage() {
       intentoCreacion.current = null;
 
       // 2) Abrir WhatsApp con el resumen, incluyendo el N° de pedido real.
-      const lista = carrito
-        .map((i) => `• ${i.producto.nombre} x${i.cantidad} = ${formatPrecio(i.producto.precio * i.cantidad)}`)
+      const lista = (json.data.resumen as Array<{nombre_producto: string; cantidad: number; gramos_solicitados?: number; subtotal: number}>)
+        .map(i => `• ${i.nombre_producto} — ${i.gramos_solicitados ? formatoCantidad({modo_venta:'GRANEL'},i.gramos_solicitados) : i.cantidad} — ${formatPrecio(i.subtotal)}`)
         .join('\n');
 
       const mensaje =
@@ -425,6 +434,7 @@ export default function TiendaPage() {
     onNombre: setNombre,
     onTelefono: setTelefono,
     onAgregar: agregar,
+    onCantidad: establecerCantidad,
     onReducir: reducir,
     onVaciar: vaciarCarrito,
     onEnviar: enviarPedido,
@@ -619,9 +629,9 @@ export default function TiendaPage() {
                          <p className="text-[11px] leading-snug text-gray-500">{formato}</p>
                        )}
                       <p className="font-bold text-sm md:text-lg text-primary">
-                        {formatPrecio(producto.precio)}
+                        {referenciaPrecio(producto, producto.precio)}
                       </p>
-                      {cantidad === 0 ? (
+                      {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidad} onCantidad={g => establecerCantidad(producto,g)} /> : cantidad === 0 ? (
                         <button
                           type="button"
                           onClick={() => agregar(producto)}

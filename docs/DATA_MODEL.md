@@ -8,6 +8,14 @@
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
+### Venta y peso (D40)
+
+PRODUCTOS agrega `modo_venta` UNIDAD/GRANEL (ausente/vacío = UNIDAD), `gramos_referencia` (entero positivo para GRANEL) y `gramos_unidad_stock` (100, 250 o 1000; kg exige 1000). `precio_venta` es CLP por referencia; `precio_costo` continúa por base nativa de stock, independiente de cambios de referencia comercial. `unidad_medida`, saldo y snapshots heredados se conservan. La base histórica queda congelada al establecer GRANEL; modificarla requiere migración específica.
+
+Entrada pública/presencial: `cantidad` = gramos enteros positivos en GRANEL, cantidad nativa en UNIDAD. Apps Script determina el modo desde PRODUCTOS y calcula `precio_venta × gramos / gramos_referencia`, redondeando mitad hacia arriba al CLP entero con numerador seguro. Browser no decide precio, modo ni referencia. Saldos nuevos se calculan en milésimas enteras de la base histórica. No hay pasos obligatorios de 100/250/500 g.
+
+DETALLE_PEDIDOS y DETALLE_VENTAS agregan `modo_venta`, `gramos_solicitados`, `gramos_referencia`, `gramos_unidad_stock` como snapshot. Para GRANEL, `cantidad` conserva gramos/base_stock y `precio_unitario` conserva precio de referencia; `subtotal` conserva el resultado redondeado. Los nuevos campos permanecen vacíos en históricos. Confirmación/cancelación usa cantidad nativa del detalle, evitando reinterpretar históricos. UI y WhatsApp muestran el peso snapshot y subtotal de autoridad. [Productos, migración y QA](operativa/GRANEL_TEST_2026-10-01.md).
+
 [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md) registra migración y readback. PRODUCTOS usa id_producto, activo SI/NO y tipo_disponibilidad REGULAR/POR_APERTURA. Campo ausente/vacío = REGULAR; activo NO nunca se ofrece.
 
 APERTURA_PRODUCTOS: apertura_id + producto_id (pareja única), habilitado SI/NO, actualizado_por y actualizado_en. Sin apertura: REGULAR activos. Con apertura: REGULAR activos + especiales habilitados. Duplicados rechazan el catálogo; valores inválidos no habilitan. Administrador gestiona oferta sin editar Sheet; no hay precio por apertura. Backend valida bajo lock en pedido/venta; snapshots y diario durable conservados.
@@ -53,8 +61,7 @@ Esta nueva planilla queda documentada como **fuente oficial futura** para:
 productos, pedidos, ventas, clientes, stock, compras, movimientos de stock y
 configuración.
 
-> ⚠️ **Pendiente operativo:** la nueva Google Sheet debe **crearse manualmente** y
-> registrarse su acceso antes de implementar FASE 1. Ver `docs/TASKS.md`.
+> La base ya existe; su continuidad TEST y los gates del corte viven en `PROJECT_STATE.md`.
 
 ---
 
@@ -103,9 +110,9 @@ Parámetros globales del sistema (clave/valor).
 | `total` | total del pedido. |
 | `estado` | `recibido` · `pendiente` · `listo` · `entregado` · `cancelado`. |
 
-En TEST, `PEDIDOS.estado_pedido` debe tener una validación estricta para esos
+En TEST, `PEDIDOS.estado_pedido` tiene una validación estricta para esos
 cinco valores desde la fila 2 hasta el final de la columna operativa. La regla
-heredada de cuatro estados sigue pendiente de migración. La validación de
+heredada de cuatro estados fue migrada en F9-A. La validación de
 transiciones permanece en el backend; el dropdown solo restringe valores.
 
 ### DETALLE_PEDIDOS

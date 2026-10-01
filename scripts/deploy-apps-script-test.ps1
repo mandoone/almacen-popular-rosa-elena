@@ -373,8 +373,13 @@ try {
     Stop-Safe 'El deployment objetivo cambio durante la ejecucion; operacion bloqueada.'
   }
 
+  $backupDirectory = Join-Path $RepoRoot ('operativa.local/backups/apps-script-test-v' + $baselineVersion + '-' + [Guid]::NewGuid().ToString('N'))
+  New-Item -ItemType Directory -Path $backupDirectory -Force | Out-Null
+  Copy-Item -LiteralPath $versionInventory.Code.FullName -Destination $backupDirectory
+  Copy-Item -LiteralPath $versionInventory.Manifest.FullName -Destination $backupDirectory
+  Write-Output 'PASS | backup local privado del codigo TEST desplegado y manifest'
   Invoke-ClaspRaw `
-    -Arguments @('push', '--force') `
+    -Arguments @('push') `
     -WorkingDirectory $payloadDirectory `
     -Step 'push exclusivo a Apps Script TEST' | Out-Null
   $versionOutput = Invoke-ClaspRaw `

@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import CantidadGranel from '@/components/CantidadGranel';
+import { esGranel, subtotalVenta, referenciaPrecio, formatoCantidad, cantidadStock } from '@/lib/granel';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ComandaVenta,
@@ -14,6 +16,9 @@ interface Producto {
   nombre: string;
   unidad_medida: string;
   permite_decimal: string;
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   paso_venta: number;
   precio_venta: number;
   stock_actual: number;
@@ -100,7 +105,7 @@ export default function PanelVendedorPage() {
   [cantidades, productos]);
 
   const totalVisual = lineas.reduce(
-    (total, linea) => total + linea.producto.precio_venta * linea.cantidad,
+    (total, linea) => total + subtotalVenta(linea.producto, linea.producto.precio_venta, linea.cantidad),
     0
   );
   const filtrados = productos.filter((producto) =>
@@ -118,6 +123,7 @@ export default function PanelVendedorPage() {
     setVenta(null);
     if (!aperturaId) return setError('No hay una apertura habilitada para venta presencial.');
     if (!vendedor.trim()) return setError('Identifica a la persona vendedora.');
+    if (lineas.some(l => cantidadStock(l.producto,l.cantidad) > l.producto.stock_actual)) return setError('Stock insuficiente.');
     if (!lineas.length) return setError('Agrega al menos un producto.');
     if (enviandoRef.current) return;
 
@@ -191,8 +197,8 @@ export default function PanelVendedorPage() {
                 {filtrados.map((producto) => {
                   const paso = producto.permite_decimal === 'SI' ? producto.paso_venta || 0.25 : 1;
                   return <div key={producto.id_producto} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-gray-100 p-3">
-                    <div><p className="font-medium text-primary-dark">{producto.nombre}</p><p className="text-xs text-gray-500">{formatoPrecio(producto.precio_venta)} · stock {producto.stock_actual} {producto.unidad_medida}</p></div>
-                    <input aria-label={`Cantidad de ${producto.nombre}`} type="number" min="0" max={producto.stock_actual} step={paso} value={cantidades[producto.id_producto] ?? 0} onChange={(e) => cambiarCantidad(producto, Number(e.target.value))} className="w-24 rounded-md border border-gray-200 px-2 py-1.5 text-right" />
+                    <div><p className="font-medium text-primary-dark">{producto.nombre}</p><p className="text-xs text-gray-500">{referenciaPrecio(producto, producto.precio_venta)} · stock {esGranel(producto) ? `${producto.stock_actual * Number(producto.gramos_unidad_stock) / 1000} kg` : `${producto.stock_actual} ${producto.unidad_medida}`}</p></div>
+                    {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidades[producto.id_producto] ?? 0} onCantidad={g => cambiarCantidad(producto,g)} /> : <input aria-label={`Cantidad de ${producto.nombre}`} type="number" min="0" max={producto.stock_actual} step={paso} value={cantidades[producto.id_producto] ?? 0} onChange={(e) => cambiarCantidad(producto, Number(e.target.value))} className="w-24 rounded-md border border-gray-200 px-2 py-1.5 text-right" />}
                   </div>;
                 })}
               </div>
@@ -201,7 +207,7 @@ export default function PanelVendedorPage() {
             <section className="h-fit rounded-xl bg-white p-5 shadow-sm">
               <h2 className="font-serif text-xl font-bold text-primary-dark">Venta actual</h2>
               <ul className="my-4 space-y-2 text-sm">
-                {lineas.length ? lineas.map(({ producto, cantidad }) => <li key={producto.id_producto} className="flex justify-between gap-3"><span>{producto.nombre} × {cantidad}</span><strong>{formatoPrecio(producto.precio_venta * cantidad)}</strong></li>) : <li className="text-gray-400">Sin productos.</li>}
+                {lineas.length ? lineas.map(({ producto, cantidad }) => <li key={producto.id_producto} className="flex justify-between gap-3"><span>{producto.nombre} — {formatoCantidad(producto,cantidad)}</span><strong>{formatoPrecio(subtotalVenta(producto,producto.precio_venta,cantidad))}</strong></li>) : <li className="text-gray-400">Sin productos.</li>}
               </ul>
               <p className="border-t border-gray-100 pt-3 text-xl font-bold text-primary">Total visual: {formatoPrecio(totalVisual)}</p>
               <p className="mb-4 text-xs text-gray-400">El total definitivo se calcula nuevamente en el servidor.</p>

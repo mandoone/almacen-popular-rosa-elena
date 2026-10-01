@@ -7,6 +7,8 @@
 
 ## BLOQUE OPERATIVO 2026-10-01
 
+- ✅ D40: venta GRANEL libre en gramos, referencia explícita, precio backend, snapshots y compatibilidad histórica. Migración de 18 maestros solo TEST; once costos adicionales cerrados. [Evidencia](operativa/GRANEL_TEST_2026-10-01.md).
+
 - ✅ Roles definitivos: confirmar todos; cancelar Operación/Admin, Venta DENY en UI/API.
 - ✅ REGULAR/POR_APERTURA/histórico, compatibilidad antigua, validación backend y UI administrativa.
 - ✅ Apps Script TEST v16, backup, migración idempotente y readback de 55 productos.

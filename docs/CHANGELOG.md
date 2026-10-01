@@ -1,5 +1,11 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Granel real — 2026-10-01
+
+- Modelo aditivo UNIDAD/GRANEL y cantidades libres en gramos para tienda/presencial; cálculo y snapshots desde maestro, CLP entero, saldo histórico conservado y base congelada.
+- Apps Script TEST v17, backup privado, esquema idempotente y 18 maestros migrados con readback. Diez precios y once costos adicionales acreditados; cero cambios de saldos físicos.
+- 26 casos nuevos; suite 444/444. Supuestos históricos supersedidos por D40. Producción no modificada.
+
 > Registro cronológico de hitos relevantes. Formato simplificado estilo
 > *Keep a Changelog*. El detalle de tareas vive en `docs/TASKS.md`.
 

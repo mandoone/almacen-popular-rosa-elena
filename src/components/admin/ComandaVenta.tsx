@@ -1,4 +1,5 @@
 'use client';
+import { formatoDetalle } from '@/lib/granel';
 
 import Link from 'next/link';
 
@@ -6,6 +7,7 @@ export interface LineaComandaVenta {
   detalle_id: string;
   producto_id: string;
   nombre_producto: string;
+  gramos_solicitados?: number;
   cantidad: number;
   unidad_medida: string;
   precio_unitario: number;
@@ -88,7 +90,7 @@ export function ComandaVenta({
           {comanda.detalle.map((linea) => (
             <tr key={linea.detalle_id} className="border-b border-gray-100">
               <td className="py-2">{linea.nombre_producto}</td>
-              <td>{linea.cantidad} {linea.unidad_medida}</td>
+              <td>{formatoDetalle(linea)}</td>
               <td className="text-right">{formatoPrecio(linea.subtotal)}</td>
             </tr>
           ))}

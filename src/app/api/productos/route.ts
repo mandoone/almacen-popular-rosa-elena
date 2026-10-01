@@ -17,6 +17,9 @@ interface ProductoTienda {
   categoria: string;
   unidad_medida: string;
   permite_decimal: string;
+  modo_venta?: 'UNIDAD' | 'GRANEL';
+  gramos_referencia?: number;
+  gramos_unidad_stock?: number;
   paso_venta: number;
   imagen_url: string;
   tipo_disponibilidad: string;
@@ -37,6 +40,7 @@ export async function GET(req: Request) {
       unidad_medida: p.unidad_medida,
       permite_decimal: p.permite_decimal,
       paso_venta: p.paso_venta,
+      modo_venta: p.modo_venta, gramos_referencia: p.gramos_referencia, gramos_unidad_stock: p.gramos_unidad_stock,
       imagen_url: p.imagen_url,
       tipo_disponibilidad: p.tipo_disponibilidad ?? 'REGULAR',
     }));

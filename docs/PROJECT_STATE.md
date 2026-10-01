@@ -7,6 +7,8 @@
 
 ## Cierre operativo 2026-10-01
 
+Actualización de esta sesión: [granel real](operativa/GRANEL_TEST_2026-10-01.md) implementado en ambas ventas y migrado solo TEST v17 con backup/readback e historia/saldos preservados. 18 referencias acreditadas, diez precios adicionales y once costos adicionales; conteo físico sigue pendiente. Baseline del bloque anterior a continuación; estados nuevos y QA final se consolidan en el [cierre TEST](operativa/CIERRE_TEST_2026-10-01.md).
+
 Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v16. Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
 
 Catálogo: 55 filas auditadas, 18 actualizaciones, 14 precios y 6 costos respaldados; Empanadas creada una vez como POR_APERTURA y no habilitada en aperturas reales. Poroto burro/concentrado históricos inactivos; blanco y detergentes 5L regulares activos. Stock físico pendiente; fuentes comerciales nunca se convierten en stock. 41 fotos inventariadas, revisión/derechos pendientes. F10 local: roles_aprobados READY, 19 PENDING, 0 FAIL. Detalle/evidencia: [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). Producción no autorizada.
