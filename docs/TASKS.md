@@ -19,6 +19,7 @@
 - ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 444/444, lint/build/typecheck/secrets/preflight PASS.
 - ✅ Auditoría concreta de cuatro alertas: dos DEV_ONLY, PostCSS transitiva sin ruta HTTP expuesta y Next heredada; [mantenimiento separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). ⬜ Upgrade separado, sin cambiar paquetes en esta sesión; reauditar al corte.
 - ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
+- ✅ Tres guías por rol y ensayo presencial de 40 minutos preparados, con firma/evidencia por persona y restauración de fixtures; cinco gates humanos siguen PENDING.
 - ✅ Paquete de activación: comandos nominales privados, hashes sin eco/salida ignorada, registro validado, revocación/rotación/session_version/rollback y checklist de las diez personas. [Procedimiento](operativa/ACTIVACION_CUENTAS_TEST.md). Ejecución humana pendiente.
 - ⬜ Dominio, backup/rollback/ventana finales y activación productiva solo tras HUMAN GATE.
 

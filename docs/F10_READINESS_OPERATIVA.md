@@ -133,7 +133,7 @@ Datos comerciales parciales aplicados solo en TEST; [cierre operativo](operativa
 
 ### 3. Capacitación y ensayo
 
-- Venta: login propio, pedido, confirmación, listo, entrega, cancelación y comanda.
+- Venta: login propio, pedido, confirmación, listo, entrega, pago/presencial y comanda; cancelación denegada.
 - Operación: lo anterior más stock, compras, abastecimiento, caja, gastos y reportes.
 - Administración: usuarios, productos, precios, configuración, revocación y rotación.
 - Ensayar en TEST un turno completo con cuentas individuales; conservar las dos

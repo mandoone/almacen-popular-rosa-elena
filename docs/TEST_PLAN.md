@@ -1,5 +1,7 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+Capacitación 01/10 preparada: tres guías, 40 minutos y checklist de cinco gates PENDING. Enlace Caja del panel vendedor sigue capacidad real (Venta no lo muestra). Lint/typecheck PASS; ningún ensayo humano ejecutado.
+
 Activación preparada 01/10: 31 tests focales PASS (identidad/roles + seis transiciones seguras del registro). No contraseñas humanas ni activación. Hashes pueden guardarse sin impresión, registro se valida/transporta base64url; checklist nominal ignorada lista. QA HTTP de tres roles/login/logout/revocación previa suficiente y no repetida.
 
 Bloque catálogo 01/10: 21 actualizaciones sin altas/stock; backup/readback TEST y replay con cero cambios. Campos no autorizados e historia previa comprobados; 25 tests focales y lint PASS. Matriz: 30 costos acreditados / 22 pendientes humanos.

@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Capacitación lista — 2026-10-01
+
+- Guías Venta/Operación/Administración y ensayo TEST de 40 minutos, evidencias por persona, fixtures y conciliación/restauración. No se promueven gates humanos.
+- Panel vendedor muestra Caja solo con capacidad correspondiente, coherente con backend. Lint/typecheck PASS.
+
 ## Activación humana preparada — 2026-10-01
 
 - Generador admite nombre visible y salida privada sin imprimir hash. Ensamble/validación local de registro, transporte base64url y control de versiones monotónicas para revocación/rotación/rollback.

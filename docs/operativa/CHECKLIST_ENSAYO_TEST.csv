@@ -1,0 +1,6 @@
+gate;rol;escenario;resultado;fecha;sha;referencia_evidencia;revisor;restauracion;firma_funcional;firma_segundo_revisor
+identidad_cuentas;TODOS;Login propio me rol logout;PENDING;;;;;PENDING;;
+capacitacion_venta;VENTA;Pedido confirmar listo entregar pago granel presencial limites;PENDING;;;;;PENDING;;
+capacitacion_operacion;OPERACION;Venta cancelar stock compra caja gasto conciliacion limites;PENDING;;;;;PENDING;;
+capacitacion_administracion;ADMINISTRACION;Operacion maestro precio oferta registro revocar rollback;PENDING;;;;;PENDING;;
+ensayo_test;TODOS;Flujo completo IDs readback compensacion y cierre sintetico;PENDING;;;;;PENDING;;
