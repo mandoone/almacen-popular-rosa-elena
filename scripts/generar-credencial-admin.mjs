@@ -1,5 +1,6 @@
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
 import { emitKeypressEvents } from 'node:readline';
+import {guardarPrivadoNuevo} from './lib/registro-cuentas.mjs';
 
 const ITERACIONES = 310_000;
 const roles = new Set(['venta', 'operacion', 'administracion']);
@@ -50,6 +51,9 @@ function leerOculto(etiqueta) {
 
 const actorId = String(argumento('actor') ?? '').trim().toLowerCase();
 const rol = String(argumento('role') ?? '').trim().toLowerCase();
+const nombre = argumento('name');
+const output = argumento('output');
+if (nombre !== undefined && (!nombre.trim() || nombre !== nombre.trim() || nombre.length > 120 || /[\u0000-\u001f\u007f]/.test(nombre))) fallar('Nombre visible inválido.');
 if (!/^[a-z0-9][a-z0-9._@-]{0,99}$/.test(actorId)) {
   fallar('usa --actor con un identificador técnico válido (sin nombre real si aún no está aprobado)');
 }
@@ -65,13 +69,18 @@ try {
   const salt = randomBytes(16);
   const hash = pbkdf2Sync(primera, salt, ITERACIONES, 32, 'sha256');
   const passwordHash = `pbkdf2-sha256$${ITERACIONES}$${salt.toString('base64url')}$${hash.toString('base64url')}`;
-  console.log(JSON.stringify({
+  const registro = JSON.stringify({
     actor_id: actorId,
     rol,
     active: true,
     session_version: 1,
     password_hash: passwordHash,
-  }, null, 2));
+    ...(nombre ? {nombre} : {}),
+  }, null, 2);
+  if (output) {
+    await guardarPrivadoNuevo(output,registro+'\n');
+    console.log('PASS | hash guardado en archivo privado nuevo; no impreso.');
+  } else console.log(registro);
 } catch {
   fallar('operación cancelada');
 }

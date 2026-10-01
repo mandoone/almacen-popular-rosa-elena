@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Activación humana preparada — 2026-10-01
+
+- Generador admite nombre visible y salida privada sin imprimir hash. Ensamble/validación local de registro, transporte base64url y control de versiones monotónicas para revocación/rotación/rollback.
+- Procedimiento completo y checklist privada de diez personas; seis pruebas nuevas, 31 focales PASS. Cuentas humanas y claves finales no creadas ni activadas.
+
 ## Mantenimiento auditado — 2026-10-01
 
 - Cuatro entradas npm investigadas con versiones/rutas, siete GHSA/CVE y exposición de CSS/globs. Dos DEV_ONLY y PostCSS/Next sin ruta HTTP atacante en el flujo vigente. Dependencias intactas; alertas visibles, upgrade separado.
