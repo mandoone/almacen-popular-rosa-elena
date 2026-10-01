@@ -1,5 +1,7 @@
 # F10 — Plan de datos reales y corte (preparado, no ejecutado)
 
+Procedimiento ejecutable TEST: [Conteo y corte](operativa/CONTEO_CORTE_TEST.md). Plantilla de cantidades vacías, dry-run y aplicación futura con acta revisada, backup, stock esperado bajo lock, replay/readback. Ningún stock físico/saldo cargado. 30 costos acreditados y 22 pendientes por ID; D40 granel vigente.
+
 No hay autorización para cargar datos reales ni tocar Production. La fuente
 operativa autorizada y sus responsables los define el Almacén. Este plan evita
 pasar de una planilla incompleta a operaciones con stock/caja sin conciliación.

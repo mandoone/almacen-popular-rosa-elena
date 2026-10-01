@@ -921,6 +921,7 @@ export function crearProductoAdmin(input: {
 export function ajustarStockAdmin(input: {
   producto_id: string;
   delta: number;
+  stock_esperado?: number;
   motivo: string;
   observaciones?: string;
   idempotency_key: string;
@@ -928,6 +929,7 @@ export function ajustarStockAdmin(input: {
   return postAdminFase78('ajustarStockAdmin', actor, {
     producto_id: input.producto_id,
     delta: input.delta,
+    ...(input.stock_esperado === undefined ? {} : {stock_esperado: input.stock_esperado}),
     motivo: input.motivo,
     observaciones: input.observaciones,
     idempotency_key: input.idempotency_key,

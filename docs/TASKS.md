@@ -7,6 +7,8 @@
 
 ## BLOQUE OPERATIVO 2026-10-01
 
+- ✅ Conteo físico: plantilla de 52 activos sin cantidades, dry-run/importador TEST con acta, hash, respaldo, control concurrente y replay. Saldos privados sin montos; gates físicos siguen humanos. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).
+
 - ✅ D40: venta GRANEL libre en gramos, referencia explícita, precio backend, snapshots y compatibilidad histórica. Migración de 18 maestros solo TEST; once costos adicionales cerrados. [Evidencia](operativa/GRANEL_TEST_2026-10-01.md).
 
 - ✅ Roles definitivos: confirmar todos; cancelar Operación/Admin, Venta DENY en UI/API.

@@ -10,6 +10,8 @@
 
 ### Venta y peso (D40)
 
+Conteo físico: captura en kg con tres decimales (1 g) y conversión a base nativa conservada. Ajustes/compras GRANEL rechazan fracciones de gramo. `ajustarStockAdmin` admite `stock_esperado`, validado bajo lock antes de escribir; replay de la misma key conserva el resultado anterior. Propuestas de abastecimiento conservan tres decimales. [Dry-run, acta y aplicación futura](operativa/CONTEO_CORTE_TEST.md); no se cargó stock contado.
+
 PRODUCTOS agrega `modo_venta` UNIDAD/GRANEL (ausente/vacío = UNIDAD), `gramos_referencia` (entero positivo para GRANEL) y `gramos_unidad_stock` (100, 250 o 1000; kg exige 1000). `precio_venta` es CLP por referencia; `precio_costo` continúa por base nativa de stock, independiente de cambios de referencia comercial. `unidad_medida`, saldo y snapshots heredados se conservan. La base histórica queda congelada al establecer GRANEL; modificarla requiere migración específica.
 
 Entrada pública/presencial: `cantidad` = gramos enteros positivos en GRANEL, cantidad nativa en UNIDAD. Apps Script determina el modo desde PRODUCTOS y calcula `precio_venta × gramos / gramos_referencia`, redondeando mitad hacia arriba al CLP entero con numerador seguro. Browser no decide precio, modo ni referencia. Saldos nuevos se calculan en milésimas enteras de la base histórica. No hay pasos obligatorios de 100/250/500 g.

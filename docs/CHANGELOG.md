@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Conteo listo — 2026-10-01
+
+- CSV privado sin cantidades y dry-run de 52 activos; aplicación futura TEST con acta/hash, backup, stock esperado, idempotencia y readback. No se aplicó conteo ni saldo.
+- Ajustes/compras granel conservan 1 g, abastecimiento conserva tres decimales; administración normaliza UNIDAD histórica y permite guardar paso 0,001 de granel sin convertirlo en restricción de venta.
+
 ## Capacitación lista — 2026-10-01
 
 - Guías Venta/Operación/Administración y ensayo TEST de 40 minutos, evidencias por persona, fixtures y conciliación/restauración. No se promueven gates humanos.

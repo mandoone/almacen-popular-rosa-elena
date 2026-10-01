@@ -82,6 +82,7 @@ export function dtoAjusteStockAdmin(body: JsonObject) {
   return {
     producto_id: String(body.producto_id ?? ''),
     delta: Number(body.delta),
+    ...(body.stock_esperado === undefined ? {} : { stock_esperado: Number(body.stock_esperado) }),
     motivo: String(body.motivo ?? ''),
     observaciones: body.observaciones === undefined ? undefined : String(body.observaciones),
     idempotency_key: String(body.idempotency_key ?? ''),

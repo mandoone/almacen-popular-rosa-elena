@@ -1,5 +1,7 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+Conteo preparado 01/10: 18 tests nuevos / 44 focales. CSV, unidades y cobertura, costos/precios, precisión de 1 g en tres bases, stock concurrente/replay y modo unitario histórico. Plantilla real de 52 productos sin cantidades; dry-run detecta 178 campos pendientes (incluidos 22 costos), cero escrituras. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).
+
 Capacitación 01/10 preparada: tres guías, 40 minutos y checklist de cinco gates PENDING. Enlace Caja del panel vendedor sigue capacidad real (Venta no lo muestra). Lint/typecheck PASS; ningún ensayo humano ejecutado.
 
 Activación preparada 01/10: 31 tests focales PASS (identidad/roles + seis transiciones seguras del registro). No contraseñas humanas ni activación. Hashes pueden guardarse sin impresión, registro se valida/transporta base64url; checklist nominal ignorada lista. QA HTTP de tres roles/login/logout/revocación previa suficiente y no repetida.

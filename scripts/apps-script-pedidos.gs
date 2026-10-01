@@ -2623,6 +2623,8 @@ function persistirCompraIdempotente_(entrada, key) {
     }
     var stockAnterior = parseNum_(fila[cStock]);
     var costoTexto = limpiar_(fila[cCosto]);
+    validarPrecisionStock_(filaAObjeto_(productos,fila),linea.cantidad);
+    validarPrecisionStock_(filaAObjeto_(productos,fila),stockAnterior);
     var costoAnterior = costoTexto === '' ? '' : parseNum_(fila[cCosto]);
     return {
       indice: i, producto_id: linea.producto_id, nombre_producto: limpiar_(fila[cNombre]),
@@ -2833,6 +2835,7 @@ function listarProductosAdmin_() {
   return hoja.filas.map(function (fila) {
     var producto = serializarRegistroF78_(filaAObjeto_(hoja, fila));
     producto.tipo_disponibilidad = tipoDisponibilidadProducto_(producto.tipo_disponibilidad);
+    producto.modo_venta = modoVenta_(producto);
     return producto;
   })
     .filter(function (producto) { return limpiar_(producto.id_producto); });
@@ -2853,7 +2856,10 @@ function actualizarProductoAdmin_(body) {
       if (fila === -1) lanzar_('Producto no encontrado.', 404);
       var vigente = filaAObjeto_(hoja, hoja.filas[fila]);
       var combinado = Object.assign({}, vigente, entrada.cambios);
-      if (modoVenta_(combinado) === 'GRANEL') validarModeloGranel_(combinado);
+      if (modoVenta_(combinado) === 'GRANEL') {
+        validarModeloGranel_(combinado);
+        validarPrecisionStock_(combinado,parseNum_(combinado.stock_minimo));
+      }
       // La base de stock queda congelada al establecerla; precio/referencia comercial pueden cambiar.
       if (modoVenta_(vigente) === 'GRANEL' && ['modo_venta','unidad_medida','gramos_unidad_stock'].some(function(k) { return entrada.cambios[k] !== undefined && String(entrada.cambios[k]) !== String(vigente[k]); })) lanzar_('La base historica de stock requiere migracion separada.',409);
       var anteriores = {};
@@ -2979,6 +2985,10 @@ function ajustarStockAdmin_(body) {
     motivo: limpiar_(body.motivo), responsable: limpiar_(body.responsable),
     observaciones: limpiar_(body.observaciones)
   };
+  if (body.stock_esperado !== undefined) {
+    if (typeof body.stock_esperado !== 'number' || !isFinite(body.stock_esperado) || body.stock_esperado < 0) lanzar_('Stock esperado invalido.',400);
+    entrada.stock_esperado = body.stock_esperado;
+  }
   var motivos = ['recuento_fisico', 'merma', 'error_carga_inicial', 'devolucion', 'otro'];
   if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(entrada.producto_id)) lanzar_('producto_id invalido.', 400);
   if (!isFinite(entrada.delta) || entrada.delta === 0) lanzar_('Delta de stock invalido.', 400);
@@ -3006,6 +3016,10 @@ function ajustarStockAdmin_(body) {
     if (fila === -1) lanzar_('Producto no encontrado.', 404);
     var cStock = col_(productos, 'stock_actual');
     var anterior = parseNum_(productos.filas[fila][cStock]);
+    if (entrada.stock_esperado !== undefined && anterior !== entrada.stock_esperado) lanzar_('El stock cambio desde el conteo/dry-run. Revisar antes de ajustar.',409);
+    var maestro = filaAObjeto_(productos,productos.filas[fila]);
+    validarPrecisionStock_(maestro,anterior);
+    validarPrecisionStock_(maestro,entrada.delta);
     var nuevo = redondearStock_(anterior + entrada.delta);
     if (nuevo < 0) lanzar_('El ajuste dejaria stock negativo.', 409);
     var ahora = new Date();
@@ -3085,7 +3099,7 @@ function obtenerPropuestaAbastecimiento_(presupuestoCrudo) {
       omitidos.push({ producto_id: productoId, motivo: 'Presupuesto insuficiente.' });
       return;
     }
-    var cantidad = redondear2_(pasos * paso);
+    var cantidad = redondearStock_(pasos * paso);
     var subtotal = Math.round(cantidad * costo);
     disponible -= subtotal;
     lineas.push({
@@ -4242,6 +4256,12 @@ function calcularLineaVenta_(producto, cantidad, exigirPasoLegacy) {
 function redondearStock_(n) {
   if (!isFinite(n) || !enteroSeguro_(Math.round(n * 1000))) lanzar_('Saldo de stock invalido.',409);
   return Math.round(n * 1000) / 1000;
+}
+function validarPrecisionStock_(producto,nativo) {
+  if (modoVenta_(producto) !== 'GRANEL') return;
+  validarModeloGranel_(producto);
+  var gramos = nativo * Number(producto.gramos_unidad_stock);
+  if (!enteroSeguro_(Math.round(gramos)) || Math.abs(gramos - Math.round(gramos)) > 0.0000001) lanzar_('Stock granel requiere gramos enteros.',400);
 }
 function prepararGranelTest_() {
   verificarDestinoFase78Test_();
