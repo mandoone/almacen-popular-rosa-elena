@@ -7,6 +7,8 @@
 
 ## BLOQUE OPERATIVO 2026-10-01
 
+- ✅ Cutover documental completo y compatible con granel. ⬜ Habilitar/probar contrato productivo únicamente después de autorización; cambiar variables no elude guardrails TEST. [Secuencia](operativa/CUTOVER_TECNICO_PREPARADO.md).
+
 - ✅ Conteo físico: plantilla de 52 activos sin cantidades, dry-run/importador TEST con acta, hash, respaldo, control concurrente y replay. Saldos privados sin montos; gates físicos siguen humanos. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).
 
 - ✅ D40: venta GRANEL libre en gramos, referencia explícita, precio backend, snapshots y compatibilidad histórica. Migración de 18 maestros solo TEST; once costos adicionales cerrados. [Evidencia](operativa/GRANEL_TEST_2026-10-01.md).

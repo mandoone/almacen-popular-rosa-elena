@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Cutover preparado — 2026-10-01
+
+- Secuencia única con acción, evidencia previa, resultado, rollback, función responsable y momento; backups de Sheet/fuente/manifest/versiones, web/configuración, dominio, WAF y smoke.
+- Contrato operativo vigente solo TEST: habilitación productiva explícita requiere otra sesión autorizada y pruebas cruzadas. Rollback posterior a granel exige código compatible y credenciales actuales. Production intacta.
+
 ## Conteo listo — 2026-10-01
 
 - CSV privado sin cantidades y dry-run de 52 activos; aplicación futura TEST con acta/hash, backup, stock esperado, idempotencia y readback. No se aplicó conteo ni saldo.

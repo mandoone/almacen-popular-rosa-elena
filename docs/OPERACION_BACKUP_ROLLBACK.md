@@ -2,6 +2,8 @@
 
 Este procedimiento es una lista de control. No autoriza ni ejecuta operaciones productivas.
 
+Orden único del corte, responsables/evidencias/resultados y comandos: [cutover preparado](operativa/CUTOVER_TECNICO_PREPARADO.md). El candidato actual solo permite TEST; habilitación del contrato productivo queda dentro del corte autorizado. Tras granel, no revertir a web/backend previos al modelo (TEST v16 o anterior): recuperar código compatible con datos y credenciales actuales, o mantener escrituras detenidas.
+
 | Componente | Qué y cómo se conserva | Cuándo / quién | Verificación |
 |---|---|---|---|
 | Sheet | Copia fechada completa en espacio autorizado, sin URL en Git | Antes del corte; responsable de datos + segundo revisor | Abrir copia, contar pestañas/filas clave y leer IDs de muestra |
