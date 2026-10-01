@@ -76,6 +76,9 @@ async function ejecutar({ escritura, soloIdempotencia }) {
     soloIdempotencia,
   });
   if (!resultadoConfig.ok) throw new Error(resultadoConfig.errores.join(' '));
+  // El runner de septiembre presupone Arroz unitario y una apertura histórica.
+  // La QA vigente usa piloto-operativo-test y e2e-granel-test con fixtures seguros.
+  if (escritura) throw new Error('Escrituras del runner histórico F56 retiradas tras D40; usar piloto-operativo-test o e2e-granel-test con apertura sintética.');
   const config = resultadoConfig.config;
   const cliente = crearClienteAppsScript(config, { escrituraAutorizada: escritura });
 
@@ -84,6 +87,15 @@ async function ejecutar({ escritura, soloIdempotencia }) {
   estadoEjecucion.pasoActual = 'preflight TEST';
   const verificacion = await cliente.get('verificarDestinoE2EFase56');
   cliente.confirmarBackendTest(verificacion);
+
+  if (!escritura) {
+    completarPaso('preflight TEST');
+    console.log('ENTORNO: TEST');
+    console.log('DESTINO: backend TEST verificado');
+    console.log('ESCRITURAS E2E: deshabilitadas (preflight)');
+    console.log('PASS | destino read-only; fixtures/horario históricos no se reutilizan.');
+    return;
+  }
 
   const productoIds = soloIdempotencia
     ? [config.productoDecimalId]

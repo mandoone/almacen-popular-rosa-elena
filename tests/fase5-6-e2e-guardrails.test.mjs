@@ -28,6 +28,18 @@ const base = {
   E2E_FASE56_ENABLE_WRITES: CONFIRMACION_ESCRITURAS_TEST,
 };
 
+for(const modo of ['--write-test','--idempotencia'])test('D40: runner F56 histórico no alcanza red aunque haya opt-in '+modo,async()=>{
+  const raiz=fileURLToPath(new URL('..',import.meta.url));
+  const resultado=await new Promise((resolve,reject)=>{
+    const hijo=spawn(process.execPath,['scripts/e2e-fase56.mjs',modo],{cwd:raiz,env:{PATH:process.env.PATH,SystemRoot:process.env.SystemRoot,...base},windowsHide:true});
+    let salida='';hijo.stdout.on('data',x=>salida+=x);hijo.stderr.on('data',x=>salida+=x);
+    hijo.once('error',reject);hijo.once('close',codigo=>resolve({codigo,salida}));
+  });
+  assert.equal(resultado.codigo,1);
+  assert.match(resultado.salida,/runner histórico F56 retiradas/);
+  assert.doesNotMatch(resultado.salida,/DESTINO: backend TEST verificado|token-test-ficticio|TEST_DEPLOYMENT/);
+});
+
 test('E2E Fase 5/6: acepta solo configuración TEST completa y confirmada', () => {
   const resultado = validarConfiguracionE2E(base, { escritura: true });
   assert.equal(resultado.ok, true);

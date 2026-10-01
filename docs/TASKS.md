@@ -22,7 +22,7 @@
 - ✅ Cruce completo con documento Nadia y comanda/diseño: acumulados 31 precios corregidos, 30 costos acreditados y una alta TEST; 22 PENDING_HUMANO por ID, tres preguntas agrupadas.
 - ✅ Inventario READ-ONLY de 41 fotos y matriz privada de 10 actores 2/2/6 sin credenciales.
 - ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
-- ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 468/468, lint/build/typecheck/secrets/preflight PASS.
+- ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 470/470, lint/build/typecheck/secrets/preflight PASS. Runner F56 histórico retirado para escrituras; preflight de destino conserva solo lectura.
 - ✅ Auditoría concreta de cuatro alertas: dos DEV_ONLY, PostCSS transitiva sin ruta HTTP expuesta y Next heredada; [mantenimiento separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). ⬜ Upgrade separado, sin cambiar paquetes en esta sesión; reauditar al corte.
 - ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
 - ✅ Tres guías por rol y ensayo presencial de 40 minutos preparados, con firma/evidencia por persona y restauración de fixtures; cinco gates humanos siguen PENDING.

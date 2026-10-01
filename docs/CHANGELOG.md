@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Continuidad segura del runner histórico — 2026-10-01
+
+- F56 septiembre conserva preflight de destino; modos de escritura se retiran antes de red para no tratar Arroz como unidad ni operar una apertura histórica. Runners vigentes: piloto con fixtures propios y escenario granel sintético.
+- Dos pruebas de rechazo con opt-in, 24 focales, suite final 470/470, lint/build/preflight y preflight F56/clasp read-only PASS. Ninguna escritura adicional TEST ni cambio de dependencias/Production.
+
 ## QA final de sesión autónoma — 2026-10-01
 
 - 468 tests, 50 focales, lint/typecheck/build/scan (303), diff/preflight limpio y backend read-only PASS; nueve CI y dos builds Preview automáticos success. Smoke de Preview protegido por 302 permanece sin validación autenticada; QA actual local contra TEST PASS.

@@ -1,5 +1,7 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+Último control de continuidad D40: **470/470 PASS**. Dos pruebas nuevas ejecutan ambos modos históricos F56 con opt-in y comprueban rechazo antes de red/filtración. Runner read-only confirma destino TEST sin asumir Arroz unitario ni horario de septiembre; remote preflight PASS. Piloto/granel son los runners vigentes de escritura sintética. Lint/build/preflight y clasp dry-run PASS; ninguna escritura adicional.
+
 QA final de sesión autónoma 01/10 sobre 8c4d6f7: suite **468 PASS**, 50 focales granel/conteo/registro; lint/typecheck/build/secrets (303)/preflight técnico limpio y remoto integral read-only PASS. Nueve CI verdes, dos Previews automáticos build success; smoke remoto protegido por 302 no validado con autenticación (conector INVALID_ARGUMENT). Browser local contra TEST: carrito 150 g/$203 móvil sin desbordes, formularios GRANEL/UNIDAD y Venta sin Caja, tres /me con rol propio; cero escrituras en revisión visual. [Evidencia final](operativa/CIERRE_TEST_2026-10-01.md).
 
 Conteo preparado 01/10: 18 tests nuevos / 44 focales. CSV, unidades y cobertura, costos/precios, precisión de 1 g en tres bases, stock concurrente/replay y modo unitario histórico. Plantilla real de 52 productos sin cantidades; dry-run detecta 178 campos pendientes (incluidos 22 costos), cero escrituras. [Procedimiento](operativa/CONTEO_CORTE_TEST.md).

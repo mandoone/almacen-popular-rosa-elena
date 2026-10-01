@@ -4,6 +4,8 @@ Producción no autorizada. Evidencia privada, backups y cuentas en `operativa.lo
 
 ## Actualización de sesión autónoma
 
+Control final adicional: runner F56 de septiembre asumía Arroz unitario y apertura histórica. Se retiraron ambos modos de escritura antes de cualquier red, conservando código histórico y preflight de destino read-only; no se reutilizó apertura ni SKU comercial. Piloto actual y runner granel usan los escenarios sintéticos vigentes. Dos pruebas de proceso con opt-in PASS, preflight F56 remoto PASS y clasp dry-run sin push/deploy PASS. **Suite final 470/470, lint/build/preflight PASS**, sin nuevas escrituras TEST. La QA de 468 y CI de 8c4d6f7 documentados debajo son el checkpoint previo.
+
 QA final sobre código 8c4d6f7: **468/468 tests**, 50 focales granel/conteo/registro, lint, typecheck, build, scan (303 archivos), diff y preflight técnico desde worktree limpio PASS. Backend TEST preflight integral read-only PASS, escrituras de piloto deshabilitadas. F10 estricto devuelve PENDING/exit 1 esperado: 1 READY, 19 PENDING, 0 FAIL; check:go-no-go conserva dominio/configuración productiva pendientes. package.json/lockfile idénticos a c036320.
 
 CI remoto de los nueve checkpoints de implementación/documentación PASS; [ejecución del código final](https://github.com/mandoone/almacen-popular-rosa-elena/actions/runs/36917209708). Dos Previews automáticos del mismo SHA reportan success en GitHub/Vercel; petición HTTP directa devuelve 302 a protección de Vercel. Conector protegido no permitió smoke autenticado (INVALID_ARGUMENT); no se declara runtime remoto PASS. QA funcional/visual actual validada localmente contra backend TEST. No se creó Preview manual ni se alteró protección/configuración para acceder.

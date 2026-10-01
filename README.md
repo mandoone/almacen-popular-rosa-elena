@@ -34,11 +34,12 @@ El chequeo consolidado local (`npm run preflight:tecnico`) exige un worktree lim
 
 ```bash
 npm run test:e2e:fase56:idempotencia:preflight
-npm run test:e2e:fase56:idempotencia
-npm run test:e2e:fase56
+node scripts/run-test-env.mjs scripts/piloto-operativo-test.mjs --preflight
 ```
 
 Las escrituras requieren el opt-in definido por el runner. No se cargan archivos env automáticamente, no existe cleanup remoto y producción queda fuera de este flujo.
+
+El runner F56 de septiembre conserva solo preflight de destino; sus modos de escritura están retirados porque asumían Arroz unitario y una apertura histórica. QA actual de escritura: piloto-operativo-test con sus fixtures propios y e2e-granel-test para el escenario sintético de granel, según sus guardrails/planes de restauración. No repetir el runner histórico sobre aperturas reales.
 
 Para scripts TEST compatibles, `node scripts/run-test-env.mjs scripts/<runner>.mjs <argumentos>` carga la configuración local Next, exige TEST y excluye variables productivas del proceso hijo. No imprime secretos ni modifica archivos env. Los scripts de activación de cuentas son locales y no activan personas automáticamente.
 
