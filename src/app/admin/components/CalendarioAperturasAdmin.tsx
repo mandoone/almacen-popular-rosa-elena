@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import ProductosPorApertura from './ProductosPorApertura';
+import { useSesionAdmin } from '@/lib/fase9/useSesionAdmin';
 import {
   ESTADOS_APERTURA,
   ESTADOS_MODO_PRESENCIAL,
@@ -177,6 +179,8 @@ function FormularioApertura({
 }
 
 export default function CalendarioAperturasAdmin() {
+  const { tiene } = useSesionAdmin();
+  const [ofertaId, setOfertaId] = useState<string | null>(null);
   const [aperturas, setAperturas] = useState<AperturaAdmin[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -323,11 +327,13 @@ export default function CalendarioAperturasAdmin() {
                 <div className="flex justify-between gap-3"><dt>Modo presencial</dt><dd>{apertura.modo_presencial_estado}</dd></div>
               </dl>
               <div className="mt-4 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
+                {tiene('productos:gestionar') && <button onClick={() => setOfertaId(ofertaId === apertura.apertura_id ? null : apertura.apertura_id)} className="rounded-md border border-gray-200 px-3 py-2 text-sm text-primary-dark" aria-expanded={ofertaId === apertura.apertura_id}>Productos especiales</button>}
                 <button onClick={() => setFormulario(apertura.apertura_id)} disabled={ocupado} className="rounded-md border border-gray-200 px-3 py-2 text-sm text-primary-dark hover:bg-gray-50 disabled:opacity-50">Editar</button>
                 {apertura.estado_apertura !== 'cerrada' && apertura.estado_apertura !== 'cancelada' && (
                   <button onClick={() => cerrar(apertura)} disabled={ocupado} className="rounded-md border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50">Cerrar apertura</button>
                 )}
               </div>
+              {ofertaId === apertura.apertura_id && tiene('productos:gestionar') && <ProductosPorApertura key={apertura.apertura_id} aperturaId={apertura.apertura_id} />}
             </article>
           ))}
         </div>

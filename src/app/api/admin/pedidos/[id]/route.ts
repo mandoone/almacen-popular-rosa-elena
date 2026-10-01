@@ -145,6 +145,9 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!sesionTieneCapacidad(req, 'pedidos:cancelar')) {
+    return NextResponse.json({ ok: false, error: 'Acceso denegado.' }, { status: 403 });
+  }
   const { id } = await params;
   try {
     const body = await req.json().catch(() => ({}));

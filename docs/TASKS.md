@@ -5,6 +5,22 @@
 
 ---
 
+## BLOQUE OPERATIVO 2026-10-01
+
+- ✅ Roles definitivos: confirmar todos; cancelar Operación/Admin, Venta DENY en UI/API.
+- ✅ REGULAR/POR_APERTURA/histórico, compatibilidad antigua, validación backend y UI administrativa.
+- ✅ Apps Script TEST v16, backup, migración idempotente y readback de 55 productos.
+- ✅ Normalizar porotos/detergentes; Empanadas maestro POR_APERTURA, nunca habilitado para aperturas reales.
+- ✅ Auditoría y cruce de últimas fuentes: 14 precios, 6 costos y 1 alta TEST; resto PENDING por SKU/unidad/faltantes.
+- ✅ Inventario READ-ONLY de 41 fotos y matriz privada de 10 actores 2/2/6 sin credenciales.
+- ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
+- ✅ E2E por apertura/roles y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 418/418, lint/build/typecheck/secrets/preflight PASS.
+- ⬜ Mantenimiento de cuatro alertas no críticas de dependencias antes del corte productivo.
+- ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
+- ⬜ Dominio, backup/rollback/ventana finales y activación productiva solo tras HUMAN GATE.
+
+Evidencias: [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). Producción no autorizada.
+
 ## BLOQUE TRANSVERSAL — Sistema documental v0.1
 
 - ✅ Conservar los Markdown v0.2 en `reports/sources/`.
@@ -359,8 +375,7 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ QA visual autenticada en Preview: panel, cuatro vistas READ-ONLY, logout,
   ruta protegida y consola PASS. Deployment con credencial efímera retirado;
   cuentas TEST finales selladas sin contraseñas conservadas.
-- ⬜ Asignar y ensayar cuentas humanas definitivas cuando el Almacén confirme
-  personas y apruebe la matriz. Las cuentas sintéticas no son operativas.
+- ⬜ Generar credenciales y ensayar las diez cuentas humanas ya definidas. Las cuentas sintéticas no son operativas.
 - ⬜ Configurar protección distribuida de intentos en la plataforma antes de
   Producción; el limitador por instancia es defensa local, no garantía global.
 - ✅ Auditar WAF nativa y límite local: equipo Hobby sin reglas; documentar dos
@@ -368,10 +383,9 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Preparar especificación y runbook local WAF por IP para login, con umbral
   candidato, observación, QA y rollback: `docs/RATE_LIMIT_WAF_RUNBOOK.md`.
   `PREPARADO_PARA_ACTIVACION`, **no publicado** y sin mutación Firewall.
-- ⬜ Decidir suficiencia de WAF + limitador local frente al riesgo real,
-  verificar cuota/costo y autorizar eventual publicación/ensayo; HUMAN_GATE.
-- ⬜ Confirmación del Almacén sobre la matriz y asignación final de personas a
-  roles. No declarar F9 cerrada antes de esa aceptación.
+- ✅ WAF por IP + limitador local IP/actor y riesgo residual aceptados para primer lanzamiento.
+- ⬜ Verificar cuota/umbral y autorizar publicación/ensayo productivo; HUMAN_GATE.
+- ✅ Matriz y asignación 2/2/6 aprobadas el 2026-10-01; F9 sigue abierta por los demás gates.
 - ✅ Preparar procedimiento de alta, cambio de rol/clave, revocación y retiro;
   registrar riesgo de URLs históricas de deployments antes de cuentas humanas.
 
@@ -388,14 +402,14 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
 - ✅ Definir evidencia, responsable funcional, fuente y PASS/FAIL para los 20
   checks; preflight READY/PENDING/FAIL y excepción con referencia humana.
 - ✅ Preparar vista operativa de los 20 checks y mensaje mínimo no enviado para
-  asignar roles, validadores de datos y responsables; ningún check pasó a READY.
+  asignar validadores de datos y responsables; roles_aprobados READY el 01/10.
 - ✅ Endurecer manifiesto F10 v2: fecha, función responsable, referencia y
   justificación de excepción para un check resuelto; fecha de corte nula
   mientras no exista corte real. Preparar guion final TEST e ingesta por etapas.
 - ✅ Unificar validación productiva de `ADMIN_USERS_JSON` con el parser runtime,
   incluso transporte `base64url:`, y exigir `SITE_URL` como origen HTTPS puro.
 - ⬜ Completar evidencias reales, dominio/CSP final, ensayo, backup, capacitación
-  y decisión humana Go/No-Go; los 20 checks continúan pending.
+  y decisión humana Go/No-Go; 19 checks siguen PENDING y roles_aprobados READY.
 - ⬜ Resolver decisiones, datos reales y bloqueos del checklist único en
   `docs/GO_NO_GO_FASE_9_10.md` antes de producción.
 

@@ -63,6 +63,7 @@ export default function PanelVendedorPage() {
   const [error, setError] = useState<string | null>(null);
   const [venta, setVenta] = useState<VentaCreada | null>(null);
   const enviandoRef = useRef(false);
+  const cargaRef = useRef(0);
   const idempotencyKeyRef = useRef<string | null>(null);
 
   const marcarVentaEditada = () => {
@@ -70,11 +71,13 @@ export default function PanelVendedorPage() {
   };
 
   const cargar = useCallback(async () => {
+    const carga = ++cargaRef.current;
     setCargando(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/ventas', { cache: 'no-store' });
+      const res = await fetch(`/api/admin/ventas${aperturaId ? `?apertura_id=${encodeURIComponent(aperturaId)}` : ''}`, { cache: 'no-store' });
       const data = await datosRespuesta(res);
+      if (carga !== cargaRef.current) return;
       const disponibles = (data.aperturas as Apertura[]).filter(
         (a) => a.estado_apertura === 'activa' && a.modo_presencial_estado === 'activo'
       );
@@ -82,13 +85,14 @@ export default function PanelVendedorPage() {
       setAperturas(disponibles);
       setAperturaId((actual) => actual || disponibles[0]?.apertura_id || '');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo preparar el panel vendedor.');
+      if (carga === cargaRef.current) setError(err instanceof Error ? err.message : 'No se pudo preparar el panel vendedor.');
     } finally {
-      setCargando(false);
+      if (carga === cargaRef.current) setCargando(false);
     }
-  }, []);
+  }, [aperturaId]);
 
   useEffect(() => { cargar(); }, [cargar]);
+  useEffect(() => { setCantidades({}); idempotencyKeyRef.current = null; }, [aperturaId]);
 
   const lineas = useMemo(() => productos
     .filter((producto) => (cantidades[producto.id_producto] ?? 0) > 0)

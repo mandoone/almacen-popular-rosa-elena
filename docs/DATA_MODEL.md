@@ -6,18 +6,26 @@
 
 ---
 
+## 0. Contrato operativo vigente TEST (2026-10-01)
+
+[Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md) registra migración y readback. PRODUCTOS usa id_producto, activo SI/NO y tipo_disponibilidad REGULAR/POR_APERTURA. Campo ausente/vacío = REGULAR; activo NO nunca se ofrece.
+
+APERTURA_PRODUCTOS: apertura_id + producto_id (pareja única), habilitado SI/NO, actualizado_por y actualizado_en. Sin apertura: REGULAR activos. Con apertura: REGULAR activos + especiales habilitados. Duplicados rechazan el catálogo; valores inválidos no habilitan. Administrador gestiona oferta sin editar Sheet; no hay precio por apertura. Backend valida bajo lock en pedido/venta; snapshots y diario durable conservados.
+
+TEST: 56 maestros (54 comerciales y 2 fixtures), 2 comerciales históricos inactivos y Empanadas POR_APERTURA sin habilitación real. Última comanda es precio público; Diseño de compra es costo y compras, no stock actual. Brand/formato distinguen SKU; nunca fusionar historia.
+
 ## 1. Estado actual
 
 - **Fuente operativa:** la base de datos nueva `BD_WEB_ALMACEN_ROSA_ELENA_MORALES`
   alimenta **tanto el catálogo como los pedidos**:
   - **Catálogo:** `src/app/api/productos/route.ts` obtiene los productos de la hoja
-    PRODUCTOS (`activo = SI`) vía la acción `listarProductos` de la Web App de Apps
+    PRODUCTOS (`activo = SI` y oferta de apertura) vía la acción `listarProductos` de la Web App de Apps
     Script; expone a la tienda `{ id, nombre, precio }` con `id = id_producto`
     (`PROD-001…`).
   - **Pedidos:** se crean/consultan vía la Web App (ver `docs/APPS_SCRIPT_PEDIDOS.md`),
     escribiendo en PEDIDOS, DETALLE_PEDIDOS, PRODUCTOS y MOVIMIENTOS_STOCK. La
     versión F9-A.2 usa además un diario `OPERACIONES_PEDIDOS` en TEST, ya
-    preparado; la validación de estados de `PEDIDOS` requiere alineación.
+    preparado; validación de cinco estados alineada y F9-A validada en TEST.
 - **Planilla antigua (retirada):** la Google Sheet publicada como CSV (hoja "WEB") se
   usó **solo como fuente de datos inicial** y **ya no alimenta** el catálogo ni la
   operación. La hoja PRODUCTOS de la base nueva se **cargó manualmente** con **53
@@ -70,9 +78,10 @@ Parámetros globales del sistema (clave/valor).
 | `nombre` | nombre visible. |
 | `costo` | costo de compra. |
 | `margen` | margen aplicado (si difiere del default de CONFIG). |
-| `precio_venta` | precio calculado (ver §4). |
+| `precio_venta` | precio vigente explícito (ver §4). |
 | `stock` | existencias actuales. |
-| `activo` | si se muestra en la tienda. |
+| `activo` | SI/NO; NO siempre oculta y rechaza compras nuevas. |
+| `tipo_disponibilidad` | REGULAR/POR_APERTURA; ausente = REGULAR. |
 | `imagen` | slug/archivo de imagen (opcional). |
 
 ### CLIENTES
@@ -186,9 +195,9 @@ Diario de intención y verificación para creación/confirmación/cancelación. 
 ## 4. Reglas de negocio
 
 ### Precio de venta
-- `precio_venta = costo × (1 + margen)`.
-- `margen` por producto; si no hay, se usa `margen_default` de **CONFIG**.
-- **Redondeo hacia arriba al múltiplo de $10** (CLP). Ej.: 1234 → 1240; 1240 → 1240.
+- Precio vigente explícito en PRODUCTOS; última comanda es referencia pública aprobada.
+- Costo + margen (10% de referencia) y redondeo son herramientas de propuesta; nunca reemplazan automáticamente el precio aprobado.
+- DETALLE_PEDIDOS/DETALLE_VENTAS conserva snapshot. Solo coincidencia inequívoca autoriza cambios TEST; dudas de SKU/unidad permanecen PENDING.
 
 ### Stock
 - El stock se descuenta/registra mediante **MOVIMIENTOS_STOCK** (fuente de verdad
@@ -215,7 +224,7 @@ Diario de intención y verificación para creación/confirmación/cancelación. 
   prepara `OPERACIONES_PEDIDOS`, aplica PRODUCTOS/MOVIMIENTOS_STOCK/PEDIDOS y
   verifica el resultado por readback. El backend lee las hojas **por nombre de
   encabezado**, robusto ante reordenamientos de columnas. El diario está en
-  TEST; la validación de estados de Sheet requiere migración y retest F9-A.
+  TEST; la validación de estados de Sheet y retest F9-A ya pasaron.
 - Los identificadores y relaciones (`*_id`) se mantienen simples (texto/numérico)
   por tratarse de una hoja de cálculo, no una base relacional.
 - Snapshots de `nombre`/`precio` en los detalles para preservar el histórico aunque

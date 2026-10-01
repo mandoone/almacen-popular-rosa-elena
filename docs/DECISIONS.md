@@ -8,6 +8,22 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D39 — Capas de rate limit elegidas para el primer lanzamiento (2026-10-01)
+
+WAF por IP más limitador local por IP+actor. El riesgo residual regional se acepta para primer lanzamiento; WAF no sustituye un contador global por actor. Supersede la elección abierta de D33; no autoriza publicar reglas ni activar Production.
+
+## D38 — Fuentes comerciales y cruces conservadores (2026-10-01)
+
+Última comanda = precio público; último Diseño de compra = costo/compras/inventario previo, nunca stock físico actual. Coincidencia inequívoca de SKU/formato/unidad permite actualizar TEST con backup/diff/readback. Mantener PENDING marcas, presentaciones o unidades ambiguas; no fusionar por nombre ni imponer costo + 10%. Inventario de fotos READ-ONLY hasta revisión/derechos humanos.
+
+## D37 — Disponibilidad persistente por apertura (2026-10-01)
+
+PRODUCTOS conserva activo y agrega tipo_disponibilidad REGULAR/POR_APERTURA; ausencia = REGULAR. APERTURA_PRODUCTOS usa pareja única y habilitado. Activo NO siempre oculta/rechaza nuevas compras. Especiales solo aparecen y se piden en apertura habilitada; backend autoridad. Precio vigente en maestro, snapshots históricos intactos. Blanco/5L/5L con suavizante regulares; burro/concentrado históricos NO; Empanadas POR_APERTURA referencia 2500 sin habilitación real.
+
+## D36 — Roles y asignación definitivos (2026-10-01)
+
+Confirmación Almacén/Omar 2026-10-01: Administración incluye Operación y Venta; Operación incluye Venta. Todos confirman; solo Operación/Admin cancelan. Supersede CAPACIDADES_VENTA con cancelar. Asignación 2 Administración, 2 Operación, 6 Venta; diez actores y nombres visibles definidos en matriz ignorada, sin contraseñas/hashes en Git ni nombres en src. Credenciales humanas e identidad_cuentas pendientes. Horario habitual 11:00–15:00 confirmado.
+
 ## D35 — HTML como fuente visual maestra para PDF documental (2026-09-30)
 
 - **Contexto:** al generar informes con estilos de impresión se observaron

@@ -67,6 +67,7 @@ interface Producto {
   permite_decimal?: string | boolean;
   paso_venta?: number;
   imagen_url?: string;
+  tipo_disponibilidad?: 'REGULAR' | 'POR_APERTURA';
 }
 
 interface ItemCarrito {
@@ -248,18 +249,25 @@ export default function TiendaPage() {
   }, [carrito]);
 
   useEffect(() => {
+    if (usaCalendarioTest && cargandoApertura) return;
     const controller = new AbortController();
     setLoading(true);
     setError(null);
-    fetch('/api/productos', { signal: controller.signal })
+    const query = apertura ? `?apertura_id=${encodeURIComponent(apertura.apertura_id)}` : '';
+    fetch(`/api/productos${query}`, { signal: controller.signal, cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error('No se pudo cargar el catálogo');
         return res.json();
       })
       .then((data: Producto[]) => {
+        if (controller.signal.aborted) return;
         if (!data.length)
           throw new Error('El catálogo está vacío o no tiene el formato esperado');
         setProductos(data);
+        setCarrito((actual) => actual.flatMap((item) => {
+          const vigente = data.find((p) => p.id === item.producto.id);
+          return vigente ? [{ producto: vigente, cantidad: item.cantidad }] : [];
+        }));
       })
       .catch((err) => {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -269,7 +277,7 @@ export default function TiendaPage() {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [intentoCatalogo]);
+  }, [intentoCatalogo, apertura, cargandoApertura, usaCalendarioTest]);
 
   useEffect(() => {
     if (!usaCalendarioTest) return;

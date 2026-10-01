@@ -42,7 +42,7 @@ test('solo los pedidos confirmados admiten pago', () => {
 test('marcar pagado exige método y responsable', () => {
   const sinMetodo = validarRegistroPago('listo', {
     estado_pago: 'pagado',
-    responsable: 'Carolina',
+    responsable: 'test-admin',
   });
   assert.equal(sinMetodo.valido, false);
   assert.ok(sinMetodo.errores.some((e) => e.includes('método')));
@@ -57,7 +57,7 @@ test('marcar pagado exige método y responsable', () => {
   const completo = validarRegistroPago('listo', {
     estado_pago: 'pagado',
     metodo_pago: 'efectivo',
-    responsable: 'Nadia',
+    responsable: 'test-admin-2',
   });
   assert.equal(completo.valido, true);
   assert.deepEqual(completo.errores, []);
@@ -68,7 +68,7 @@ test('no se puede pagar un pedido recibido ni uno cancelado', () => {
     const r = validarRegistroPago(estado, {
       estado_pago: 'pagado',
       metodo_pago: 'efectivo',
-      responsable: 'Carolina',
+      responsable: 'test-admin',
     });
     assert.equal(r.valido, false, `${estado} no debe admitir pago`);
   }
@@ -88,7 +88,7 @@ test('entregar exige pago completo', () => {
     validarEntrega({
       estado_pago: 'pagado',
       metodo_pago: 'transferencia',
-      responsable: 'Lucía',
+      responsable: 'test-operacion',
     }).valido,
     true
   );
@@ -119,16 +119,17 @@ test('migración de los valores mezclados que hoy están en la hoja', () => {
   assert.equal(vacio.estado_pago, 'pendiente_de_pago');
   assert.equal(vacio.requiere_revision, false);
 
-  const raro = migrarEstadoPagoHeredado('lo pagó la Cris el sábado');
+  const raro = migrarEstadoPagoHeredado('lo pagó la test-venta-2 el sábado');
   assert.equal(raro.requiere_revision, true);
 });
 
 test('responsables autorizados y excepción "Otro"', () => {
-  assert.equal(esResponsableAutorizado('Carolina'), true);
-  assert.equal(esResponsableAutorizado('Juan Py'), true);
+  assert.equal(esResponsableAutorizado('test-admin', ['test-admin','test-venta']), true);
+  assert.equal(esResponsableAutorizado('test-venta', ['test-admin','test-venta']), true);
   assert.equal(esResponsableAutorizado('Otro'), false);
 
-  const ok = validarResponsable('Mati');
+  assert.equal(esResponsableAutorizado('test-admin'), false, 'Sin registro debe denegar');
+  const ok = validarResponsable('test-venta-3', undefined, ['test-venta-3']);
   assert.equal(ok.valido, true);
   assert.equal(ok.requiere_alerta, false);
 

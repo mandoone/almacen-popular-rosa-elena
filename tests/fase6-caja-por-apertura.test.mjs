@@ -40,7 +40,7 @@ test('Fase 6: prepara cierre de solo lectura y marca pendientes/diferencias', ()
   const cierre = prepararCierreApertura(resumen, {
     apertura_id: aperturaId,
     efectivo_declarado: 1400,
-    responsable: 'Carolina',
+    responsable: 'test-admin',
   });
 
   assert.equal(cierre.efectivo_esperado, 1500);

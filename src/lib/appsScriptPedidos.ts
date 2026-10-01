@@ -407,11 +407,13 @@ export interface ProductoCatalogo {
   stock_actual: number;
   stock_minimo: number;
   imagen_url: string;
+  tipo_disponibilidad?: 'REGULAR' | 'POR_APERTURA';
 }
 
-export function listarProductos(): Promise<ProductoCatalogo[]> {
+export function listarProductos(aperturaId = ''): Promise<ProductoCatalogo[]> {
   return getScript<{ productos: ProductoCatalogo[] }>({
     action: 'listarProductos',
+    apertura_id: aperturaId,
   }).then((d) => d.productos);
 }
 
@@ -632,9 +634,34 @@ export function cambiarEstadoApertura(args: {
 
 // ── Fase 5 + Fase 6 (exclusivamente TEST) ─────────────────────────────────
 
-export function listarCatalogoVentaPresencial(): Promise<ProductoCatalogo[]> {
+export function listarCatalogoVentaPresencial(aperturaId = ''): Promise<ProductoCatalogo[]> {
   exigirEntornoTestParaFase56();
-  return listarProductos();
+  return listarProductos(aperturaId);
+}
+
+export interface ProductoPorAperturaAdmin {
+  producto_id: string;
+  nombre: string;
+  activo: string;
+  habilitado: boolean;
+}
+
+export function listarProductosPorAperturaAdmin(aperturaId: string): Promise<ProductoPorAperturaAdmin[]> {
+  return getAdminFase78<{ productos: ProductoPorAperturaAdmin[] }>({
+    action: 'listarProductosPorAperturaAdmin', apertura_id: aperturaId,
+  }).then((data) => data.productos);
+}
+
+export function configurarProductoPorAperturaAdmin(aperturaId: string, input: {
+  producto_id: string; habilitado: boolean; habilitado_esperado: boolean; idempotency_key: string;
+}, actor: string): Promise<ProductoPorAperturaAdmin[]> {
+  return postAdminFase78<{ productos: ProductoPorAperturaAdmin[] }>(
+    'configurarProductoPorAperturaAdmin', actor, {
+      apertura_id: aperturaId, producto_id: input.producto_id,
+      habilitado: input.habilitado, habilitado_esperado: input.habilitado_esperado,
+      idempotency_key: input.idempotency_key,
+    }
+  ).then((data) => data.productos);
 }
 
 export function crearVentaPresencial(

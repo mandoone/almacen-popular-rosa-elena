@@ -139,7 +139,7 @@ test('alertas del panel admin según §7.3', () => {
       estado_pedido: 'listo',
       estado_pago: 'pagado',
       metodo_pago: 'transferencia',
-      responsable: 'Nadia',
+      responsable: 'test-admin-2',
     }),
     []
   );

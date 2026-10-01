@@ -92,7 +92,7 @@ test('Fase 5: Apps Script valida cantidades y pago sin confiar en precios del na
   assert.equal(contexto.esMultiploPasoVenta_(0.3, 0.25), false);
   assert.throws(() => contexto.normalizarEntradaVentaPresencial_({
     apertura_id: 'APE-20260919',
-    vendedor: 'Lucía',
+    vendedor: 'test-operacion',
     forma_pago: 'tarjeta',
     lineas: [{ producto_id: 'PROD-1', cantidad: 1 }],
     total: 1,
@@ -101,7 +101,7 @@ test('Fase 5: Apps Script valida cantidades y pago sin confiar en precios del na
 
   const entrada = contexto.normalizarEntradaVentaPresencial_({
     apertura_id: 'APE-20260919',
-    vendedor: 'Lucía',
+    vendedor: 'test-operacion',
     forma_pago: 'efectivo',
     lineas: [{ producto_id: 'PROD-1', cantidad: 2 }],
     total: 1,

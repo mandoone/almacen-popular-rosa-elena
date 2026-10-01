@@ -21,10 +21,11 @@ function idempotencyKeyValida(valor: unknown): valor is string {
 }
 
 /** Datos de preparación del panel vendedor, siempre resueltos contra TEST. */
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const aperturaId = new URL(req.url).searchParams.get('apertura_id') ?? '';
     const [productos, aperturas] = await Promise.all([
-      listarCatalogoVentaPresencial(),
+      listarCatalogoVentaPresencial(aperturaId),
       listarAperturas(),
     ]);
     return NextResponse.json({ ok: true, data: { productos, aperturas } });

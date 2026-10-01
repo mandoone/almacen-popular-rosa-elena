@@ -4,6 +4,10 @@
 autorizada. Este documento no autoriza crear borradores, reglas, ni publicar
 configuración Firewall. El gate de seguridad productiva sigue abierto.
 
+## Elección definitiva 2026-10-01
+
+Primer lanzamiento: **Vercel WAF por IP + limitador local por IP y actor**. Riesgo regional y ausencia de contador global por actor aceptados por decisión humana. Selección cerrada; WAF no sustituye semánticamente el contador global por actor. Activación, cuota/umbral y publicación requieren gate de Producción; Firewall no cambió.
+
 ## Evidencia y alcance (2026-09-27)
 
 - Proyecto Vercel `almacen-popular-rosa-elena-7m17`, equipo Hobby: dashboard
@@ -54,9 +58,8 @@ cuando alcanza 5.000 claves; antes del ensayo productivo se debe comprobar
 cómo normaliza Vercel el encabezado de IP reenviada y medir abuso de actores/IPs
 rotativas. Ninguna de esas condiciones se considera resuelta por la WAF.
 
-**Criterio de suficiencia:** WAF + limitador local es una defensa por capas
-razonable para ensayar en un almacén pequeño, sin dependencia nueva. No está
-demostrado que baste para el tráfico o riesgo reales. Si se exige un máximo
+**Criterio de suficiencia:** WAF + local aceptados para primer lanzamiento
+el 2026-10-01, sin prometer límite global por actor ni resultados aún no medidos. Si se exige un máximo
 global estricto de cinco fallos por actor/IP, o se observan abusos desde IPs
 rotativas/múltiples regiones, clasificar `REQUIERE_CONTADOR_CENTRAL` y abrir
 decisión de proveedor/costo. No usar Runtime Cache o Edge Config como contador

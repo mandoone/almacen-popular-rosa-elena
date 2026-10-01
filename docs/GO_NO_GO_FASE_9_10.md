@@ -1,24 +1,25 @@
 # Fases 9–10 — inventario, decisiones y Go/No-Go
 
-**Fecha de corte:** 2026-09-27
+**Fecha de corte:** 2026-10-01
 **Alcance:** preparación técnica y editorial; producción no autorizada ni tocada.  
 **Estado global:** **NO-GO productivo** hasta resolver los bloqueos humanos indicados.
 
-Este documento es la fuente de verdad para el cierre de F9/F10. No reabre las
-validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
+Este documento registra el Go/No-Go F9/F10. El bloque TEST 01/10 está autorizado: roles definitivos, disponibilidad por apertura, migración/catálogo comercial y E2E sintético. No autoriza Producción.
+
+Corte local: roles_aprobados READY, 19 PENDING, 0 FAIL. Asignación 2 Administración/2 Operación/6 Venta y usernames definitivos preparados sin credenciales. Horario 11–15 confirmado. [Evidencia y matrices](operativa/CIERRE_TEST_2026-10-01.md).
 
 ## 0. Auditoría ejecutiva F9/F10
 
 | Pendiente | Estado real | Bloquea Producción | Decisión humana | Implementable ahora |
 |---|---|---:|---:|---:|
-| Identidad individual | Tres actores sintéticos validados localmente, por HTTP y visualmente en Vercel Preview TEST; cuentas finales selladas | SÍ, hasta asignación/ensayo humano | SÍ, asignación | Técnica TEST remota CERRADA |
+| Identidad individual | Tres actores sintéticos validados localmente, por HTTP y visualmente en Vercel Preview TEST; cuentas finales selladas | SÍ, hasta credenciales/ensayo humano | Asignación cerrada; falta ensayo | Técnica TEST remota CERRADA |
 | `legacy-admin` | Aislado a TEST/local; se apaga al configurar cuentas salvo recuperación explícita | SÍ si siguiera como login normal | NO para aislamiento; SÍ para retiro final | CERRADO técnico |
-| Protección de login | 5 fallos/15 min por IP+actor, solo memoria de instancia; Vercel Hobby con 0 reglas personalizadas activas; especificación WAF local preparada, no activada | SÍ, falta capa distribuida productiva | SÍ, suficiencia, cuota y publicación | Local CERRADO; distribuido PREPARADO_PARA_ACTIVACION, no PASS |
+| Protección de login | 5 fallos/15 min por IP+actor, solo memoria de instancia; Vercel Hobby con 0 reglas personalizadas activas; especificación WAF local preparada, no activada | SÍ, falta capa distribuida productiva | Elección/riesgo cerrados; cuota/umbral y publicación pendientes | Local CERRADO; distribuido PREPARADO_PARA_ACTIVACION, no PASS |
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
-| Capacidades | Matriz `venta`/`operacion`/`administracion` probada | SÍ, aceptación/asignación pendientes | SÍ, Almacén | No hardcodear personas |
+| Capacidades | Matriz aprobada; todos confirman, solo Operación/Admin cancelan | NO por matriz; SÍ por cuentas sin ensayo | RESUELTA 01/10 | Implementada UI/API; nombres fuera de src |
 | CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
 | Contenido/contactos/derechos | F9-01 a F9-04 pendientes | SÍ | SÍ, Almacén | NO sin fuente/aprobación |
-| Stock/precios/costos | TEST técnico listo; valores reales no validados | SÍ por flujo | SÍ, Almacén | NO cargar aún |
+| Stock/precios/costos | TEST normalizado; 14 precios/6 costos parciales trazables | SÍ por stock/unidades/SKU/costos faltantes | SÍ para faltantes | Backup/diff/readback aplicados solo TEST |
 | Caja/saldos | Corte real no informado | SÍ para caja/abastecimiento | SÍ, Almacén | NO cargar aún |
 | Backup/rollback | Procedimiento y manifiesto listos; evidencia productiva no ejecutada | SÍ | SÍ, responsables/ventana | Preparación CERRADA |
 | Capacitación/ensayo | Guion preparado; ejecución pendiente | SÍ | SÍ, participantes | NO sin cuentas/datos |
@@ -26,7 +27,7 @@ validaciones técnicas de F4–F8 ni autoriza repetir sus E2E de escritura.
 
 Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visual en Preview;
 `PENDIENTE_TECNICO` para activar y comprobar rate limiting distribuido y para dominio/CSP final;
-`PENDIENTE_ALMACEN` para personas, matriz, contenido y datos;
+`PENDIENTE_ALMACEN` para credenciales/ensayo humanos, contenido y datos;
 `REQUISITO_PUESTA_EN_MARCHA` para carga/corte/capacitación/backup; todo ello es
 `BLOQUEANTE_PRODUCCION` mientras no exista evidencia.
 
@@ -104,7 +105,9 @@ B. Corregir los que hayan cambiado.
 C. Publicar solo los canales confirmados.  
 **Recomendación:** C hasta contar con confirmación explícita.  
 **Impacto:** contacto y asistencia a aperturas.  
-**Bloquea producción:** **SÍ**.
+Horario 11:00–15:00 confirmado; los demás canales/aprobación institucional final siguen pendientes.
+
+**Bloquea producción:** **SÍ** para datos públicos restantes.
 
 ## 3. Preparación técnica F10
 
@@ -164,19 +167,11 @@ existe monitoreo manual y responsable asignado.
   `RATE_LIMIT_WAF_RUNBOOK.md`. No se creó borrador ni publicó regla en este
   bloque; la existencia de borradores previos no quedó verificada por CLI.
 
-**HUMAN_GATE — protección distribuida:**
+**Decisión definitiva 2026-10-01 — protección distribuida:**
 
-| Alternativa | Qué cambia | Ventaja | Límite / decisión |
-|---|---|---|---|
-| A. Vercel WAF + limitador local | Una regla por IP, método y ruta, primero observada en modo log; luego Preview y Production por etapas | Sin dependencia ni servicio nuevo; protección compartida entre instancias | Cuenta requests y regiones por separado; posible costo y falsos positivos por IP compartida. Requiere aceptar protección aproximada y autorizar publicación de regla sobre proyecto que también sirve Production. |
-| B. Almacén central transaccional para fallos | Servicio de contador atómico por IP+actor con expiración de 15 min, consultado por cada login | Semántica de fallos/actor y límite global más preciso | Nuevo proveedor/credencial/dependencia, latencia y costo; requiere elección y política fail-closed ante caída. |
+Primer lanzamiento: Vercel WAF por IP + limitador local por IP y actor. La elección y la aceptación del riesgo residual están cerradas. WAF cuenta requests y regiones por separado; no sustituye un contador global exacto de fallos por actor. Si posteriormente se exige esa semántica, corresponde otro bloque con contador central.
 
-La especificación local se clasifica `PREPARADO_PARA_ACTIVACION`, **no** como
-protección productiva vigente. Sin perfil de tráfico y aceptación del riesgo
-residual no puede concluirse que WAF + límite local sea suficiente. Si se
-requiere el máximo global exacto de fallos por actor/IP, hace falta contador
-central. La selección y cualquier cambio de Firewall quedan pendientes de
-autorización humana; **no se declara resuelto F9 global**.
+La especificación se clasifica PREPARADO_PARA_ACTIVACION. No hay protección WAF publicada en este bloque. Cuota/umbral y activación requieren el gate de Producción; F9 global sigue abierta por los demás gates humanos.
 
 - Headers: `nosniff`, anti-clickjacking, referrer policy, permissions policy,
   COOP, HSTS y CSP limitada a `self`/recursos locales inventariados.
@@ -195,8 +190,8 @@ autorización humana; **no se declara resuelto F9 global**.
   en Preview de la rama; Production conservó sus variables originales.
 
 **Pendiente humano F10-02:** la arquitectura técnica, identidad multiusuario y
-matriz provisional están preparadas localmente, pero falta confirmación del
-Almacén, asignación de personas, QA TEST de las cuentas humanas finales y
+matriz definitiva y asignación 2/2/6 están aprobadas, pero faltan credenciales,
+QA TEST de las cuentas humanas finales y
 protección distribuida de intentos de login. Los actores sintéticos ya pasaron
 su QA técnica local, remota por HTTP y visual; no constituyen la asignación humana.
 **Bloquea producción: SÍ**.
@@ -205,14 +200,18 @@ su QA técnica local, remota por HTTP y visual; no constituyen la asignación hu
 
 | Paquete | Severidad | Tipo / superficie | Impacto real | Solución | ¿Bloquea? |
 |---|---|---|---|---|---|
-| `brace-expansion` | alta | transitiva, desarrollo | DoS al procesar patrones hostiles; la app no recibe patrones | override a versiones corregidas 1.1.18/5.0.9 | NO, resuelta |
+| `minimatch` | alta derivada | transitiva, desarrollo | npm la marca por brace-expansion | mantenimiento transitivo junto con brace-expansion | NO para TEST actual; revisar antes del corte productivo |
+| `brace-expansion` | alta | transitiva, desarrollo | DoS por patrones hostiles; la app no recibe patrones | Audit 01/10 agrega nuevos advisories contra los overrides existentes 1.1.18/5.0.9; mantenimiento pendiente | NO para TEST actual; revisar parche transitivo antes del corte productivo |
 | `js-yaml` | alta | transitiva, desarrollo (ESLint) | DoS al parsear YAML hostil; no ocurre en runtime | override 4.3.2 | NO, resuelta |
 | `postcss-selector-parser` | baja | transitiva, build (Tailwind) | recursión con CSS hostil; CSS es del repo | override 6.1.3 | NO, resuelta |
 | `postcss` incluido por Next | alta | transitiva de dependencia directa, build | lectura de sourcemaps/CSS hostiles; no hay subida de CSS por usuarios | requiere versión de Next que incorpore PostCSS corregido | NO con el modelo actual; vigilar |
-| `next` | moderada derivada | directa, runtime/build | npm la marca por el PostCSS incluido | auditoría local propone Next 16.3.6 (major) | NO por sí sola; migración separada |
+| `next` | moderada derivada | directa, runtime/build | npm la marca por el PostCSS incluido | auditoría 01/10 propone Next 16.3.8 (major) | NO por sí sola; migración separada |
 
-Resultado actual esperado: **2 alertas (1 alta, 1 moderada), 0 críticas**. No se
-migró a Next 16.
+Resultado real al 2026-10-01: **4 alertas (3 altas, 1 moderada), 0 críticas**.
+Audit al umbral crítico PASS. No se modificaron dependencias en este bloque: el nuevo
+hallazgo es transitivo de desarrollo sin entrada de patrones del usuario; el PostCSS
+interno de Next requiere evaluar una migración separada. Registrar mantenimiento
+antes del corte productivo; no ejecutar npm audit fix --force.
 
 ### Backup y rollback
 
@@ -244,13 +243,13 @@ la revisión de evidencia ni la aprobación de Producción.
 | Dato | Estado | ¿Bloquea producción? |
 |---|---|---|
 | Stock físico | BLOCKED | SÍ: disponibilidad y pedidos reales. |
-| Cuatro precios extremos | HUMAN_DECISION_REQUIRED | SÍ: cobro correcto de esos productos. |
+| Precios/SKU/unidades pendientes | PENDING; última comanda base aprobada, actualización parcial TEST | SÍ para productos ambiguos. |
 | Costos | HUMAN_DECISION_REQUIRED | SÍ para compras/márgenes; no para catálogo si precios de venta se validan aparte. |
 | Venta física real `PROD-001–019` | HUMAN_DECISION_REQUIRED | SÍ para activar venta presencial de esos productos. |
 | Imágenes, derechos y créditos | HUMAN_DECISION_REQUIRED | SÍ para publicar cada imagen; se puede lanzar sin ellas. |
 | Stock mínimo y prioridades | PENDING | NO para catálogo/pedidos; SÍ para recomendaciones de abastecimiento fiables. |
 | Saldo bancario y efectivo | PENDING | NO para sitio público; SÍ antes de usar caja/abastecimiento productivo. |
-| Modelo de roles | PREPARADO_TEST / HUMAN_DECISION_REQUIRED | SÍ: falta aceptación y asignación de personas. |
+| Modelo de roles | READY; aprobación/asignación definitivas 01/10 | NO por roles; identidades requieren credenciales/ensayo. |
 
 ## 5. Checklist final
 
@@ -275,7 +274,7 @@ la revisión de evidencia ni la aprobación de Producción.
 - Resolver dos advisories npm ligados a Next 15 cuando exista una corrección sin
   migración mayor aceptada, o planificar la migración separada.
 - Completar mínimos/prioridades, saldo/efectivo y observabilidad externa opcional.
-- Elegir/configurar rate limiting distribuido y ejecutar QA TEST de las cuentas
+- Activar la WAF por IP elegida solo con gate productivo y ejecutar QA TEST de las cuentas
   humanas finales, incluida revocación frente a deployments históricos.
 
 ### BLOCKED
@@ -287,5 +286,5 @@ la revisión de evidencia ni la aprobación de Producción.
 ### HUMAN_DECISION_REQUIRED
 
 - F9-01 a F9-04.
-- Dominio `SITE_URL`, asignación humana de roles, elección/configuración de la
-  protección distribuida, datos reales y responsables/ventana de backup y rollback.
+- Dominio SITE_URL, credenciales/ensayo humanos, activación WAF bajo gate productivo,
+  datos físicos/ambigüedades comerciales y responsables/ventana de backup/rollback.

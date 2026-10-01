@@ -19,11 +19,16 @@ interface ProductoTienda {
   permite_decimal: string;
   paso_venta: number;
   imagen_url: string;
+  tipo_disponibilidad: string;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const productos = await listarProductos();
+    const aperturaId = new URL(req.url).searchParams.get('apertura_id') ?? '';
+    if (aperturaId && !/^APE-\d{8}$/.test(aperturaId)) {
+      return NextResponse.json({ error: 'Apertura inválida.' }, { status: 400 });
+    }
+    const productos = await listarProductos(aperturaId);
     const data: ProductoTienda[] = productos.map((p) => ({
       id: p.id_producto,
       nombre: p.nombre,
@@ -33,6 +38,7 @@ export async function GET() {
       permite_decimal: p.permite_decimal,
       paso_venta: p.paso_venta,
       imagen_url: p.imagen_url,
+      tipo_disponibilidad: p.tipo_disponibilidad ?? 'REGULAR',
     }));
     return NextResponse.json(data);
   } catch (err) {

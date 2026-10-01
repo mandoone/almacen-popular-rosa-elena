@@ -5,6 +5,14 @@
 
 ---
 
+## Roles y catálogo por apertura TEST (2026-10-01)
+
+Resultado final: **418/418 PASS, cero fallos**. Baseline 393 tests; añadidos 19 casos funcionales y 6 de guardrails/cuentas. Cubren seis combinaciones confirmar/cancelar por rol, POST directo Venta 403 antes de backend, oferta activa/inactiva sin/con apertura, compatibilidad REGULAR, pedidos regulares/especiales/históricos, migración idempotente y readback, IDs/snapshots, duplicados, privilegios administrativos y replay seguro de transporte.
+
+Backend TEST v16, migración aditiva con backup y repetición sin cambios. Auditoría y diff de catálogo en [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). QA HTTP/navegador local usa cuentas sintéticas y apertura sintética controlada; nunca aperturas reales ni Empanadas reales. E2E completo PASS: stock 5.5 → 5.4 → 5.5, apertura sintética cerrada, fixtures restaurados e historia preexistente idéntica, incluidas dos REQUIERE_REVISION. QA visual, lint, build, typecheck, secrets scan (278), diff y preflight técnico PASS. Audit crítico PASS con 4 alertas no críticas abiertas. Evidencias en ese informe y archivos ignorados. Horario 11–15 confirmado.
+
+F10 local: roles_aprobados READY, 19 PENDING; QA técnica no sustituye identidad/capacitación/ensayo humano final. Producción no cambió.
+
 ## F9/F10 — preflight y preparación local (2026-09-27)
 
 - Rate limiter actual: cinco fallos/15 min por IP y actor en `Map` de instancia;

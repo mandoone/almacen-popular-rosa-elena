@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { capacidadParaCambioPedido } from '@/lib/fase9/autorizacion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -237,6 +238,7 @@ function AdminPanel({
   };
 
   const cancelar = async (pedido: Pedido) => {
+    if (!modoDemo && !tiene('pedidos:cancelar')) return;
     if (!window.confirm('¿Cancelar este pedido? Se devolverá el stock de sus productos.')) return;
     setAccionId(pedido.id_pedido);
     try {
@@ -380,7 +382,7 @@ function AdminPanel({
                 const ocupado = accionId === pedido.id_pedido;
                 const cancelado = pedido.estado_pedido === 'cancelado';
                 const transiciones = esEstadoPedido(pedido.estado_pedido)
-                  ? transicionesPosibles(pedido.estado_pedido)
+                  ? transicionesPosibles(pedido.estado_pedido).filter((estado) => modoDemo || tiene(capacidadParaCambioPedido(estado)))
                   : [];
 
                 return (

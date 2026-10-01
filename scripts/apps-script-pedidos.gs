@@ -40,6 +40,7 @@ var HOJAS = {
   DETALLE_VENTAS: 'DETALLE_VENTAS',
   MOVIMIENTOS_STOCK: 'MOVIMIENTOS_STOCK',
   APERTURAS: 'APERTURAS',
+  APERTURA_PRODUCTOS: 'APERTURA_PRODUCTOS',
   COMPRAS: 'COMPRAS',
   DETALLE_COMPRAS: 'DETALLE_COMPRAS',
   GASTOS_EXTRA: 'GASTOS_EXTRA',
@@ -80,6 +81,9 @@ var COLUMNAS_APERTURAS = [
 ];
 
 var CANAL_WEB = 'web';
+var COLUMNAS_APERTURA_PRODUCTOS = [
+  'apertura_id', 'producto_id', 'habilitado', 'actualizado_por', 'actualizado_en'
+];
 var NOMBRE_SHEET_TEST_E2E = 'TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES';
 
 var COLUMNAS_VENTA_PRESENCIAL = {
@@ -139,6 +143,169 @@ var COLUMNAS_FASE_7_8 = {
   ]
 };
 
+// ===================== DISPONIBILIDAD POR APERTURA =============================
+
+function tipoDisponibilidadProducto_(valor) {
+  return limpiar_(valor) || 'REGULAR'; // Compatibilidad con productos anteriores.
+}
+
+function productoDisponibleEnApertura_(producto, habilitados) {
+  if (limpiar_(producto.activo).toUpperCase() !== 'SI') return false;
+  var tipo = tipoDisponibilidadProducto_(producto.tipo_disponibilidad);
+  return tipo === 'REGULAR' || (tipo === 'POR_APERTURA' && habilitados[producto.id_producto] === true);
+}
+
+function exigirDisponibilidadProducto_(producto, habilitados) {
+  if (!productoDisponibleEnApertura_(producto, habilitados)) {
+    lanzar_('Producto no disponible para esta apertura: "' + producto.id_producto + '".', 409);
+  }
+}
+
+function productosHabilitadosEnApertura_(ss, aperturaId) {
+  var resultado = Object.create(null);
+  if (!limpiar_(aperturaId) || !ss.getSheetByName(HOJAS.APERTURA_PRODUCTOS)) return resultado;
+  var hoja = leerHoja_(ss, HOJAS.APERTURA_PRODUCTOS);
+  exigirColumnas_(hoja, COLUMNAS_APERTURA_PRODUCTOS.slice(0, 3));
+  var vistos = Object.create(null);
+  hoja.filas.forEach(function (fila) {
+    var registro = filaAObjeto_(hoja, fila);
+    if (limpiar_(registro.apertura_id) !== aperturaId) return;
+    var id = limpiar_(registro.producto_id);
+    if (!id || vistos[id]) lanzar_('Relacion apertura-producto duplicada o invalida.', 409);
+    vistos[id] = true;
+    resultado[id] = limpiar_(registro.habilitado).toUpperCase() === 'SI';
+  });
+  return resultado;
+}
+
+function listarProductosPorAperturaAdmin_(aperturaId) {
+  verificarDestinoFase78Test_();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  aperturaId = limpiar_(aperturaId);
+  obtenerAperturaEnHoja_(leerHoja_(ss, HOJAS.APERTURAS), aperturaId);
+  var habilitados = productosHabilitadosEnApertura_(ss, aperturaId);
+  return listarProductosAdmin_().filter(function (p) { return p.tipo_disponibilidad === 'POR_APERTURA'; })
+    .map(function (p) {
+      return { producto_id: p.id_producto, nombre: p.nombre, activo: p.activo, habilitado: habilitados[p.id_producto] === true };
+    });
+}
+
+function configurarProductoPorAperturaAdmin_(body) {
+  verificarDestinoFase78Test_();
+  exigirIdempotencyKey_(body.idempotency_key);
+  var entrada = {
+    apertura_id: limpiar_(body.apertura_id), producto_id: limpiar_(body.producto_id),
+    habilitado: body.habilitado, habilitado_esperado: body.habilitado_esperado,
+    responsable: limpiar_(body.responsable)
+  };
+  if (!/^APE-\d{8}$/.test(entrada.apertura_id) || !/^PROD-[A-Za-z0-9-]{1,80}$/.test(entrada.producto_id) ||
+      typeof entrada.habilitado !== 'boolean' || typeof entrada.habilitado_esperado !== 'boolean' || !entrada.responsable) {
+    lanzar_('Configuracion apertura-producto invalida.', 400);
+  }
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) lanzar_('El backend TEST esta ocupado.', 503);
+  try {
+    return ejecutarIdempotenteBajoLock_('configurarProductoPorAperturaAdmin', body.idempotency_key, entrada, function () {
+      var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      var lista = listarProductosPorAperturaAdmin_(entrada.apertura_id);
+      var producto = lista.filter(function (p) { return p.producto_id === entrada.producto_id; })[0];
+      if (!producto) lanzar_('El producto no es POR_APERTURA.', 400);
+      if (entrada.habilitado && producto.activo !== 'SI') lanzar_('No se puede habilitar un producto inactivo.', 409);
+      if (producto.habilitado !== entrada.habilitado_esperado) lanzar_('La disponibilidad cambio. Actualiza y vuelve a intentar.', 409);
+      var hoja = leerHoja_(ss, HOJAS.APERTURA_PRODUCTOS);
+      var indice = -1;
+      hoja.filas.forEach(function (fila, i) {
+        if (limpiar_(fila[col_(hoja, 'apertura_id')]) === entrada.apertura_id &&
+            limpiar_(fila[col_(hoja, 'producto_id')]) === entrada.producto_id) indice = i;
+      });
+      var registro = indice < 0 ? {} : filaAObjeto_(hoja, hoja.filas[indice]);
+      registro.apertura_id = entrada.apertura_id;
+      registro.producto_id = entrada.producto_id;
+      registro.habilitado = entrada.habilitado ? 'SI' : 'NO';
+      registro.actualizado_por = entrada.responsable;
+      registro.actualizado_en = marcaIso_(new Date());
+      if (indice < 0) agregarFila_(hoja, registro);
+      else hoja.sheet.getRange(indice + 2, 1, 1, hoja.headers.length).setValues([
+        hoja.headers.map(function (campo) { return registro[campo] === undefined ? '' : registro[campo]; })
+      ]);
+      SpreadsheetApp.flush();
+      var actual = listarProductosPorAperturaAdmin_(entrada.apertura_id);
+      if (actual.filter(function (p) { return p.producto_id === entrada.producto_id; })[0].habilitado !== entrada.habilitado) {
+        lanzar_('Readback de disponibilidad no coincide.', 409);
+      }
+      return { apertura_id: entrada.apertura_id, productos: actual };
+    });
+  } finally { lock.releaseLock(); }
+}
+
+/** Readback privado completo del maestro/relacion y huellas de las demas hojas. */
+function obtenerCatalogoOperativoTest_() {
+  verificarDestinoFase78Test_();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var nombres = [HOJAS.PRODUCTOS, HOJAS.APERTURA_PRODUCTOS];
+  return {
+    entorno: 'TEST', sheet_nombre: ss.getName(),
+    hojas: nombres.map(function (nombre) {
+      if (!ss.getSheetByName(nombre)) return { nombre: nombre, existe: false, headers: [], registros: [] };
+      var hoja = leerHoja_(ss, nombre);
+      return { nombre: nombre, existe: true, headers: hoja.headers,
+        registros: hoja.filas.map(function (fila) { return serializarRegistroF78_(filaAObjeto_(hoja, fila)); }) };
+    }),
+    integridad: ss.getSheets().map(function (sheet) {
+      var valores = sheet.getDataRange().getValues();
+      return { nombre: sheet.getName(), filas: Math.max(0, sheet.getLastRow() - 1), huella: hashPayload_(valores) };
+    })
+  };
+}
+
+/** Migracion aditiva TEST: backup antes de escribir, sin tocar IDs ni snapshots. */
+function prepararDisponibilidadProductosTest_() {
+  verificarDestinoFase78Test_();
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) lanzar_('El backend TEST esta ocupado.', 503);
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var hoja = leerHoja_(ss, HOJAS.PRODUCTOS);
+    var ids = Object.create(null);
+    if (hoja.headers.some(function (h, i) { return !h || hoja.headers.indexOf(h) !== i; })) lanzar_('Headers PRODUCTOS ambiguos.', 409);
+    hoja.filas.forEach(function (fila) {
+      var p = filaAObjeto_(hoja, fila);
+      if (!limpiar_(p.id_producto)) return;
+      if (ids[p.id_producto]) lanzar_('ID de producto duplicado.', 409);
+      ids[p.id_producto] = true;
+      if (['REGULAR', 'POR_APERTURA'].indexOf(tipoDisponibilidadProducto_(p.tipo_disponibilidad)) === -1) lanzar_('Tipo de disponibilidad invalido.', 409);
+    });
+    var relacion = ss.getSheetByName(HOJAS.APERTURA_PRODUCTOS);
+    var headersRelacion = relacion && relacion.getLastColumn() > 0
+      ? relacion.getRange(1, 1, 1, relacion.getLastColumn()).getValues()[0].map(limpiar_) : [];
+    if (headersRelacion.some(function (h, i) { return !h || headersRelacion.indexOf(h) !== i; })) lanzar_('Headers APERTURA_PRODUCTOS ambiguos.', 409);
+    var tipoCol = hoja.mapa.tipo_disponibilidad;
+    var faltantes = hoja.filas.some(function (fila) {
+      return limpiar_(fila[col_(hoja, 'id_producto')]) && (tipoCol === undefined || !limpiar_(fila[tipoCol]));
+    });
+    var cambios = tipoCol === undefined || faltantes || !relacion ||
+      COLUMNAS_APERTURA_PRODUCTOS.some(function (h) { return headersRelacion.indexOf(h) < 0; });
+    if (cambios) ss.copy('BACKUP TEST DISPONIBILIDAD ' + marca_(new Date()).replace(/[: ]/g, '-'));
+    var extension = asegurarColumnasAditivas_(hoja, ['tipo_disponibilidad']);
+    hoja = leerHoja_(ss, HOJAS.PRODUCTOS);
+    var normalizadas = 0;
+    hoja.filas.forEach(function (fila, i) {
+      if (limpiar_(fila[col_(hoja, 'id_producto')]) && !limpiar_(fila[col_(hoja, 'tipo_disponibilidad')])) {
+        hoja.sheet.getRange(i + 2, col_(hoja, 'tipo_disponibilidad') + 1).setValue('REGULAR');
+        normalizadas++;
+      }
+    });
+    if (!relacion) relacion = ss.insertSheet(HOJAS.APERTURA_PRODUCTOS);
+    if (relacion.getLastColumn() === 0) {
+      relacion.getRange(1, 1, 1, COLUMNAS_APERTURA_PRODUCTOS.length).setValues([COLUMNAS_APERTURA_PRODUCTOS]);
+      relacion.setFrozenRows(1);
+    } else asegurarColumnasAditivas_(leerHoja_(ss, HOJAS.APERTURA_PRODUCTOS), COLUMNAS_APERTURA_PRODUCTOS);
+    SpreadsheetApp.flush();
+    return { entorno: 'TEST', backup_creado: cambios, agregadas: extension.agregadas,
+      normalizadas: normalizadas, readback: obtenerCatalogoOperativoTest_() };
+  } finally { lock.releaseLock(); }
+}
+
 // ============================== ENRUTADO HTTP ==================================
 
 /**
@@ -155,7 +322,15 @@ function doGet(e) {
     switch (action) {
       case 'listarProductos':
         // Publico: catalogo para la tienda. No requiere token.
-        return jsonOk_({ productos: listarProductos_() });
+        return jsonOk_({ productos: listarProductos_(params.apertura_id) });
+      case 'listarProductosPorAperturaAdmin':
+        exigirToken_(params.token);
+        validarEntornoTestFase78_();
+        return jsonOk_({ productos: listarProductosPorAperturaAdmin_(params.apertura_id) });
+      case 'obtenerCatalogoOperativoTest':
+        exigirToken_(params.token);
+        validarEntornoTestFase78_();
+        return jsonOk_(obtenerCatalogoOperativoTest_());
       case 'listarPedidos':
         exigirToken_(params.token);
         return jsonOk_({ pedidos: listarPedidos_() });
@@ -274,6 +449,14 @@ function doPost(e) {
     switch (action) {
       case 'crearPedido':
         return jsonOk_(crearPedido_(body));
+      case 'prepararDisponibilidadProductosTest':
+        exigirToken_(body.token);
+        validarEntornoTestFase78_();
+        return jsonOk_(prepararDisponibilidadProductosTest_());
+      case 'configurarProductoPorAperturaAdmin':
+        exigirToken_(body.token);
+        validarEntornoTestFase78_();
+        return jsonOk_(configurarProductoPorAperturaAdmin_(body));
       case 'actualizarEstadoPedido':
         exigirToken_(body.token);
         return jsonOk_(actualizarEstadoPedido_(body));
@@ -383,6 +566,7 @@ function construirPlanCreacionPedido_(ss, payload, ahora) {
   exigirContratoPedidosF9Test_(ss);
   var contextoApertura = validarPedidoAnticipadoTest_(ss, payload, ahora);
   var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var habilitados = productosHabilitadosEnApertura_(ss, payload.apertura_id);
 
   var cId = col_(prod, 'id_producto');
   var cActivo = col_(prod, 'activo');
@@ -411,6 +595,7 @@ function construirPlanCreacionPedido_(ss, payload, ahora) {
     if (String(fila[cActivo]).toUpperCase() !== 'SI') {
       lanzar_('Producto inactivo: "' + idProd + '".', 400);
     }
+    exigirDisponibilidadProducto_(filaAObjeto_(prod, fila), habilitados);
     var permiteDecimal = String(fila[cDecimal]).toUpperCase() === 'SI';
     if (!permiteDecimal && Math.floor(cant) !== cant) {
       lanzar_('Producto "' + idProd + '" no permite decimales (cantidad ' + cant + ').', 400);
@@ -771,9 +956,12 @@ function crearPedido_(body) {
  * Catalogo publico para la tienda: productos con activo = SI, en el orden de la
  * hoja PRODUCTOS. NO expone precio_costo ni margen_pct.
  */
-function listarProductos_() {
+function listarProductos_(aperturaId) {
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+  aperturaId = limpiar_(aperturaId);
+  if (aperturaId) obtenerAperturaEnHoja_(leerHoja_(ss, HOJAS.APERTURAS), aperturaId);
+  var habilitados = productosHabilitadosEnApertura_(ss, aperturaId);
 
   var cId = col_(prod, 'id_producto');
   var cActivo = col_(prod, 'activo');
@@ -794,9 +982,12 @@ function listarProductos_() {
     var idProd = limpiar_(fila[cId]);
     if (!idProd) continue;
     if (String(fila[cActivo]).toUpperCase() !== 'SI') continue;
+    var producto = filaAObjeto_(prod, fila);
+    if (!productoDisponibleEnApertura_(producto, habilitados)) continue;
 
     productos.push({
       id_producto: idProd,
+      tipo_disponibilidad: tipoDisponibilidadProducto_(producto.tipo_disponibilidad),
       nombre: limpiar_(fila[cNombre]),
       categoria: limpiar_(fila[cCategoria]),
       prioridad: limpiar_(fila[cPrioridad]),
@@ -1699,6 +1890,7 @@ function persistirVentaPresencial_(entrada) {
   validarAperturaVentaPresencial_(apertura, new Date());
 
   var prod = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var habilitados = productosHabilitadosEnApertura_(ss, entrada.apertura_id);
   var ventas = leerHoja_(ss, HOJAS.VENTAS);
   var detalles = leerHoja_(ss, HOJAS.DETALLE_VENTAS);
   var movimientos = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
@@ -1730,6 +1922,7 @@ function persistirVentaPresencial_(entrada) {
     if (limpiar_(fila[cActivo]).toUpperCase() !== 'SI') {
       lanzar_('Producto inactivo: "' + solicitada.producto_id + '".', 409);
     }
+    exigirDisponibilidadProducto_(filaAObjeto_(prod, fila), habilitados);
     var cantidad = solicitada.cantidad;
     var permiteDecimal = limpiar_(fila[cDecimal]).toUpperCase() === 'SI';
     if (!permiteDecimal && Math.floor(cantidad) !== cantidad) {
@@ -2632,7 +2825,11 @@ function listarMovimientosStockAdmin_(productoId, desde, hasta) {
 function listarProductosAdmin_() {
   var hoja = leerHoja_(SpreadsheetApp.openById(SPREADSHEET_ID), HOJAS.PRODUCTOS);
   exigirColumnas_(hoja, COLUMNAS_FASE_7_8.PRODUCTOS_ADMIN);
-  return hoja.filas.map(function (fila) { return serializarRegistroF78_(filaAObjeto_(hoja, fila)); })
+  return hoja.filas.map(function (fila) {
+    var producto = serializarRegistroF78_(filaAObjeto_(hoja, fila));
+    producto.tipo_disponibilidad = tipoDisponibilidadProducto_(producto.tipo_disponibilidad);
+    return producto;
+  })
     .filter(function (producto) { return limpiar_(producto.id_producto); });
 }
 
@@ -2695,6 +2892,7 @@ function crearProductoAdmin_(body) {
   var productoId = limpiar_(body.producto_id);
   if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(productoId)) lanzar_('producto_id invalido.', 400);
   var entrada = normalizarCambioProductoAdmin_({ producto_id: productoId, cambios: body.producto || {} });
+  entrada.cambios.tipo_disponibilidad = tipoDisponibilidadProducto_(entrada.cambios.tipo_disponibilidad);
   var requeridos = ['nombre', 'categoria', 'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_venta', 'stock_minimo', 'prioridad', 'activo'];
   requeridos.forEach(function (campo) {
     if (entrada.cambios[campo] === undefined || limpiar_(entrada.cambios[campo]) === '') lanzar_('Falta campo requerido: ' + campo + '.', 400);
@@ -2734,7 +2932,7 @@ function crearProductoAdmin_(body) {
 function normalizarCambioProductoAdmin_(body) {
   var productoId = limpiar_(body.producto_id);
   if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(productoId)) lanzar_('producto_id invalido.', 400);
-  var permitidos = ['nombre', 'categoria', 'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_costo', 'precio_venta', 'stock_minimo', 'prioridad', 'imagen_url', 'activo'];
+  var permitidos = ['nombre', 'categoria', 'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_costo', 'precio_venta', 'stock_minimo', 'prioridad', 'imagen_url', 'activo', 'tipo_disponibilidad'];
   var cambios = {};
   Object.keys(body.cambios || {}).forEach(function (campo) {
     if (permitidos.indexOf(campo) === -1 || campo === 'stock_actual') lanzar_('Campo de producto no editable.', 400);
@@ -2746,6 +2944,9 @@ function normalizarCambioProductoAdmin_(body) {
   if (cambios.unidad_medida !== undefined && ['unidad', 'pack', 'kg'].indexOf(limpiar_(cambios.unidad_medida)) === -1) lanzar_('Unidad invalida.', 400);
   if (cambios.prioridad !== undefined && ['alta', 'media', 'baja'].indexOf(limpiar_(cambios.prioridad)) === -1) lanzar_('Prioridad invalida.', 400);
   if (cambios.activo !== undefined) cambios.activo = normalizarSiNo_(cambios.activo);
+  if (cambios.tipo_disponibilidad !== undefined) {
+    if (['REGULAR', 'POR_APERTURA'].indexOf(cambios.tipo_disponibilidad) === -1) lanzar_('Tipo de disponibilidad invalido.', 400);
+  }
   if (cambios.permite_decimal !== undefined) cambios.permite_decimal = normalizarSiNo_(cambios.permite_decimal);
   ['paso_venta', 'precio_costo', 'precio_venta', 'stock_minimo'].forEach(function (campo) {
     if (cambios[campo] !== undefined) {

@@ -64,21 +64,15 @@ para ocultar un requisito crítico sin una alternativa aprobada.
 
 ## Vista operativa de los 20 checks
 
-Esta clasificación ordena el **siguiente trabajo**, no cambia el estado de
-ningún check: los 20 del ejemplo siguen `PENDING` y ninguno puede pasar a
-`READY` solo con una plantilla técnica.
+Corte 2026-10-01: manifiesto local v2 válido, **1 READY / 19 PENDING / 0 FAIL**. roles_aprobados READY: jerarquía, confirmar/cancelar y asignación 2/2/6 aprobadas con referencia Confirmación Almacén/Omar 2026-10-01. El ejemplo versionado conserva sus veinte PENDING para una instalación nueva.
 
 | Grupo | Checks / trabajo siguiente |
 |---|---|
-| `PODEMOS_RESOLVER_NOSOTROS` | Preparar guion y referencias técnicas para `dominio_https`, `backup_sheet`, `version_apps_script`, `rollback_web` y `ensayo_test`; no aprobarlos ni ejecutarlos en Producción. **0 checks completos sin participación humana.** |
-| `NECESITA_ALMACEN` | `roles_aprobados`, `identidad_cuentas`, `contenido_editorial`, `derechos_imagenes`, `contactos_publicos`, `stock_fisico`, `precios_venta`, `costos_iniciales`, `saldo_efectivo`, `saldo_bancario`, `minimos_prioridades`, `responsable_ventana` (12). |
-| `SOLO_AL_FINAL` | Cerrar `dominio_https`, `backup_sheet`, `version_apps_script`, `rollback_web`, `capacitacion_venta`, `capacitacion_operacion`, `capacitacion_administracion` y `ensayo_test` (8), tras cuentas, datos y responsables aprobados. |
+| RESUELTO | roles_aprobados; usernames y distribución definidos, sin credenciales |
+| NECESITA_ALMACEN | identidad_cuentas (credenciales/ensayo), contenido_editorial, derechos_imagenes/fotos, contactos restantes (horario 11–15 confirmado), stock_fisico/unidades, precios_venta ambiguos, costos_iniciales incompletos, saldo_efectivo, saldo_bancario, minimos_prioridades, responsable_ventana |
+| SOLO_AL_FINAL | dominio_https, backup_sheet, version_apps_script, rollback_web, tres capacitaciones y ensayo_test con personas, después de datos/cuentas y autorización |
 
-**Primer check ejecutable al recibir respuestas:** registrar aprobación de
-`roles_aprobados` con matriz persona–rol–acceso; después crear y ensayar las
-cuentas humanas en TEST para `identidad_cuentas`. En paralelo, los validadores
-designados podrán preparar actas de contenido/contactos, inventario/precios/
-costos y saldos. No cargar datos reales sin autorización de su entorno.
+Datos comerciales parciales aplicados solo en TEST; [cierre operativo](operativa/CIERRE_TEST_2026-10-01.md). Ninguna fuente reconstruye stock físico ni saldos. Identidad usa los diez actores definidos; no volver a pedir usernames, roles ni horario.
 
 ## Secuencia operativa
 
@@ -92,7 +86,7 @@ costos y saldos. No cargar datos reales sin autorización de su entorno.
   `test-admin` pasó QA visual autenticada. El deployment con la credencial de
   QA fue retirado y las cuentas finales quedaron selladas. Detalle en
   `TEST_PLAN.md`.
-- El Almacén aprueba la matriz de capacidades y asigna cada persona a un rol.
+- El Almacén ya aprobó la matriz y asignación 2/2/6 el 2026-10-01.
 - Se crean actores técnicos individuales con `npm run auth:credential -- --actor
   <id> --role <rol>`; el comando pide la contraseña sin mostrarla.
 - Se verifica login, trazabilidad, revocación y cierre de sesión de cada rol en TEST.
@@ -100,10 +94,10 @@ costos y saldos. No cargar datos reales sin autorización de su entorno.
 
 #### Procedimiento de identidad real (preparado; no ejecutado)
 
-1. El Almacén aprueba la matriz vigente y entrega por canal privado la tabla
-   **PERSONA | ROL | NECESITA_ACCESO**. Designa titular y suplente para revocar.
-   No registrar nombres ni contraseñas en Git.
-2. Elegir un `actor_id` técnico único por persona y confirmar el rol permitido.
+1. Usar la matriz privada definida en operativa.local/cuentas-humanas.json.
+   Diez actores únicos validados y comandos exactos en PROCEDIMIENTO_CUENTAS.md;
+   designar titular y suplente para revocar. No guardar nombres/credenciales en Git.
+2. Mantener los actor_id y roles aprobados; no volver a elegirlos.
    Crear una credencial inicial con `npm run auth:credential -- --actor <id>
    --role <rol>` en terminal privada: el comando pide la clave sin eco, pero
    muestra el hash; evitar grabaciones, logs y pantalla compartida. Entregar la
@@ -162,32 +156,8 @@ existe autorización explícita de Producción. Cualquier `PENDING`, `FAIL`,
 preflight fallido, diferencia de inventario/caja, identidad compartida o ausencia
 de backup verificable implica **NO-GO**.
 
-## Paquete mínimo al Almacén (borrador; no enviado)
+## Próxima intervención del Almacén
 
-La matriz de capacidades continúa **provisional**; esta tabla no asigna
-personas ni presupone aprobación.
+Roles, usernames, asignación 2/2/6 y horario 11:00–15:00 cerrados. Matriz nominativa local ignorada. Faltan credenciales privadas/ensayo, validadores de textos/contactos/fotos/derechos, conteo/unidades, ambigüedades SKU/costos, arqueo/conciliación, mínimos/prioridades, reunión/capacitaciones y responsable/suplente/ventana. No se envió ningún mensaje a terceros.
 
-| PERSONA | ROL (`venta` / `operacion` / `administracion`) | NECESITA_ACCESO (sí/no) |
-|---|---|---|
-| Por completar | Por confirmar | Por confirmar |
-| Por completar | Por confirmar | Por confirmar |
-| Por completar | Por confirmar | Por confirmar |
-
-- `venta`: pedidos y venta presencial, con consulta de productos/stock.
-- `operacion`: lo de venta, más ajustes de stock, compras, abastecimiento, caja,
-  gastos y reportes.
-- `administracion`: lo de operación, más productos, precios, usuarios y
-  configuración sensible.
-
-**Mensaje corto para WhatsApp o reunión — NO ENVIADO:** “Para preparar el
-Almacén, ¿nos indican (1) quién necesita acceso, con rol venta/operación/
-administración, y si aprueban esa matriz; (2) quién valida textos y contactos,
-quién valida inventario/precios/costos, y quién valida caja y saldo inicial;
-(3) quién será responsable principal de la puesta en marcha y quién su
-reemplazo? Basta responder con nombres/funciones; no envíen contraseñas ni
-montos por WhatsApp.”
-
-**Antes de Producción, no ahora:** dominio/HTTPS, respaldo y rollback
-verificados, capacitación, ensayo y decisión Go/No-Go. **Puede esperar:**
-monitoreo externo opcional y ampliaciones del catálogo/proveedores que no
-formen parte del corte inicial.
+Primer lanzamiento: WAF por IP + local IP/actor, riesgo residual regional aceptado. Sin activación ni contador global por actor. Dominio, cuota/umbral, publicación WAF, secretos, backup/rollback finales solo ante gate de Producción.

@@ -1,9 +1,17 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-09-30.
+> tarea que cambie el estado. Última actualización: 2026-10-01.
 
 ---
+
+## Cierre operativo 2026-10-01
+
+Modelo REGULAR/POR_APERTURA e históricos implementado en backend/UI y Sheet TEST; Apps Script TEST v16. Venta confirma y no cancela (403 directo en API); Operación/Admin confirman y cancelan. Roles y asignación 2/2/6 aprobados, diez usernames definidos en matriz local ignorada sin credenciales. Horario 11:00–15:00 confirmado.
+
+Catálogo: 55 filas auditadas, 18 actualizaciones, 14 precios y 6 costos respaldados; Empanadas creada una vez como POR_APERTURA y no habilitada en aperturas reales. Poroto burro/concentrado históricos inactivos; blanco y detergentes 5L regulares activos. Stock físico pendiente; fuentes comerciales nunca se convierten en stock. 41 fotos inventariadas, revisión/derechos pendientes. F10 local: roles_aprobados READY, 19 PENDING, 0 FAIL. Detalle/evidencia: [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). Producción no autorizada.
+
+QA de este bloque: **418/418 PASS, cero fallos**; E2E HTTP/visual y restauración PASS. Lint, build, typecheck, secrets scan y preflight técnico PASS. Dos REQUIERE_REVISION y toda historia preexistente intactas. Audit crítico PASS; cuatro alertas no críticas pendientes de mantenimiento.
 
 ## Resumen
 
@@ -17,7 +25,7 @@ sábados de apertura.
   abastecimiento terminó PASS y restauró los fixtures.
 - **Producción:** no se toca todavía. Google Sheets, Apps Script, variables y
   comportamiento productivos permanecen sin cambios.
-- **F9-A VALIDADA EN TEST:** Apps Script TEST v15 y la validación de los cinco
+- **F9-A VALIDADA EN TEST:** baseline Apps Script TEST v15 (ahora v16) y la validación de los cinco
   estados siguen activos. El runtime Next local `43a51a9` registró etapas
   saneadas y completó el E2E focalizado con un único pedido: creación durable,
   retry y conflicto de key, confirmación, LISTO reconciliado tras respuesta
@@ -26,17 +34,17 @@ sábados de apertura.
   se conservan intactas como evidencia. El 503 anterior a `doPost` no tiene
   causa upstream exacta demostrada; en este retest se observó y recuperó un
   404 HTML transitorio en GET `listarAperturas`.
-- **Próxima prioridad:** asignación humana de roles, protección distribuida de
-  login y preparación operativa F10. Producción sigue fuera de alcance.
+- **Próxima prioridad:** credenciales y ensayo humanos, datos físicos y
+  preparación operativa F10; roles y capas de protección ya aprobados. Producción sigue fuera de alcance.
 - **F9/F10 — preparación actual:** el limitador de login sigue siendo local por
   instancia. El dashboard del proyecto Hobby mostró cero reglas WAF
   personalizadas activas. La especificación por IP/región y el runbook de
   activación quedaron `PREPARADO_PARA_ACTIVACION`, **sin crear ni publicar
-  reglas**; el riesgo residual y la decisión de suficiencia/costo siguen
-  pendientes (ver `RATE_LIMIT_WAF_RUNBOOK.md`). El procedimiento de cuentas
+  reglas**; WAF por IP + limitador local IP/actor y riesgo residual fueron
+  aceptados para primer lanzamiento el 01/10; activación/cuota siguen pendientes (ver `RATE_LIMIT_WAF_RUNBOOK.md`). El procedimiento de cuentas
   reales, la checklist de dominio y la matriz de evidencias de los 20 checks
-  F10 están preparados sin asignar
-  personas ni cargar datos. El paquete mínimo de preguntas al Almacén y la
+  F10 están preparados; asignación 2/2/6 cerrada y datos comerciales parciales
+  cargados únicamente en TEST. El paquete mínimo de preguntas al Almacén y la
   vista `PODEMOS_RESOLVER_NOSOTROS` / `NECESITA_ALMACEN` / `SOLO_AL_FINAL`
   están en `F10_READINESS_OPERATIVA.md`. El preflight F10 distingue
   READY/PENDING/FAIL y `check:go-no-go` valida el mismo formato de cuentas que
@@ -65,8 +73,7 @@ sábados de apertura.
   datos, stock, caja/saldos, costos, capacitación, backup, rollback y Go/No-Go.
   El esquema v2 exige fecha, responsable y referencia para resolver un check;
   `fecha_corte` permanece nula hasta existir corte real. Los guiones de ingesta
-  y ensayo TEST están preparados, no ejecutados. Todos los checks operativos
-  reales continúan pendientes.
+  y ensayo TEST están preparados, no ejecutados. roles_aprobados READY y 19 checks operativos PENDING al 01/10.
 - **Rama técnica actual:** `feature/fase-3a-operativa`.
 - **Fase 3B TEST validada:** la hoja `APERTURAS` existe y
   opera con siete aperturas oficiales; Apps Script TEST versión 2 respondió
@@ -217,8 +224,8 @@ en marcha autorizada.** La identidad sintética TEST ya fue probada; cualquier
 intervención productiva requiere autorización y Go/No-Go separados.
 
 La arquitectura técnica de roles usa `venta`, `operacion` y `administracion` con
-herencia explícita de capacidades. La matriz es provisional, definida por Omar;
-la asignación de personas y la aceptación del Almacén siguen pendientes. Las
+herencia explícita de capacidades. Matriz y asignación definitivas aprobadas
+el 2026-10-01; credenciales y ensayo humanos siguen pendientes. Las
 cuentas individuales se suministran por entorno sin nombres hardcodeados. El
 login compartido crea temporalmente `legacy-admin`/`administracion` solo en
 TEST/local y queda deshabilitado al configurar usuarios, salvo recuperación

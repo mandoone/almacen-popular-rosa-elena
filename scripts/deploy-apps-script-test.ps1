@@ -411,6 +411,7 @@ try {
   }
 
   Invoke-TestPreflight
+  Write-Output "VERSION TEST: $baselineVersion -> $newVersion"
   Write-Output 'PASS | Apps Script TEST actualizado en el deployment existente'
 } catch {
   Write-Error ('FAIL | ' + $_.Exception.Message)

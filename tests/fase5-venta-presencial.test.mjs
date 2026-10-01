@@ -35,7 +35,7 @@ function entrada(lineas) {
     fecha_hora: '2026-09-19T11:15',
     lineas,
     forma_pago: 'efectivo',
-    vendedor: 'Lucía',
+    vendedor: 'test-operacion',
   };
 }
 

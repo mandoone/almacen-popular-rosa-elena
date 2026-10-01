@@ -67,6 +67,7 @@ export interface CambioProductoAdmin {
   categoria?: string;
   prioridad?: string;
   activo?: boolean;
+  tipo_disponibilidad?: 'REGULAR' | 'POR_APERTURA';
   unidad_medida?: string;
   permite_decimal?: boolean;
   paso_venta?: number;
@@ -79,6 +80,9 @@ export interface CambioProductoAdmin {
 /** Valida edición; stock_actual queda fuera y solo se cambia mediante ajuste auditado. */
 export function validarCambioProducto(cambio: CambioProductoAdmin): string[] {
   const errores: string[] = [];
+  if ('tipo_disponibilidad' in cambio && !['REGULAR', 'POR_APERTURA'].includes(String(cambio.tipo_disponibilidad))) {
+    errores.push('El tipo de disponibilidad no es válido.');
+  }
   if ('nombre' in cambio && !String(cambio.nombre ?? '').trim()) errores.push('El nombre no puede quedar vacío.');
   if ('unidad_medida' in cambio && !['unidad', 'kg', 'litro', 'pack'].includes(String(cambio.unidad_medida))) {
     errores.push('La unidad de medida no es válida.');

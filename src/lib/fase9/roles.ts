@@ -31,7 +31,6 @@ export type Capacidad = (typeof CAPACIDADES)[number];
 const CAPACIDADES_VENTA: readonly Capacidad[] = [
   'pedidos:ver',
   'pedidos:confirmar',
-  'pedidos:cancelar',
   'pedidos:entregar',
   'venta_presencial:registrar',
   'stock:ver',
@@ -39,6 +38,7 @@ const CAPACIDADES_VENTA: readonly Capacidad[] = [
 
 const CAPACIDADES_OPERACION: readonly Capacidad[] = [
   ...CAPACIDADES_VENTA,
+  'pedidos:cancelar',
   'stock:ajustar',
   'compras:gestionar',
   'abastecimiento:gestionar',

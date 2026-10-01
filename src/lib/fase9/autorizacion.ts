@@ -5,6 +5,7 @@ export function rutaEsODescendiente(pathname: string, base: string): boolean {
 }
 
 export function capacidadParaCambioPedido(estadoSolicitado: unknown): Capacidad {
+  if (String(estadoSolicitado ?? '').trim().toLowerCase() === 'cancelado') return 'pedidos:cancelar';
   return String(estadoSolicitado ?? '').trim().toLowerCase() === 'entregado'
     ? 'pedidos:entregar'
     : 'pedidos:confirmar';
@@ -28,6 +29,7 @@ export function capacidadParaRuta(pathname: string, metodo = 'GET'): Capacidad |
   }
   if (rutaEsODescendiente(pathname, '/api/admin/ventas')) return 'venta_presencial:registrar';
   if (rutaEsODescendiente(pathname, '/api/admin/aperturas')) {
+    if (/^\/api\/admin\/aperturas\/[^/]+\/productos$/.test(pathname)) return 'productos:gestionar';
     return method === 'GET' ? 'aperturas:ver' : 'configuracion:gestionar';
   }
   if (rutaEsODescendiente(pathname, '/api/admin/stock')) return 'stock:ajustar';

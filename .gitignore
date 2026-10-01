@@ -49,3 +49,6 @@ next-env.d.ts
 
 # Evidencia local de puesta en marcha (puede referenciar datos operativos privados)
 /config/f10-readiness.local.json
+
+# Evidencia, fuentes y matriz humana privada del bloque operativo TEST.
+/operativa.local/

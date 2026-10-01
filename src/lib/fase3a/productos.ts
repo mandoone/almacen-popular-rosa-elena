@@ -4,7 +4,7 @@
  * Fuente: docs/fase-3a/levantamiento_operativo_fase_3a_consolidado.md (§5, §6.3).
  *
  * Las categorías y unidades de venta NO se fijan aquí: siguen pendientes de
- * Carolina/Nadia. Solo se expone la propuesta base como constante editable.
+ * Administración. Solo se expone la propuesta base como constante editable.
  */
 
 /** Estado editorial del producto (§5.4, §5.5). */
@@ -15,7 +15,7 @@ export type EstadoProducto = (typeof ESTADOS_PRODUCTO)[number];
 export const PASO_GRANEL_KG = 0.25;
 
 /**
- * PROPUESTA BASE — pendiente de validación por Carolina/Nadia (§2.6, §2.8).
+ * PROPUESTA BASE — pendiente de validación por Administración (§2.6, §2.8).
  * No tratar como decisión cerrada.
  */
 export const CATEGORIAS_PROPUESTAS = [

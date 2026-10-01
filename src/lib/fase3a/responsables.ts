@@ -3,56 +3,26 @@
  *
  * Fuente: docs/fase-3a/levantamiento_operativo_fase_3a_consolidado.md (§3.1, §4.7).
  *
- * DEPRECADO PARA AUTORIZACIÓN: este archivo conserva un snapshot histórico del
- * levantamiento Fase 3A. La autorización runtime vive exclusivamente en
- * `src/lib/fase9/roles.ts`; la asignación humana final sigue PENDIENTE_ALMACEN.
+ * DEPRECADO PARA AUTORIZACIÓN: el validador heredado recibe un registro explícito
+ * del llamador y falla cerrado si falta. La autorización runtime usa la sesión
+ * y src/lib/fase9/roles.ts; la matriz nominativa vive fuera de Git.
  */
 
 export const RESPONSABLE_OTRO = 'Otro';
 
-/** Lista autorizada inicial (§4.7). Editable sin tocar la lógica. */
-export const RESPONSABLES_AUTORIZADOS = [
-  'Carolina',
-  'Nadia',
-  'Lucía',
-  'Seba',
-  'Juan Py',
-  'Cris',
-  'Mati',
-  'Lizzie',
-] as const;
-
-export type ResponsableAutorizado = (typeof RESPONSABLES_AUTORIZADOS)[number];
+/** Registro suministrado por el llamador; nunca una lista nominativa en código. */
+export type ResponsableAutorizado = string;
 
 export const ALERTA_RESPONSABLE_NO_AUTORIZADO =
   'Responsable no autorizado / pendiente de validación administrativa';
 
-/**
- * Snapshot histórico, no fuente de permisos ni asignación vigente.
- * @deprecated La asignación humana final sigue PENDIENTE_ALMACEN.
- */
-export type RolOperativo = 'administracion' | 'operacion' | 'venta';
-
-export const ROLES_POR_RESPONSABLE: Record<
-  ResponsableAutorizado,
-  readonly RolOperativo[]
-> = {
-  Carolina: ['administracion', 'operacion'],
-  Nadia: ['administracion', 'operacion'],
-  'Lucía': ['operacion', 'venta'],
-  Seba: ['operacion'],
-  'Juan Py': ['venta'],
-  Cris: ['venta'],
-  Mati: ['venta'],
-  Lizzie: ['venta'],
-};
-
 export function esResponsableAutorizado(
-  valor: unknown
+  valor: unknown,
+  autorizados: readonly string[] = []
 ): valor is ResponsableAutorizado {
   return (
     typeof valor === 'string' &&
-    (RESPONSABLES_AUTORIZADOS as readonly string[]).includes(valor)
+    autorizados.includes(valor)
   );
 }
 
@@ -72,7 +42,8 @@ export interface ResultadoResponsable {
  */
 export function validarResponsable(
   responsable: unknown,
-  observacion?: unknown
+  observacion?: unknown,
+  autorizados: readonly string[] = []
 ): ResultadoResponsable {
   const nombre = String(responsable ?? '').trim();
   const errores: string[] = [];
@@ -85,7 +56,7 @@ export function validarResponsable(
     };
   }
 
-  if (esResponsableAutorizado(nombre)) {
+  if (esResponsableAutorizado(nombre, autorizados)) {
     return { valido: true, requiere_alerta: false, errores: [] };
   }
 

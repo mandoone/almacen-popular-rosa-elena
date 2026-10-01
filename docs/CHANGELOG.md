@@ -5,6 +5,18 @@
 
 ---
 
+## [Operativa TEST] — Roles y disponibilidad por apertura (2026-10-01)
+
+- Matriz definitiva 2/2/6; Venta confirma y recibe DENY para cancelar en UI/API.
+- Maestro REGULAR/POR_APERTURA, relación por apertura, backend autoridad, UI mínima administrativa y compatibilidad histórica.
+- Apps Script TEST v16 y migración idempotente con backup/readback; histórico y dos REQUIERE_REVISION conservados.
+- Burro/concentrado inactivos; blanco y detergentes 5L regulares; Empanadas maestro 2500 por apertura sin habilitación real.
+- 55 registros auditados, 14 precios y 6 costos actualizados con respaldo; 1 alta. Matrices comerciales y 41 fotos; stock físico/fotos/ambigüedades pendientes.
+- Retirada lista nominativa heredada y roles por nombre de src; fixtures sintéticos.
+- Diez cuentas preparadas localmente sin credenciales; F10 roles_aprobados READY y 19 PENDING. WAF por IP + local IP/actor acordado, sin publicación.
+- QA final 418/418, lint/build/typecheck/secrets/preflight PASS; E2E y visual PASS, fixture/stock restaurados. Historia preexistente idéntica, dos REQUIERE_REVISION intactas. Audit crítico PASS con cuatro alertas no críticas registradas.
+- [Cierre operativo TEST 2026-10-01](operativa/CIERRE_TEST_2026-10-01.md). Producción no autorizada ni modificada.
+
 ## [Sistema documental] — Flujo oficial HTML → PDF (2026-09-30)
 
 - Formalizado el HTML aprobado como fuente visual maestra para los PDF.
