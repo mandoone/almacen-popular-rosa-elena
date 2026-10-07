@@ -104,5 +104,7 @@ for (const [nombre, fn] of [['pedido_unidad', f => pedidoV1(f)], ...[100, 250, 1
   assert.deepEqual(nuevo, viejo, `Resultado V1 distinto: ${nombre}`); diferenciales.push({ nombre, hash: sha(nuevo), igual: true });
 }
 const evidencia = { inicial, archivos_sin_cambios: archivosV1.length, funciones_GAS_iguales: oldGas.size - modificadas.length, funciones_modificadas: modificadas, acciones_V1_iguales: casosV1, funciones_transporte_iguales: antesTransporte.size, diferenciales, solo_local: true };
-await mkdir('operativa.local', { recursive: true }); await writeFile('operativa.local/auditoria-v1-familias.json', JSON.stringify(evidencia, null, 2));
+if (!process.argv.includes('--no-write')) {
+  await mkdir('operativa.local', { recursive: true }); await writeFile('operativa.local/auditoria-v1-familias.json', JSON.stringify(evidencia, null, 2));
+}
 console.log(JSON.stringify(evidencia));

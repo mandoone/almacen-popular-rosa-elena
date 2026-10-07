@@ -12,7 +12,8 @@
 - ✅ C1 contrato paralelo y snapshots comerciales, asignaciones futuras; 13 tests locales. Ningún deploy ni Sheet nueva.
 - ✅ C2 motor puro local y 38 tests de reparto, durable/replay/revisión, reversión/reasignación y granel.
 - ✅ C3 auditoría V1, 648 tests, QA y [plan de activación](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md). Sin activación/carga real.
-- ⬜ C4 adaptador durable V2 con mocks, interrupciones y puente contractual; todavía sin deploy/rutas públicas. HUMAN_GATES del informe deben resolverse antes de carga/activación.
+- ✅ C4 adaptador durable local, pedidos mixtos, recovery/fault injection, bloqueos, cancelación/reasignación y176 tests nuevos. [Evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md). Sin Sheets/deploy/rutas públicas.
+- ⬜ C5 eventual puerto TEST con garantías de escritura/recibos/lock, respaldo/restauración y fixtures aislados; requiere autorización separada y HUMAN_GATE familia desactivada antes de operación. No ejecutado por C4.
 
 ## IDENTIDAD SKU / COMPRAS — FASE B1 LOCAL 2026-10-07
 

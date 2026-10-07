@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D49 — Persistencia durable mixta, con evidencia de autoría (2026-10-07)
+
+C4 compone V1/V2 sobre C2 y puerto local simulado: intención previa a efectos, asignaciones append-only, IDs deterministas, saldo/revisión/recibo en una escritura lógica, readback y bloqueo durable por pedido/SKU. Stock coincidente sin evidencia exige revisión. Reasignación registra reversión/aplicación y aplica saldo neto, conservando historia. No se afirma ACID ni se conecta a Google/GAS/rutas. Familia desactivada continúa HUMAN_GATE; política configurable sin decisión comercial por defecto. [Modelo](DATA_MODEL.md#adaptador-durable-c4--exclusivamente-local-2026-10-07-d49) y [evidencia/límites](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+
 ## D48 — Reparto operativo y reversión histórica local (2026-10-07)
 
 C2 valida reparto decidido por operación, stock físico acumulado y snapshots de oferta. Plan SHA-256 congela efectos/IDs; reintentos no recalculan marca ni precio, evidencia incompleta requiere revisión. Cancelación devuelve exactamente SKU/cantidades históricos; reasignación conserva historia y usa futuro puntero de operación vigente. Solo motor/mocks, sin adaptador Sheets ni deploy. [Contrato y límites](DATA_MODEL.md).

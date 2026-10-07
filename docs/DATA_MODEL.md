@@ -8,6 +8,16 @@
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
+### Adaptador durable C4 — exclusivamente local (2026-10-07, D49)
+
+`adaptadorDurableV2.ts` orquesta un plan mixto completo mediante un puerto de almacenamiento; `planMixtoV2.ts` reutiliza C2 y conserva cantidades nativas históricas V1. `almacenSheetsMemoriaV2.ts` simula filas, lock y CAS. No existe puerto Google ni integración con rutas/GAS. [Orden, pruebas y límites](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+
+OPERACIONES_PEDIDOS conserva contrato de columnas; tipos locales CONFIRMAR_V2/CANCELAR_V2/REASIGNAR_V2 y snapshot_json versionado PEDIDO_MIXTO_V2_1 guardan plan/hash, reservas V1, asignaciones familiares y efectos deterministas. Paso/resultado_json permiten reconciliar/replay. Asignaciones append-only se seleccionan por operacion_asignacion_vigente; cancelado mantiene referencia histórica. Reasignación escribe saldos netos por SKU y registra reversión/aplicación, sin modificar filas anteriores.
+
+Campos lógicos adicionales **solo del mock**, no columnas migradas: PRODUCTOS revision_stock_v2/evidencia_stock_v2; PEDIDOS contexto_apertura_snapshot/evidencia_estado_v2/evidencia_puntero_v2; movimientos referencia_id/payload_hash/id_detalle_pedido/asignacion_ids. Recibos enlazan operación/payload_hash/plan_hash/efecto_id. Futuro puerto debe definir serialización y acreditar escritura conjunta saldo/recibo. Stock coincidente sin recibo nunca reconoce autoría. PREPARADA/APLICANDO/REQUIERE_REVISION bloquean pedido/SKU; diario desconocido/corrupto bloquea globalmente. Movimientos V2 pendientes son intenciones, no efectos completos para reportes.
+
+Mixed V1/V2 valida stock acumulado del plan completo y no crea familias artificiales para V1. Política de familia desactivada inyectable, sin elección por defecto: HUMAN_GATE423 antes de escribir. Apertura del pedido conserva ID; POR_APERTURA exige habilitación actual siguiendo C2. Cancelación utiliza cantidades/bases históricas. D40, operaciones V1, Sheets y backend TEST v20 permanecen intactos.
+
 ### Motor de asignación C2 — exclusivamente local (2026-10-07, D48)
 
 `src/lib/familias/asignacionV2.ts`: operación aporta reparto por detalle; familia nunca tiene saldo. Confirma recibido→pendiente mediante SKU elegibles equivalentes y solicitud exacta. Cantidades/stock se operan como enteros (unidades, milésimas o gramos), sin NaN/desborde. SKU compartidos por líneas se validan sobre saldo acumulado. No se elige marca automáticamente.

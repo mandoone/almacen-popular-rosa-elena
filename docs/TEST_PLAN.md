@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C4 — persistencia simulada durable (2026-10-07)
+
+`node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-durable-c4.test.mjs`:176 casos. Todos los puntos de escritura/checkpoint y readback, nuevo proceso/replay, HTTP TIMEOUT/502, corrupción/autoría incierta, mixed V1/V2 con validación acumulada, cancelación/reasignación append-only, recibo de puntero, apertura, HUMAN_GATE sin política por defecto, granel100/250/1000 y bloqueo/concurrencia. Hojas/HTTP exclusivamente en memoria; cero servicios remotos. Suite824 PASS, lint/typecheck/build aislado por EBUSY/secrets/diffcheck y auditoría diferencial `scripts/auditar-v1-familias.mjs --no-write` PASS. [Matriz de fallos, supuestos del mock y límites C5](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+
 ## C3 — auditoría integral (2026-10-07)
 
 `tests/familias-admin-frontera-c3.test.mjs` ejecuta handlers reales con transportes mock: fuera de TEST y roles sin permiso reciben403 antes de backend; actor no se inyecta y DTO rechaza campos físicos/comerciales indebidos. `scripts/auditar-v1-familias.mjs` compara 23 archivos,187 funciones GAS,47 acciones y51 funciones transporte con f273001; seis escenarios VM diferenciales idénticos. Suite final648 PASS, QA/backup/readback y limits de revisión humana en [informe](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).

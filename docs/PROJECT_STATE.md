@@ -5,6 +5,10 @@
 
 ---
 
+## Familias / SKU — C4 durable local, 2026-10-07
+
+Adaptador desacoplado con Sheets en memoria: confirmación mixta V1/V2, cancelación/reasignación históricas, planes y recibos de autoría, recuperación tras escrituras, HTTP ambiguo, bloqueos y concurrencia. 176 nuevos tests; suite824 PASS y QA completo (build con salida aislada por EBUSY en Dropbox). V1/C1/C2/GAS intactos. Ninguna escritura/lectura remota ni deploy; TEST Sheet sin cambios, Apps Script TEST continúa v20 según cierre anterior. HUMAN_GATE familia desactivada sigue pendiente; F10 continúa 1 READY/19 PENDING. [Entrega y eventual C5](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+
 ## Sesión familias/SKU — cierre B2/B3/C1/C2/C3, 2026-10-07
 
 B2/B3 completos en TEST estructural/backend v20 sin carga comercial; C1/C2 completos exclusivamente locales. C3 verifica continuidad V1 y conservación de 5.074 celdas originales. Suite final 648 PASS, lint/typecheck/build/secret scan/diff check aprobados. Revisión visual humana y gates de activación pendientes; F10 continúa 1 READY/19 PENDING. [Informe integral, checkpoints, backups y siguiente paso C4](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).

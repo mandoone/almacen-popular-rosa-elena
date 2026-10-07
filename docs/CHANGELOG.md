@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## C4 — adaptador durable exclusivamente local — 2026-10-07
+
+- Plan mixto V1/V2, orquestación sobre C2 con almacenamiento simulado, recibos de autoría, fault recovery, bloqueos, cancelación y reasignación históricas. 176 pruebas nuevas, suite824 y QA/auditoría V1 PASS. Sin Sheets/deploy ni decisiones comerciales nuevas. [Entrega](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+
 ## C3 — cierre de sesión familias/SKU — 2026-10-07
 
 - QA648 PASS y auditoría V1 diferencial/source; 5.074 celdas originales conservadas en TEST, estructura familiar vacía y backend v20. Contratos/motor C1/C2 locales, gates humanos y siguiente adaptador C4 documentados. [Entrega](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).
