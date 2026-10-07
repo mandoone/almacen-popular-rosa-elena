@@ -8,6 +8,12 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D44 — Identidad física y snapshots de compra: Fase B1 local (2026-10-07)
+
+Cada compra selecciona el SKU físico PROD-*; el backend congela su identidad desde PRODUCTOS bajo lock, nunca desde marca/snapshots manuales del navegador. Proveedor permanece por compra, costo por SKU/detalle y precio familiar no se deriva ni modifica. Replay usa el detalle histórico original; hash y compensación conservan el mecanismo V1.
+
+Contratos internos de administración preparados con campos opcionales y snapshots aditivos, incluida base nativa de granel. Sin columnas destino no se pierde silenciosamente identidad; legado sin campos nuevos sigue comprándose. No se activa UI de identidad, catálogo/pedido familiar ni asignación; no hay datos/Sheets reales modificados ni deploy y F10 no cambia. [Contrato](DATA_MODEL.md#identidad-física-y-snapshots-de-compra--fase-b1-local-2026-10-07-d44) y [entrega](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+
 ## D43 — Familia pública y SKU físico: Fase A paralela (2026-10-07)
 
 Arquitectura aprobada por Omar: marca física distinta = SKU interno distinto; una oferta pública puede agrupar SKU equivalentes mediante familia. PRODUCTOS conserva inventario/costo físicos, proveedor pertenece a cada compra y precio público futuro reside en FAMILIAS_PRODUCTO. Sin SKU virtual, stock familiar ni lotes en esta fase.

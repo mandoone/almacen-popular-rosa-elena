@@ -753,6 +753,12 @@ export interface DetalleCompraAdmin {
   stock_nuevo: number;
   costo_anterior: number | '';
   costo_nuevo: number;
+  familia_id_snapshot?: string;
+  marca_snapshot?: string;
+  presentacion_snapshot?: string;
+  contenido_cantidad_snapshot?: number | '';
+  contenido_unidad_snapshot?: string;
+  gramos_unidad_stock_snapshot?: number | '';
 }
 
 export interface CompraConDetalle {

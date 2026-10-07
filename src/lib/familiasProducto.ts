@@ -100,6 +100,19 @@ function positivo(valor: unknown): valor is number { return typeof valor === 'nu
 function enteroPositivo(valor: unknown): valor is number { return positivo(valor) && Number.isSafeInteger(valor); }
 function resultado(inconsistencias: InconsistenciaFamilia[]): ValidacionFamilias { return { valido: inconsistencias.length === 0, inconsistencias }; }
 
+/** Identidad opcional del maestro físico; no consulta familias ni infiere datos. */
+export function validarIdentidadSkuFisica(valor: unknown): ValidacionFamilias {
+  const sku = registro(valor), inconsistencias: InconsistenciaFamilia[] = [];
+  const error = (codigo: string, campo: string) => inconsistencias.push({ codigo, campo, producto_id: texto(sku.id_producto) });
+  if (!vacio(sku.familia_id) && (typeof sku.familia_id !== 'string' || !/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id)))) error('FAMILIA_ID_INVALIDO', 'familia_id');
+  for (const [campo, maximo] of [['marca', 120], ['presentacion', 200]] as const) {
+    if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo)) error('TEXTO_IDENTIDAD_INVALIDO', campo);
+  }
+  if (!vacio(sku.contenido_cantidad) && (!positivo(sku.contenido_cantidad) || sku.contenido_cantidad > Number.MAX_SAFE_INTEGER)) error('CONTENIDO_INVALIDO', 'contenido_cantidad');
+  if (!vacio(sku.contenido_unidad) && !['g', 'ml', 'unidad'].includes(sku.contenido_unidad as string)) error('UNIDAD_CONTENIDO_INVALIDA', 'contenido_unidad');
+  return resultado(inconsistencias);
+}
+
 export function validarFamiliaProducto(valor: unknown): ValidacionFamilias {
   const f = registro(valor), inconsistencias: InconsistenciaFamilia[] = [];
   const error = (codigo: string, campo: string) => inconsistencias.push({ codigo, campo, familia_id: texto(f.familia_id) });

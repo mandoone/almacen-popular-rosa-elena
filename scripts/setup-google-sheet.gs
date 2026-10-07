@@ -98,7 +98,10 @@ var HOJAS = [
     nombre: 'DETALLE_COMPRAS',
     encabezados: [
       'id_compra', 'id_producto', 'nombre_producto', 'cantidad_comprada',
-      'unidad_medida', 'precio_costo_unitario', 'subtotal', 'nuevo_precio_venta'
+      'unidad_medida', 'precio_costo_unitario', 'subtotal', 'nuevo_precio_venta',
+      'familia_id_snapshot', 'marca_snapshot', 'presentacion_snapshot',
+      'contenido_cantidad_snapshot', 'contenido_unidad_snapshot',
+      'gramos_unidad_stock_snapshot'
     ]
   },
   {

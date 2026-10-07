@@ -51,7 +51,7 @@ Clave: `familia_id`, única, formato `FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}`. No se 
 
 #### Relación física opcional en PRODUCTOS
 
-Campos aditivos: `familia_id`, `marca`, `presentacion`, `contenido_cantidad`, `contenido_unidad`. SKU sin familia conserva validez V1 y no necesita ninguno de los nuevos campos. Cada fila puede referenciar como máximo una familia; IDs duplicados o familia inexistente fallan en la auditoría paralela. No se infiere marca ni se asigna familia automáticamente. No se modifican DTOs de escritura ni validadores operativos actuales para admitir estas ediciones.
+Campos aditivos: `familia_id`, `marca`, `presentacion`, `contenido_cantidad`, `contenido_unidad`. SKU sin familia conserva validez V1 y no necesita ninguno de los nuevos campos. Cada fila puede referenciar como máximo una familia; IDs duplicados o familia inexistente fallan en la auditoría paralela. No se infiere marca ni se asigna familia automáticamente. Fase A no modificó DTOs de escritura ni validadores operativos; Fase B1 prepara esos contratos internos en código local, sin activar controles de UI ni desplegar backend.
 
 Al vincular un SKU se exige categoría/modo compatibles y presentación física legible. VARIABLE permite diferentes marcas físicas documentadas; EXPLICITA exige la misma marca pública (comparación textual normalizada, sin equiparar marcas diferentes); NO_APLICA no exige marca física. En UNIDAD se exige contenido numérico/unidad idénticos, misma unidad de venta y reglas de cantidad compatibles. 750 ml y 1000 ml no son equivalentes. La asociación explícita aprobada sigue siendo necesaria incluso si los contenidos coinciden.
 
@@ -66,6 +66,31 @@ UNIDAD entera suma unidades; fracciones compatibles conservan precisión de mil�
 La cantidad diagnóstica puede mostrar el subtotal de SKU correctos ante una inconsistencia, pero `disponible` falla cerrado. Una auditoría global inválida también impide anunciar cualquier vista paralela como vendible. Familia inactiva agrega cero; precio cero no es vendible. Esta cifra no es stock persistido de familia ni reserva.
 
 GAS incorpora helpers internos `leerFamiliasProductoFaseA_` y `leerVistaFamiliasFaseA_`, restringidos al destino TEST conocido. La hoja faltante se tolera como lista vacía; un SKU con familia_id que referencia una familia ausente falla en auditoría, mientras que un SKU sin familia_id sigue permitido como legado V1. El caller aporta contexto de apertura/habilitados. No se añade ninguna acción HTTP, no se abre un spreadsheet remoto desde estos helpers y ninguna acción V1 los invoca. Fuente operativa, precios V1, stocks, costos y snapshots históricos permanecen intactos.
+
+### Identidad física y snapshots de compra — Fase B1 local, 2026-10-07 (D44)
+
+El código versionado de administración admite los cinco campos opcionales de PRODUCTOS. No hay controles nuevos en UI; backend/Sheet TEST desplegados no se modificaron. No se vinculan productos reales a familias. [Entrega, archivos y QA](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+
+`validarIdentidadSkuFisica` es el validador puro compartido TS/GAS: familia_id vacío o formato FAM de D43; marca texto hasta 120 caracteres; presentación física texto hasta 200; contenido_cantidad numérico finito positivo hasta el máximo seguro, o vacío; contenido_unidad g/ml/unidad o vacío. No convierte texto numérico, infiere marca ni exige completar el legado. Edición normaliza espacios y admite vaciar campos opcionales. La auditoría familiar de D43 sigue exigiendo marca para VARIABLE/EXPLICITA y equivalencia completa cuando se usa el modelo familiar; no se consulta una hoja de familias para registrar compras B1.
+
+#### DETALLE_COMPRAS: columnas aditivas
+
+| Campo | Fuente y significado |
+|---|---|
+| `familia_id_snapshot` | PRODUCTOS.familia_id vigente en la compra; no cambia producto_id físico. |
+| `marca_snapshot` | Marca del SKU; no se escribe manualmente en la compra. |
+| `presentacion_snapshot` | Presentación física del SKU, puede diferir de la etiqueta pública de familia. |
+| `contenido_cantidad_snapshot` | Contenido numérico del SKU o vacío. |
+| `contenido_unidad_snapshot` | g/ml/unidad del SKU o vacío. |
+| `gramos_unidad_stock_snapshot` | Base nativa de stock solo en GRANEL; vacío en UNIDAD. Permite interpretar cantidad/costo históricos sin consultar el maestro futuro. |
+
+El navegador sigue enviando producto_id/cantidad/costo_unitario por línea, más la cabecera de compra. DTO y normalización GAS descartan snapshots enviados por el cliente. La compra exige PROD-* y rechaza FAM-*; un SKU repetido sigue rechazado. Dentro del lock, después de comprobar replay/conflicto, el backend busca el SKU en PRODUCTOS, valida identidad opcional y congela los snapshots antes de cualquier escritura. Cantidad, stock, costo, movimiento y rollback conservan las reglas vigentes. Proveedor permanece en COMPRAS; costo_unitario en cada detalle, precio_costo vigente e HISTORIAL_COSTOS por SKU. No se lee/escribe costo ni precio de FAMILIAS_PRODUCTO.
+
+Hash de compra: mismo input normalizado de cabecera/líneas V1; no incorpora snapshots derivados. Replay devuelve el detalle persistido original, incluso si después cambian nombre/marca/presentación/familia del maestro. Cambiar el input con la misma key produce conflicto. La reversión conserva el mecanismo existente: restaura stock/costo y elimina filas nuevas de COMPRAS, DETALLE_COMPRAS, MOVIMIENTOS_STOCK e HISTORIAL_COSTOS, incluidos snapshots sin efectos adicionales. Sigue siendo compensación en Sheets, no transacción ACID ni nueva garantía ante interrupción abrupta del proceso.
+
+Compatibilidad de esquemas: las columnas nuevas son opcionales para lectura y compra de legado sin identidad; respuestas antiguas pueden omitirlas y futuras filas legadas las dejan vacías. GRANEL legado congela su base si existe la columna destino y sigue operando sin ella en esquema V1. Con cualquier identidad física documentada, se exige el destino completo de cinco snapshots (y base en GRANEL) antes de escribir, para impedir pérdida silenciosa. Columnas opcionales presentes deben ser únicas. Crear/editar identidad exige sus columnas destino; sin ellas se rechaza antes de mutar y no las crea. Setup futuro solo agrega encabezados locales; no es una migración ejecutada.
+
+F10 conserva estados; sin hoja familiar real, migración, deploy, catálogo/pedido familiar, asignaciones ni venta presencial nueva.
 
 ## 1. Estado actual
 

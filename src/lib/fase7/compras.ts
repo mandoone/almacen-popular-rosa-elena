@@ -154,6 +154,10 @@ export function validarYCalcularCompra(
   const lineas: LineaCompraCalculada[] = [];
   (entrada.lineas ?? []).forEach((linea) => {
     const productoId = texto(linea.producto_id);
+    if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(productoId)) {
+      errores.push('La compra requiere producto_id físico PROD-*, nunca familia_id.');
+      return;
+    }
     if (vistos.has(productoId)) {
       errores.push(`El producto "${productoId}" está repetido.`);
       return;

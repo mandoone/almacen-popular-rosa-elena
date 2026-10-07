@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Identidad SKU/compras — Fase B1 exclusivamente local (2026-10-07)
+
+Ejecutar `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-producto-fase-b1.test.mjs`: validadores TS/GAS, contratos DTO, persistencia interna/auditoría de identidad, columnas ausentes/duplicadas, dos marcas, proveedor por cabecera y costo por detalle, precio familiar intacto, inyección de seis snapshots ignorada, replay con maestro cambiado/inválido, conflictos de key, legado con/sin columnas y GRANEL/base nativa. Fallos en detalle, movimiento, historial (incluida segunda línea), cabecera y flush deben restaurar stock/costo y filas, conservar historia previa y permitir retry único. Todos usan hojas/locks/propiedades en memoria; sin red.
+
+Comparar por AST funciones GAS contra el HEAD inicial B1: solo seis existentes de productos/compras pueden cambiar. Transporte compilado debe permanecer idéntico y UI/rutas/pedidos/confirmación/cancelación/venta/granel sin diff. Completar suite, lint, typecheck, build local sin destinos backend, scan de secretos, generador `--check` y `git diff --check`. No ejecutar setup/migraciones/E2E remoto ni deploy. [Resultados](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+
 ## Familias — Fase A exclusivamente local (2026-10-07)
 
 Ejecutar `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-producto-fase-a.test.mjs`: validadores TypeScript/GAS con fixtures, 750 ml vs 1 L, marcas explícitas, SKU sin familia, inactivos/especiales, precio familiar independiente del costo, errores/duplicados/desbordes y pureza. Cloro A+B = 11/$650; Clorinda independiente = 9; granel 4×250 + 2×1000 = 3000 g. Una inconsistencia impide anunciar vendibilidad. El test V1 ejecuta catálogo, creación sin descuento, confirmación y cancelación con campos familiares presentes sin consultarlos. Ninguna prueba llama servicios reales.

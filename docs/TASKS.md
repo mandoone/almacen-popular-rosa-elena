@@ -5,10 +5,16 @@
 
 ---
 
+## IDENTIDAD SKU / COMPRAS — FASE B1 LOCAL 2026-10-07
+
+- ✅ Contratos internos de identidad, snapshots autoritativos de compras bajo lock y compatibilidad V1, probados con mocks de rollback/replay/inyección. Sin controles nuevos de UI ni modificaciones remotas. [Entrega](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+- ⬜ Preparar en tarea separada el plan de columnas/deploy TEST coordinado con backup/readback y correspondencia física acreditada, antes de activar edición. No ejecutado ni autorizado por B1.
+- ⬜ Catálogo/pedido familiar y asignación durable continúan en fases posteriores; F10 sin cambios.
+
 ## FAMILIAS PRODUCTO — FASE A LOCAL 2026-10-07
 
 - ✅ Contrato de familia, relación opcional SKU, validadores puros y lectura/agregación paralela con fixtures. Copia GAS generada, sin rutas nuevas ni cambios operativos V1. [Entrega y QA](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
-- ⬜ Siguiente tarea separada: identidad física y snapshots de compras por SKU, primero con mocks; definir después plan aprobado para eventual migración TEST con backup/readback.
+- ✅ Identidad física y snapshots de compras por SKU implementados localmente en B1, sin migración/deploy. Plan eventual de TEST queda separado y pendiente.
 - ⬜ Asignación durable, carrito/pedido V2 y activación pública quedan en fases posteriores; ninguna ejecutada en Fase A. F10 sin cambios.
 
 ## CONTENIDO PÚBLICO TEST 2026-10-07

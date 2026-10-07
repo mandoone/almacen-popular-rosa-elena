@@ -13,6 +13,7 @@ const CAMPOS_PRODUCTO = [
   'activo',
   'tipo_disponibilidad', 'modo_venta', 'gramos_referencia', 'gramos_unidad_stock',
   'imagen_url',
+  'familia_id', 'marca', 'presentacion', 'contenido_cantidad', 'contenido_unidad',
 ] as const;
 
 function objeto(valor: unknown): JsonObject {

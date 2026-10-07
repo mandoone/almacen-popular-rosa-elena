@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Identidad física y snapshots de compra — Fase B1 local — 2026-10-07
+
+- Cinco campos opcionales del SKU integrados en contratos internos y seis snapshots de compra derivados del maestro bajo lock. Proveedor/costos por compra/SKU, hash V1 y replay histórico conservados; protección ante columnas ausentes y rollback comprobado con fallos locales.
+- Sin UI nueva, catálogo/pedido familiar, asignaciones, migración de datos reales ni deploy. F10 no cambia. [Entrega y QA](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+
 ## Familias de producto — Fase A local — 2026-10-07
 
 - Contrato de familia pública separado de SKU físico, relación opcional, identidad estructurada, validadores y disponibilidad agregada pura. Copia GAS generada y helpers TEST de lectura interna; ningún endpoint nuevo ni activación en tienda/pedidos/ventas.

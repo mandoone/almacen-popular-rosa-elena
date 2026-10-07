@@ -1,3 +1,5 @@
+import { validarIdentidadSkuFisica, type IdentidadSkuFamilia } from '../familiasProducto.ts';
+
 export const MOTIVOS_AJUSTE_STOCK = [
   'recuento_fisico',
   'merma',
@@ -62,7 +64,9 @@ export function prepararAjusteStock(entrada: AjusteStockAdmin): ResultadoAjusteS
   };
 }
 
-export interface CambioProductoAdmin {
+export interface CambioProductoAdmin extends Omit<IdentidadSkuFamilia, 'contenido_cantidad' | 'contenido_unidad'> {
+  contenido_cantidad?: number | '';
+  contenido_unidad?: IdentidadSkuFamilia['contenido_unidad'] | '';
   modo_venta?: 'UNIDAD' | 'GRANEL';
   gramos_referencia?: number;
   gramos_unidad_stock?: number;
@@ -82,7 +86,8 @@ export interface CambioProductoAdmin {
 
 /** Valida edición; stock_actual queda fuera y solo se cambia mediante ajuste auditado. */
 export function validarCambioProducto(cambio: CambioProductoAdmin): string[] {
-  const errores: string[] = [];
+  const errores: string[] = validarIdentidadSkuFisica(cambio).inconsistencias
+    .map(({ campo }) => `Identidad física inválida: ${campo}.`);
   if (cambio.modo_venta !== undefined && !['UNIDAD','GRANEL'].includes(cambio.modo_venta)) errores.push('Modo de venta inválido.');
   for (const campo of ['gramos_referencia','gramos_unidad_stock'] as const) if (cambio[campo] !== undefined && (!Number.isSafeInteger(cambio[campo]) || Number(cambio[campo]) < 0)) errores.push('Referencia inválida.');
   if ('tipo_disponibilidad' in cambio && !['REGULAR', 'POR_APERTURA'].includes(String(cambio.tipo_disponibilidad))) {

@@ -103,6 +103,12 @@ var COLUMNAS_VENTA_PRESENCIAL = {
   ]
 };
 
+var COLUMNAS_SNAPSHOTS_COMPRA_B1 = [
+  'familia_id_snapshot', 'marca_snapshot', 'presentacion_snapshot',
+  'contenido_cantidad_snapshot', 'contenido_unidad_snapshot',
+  'gramos_unidad_stock_snapshot'
+];
+
 var COLUMNAS_FASE_7_8 = {
   COMPRAS: [
     'compra_id', 'fecha', 'fecha_hora', 'proveedor', 'responsable', 'estado', 'total',
@@ -112,7 +118,7 @@ var COLUMNAS_FASE_7_8 = {
     'detalle_compra_id', 'compra_id', 'producto_id', 'nombre_producto',
     'unidad_medida', 'cantidad', 'costo_unitario', 'costo_total',
     'stock_anterior', 'stock_nuevo', 'costo_anterior', 'costo_nuevo'
-  ],
+  ].concat(COLUMNAS_SNAPSHOTS_COMPRA_B1),
   GASTOS_EXTRA: [
     'gasto_id', 'fecha_hora', 'categoria', 'descripcion', 'monto', 'responsable',
     'observaciones', 'estado', 'idempotency_key', 'payload_hash', 'creado_en',
@@ -140,7 +146,8 @@ var COLUMNAS_FASE_7_8 = {
   PRODUCTOS_ADMIN: [
     'id_producto', 'activo', 'nombre', 'categoria', 'prioridad', 'unidad_medida',
     'permite_decimal', 'paso_venta', 'precio_costo', 'precio_venta',
-    'stock_actual', 'stock_minimo', 'imagen_url'
+    'stock_actual', 'stock_minimo', 'imagen_url',
+    'familia_id', 'marca', 'presentacion', 'contenido_cantidad', 'contenido_unidad'
   ]
 };
 
@@ -2534,6 +2541,52 @@ function obtenerEvidenciaPilotoTest_(params) {
   };
 }
 
+/** Columnas B1 opcionales en bases V1; si existen, deben ser únicas. No migra. */
+function exigirColumnasCompatiblesB1_(hoja, columnas, opcionales) {
+  exigirColumnas_(hoja, columnas.filter(function (campo) { return opcionales.indexOf(campo) === -1; }));
+  opcionales.forEach(function (campo) {
+    if (hoja.mapa[campo] !== undefined) columnaUnicaContrato_(hoja.sheet, campo);
+  });
+}
+
+function normalizarIdentidadSkuFisicaB1_(producto) {
+  var validacion = DominioFamiliasFaseA.validarIdentidadSkuFisica(producto);
+  if (!validacion.valido) lanzar_('Identidad fisica invalida: ' + validacion.inconsistencias[0].campo + '.', 400);
+  var identidad = {};
+  COLUMNAS_IDENTIDAD_SKU_FAMILIA.forEach(function (campo) {
+    if (!Object.prototype.hasOwnProperty.call(producto, campo)) return;
+    var valor = producto[campo];
+    identidad[campo] = campo === 'contenido_cantidad' && typeof valor === 'number' ? valor : limpiar_(valor);
+  });
+  return identidad;
+}
+
+function exigirColumnasEdicionIdentidadB1_(hoja, cambios) {
+  COLUMNAS_IDENTIDAD_SKU_FAMILIA.forEach(function (campo) {
+    if (Object.prototype.hasOwnProperty.call(cambios, campo)) columnaUnicaContrato_(hoja.sheet, campo);
+  });
+}
+
+/** Solo PRODUCTOS es fuente: no acepta ni mezcla snapshots del body. */
+function snapshotsIdentidadCompraB1_(producto) {
+  var identidad = normalizarIdentidadSkuFisicaB1_(producto), snapshots = {};
+  COLUMNAS_IDENTIDAD_SKU_FAMILIA.forEach(function (campo) {
+    snapshots[campo + '_snapshot'] = identidad[campo] === undefined ? '' : identidad[campo];
+  });
+  snapshots.gramos_unidad_stock_snapshot = modoVenta_(producto) === 'GRANEL' ? Number(producto.gramos_unidad_stock) : '';
+  return snapshots;
+}
+
+/** Una identidad documentada no puede perderse por falta de columnas destino. */
+function exigirDestinoSnapshotsCompraB1_(detalles, snapshots) {
+  var identidadPresente = COLUMNAS_IDENTIDAD_SKU_FAMILIA.some(function (campo) { return snapshots[campo + '_snapshot'] !== ''; });
+  if (!identidadPresente) return; // Legados sin identidad siguen operando en su esquema V1.
+  var requeridos = COLUMNAS_SNAPSHOTS_COMPRA_B1.filter(function (campo) {
+    return campo !== 'gramos_unidad_stock_snapshot' || snapshots[campo] !== '';
+  });
+  exigirColumnas_(detalles, requeridos); // Antes de cualquier escritura, sin crear columnas.
+}
+
 function crearCompra_(body) {
   exigirIdempotencyKey_(body.idempotency_key);
   var entrada = normalizarCompra_(body);
@@ -2564,7 +2617,7 @@ function normalizarCompra_(body) {
     var productoId = limpiar_(linea && linea.producto_id);
     var cantidad = Number(linea && linea.cantidad);
     var costo = Number(linea && linea.costo_unitario);
-    if (!productoId || productoId.length > 100) lanzar_('Linea sin producto_id valido.', 400);
+    if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(productoId)) lanzar_('La compra requiere producto_id fisico PROD-*, nunca familia_id.', 400);
     if (vistos[productoId]) lanzar_('Producto repetido: "' + productoId + '".', 400);
     if (!isFinite(cantidad) || cantidad <= 0) lanzar_('Cantidad de compra invalida.', 400);
     if (!isFinite(costo) || costo <= 0 || Math.floor(costo) !== costo) {
@@ -2584,8 +2637,8 @@ function persistirCompraIdempotente_(entrada, key) {
   var movimientos = leerHoja_(ss, HOJAS.MOVIMIENTOS_STOCK);
   var costos = leerHoja_(ss, HOJAS.HISTORIAL_COSTOS);
   exigirColumnas_(compras, COLUMNAS_FASE_7_8.COMPRAS);
-  exigirColumnas_(detalles, COLUMNAS_FASE_7_8.DETALLE_COMPRAS);
-  exigirColumnas_(productos, COLUMNAS_FASE_7_8.PRODUCTOS_ADMIN);
+  exigirColumnasCompatiblesB1_(detalles, COLUMNAS_FASE_7_8.DETALLE_COMPRAS, COLUMNAS_SNAPSHOTS_COMPRA_B1);
+  exigirColumnasCompatiblesB1_(productos, COLUMNAS_FASE_7_8.PRODUCTOS_ADMIN, COLUMNAS_IDENTIDAD_SKU_FAMILIA);
   exigirColumnas_(movimientos, COLUMNAS_FASE_7_8.MOVIMIENTOS_STOCK);
   exigirColumnas_(costos, COLUMNAS_FASE_7_8.HISTORIAL_COSTOS);
   var hash = hashPayload_(entrada);
@@ -2616,6 +2669,9 @@ function persistirCompraIdempotente_(entrada, key) {
     var i = indice[linea.producto_id];
     if (i === undefined) lanzar_('Producto no existe: "' + linea.producto_id + '".', 400);
     var fila = productos.filas[i];
+    var maestro = filaAObjeto_(productos, fila);
+    var snapshots = snapshotsIdentidadCompraB1_(maestro);
+    exigirDestinoSnapshotsCompraB1_(detalles, snapshots);
     if (limpiar_(fila[cActivo]).toUpperCase() !== 'SI') lanzar_('Producto inactivo.', 409);
     var decimal = limpiar_(fila[cDecimal]).toUpperCase() === 'SI';
     var paso = decimal ? parseNum_(fila[cPaso]) : 1;
@@ -2633,7 +2689,8 @@ function persistirCompraIdempotente_(entrada, key) {
       costo_unitario: linea.costo_unitario,
       costo_total: Math.round(linea.cantidad * linea.costo_unitario),
       stock_anterior: stockAnterior, stock_nuevo: redondearStock_(stockAnterior + linea.cantidad),
-      costo_anterior: costoAnterior, costo_nuevo: linea.costo_unitario
+      costo_anterior: costoAnterior, costo_nuevo: linea.costo_unitario,
+      snapshots: snapshots
     };
   });
   var ahora = new Date();
@@ -2646,7 +2703,7 @@ function persistirCompraIdempotente_(entrada, key) {
     calculadas.forEach(function (linea, posicion) {
       productos.sheet.getRange(linea.indice + 2, cStock + 1).setValue(linea.stock_nuevo);
       productos.sheet.getRange(linea.indice + 2, cCosto + 1).setValue(linea.costo_nuevo);
-      agregarFila_(detalles, {
+      agregarFila_(detalles, Object.assign({}, {
         detalle_compra_id: compraId + '-D' + ('00' + (posicion + 1)).slice(-3),
         compra_id: compraId, producto_id: linea.producto_id,
         nombre_producto: linea.nombre_producto, unidad_medida: linea.unidad_medida,
@@ -2654,7 +2711,7 @@ function persistirCompraIdempotente_(entrada, key) {
         costo_total: linea.costo_total, stock_anterior: linea.stock_anterior,
         stock_nuevo: linea.stock_nuevo, costo_anterior: linea.costo_anterior,
         costo_nuevo: linea.costo_nuevo
-      });
+      }, linea.snapshots));
       registrarMovimiento_(movimientos, {
         tipo: 'entrada', origen: 'compra', referencia_tipo: 'compra',
         id_origen: compraId, id_producto: linea.producto_id, cantidad: linea.cantidad,
@@ -2832,7 +2889,7 @@ function listarMovimientosStockAdmin_(productoId, desde, hasta) {
 
 function listarProductosAdmin_() {
   var hoja = leerHoja_(SpreadsheetApp.openById(SPREADSHEET_ID), HOJAS.PRODUCTOS);
-  exigirColumnas_(hoja, COLUMNAS_FASE_7_8.PRODUCTOS_ADMIN);
+  exigirColumnasCompatiblesB1_(hoja, COLUMNAS_FASE_7_8.PRODUCTOS_ADMIN, COLUMNAS_IDENTIDAD_SKU_FAMILIA);
   return hoja.filas.map(function (fila) {
     var producto = serializarRegistroF78_(filaAObjeto_(hoja, fila));
     producto.tipo_disponibilidad = tipoDisponibilidadProducto_(producto.tipo_disponibilidad);
@@ -2856,6 +2913,7 @@ function actualizarProductoAdmin_(body) {
       var fila = buscarFila_(hoja, col_(hoja, 'id_producto'), entrada.producto_id);
       if (fila === -1) lanzar_('Producto no encontrado.', 404);
       var vigente = filaAObjeto_(hoja, hoja.filas[fila]);
+      exigirColumnasEdicionIdentidadB1_(hoja, entrada.cambios);
       var combinado = Object.assign({}, vigente, entrada.cambios);
       if (modoVenta_(combinado) === 'GRANEL') {
         validarModeloGranel_(combinado);
@@ -2922,6 +2980,7 @@ function crearProductoAdmin_(body) {
       var hoja = leerHoja_(ss, HOJAS.PRODUCTOS);
       var auditoria = leerHoja_(ss, HOJAS.AUDITORIA_PRODUCTOS);
       if (buscarFila_(hoja, col_(hoja, 'id_producto'), productoId) !== -1) lanzar_('El producto ya existe.', 409);
+      exigirColumnasEdicionIdentidadB1_(hoja, entrada.cambios);
       if (modoVenta_(entrada.cambios) === 'GRANEL') validarModeloGranel_(entrada.cambios);
       var producto = { id_producto: productoId, stock_actual: 0 };
       Object.keys(entrada.cambios).forEach(function (campo) { producto[campo] = entrada.cambios[campo]; });
@@ -2950,13 +3009,15 @@ function crearProductoAdmin_(body) {
 function normalizarCambioProductoAdmin_(body) {
   var productoId = limpiar_(body.producto_id);
   if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(productoId)) lanzar_('producto_id invalido.', 400);
-  var permitidos = ['nombre', 'categoria', 'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_costo', 'precio_venta', 'stock_minimo', 'prioridad', 'imagen_url', 'activo', 'tipo_disponibilidad', 'modo_venta', 'gramos_referencia', 'gramos_unidad_stock'];
+  var permitidos = ['nombre', 'categoria', 'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_costo', 'precio_venta', 'stock_minimo', 'prioridad', 'imagen_url', 'activo', 'tipo_disponibilidad', 'modo_venta', 'gramos_referencia', 'gramos_unidad_stock'].concat(COLUMNAS_IDENTIDAD_SKU_FAMILIA);
   var cambios = {};
   Object.keys(body.cambios || {}).forEach(function (campo) {
     if (permitidos.indexOf(campo) === -1 || campo === 'stock_actual') lanzar_('Campo de producto no editable.', 400);
     cambios[campo] = body.cambios[campo];
   });
   if (!Object.keys(cambios).length) lanzar_('No hay cambios de producto.', 400);
+  var identidad = normalizarIdentidadSkuFisicaB1_(cambios);
+  Object.keys(identidad).forEach(function (campo) { cambios[campo] = identidad[campo]; });
   if (cambios.modo_venta !== undefined && ['UNIDAD','GRANEL'].indexOf(cambios.modo_venta) < 0) lanzar_('Modo de venta invalido.',400);
   ['gramos_referencia','gramos_unidad_stock'].forEach(function(k) { if (cambios[k] !== undefined && (!enteroSeguro_(Number(cambios[k])) || Number(cambios[k]) < 0)) lanzar_('Referencia invalida.',400); });
   if (cambios.nombre !== undefined && !limpiar_(cambios.nombre)) lanzar_('Nombre invalido.', 400);
@@ -4319,6 +4380,22 @@ function normalizado(valor) { return texto(valor).normalize('NFD').replace(/[\u0
 function positivo(valor) { return typeof valor === 'number' && Number.isFinite(valor) && valor > 0; }
 function enteroPositivo(valor) { return positivo(valor) && Number.isSafeInteger(valor); }
 function resultado(inconsistencias) { return { valido: inconsistencias.length === 0, inconsistencias }; }
+/** Identidad opcional del maestro físico; no consulta familias ni infiere datos. */
+function validarIdentidadSkuFisica(valor) {
+    const sku = registro(valor), inconsistencias = [];
+    const error = (codigo, campo) => inconsistencias.push({ codigo, campo, producto_id: texto(sku.id_producto) });
+    if (!vacio(sku.familia_id) && (typeof sku.familia_id !== 'string' || !/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id))))
+        error('FAMILIA_ID_INVALIDO', 'familia_id');
+    for (const [campo, maximo] of [['marca', 120], ['presentacion', 200]]) {
+        if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo))
+            error('TEXTO_IDENTIDAD_INVALIDO', campo);
+    }
+    if (!vacio(sku.contenido_cantidad) && (!positivo(sku.contenido_cantidad) || sku.contenido_cantidad > Number.MAX_SAFE_INTEGER))
+        error('CONTENIDO_INVALIDO', 'contenido_cantidad');
+    if (!vacio(sku.contenido_unidad) && !['g', 'ml', 'unidad'].includes(sku.contenido_unidad))
+        error('UNIDAD_CONTENIDO_INVALIDA', 'contenido_unidad');
+    return resultado(inconsistencias);
+}
 function validarFamiliaProducto(valor) {
     const f = registro(valor), inconsistencias = [];
     const error = (codigo, campo) => inconsistencias.push({ codigo, campo, familia_id: texto(f.familia_id) });
@@ -4518,7 +4595,7 @@ function leerVistaFamiliasParalela(familias, skus, contexto = {}) {
         }),
     };
 }
-return { COLUMNAS_FAMILIAS_PRODUCTO, COLUMNAS_IDENTIDAD_SKU_FAMILIA, validarFamiliaProducto, presentacionesEquivalentes, validarRelacionSkuFamilia, auditarModeloFamilias, agregarDisponibilidadFamilia, leerVistaFamiliasParalela };
+return { COLUMNAS_FAMILIAS_PRODUCTO, COLUMNAS_IDENTIDAD_SKU_FAMILIA, validarIdentidadSkuFisica, validarFamiliaProducto, presentacionesEquivalentes, validarRelacionSkuFamilia, auditarModeloFamilias, agregarDisponibilidadFamilia, leerVistaFamiliasParalela };
 })();
 // END DOMINIO FAMILIAS FASE A GENERADO
 

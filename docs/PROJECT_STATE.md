@@ -5,6 +5,10 @@
 
 ---
 
+## Identidad SKU y compras — Fase B1 local, 2026-10-07
+
+Contratos internos de producto extendidos y snapshots de identidad física en compra obtenidos desde PRODUCTOS bajo lock. Proveedor por compra y costos/stock por SKU; replay preserva identidad histórica y rollback conserva efectos V1. Legados/esquemas antiguos compatibles; edición de identidad exige columnas sin crearlas. Solo código/fixtures locales: sin UI nueva, migración real, deploy ni familias activas en catálogo/pedido/venta. Sheet TEST y demás bases intactas. F10 mantiene 1 READY/19 PENDING. [Contrato](DATA_MODEL.md) y [entrega/QA](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
+
 ## Familias de producto — Fase A local, 2026-10-07
 
 Contrato paralelo implementado: dominio puro, identidad SKU opcional, equivalencias/política de marca y disponibilidad agregada diagnóstica. GAS contiene una copia generada y helpers internos TEST sin acciones HTTP nuevas; setup preparado solamente para futura base nueva. No se ejecutó setup ni se creó hoja/migró producto real. Catálogo, carrito, pedidos, ventas, compras y stock siguen SKU_V1; PRODUCTOS sigue siendo fuente física. F10 continúa 1 READY/19 PENDING, sin cambio por esta fase. [Contrato](DATA_MODEL.md) y [archivos/QA/continuidad](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
