@@ -5,6 +5,10 @@
 
 ---
 
+## Sesión familias/SKU — cierre B2/B3/C1/C2/C3, 2026-10-07
+
+B2/B3 completos en TEST estructural/backend v20 sin carga comercial; C1/C2 completos exclusivamente locales. C3 verifica continuidad V1 y conservación de 5.074 celdas originales. Suite final 648 PASS, lint/typecheck/build/secret scan/diff check aprobados. Revisión visual humana y gates de activación pendientes; F10 continúa 1 READY/19 PENDING. [Informe integral, checkpoints, backups y siguiente paso C4](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).
+
 ## Familias B3 — administración técnica, 2026-10-07
 
 Contrato C1 local completado: solicitud FAMILIA_V2, oferta congelada y ASIGNACIONES_PEDIDO futura. Ninguna ruta importa el dominio V2; TEST continúa backend B3 v20. [Contrato](DATA_MODEL.md#pedido-familiar-c1--contrato-local-paralelo-2026-10-07-d47).

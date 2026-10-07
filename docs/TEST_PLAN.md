@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C3 — auditoría integral (2026-10-07)
+
+`tests/familias-admin-frontera-c3.test.mjs` ejecuta handlers reales con transportes mock: fuera de TEST y roles sin permiso reciben403 antes de backend; actor no se inyecta y DTO rechaza campos físicos/comerciales indebidos. `scripts/auditar-v1-familias.mjs` compara 23 archivos,187 funciones GAS,47 acciones y51 funciones transporte con f273001; seis escenarios VM diferenciales idénticos. Suite final648 PASS, QA/backup/readback y limits de revisión humana en [informe](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).
+
 ## C2 — motor local (2026-10-07)
 
 `tests/asignacion-familia-c2.test.mjs`: A4+B2→A0/B5 y reversión exacta, rechazo de incompatibilidades/duplicados/cantidades/stock, múltiples líneas, apertura, replay/conflicto409, maestro cambiado, checkpoints, cursor atrasado con evidencia, escritura parcial/concurrencia/plan corrupto requieren revisión, cancelación recibido/confirmado/inactivo, reasignación íntegra y granel100/250/1000. Mocks sin red; ningún caso comercial real. Plan puro no sustituye pruebas futuras del adaptador durable remoto.

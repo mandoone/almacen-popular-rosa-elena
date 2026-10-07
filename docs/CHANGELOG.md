@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## C3 — cierre de sesión familias/SKU — 2026-10-07
+
+- QA648 PASS y auditoría V1 diferencial/source; 5.074 celdas originales conservadas en TEST, estructura familiar vacía y backend v20. Contratos/motor C1/C2 locales, gates humanos y siguiente adaptador C4 documentados. [Entrega](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md).
+
 ## C2 — asignación/reversión local — 2026-10-07
 
 - Motor puro con reparto operativo, planes y hashes inmutables, cancelación histórica y reasignación auditable. 38 pruebas locales; stock por SKU y subtotal granel por línea. Sin integración/deploy. [Modelo](DATA_MODEL.md).
