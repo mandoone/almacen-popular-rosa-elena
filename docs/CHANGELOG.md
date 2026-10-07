@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## B2 — esquema TEST — 2026-10-07
+
+- Backup completo verificado; identidad SKU/snapshots vacíos y FAMILIAS_PRODUCTO sin registros. Readback histórico exacto y segunda ejecución cero cambios. Apps Script TEST v19, rollback v18. Sin valores comerciales nuevos ni cambios productivos. [Acta](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
+
 ## Identidad física y snapshots de compra — Fase B1 local — 2026-10-07
 
 - Cinco campos opcionales del SKU integrados en contratos internos y seis snapshots de compra derivados del maestro bajo lock. Proveedor/costos por compra/SKU, hash V1 y replay histórico conservados; protección ante columnas ausentes y rollback comprobado con fallos locales.

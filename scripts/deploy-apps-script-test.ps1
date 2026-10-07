@@ -10,6 +10,7 @@ $ErrorActionPreference = 'Stop'
 $ClaspPackage = '@google/clasp@3.4.1'
 $ConfirmacionRequerida = 'DESPLEGAR_SOLO_TEST'
 $NombreSheetTest = 'TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES'
+$SpreadsheetIdTestAutorizado = '1U1nj_DKExmMV3pOA50JprcQ2d4TOQqb-4ORaJUagEoM'
 $RutaConfigSegura = Join-Path $env:USERPROFILE '.almacen-popular-clasp-test.json'
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $FuenteAppsScript = Join-Path $PSScriptRoot 'apps-script-pedidos.gs'
@@ -300,7 +301,7 @@ try {
     -Pattern "(?m)^var ADMIN_TOKEN = '([^'\r\n]+)';\s*$" `
     -Label 'ADMIN_TOKEN TEST'
   if (
-    $spreadsheetMatch.Groups[1].Value -eq 'PEGAR_ID_BASE_OPERATIVA_AQUI' -or
+    $spreadsheetMatch.Groups[1].Value -cne $SpreadsheetIdTestAutorizado -or
     $tokenMatch.Groups[1].Value -eq 'PEGAR_TOKEN_ADMIN_AQUI' -or
     $tokenMatch.Groups[1].Value -cne $testToken
   ) {

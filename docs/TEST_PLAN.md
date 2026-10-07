@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## B2 — esquema TEST autorizado (2026-10-07)
+
+`tests/familias-b2.test.mjs` comprueba destino, duplicados, respaldo inválido, concurrencia, corrupción y segunda ejecución sin cambios. La ejecución real comparó backup de 17 pestañas y todas las celdas anteriores tras cuatro requests atómicos; no hubo valores nuevos en filas. Post-deploy solo GET destino/esquema/maestro/catálogo/compras/detalles, con evidencia privada y errores sanitizados. [Acta](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
+
 ## Identidad SKU/compras — Fase B1 exclusivamente local (2026-10-07)
 
 Ejecutar `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-producto-fase-b1.test.mjs`: validadores TS/GAS, contratos DTO, persistencia interna/auditoría de identidad, columnas ausentes/duplicadas, dos marcas, proveedor por cabecera y costo por detalle, precio familiar intacto, inyección de seis snapshots ignorada, replay con maestro cambiado/inválido, conflictos de key, legado con/sin columnas y GRANEL/base nativa. Fallos en detalle, movimiento, historial (incluida segunda línea), cabecera y flush deben restaurar stock/costo y filas, conservar historia previa y permitir retry único. Todos usan hojas/locks/propiedades en memoria; sin red.

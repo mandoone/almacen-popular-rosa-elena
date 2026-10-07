@@ -90,7 +90,7 @@ Hash de compra: mismo input normalizado de cabecera/líneas V1; no incorpora sna
 
 Compatibilidad de esquemas: las columnas nuevas son opcionales para lectura y compra de legado sin identidad; respuestas antiguas pueden omitirlas y futuras filas legadas las dejan vacías. GRANEL legado congela su base si existe la columna destino y sigue operando sin ella en esquema V1. Con cualquier identidad física documentada, se exige el destino completo de cinco snapshots (y base en GRANEL) antes de escribir, para impedir pérdida silenciosa. Columnas opcionales presentes deben ser únicas. Crear/editar identidad exige sus columnas destino; sin ellas se rechaza antes de mutar y no las crea. Setup futuro solo agrega encabezados locales; no es una migración ejecutada.
 
-F10 conserva estados; sin hoja familiar real, migración, deploy, catálogo/pedido familiar, asignaciones ni venta presencial nueva.
+F10 conserva estados. La sesión B2 posterior alineó únicamente el esquema TEST: campos SKU y snapshots vacíos más FAMILIAS_PRODUCTO con cero registros; Apps Script TEST v19. No se modificó ninguna celda histórica ni valor comercial/stock/costo. Las restricciones de no migración/deploy de A/B1 describen esas entregas originales. [Backup/readback B2](operativa/FAMILIAS_B2_TEST_2026-10-07.md). Catálogo/pedido familiar y asignaciones siguen sin activar.
 
 ## 1. Estado actual
 

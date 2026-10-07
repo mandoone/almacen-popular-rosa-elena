@@ -5,6 +5,10 @@
 
 ---
 
+## Familias B2 — estructura TEST, 2026-10-07
+
+Esquema TEST alineado con A/B1 mediante backup completo verificado y readback histórico exacto: cinco campos SKU, seis snapshots de compra y FAMILIAS_PRODUCTO vacía. Segunda ejecución sin cambios. Apps Script TEST v19 (previa v18), sin activación de catálogo familiar. C1/C2 no desplegados; F10 sigue 1 READY/19 PENDING. [Evidencia B2 y rollback](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
+
 ## Identidad SKU y compras — Fase B1 local, 2026-10-07
 
 Contratos internos de producto extendidos y snapshots de identidad física en compra obtenidos desde PRODUCTOS bajo lock. Proveedor por compra y costos/stock por SKU; replay preserva identidad histórica y rollback conserva efectos V1. Legados/esquemas antiguos compatibles; edición de identidad exige columnas sin crearlas. Solo código/fixtures locales: sin UI nueva, migración real, deploy ni familias activas en catálogo/pedido/venta. Sheet TEST y demás bases intactas. F10 mantiene 1 READY/19 PENDING. [Contrato](DATA_MODEL.md) y [entrega/QA](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).

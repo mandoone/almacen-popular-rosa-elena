@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D45 — Esquema familiar TEST autorizado, sin datos comerciales (2026-10-07)
+
+Omar autoriza B2 exclusivamente en el ID/nombre TEST especificado, con backup completo legible, lectura previa, comparación histórica exacta y repetición idempotente. Encabezados al final, familias vacías; no reconstruir snapshots históricos. Se autoriza deploy TEST de A/B1 después del readback; Production permanece prohibida y C1/C2 quedan locales. F10 no cambia. [Evidencia](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
+
 ## D44 — Identidad física y snapshots de compra: Fase B1 local (2026-10-07)
 
 Cada compra selecciona el SKU físico PROD-*; el backend congela su identidad desde PRODUCTOS bajo lock, nunca desde marca/snapshots manuales del navegador. Proveedor permanece por compra, costo por SKU/detalle y precio familiar no se deriva ni modifica. Replay usa el detalle histórico original; hash y compensación conservan el mecanismo V1.

@@ -5,6 +5,11 @@
 
 ---
 
+## SESIÓN FAMILIAS / SKU 2026-10-07
+
+- ✅ B2: esquema aditivo TEST, backup/readback, segunda ejecución sin cambios y Apps Script TEST v19. [Evidencia](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
+- ⬜ B3 administración técnica, C1 contrato paralelo, C2 motor puro y C3 auditoría. Sin autorización para activar catálogo o cargar familias/identidad reales.
+
 ## IDENTIDAD SKU / COMPRAS — FASE B1 LOCAL 2026-10-07
 
 - ✅ Contratos internos de identidad, snapshots autoritativos de compras bajo lock y compatibilidad V1, probados con mocks de rollback/replay/inyección. Sin controles nuevos de UI ni modificaciones remotas. [Entrega](operativa/FAMILIAS_PRODUCTO_FASE_B1_2026-10-07.md).
