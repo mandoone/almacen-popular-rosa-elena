@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D46 — Administración TEST de oferta e identidad separadas (2026-10-07)
+
+B3 usa el permiso vigente de gestión de productos. Familia tiene versión optimista, precio explícito y auditoría con entidad propia; nunca se introduce FAM-* en producto_id. Identidad física se valida contra familia bajo lock y se edita separada de stock/costo. El diario administrativo bloquea operaciones incompletas para revisión y conserva replay original; no se cargan familias/asociaciones reales. [Contrato](DATA_MODEL.md) y [QA/acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md).
+
 ## D45 — Esquema familiar TEST autorizado, sin datos comerciales (2026-10-07)
 
 Omar autoriza B2 exclusivamente en el ID/nombre TEST especificado, con backup completo legible, lectura previa, comparación histórica exacta y repetición idempotente. Encabezados al final, familias vacías; no reconstruir snapshots históricos. Se autoriza deploy TEST de A/B1 después del readback; Production permanece prohibida y C1/C2 quedan locales. F10 no cambia. [Evidencia](operativa/FAMILIAS_B2_TEST_2026-10-07.md).

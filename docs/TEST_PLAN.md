@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## B3 — administración técnica TEST (2026-10-07)
+
+`tests/familias-producto-fase-b3.test.mjs`: CRUD, versión/ID, validación de asociación, destino estricto, migración/backup idempotente, replay histórico, payload distinto, compensación y bloqueo durable incompleto. UI/APIs cerradas fuera de TEST; DTO de identidad rechaza stock/costo/precio, actor siempre servidor. Solo mocks para escrituras. Lecturas remotas y esquema constan en [acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md). Revisión visual por Omar pendiente, sin familias reales ni cambio de F10.
+
 ## B2 — esquema TEST autorizado (2026-10-07)
 
 `tests/familias-b2.test.mjs` comprueba destino, duplicados, respaldo inválido, concurrencia, corrupción y segunda ejecución sin cambios. La ejecución real comparó backup de 17 pestañas y todas las celdas anteriores tras cuatro requests atómicos; no hubo valores nuevos en filas. Post-deploy solo GET destino/esquema/maestro/catálogo/compras/detalles, con evidencia privada y errores sanitizados. [Acta](operativa/FAMILIAS_B2_TEST_2026-10-07.md).

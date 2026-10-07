@@ -17,9 +17,10 @@ try{
   const destino=await get('verificarDestinoFase78Test');if(!validarDestinoF78(destino))throw new Error('Destino TEST no verificado.');
   const evidencia={destino};
   for(const action of ['obtenerEsquemaFase78Test','listarProductosAdmin','listarProductos','listarCompras'])evidencia[action]=await get(action);
+  if(process.argv.includes('--b3'))for(const action of ['listarFamiliasProductoAdmin','auditarMapaFamiliasSku'])evidencia[action]=await get(action);
   const compras=evidencia.listarCompras.compras??evidencia.listarCompras;
   evidencia.detalles=[];for(const c of compras)evidencia.detalles.push(await get('obtenerCompra',{compra_id:c.compra_id}));
   const sha=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
   await mkdir('operativa.local',{recursive:true});await writeFile('operativa.local/familias-test-readonly.json',JSON.stringify(evidencia),'utf8');
-  console.log(JSON.stringify({destino:'TEST verificado',esquema:evidencia.obtenerEsquemaFase78Test.hojas.map(h=>({nombre:h.nombre,columnas:h.headers.length,filas:h.filas})),catalogo_hash:sha(evidencia.listarProductos),compras:compras.length,detalles_leidos:evidencia.detalles.length,solo_GET:true}));
+  console.log(JSON.stringify({destino:'TEST verificado',esquema:evidencia.obtenerEsquemaFase78Test.hojas.map(h=>({nombre:h.nombre,columnas:h.headers.length,filas:h.filas})),catalogo_hash:sha(evidencia.listarProductos),compras:compras.length,detalles_leidos:evidencia.detalles.length,familias:evidencia.listarFamiliasProductoAdmin?.familias.length,auditoria_familias:evidencia.auditarMapaFamiliasSku?.valido,solo_GET:true}));
 }catch{console.error('FAIL | verificación read-only TEST; salida privada suprimida');process.exitCode=1;}

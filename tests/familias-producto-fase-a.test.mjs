@@ -154,7 +154,8 @@ test('contrato GAS generado está actualizado y coincide con el setup futuro', a
   assert.deepEqual(plano(gas.COLUMNAS_FAMILIAS_PRODUCTO), [...dominio.COLUMNAS_FAMILIAS_PRODUCTO]);
   assert.deepEqual(plano(setup.HOJAS.find(h => h.nombre === 'FAMILIAS_PRODUCTO').encabezados), [...dominio.COLUMNAS_FAMILIAS_PRODUCTO]);
   assert.deepEqual(plano(setup.HOJAS.find(h => h.nombre === 'PRODUCTOS').encabezados.slice(-5)), [...dominio.COLUMNAS_IDENTIDAD_SKU_FAMILIA]);
-  assert.doesNotMatch(fuente, /case\s+['"][^'"]*(?:Familias|familias)[^'"]*['"]/);
+  // B3 agrega lectura administrativa TEST; el catálogo público V1 sigue separado.
+  assert.doesNotMatch(fuente.slice(fuente.indexOf("case 'listarProductos':"), fuente.indexOf("case 'listarProductosPorAperturaAdmin':")), /Familias|familias/);
 });
 
 function hojaSoloLectura(registros, columnas = Object.keys(registros[0] ?? {})) {

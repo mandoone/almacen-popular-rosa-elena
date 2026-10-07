@@ -8,6 +8,12 @@
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
+### Administración familiar B3 (2026-10-07, D46)
+
+FAMILIAS_PRODUCTO existe vacía en TEST tras B2. Backend administrativo separado del catálogo V1; exige APP_ENV TEST, ID/nombre exactos y token interno. Next exige sesión con `productos:gestionar`; página y APIs bloqueadas fuera de TEST. Creación v1, ID inmutable, edición con versión esperada; cualquier cambio de oferta incrementa versión y valida todos los SKU asociados antes de escribir. Asociación SKU valida familia única/existente, categoría, contenido, modo, marca y reglas; desasociación permite V1. No cambia stock/costo/precio físico.
+
+AUDITORIA_PRODUCTOS agrega al final `entidad_tipo`, `entidad_id`, `payload_hash`, `resultado_json`. Filas históricas vacías conservan significado de producto; familia usa tipo FAMILIA, entidad_id FAM-* y producto_id vacío. `cambios_json` congela antes/después y estado PREPARADA/COMPLETADA; actor, referencia y timestamp existentes. Resultado persistido permite replay histórico; misma key/otro payload falla 409. Una interrupción pendiente bloquea la entidad para revisión; errores controlados compensan oferta/auditoría. Reportes de producto excluyen FAMILIA. La nueva UI administra oferta e identidad en secciones separadas; dry-run detecta problemas sin corregirlos. [Acta B3](operativa/FAMILIAS_B3_TEST_2026-10-07.md).
+
 ### Venta y peso (D40)
 
 Conteo físico: captura en kg con tres decimales (1 g) y conversión a base nativa conservada. Ajustes/compras GRANEL rechazan fracciones de gramo. `ajustarStockAdmin` admite `stock_esperado`, validado bajo lock antes de escribir; replay de la misma key conserva el resultado anterior. Propuestas de abastecimiento conservan tres decimales. [Dry-run, acta y aplicación futura](operativa/CONTEO_CORTE_TEST.md); no se cargó stock contado.

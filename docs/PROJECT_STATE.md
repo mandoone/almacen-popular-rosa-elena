@@ -5,6 +5,10 @@
 
 ---
 
+## Familias B3 — administración técnica, 2026-10-07
+
+CRUD de familias e identidad SKU preparado en backend TEST v20 y UI exclusiva TEST con permiso productos:gestionar. Diario de familias separado por entidad y dry-run sin correcciones. Ninguna familia/asociación comercial cargada; tienda y operación V1 conservadas. UI compilada, revisión visual humana pendiente. C1/C2 no desplegados y F10 sin cambios. [Acta y rollback](operativa/FAMILIAS_B3_TEST_2026-10-07.md).
+
 ## Familias B2 — estructura TEST, 2026-10-07
 
 Esquema TEST alineado con A/B1 mediante backup completo verificado y readback histórico exacto: cinco campos SKU, seis snapshots de compra y FAMILIAS_PRODUCTO vacía. Segunda ejecución sin cambios. Apps Script TEST v19 (previa v18), sin activación de catálogo familiar. C1/C2 no desplegados; F10 sigue 1 READY/19 PENDING. [Evidencia B2 y rollback](operativa/FAMILIAS_B2_TEST_2026-10-07.md).

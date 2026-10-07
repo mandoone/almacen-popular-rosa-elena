@@ -901,6 +901,24 @@ export function listarProductosAdmin(): Promise<ProductoAdmin[]> {
     .then((data) => data.productos);
 }
 
+export function listarFamiliasProductoAdmin(): Promise<{ familias: import('./familiasProducto').FamiliaProducto[] }> {
+  return getAdminFase78({ action: 'listarFamiliasProductoAdmin' });
+}
+
+export function obtenerFamiliaProductoAdmin(familia_id: string): Promise<import('./familiasProducto').FamiliaProducto> {
+  return getAdminFase78({ action: 'obtenerFamiliaProductoAdmin', familia_id });
+}
+
+export function auditarMapaFamiliasSkuAdmin(apertura_id = ''): Promise<import('./familiasProducto').ValidacionFamilias> {
+  return getAdminFase78({ action: 'auditarMapaFamiliasSku', apertura_id });
+}
+
+export function guardarFamiliaProductoAdmin(input: {
+  familia: Record<string, unknown>; version_esperada?: number; idempotency_key: string;
+}, actor: string, crear: boolean): Promise<import('./familiasProducto').FamiliaProducto> {
+  return postAdminFase78(crear ? 'crearFamiliaProductoAdmin' : 'actualizarFamiliaProductoAdmin', actor, input);
+}
+
 export function actualizarProductoAdmin(input: {
   producto_id: string;
   cambios: Record<string, unknown>;

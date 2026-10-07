@@ -106,7 +106,7 @@ export function validarIdentidadSkuFisica(valor: unknown): ValidacionFamilias {
   const error = (codigo: string, campo: string) => inconsistencias.push({ codigo, campo, producto_id: texto(sku.id_producto) });
   if (!vacio(sku.familia_id) && (typeof sku.familia_id !== 'string' || !/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id)))) error('FAMILIA_ID_INVALIDO', 'familia_id');
   for (const [campo, maximo] of [['marca', 120], ['presentacion', 200]] as const) {
-    if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo)) error('TEXTO_IDENTIDAD_INVALIDO', campo);
+    if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo || /^=|[\u0000-\u001f]/.test(texto(sku[campo])))) error('TEXTO_IDENTIDAD_INVALIDO', campo);
   }
   if (!vacio(sku.contenido_cantidad) && (!positivo(sku.contenido_cantidad) || sku.contenido_cantidad > Number.MAX_SAFE_INTEGER)) error('CONTENIDO_INVALIDO', 'contenido_cantidad');
   if (!vacio(sku.contenido_unidad) && !['g', 'ml', 'unidad'].includes(sku.contenido_unidad as string)) error('UNIDAD_CONTENIDO_INVALIDA', 'contenido_unidad');
@@ -262,4 +262,38 @@ export function leerVistaFamiliasParalela(
       return vista;
     }),
   };
+}
+
+/** Dry-run administrativo: informa problemas sin cambiar ni inferir identidad. */
+export function auditarMapaFamiliasSku(
+  familias: readonly FamiliaProducto[], skus: readonly SkuFamilia[], contexto: ContextoDisponibilidadFamilia = {},
+): ValidacionFamilias {
+  const inconsistencias = [...auditarModeloFamilias(familias, skus).inconsistencias];
+  for (const f of familias) {
+    const miembros = skus.filter(s => s.familia_id === f.familia_id);
+    if (!miembros.length) inconsistencias.push({ codigo: 'FAMILIA_SIN_SKU', familia_id: f.familia_id });
+    for (const sku of miembros.filter(s => s.activo === 'NO')) inconsistencias.push({ codigo: 'SKU_ASOCIADO_INACTIVO', familia_id: f.familia_id, producto_id: sku.id_producto });
+    const vista = agregarDisponibilidadFamilia(f, skus, contexto);
+    inconsistencias.push(...vista.inconsistencias);
+    if (f.activo === 'SI' && !vista.disponible) inconsistencias.push({ codigo: 'FAMILIA_ACTIVA_SIN_SKU_ELEGIBLE', familia_id: f.familia_id });
+  }
+  return resultado(inconsistencias.filter((i, n, todos) => todos.findIndex(j => JSON.stringify(j) === JSON.stringify(i)) === n));
+}
+
+/** Versionado de oferta independiente de costos/stock. Versiones gestionadas por servidor. */
+export function prepararCambioFamilia(
+  anterior: FamiliaProducto | undefined, entrada: Record<string, unknown>, versionEsperada?: number,
+): FamiliaProducto {
+  const campos = COLUMNAS_FAMILIAS_PRODUCTO.filter(c => c !== 'actualizado_en' && c !== 'version_oferta');
+  if (Object.keys(entrada).some(c => !campos.includes(c as typeof campos[number]))) throw new Error('CAMPO_FAMILIA_NO_EDITABLE');
+  if (anterior && (entrada.familia_id !== anterior.familia_id || versionEsperada !== anterior.version_oferta)) throw new Error('CONFLICTO_VERSION_FAMILIA');
+  const nuevo = { ...anterior, ...entrada, version_oferta: anterior?.version_oferta ?? 1 } as FamiliaProducto;
+  if (Object.values(entrada).some(v => typeof v === 'string' && /^=|[\u0000-\u001f]/.test(v.trim()))) throw new Error('TEXTO_FAMILIA_INVALIDO');
+  for (const c of campos) if (typeof nuevo[c] === 'string') (nuevo as unknown as Record<string, unknown>)[c] = (nuevo[c] as string).trim();
+  // Cualquier cambio de oferta invalida snapshots futuros; no se sincronizan SKU.
+  if (anterior && campos.some(c => (anterior[c] ?? '') !== (nuevo[c] ?? ''))) nuevo.version_oferta++;
+  const validacion = validarFamiliaProducto(nuevo);
+  if (!validacion.valido) throw new Error(validacion.inconsistencias.map(i => i.codigo).join(','));
+  if (nuevo.activo === 'SI' && nuevo.precio_venta === 0) throw new Error('PRECIO_FAMILIAR_NO_VENDIBLE');
+  return nuevo;
 }

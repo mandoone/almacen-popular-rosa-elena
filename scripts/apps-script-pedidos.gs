@@ -136,7 +136,8 @@ var COLUMNAS_FASE_7_8 = {
   ],
   AUDITORIA_PRODUCTOS: [
     'auditoria_id', 'fecha_hora', 'producto_id', 'accion', 'cambios_json',
-    'responsable', 'referencia_id'
+    'responsable', 'referencia_id',
+    'entidad_tipo', 'entidad_id', 'payload_hash', 'resultado_json'
   ],
   MOVIMIENTOS_STOCK: [
     'movimiento_id', 'fecha_hora', 'producto_id', 'tipo_movimiento', 'cantidad',
@@ -392,6 +393,15 @@ function doGet(e) {
         exigirToken_(params.token);
         validarEntornoTestFase78_();
         return jsonOk_(obtenerEsquemaFase78Test_());
+      case 'listarFamiliasProductoAdmin':
+        exigirToken_(params.token);
+        return jsonOk_(listarFamiliasProductoAdmin_());
+      case 'obtenerFamiliaProductoAdmin':
+        exigirToken_(params.token);
+        return jsonOk_(obtenerFamiliaProductoAdmin_(params.familia_id));
+      case 'auditarMapaFamiliasSku':
+        exigirToken_(params.token);
+        return jsonOk_(auditarMapaFamiliasSkuAdmin_(params));
       case 'listarCompras':
         exigirToken_(params.token);
         validarEntornoTestFase78_();
@@ -501,6 +511,12 @@ function doPost(e) {
         exigirToken_(body.token);
         validarEntornoTestFase78_();
         return jsonOk_(crearBackupPilotoTest_(body));
+      case 'crearFamiliaProductoAdmin':
+        exigirToken_(body.token);
+        return jsonOk_(mutarFamiliaProductoAdmin_(body, true));
+      case 'actualizarFamiliaProductoAdmin':
+        exigirToken_(body.token);
+        return jsonOk_(mutarFamiliaProductoAdmin_(body, false));
       case 'crearCompra':
         exigirToken_(body.token);
         validarEntornoTestFase78_();
@@ -2915,6 +2931,7 @@ function actualizarProductoAdmin_(body) {
       var vigente = filaAObjeto_(hoja, hoja.filas[fila]);
       exigirColumnasEdicionIdentidadB1_(hoja, entrada.cambios);
       var combinado = Object.assign({}, vigente, entrada.cambios);
+      validarAsociacionSkuAdminB3_(ss, combinado);
       if (modoVenta_(combinado) === 'GRANEL') {
         validarModeloGranel_(combinado);
         validarPrecisionStock_(combinado,parseNum_(combinado.stock_minimo));
@@ -2984,6 +3001,7 @@ function crearProductoAdmin_(body) {
       if (modoVenta_(entrada.cambios) === 'GRANEL') validarModeloGranel_(entrada.cambios);
       var producto = { id_producto: productoId, stock_actual: 0 };
       Object.keys(entrada.cambios).forEach(function (campo) { producto[campo] = entrada.cambios[campo]; });
+      validarAsociacionSkuAdminB3_(ss, producto);
       var ultimaFila = hoja.sheet.getLastRow();
       var ultimoAudit = auditoria.sheet.getLastRow();
       try {
@@ -3192,7 +3210,8 @@ function obtenerReportesFase78_(params) {
     .filter(function (venta) { return !limpiar_(params.apertura_id) || limpiar_(venta.apertura_id) === limpiar_(params.apertura_id); });
   var pedidosHistoricos = listarRegistrosPeriodoF78_(leerHoja_(ss, HOJAS.PEDIDOS), 'fecha_hora', desde, hasta)
     .filter(function (pedido) { return !limpiar_(params.apertura_id) || limpiar_(pedido.apertura_id) === limpiar_(params.apertura_id); });
-  var auditoriaProductos = listarRegistrosPeriodoF78_(leerHoja_(ss, HOJAS.AUDITORIA_PRODUCTOS), 'fecha_hora', desde, hasta);
+  var auditoriaProductos = listarRegistrosPeriodoF78_(leerHoja_(ss, HOJAS.AUDITORIA_PRODUCTOS), 'fecha_hora', desde, hasta)
+    .filter(function (r) { return r.entidad_tipo !== 'FAMILIA'; }); // Histórico vacío sigue siendo PRODUCTO.
   return {
     compras: compras, gastos: gastos, movimientos_stock: movimientos,
     historial_costos: costos, auditoria_productos: auditoriaProductos,
@@ -4387,7 +4406,7 @@ function validarIdentidadSkuFisica(valor) {
     if (!vacio(sku.familia_id) && (typeof sku.familia_id !== 'string' || !/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id))))
         error('FAMILIA_ID_INVALIDO', 'familia_id');
     for (const [campo, maximo] of [['marca', 120], ['presentacion', 200]]) {
-        if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo))
+        if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo || /^=|[\u0000-\u001f]/.test(texto(sku[campo]))))
             error('TEXTO_IDENTIDAD_INVALIDO', campo);
     }
     if (!vacio(sku.contenido_cantidad) && (!positivo(sku.contenido_cantidad) || sku.contenido_cantidad > Number.MAX_SAFE_INTEGER))
@@ -4595,7 +4614,47 @@ function leerVistaFamiliasParalela(familias, skus, contexto = {}) {
         }),
     };
 }
-return { COLUMNAS_FAMILIAS_PRODUCTO, COLUMNAS_IDENTIDAD_SKU_FAMILIA, validarIdentidadSkuFisica, validarFamiliaProducto, presentacionesEquivalentes, validarRelacionSkuFamilia, auditarModeloFamilias, agregarDisponibilidadFamilia, leerVistaFamiliasParalela };
+/** Dry-run administrativo: informa problemas sin cambiar ni inferir identidad. */
+function auditarMapaFamiliasSku(familias, skus, contexto = {}) {
+    const inconsistencias = [...auditarModeloFamilias(familias, skus).inconsistencias];
+    for (const f of familias) {
+        const miembros = skus.filter(s => s.familia_id === f.familia_id);
+        if (!miembros.length)
+            inconsistencias.push({ codigo: 'FAMILIA_SIN_SKU', familia_id: f.familia_id });
+        for (const sku of miembros.filter(s => s.activo === 'NO'))
+            inconsistencias.push({ codigo: 'SKU_ASOCIADO_INACTIVO', familia_id: f.familia_id, producto_id: sku.id_producto });
+        const vista = agregarDisponibilidadFamilia(f, skus, contexto);
+        inconsistencias.push(...vista.inconsistencias);
+        if (f.activo === 'SI' && !vista.disponible)
+            inconsistencias.push({ codigo: 'FAMILIA_ACTIVA_SIN_SKU_ELEGIBLE', familia_id: f.familia_id });
+    }
+    return resultado(inconsistencias.filter((i, n, todos) => todos.findIndex(j => JSON.stringify(j) === JSON.stringify(i)) === n));
+}
+/** Versionado de oferta independiente de costos/stock. Versiones gestionadas por servidor. */
+function prepararCambioFamilia(anterior, entrada, versionEsperada) {
+    var _a;
+    const campos = COLUMNAS_FAMILIAS_PRODUCTO.filter(c => c !== 'actualizado_en' && c !== 'version_oferta');
+    if (Object.keys(entrada).some(c => !campos.includes(c)))
+        throw new Error('CAMPO_FAMILIA_NO_EDITABLE');
+    if (anterior && (entrada.familia_id !== anterior.familia_id || versionEsperada !== anterior.version_oferta))
+        throw new Error('CONFLICTO_VERSION_FAMILIA');
+    const nuevo = Object.assign(Object.assign(Object.assign({}, anterior), entrada), { version_oferta: (_a = anterior === null || anterior === void 0 ? void 0 : anterior.version_oferta) !== null && _a !== void 0 ? _a : 1 });
+    if (Object.values(entrada).some(v => typeof v === 'string' && /^=|[\u0000-\u001f]/.test(v.trim())))
+        throw new Error('TEXTO_FAMILIA_INVALIDO');
+    for (const c of campos)
+        if (typeof nuevo[c] === 'string')
+            nuevo[c] = nuevo[c].trim();
+    // Cualquier cambio de oferta invalida snapshots futuros; no se sincronizan SKU.
+    if (anterior && campos.some(c => { var _a, _b; return ((_a = anterior[c]) !== null && _a !== void 0 ? _a : '') !== ((_b = nuevo[c]) !== null && _b !== void 0 ? _b : ''); }))
+        nuevo.version_oferta++;
+    const validacion = validarFamiliaProducto(nuevo);
+    if (!validacion.valido)
+        throw new Error(validacion.inconsistencias.map(i => i.codigo).join(','));
+    if (nuevo.activo === 'SI' && nuevo.precio_venta === 0)
+        throw new Error('PRECIO_FAMILIAR_NO_VENDIBLE');
+    return nuevo;
+}
+return { COLUMNAS_FAMILIAS_PRODUCTO, COLUMNAS_IDENTIDAD_SKU_FAMILIA, validarIdentidadSkuFisica, validarFamiliaProducto, presentacionesEquivalentes, validarRelacionSkuFamilia, auditarModeloFamilias, agregarDisponibilidadFamilia, leerVistaFamiliasParalela, auditarMapaFamiliasSku, prepararCambioFamilia };
 })();
 // END DOMINIO FAMILIAS FASE A GENERADO
 
@@ -4632,4 +4691,129 @@ function leerVistaFamiliasFaseA_(ss, contexto) {
     return fila.some(function (valor) { return valor !== '' && valor !== null && valor !== undefined; });
   }).map(function (fila) { return filaAObjeto_(productos, fila); });
   return DominioFamiliasFaseA.leerVistaFamiliasParalela(familias, skus, contexto || {});
+}
+
+/** B3: únicamente el destino TEST aprobado; nunca crea/migra hojas. */
+function destinoFamiliasAdminB3_() {
+  validarEntornoTestFase78_();
+  if (SPREADSHEET_ID !== '1U1nj_DKExmMV3pOA50JprcQ2d4TOQqb-4ORaJUagEoM') lanzar_('Destino familias TEST no autorizado.', 403);
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  if (ss.getName() !== 'TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES') lanzar_('Nombre destino familias TEST no autorizado.', 403);
+  if (!ss.getSheetByName(HOJAS.FAMILIAS_PRODUCTO)) lanzar_('Falta esquema B2.', 409);
+  return ss;
+}
+
+function listarFamiliasProductoAdmin_() {
+  var familias = leerFamiliasProductoFaseA_(destinoFamiliasAdminB3_());
+  var vistos = {};
+  familias.forEach(function (f) {
+    if (vistos[f.familia_id]) lanzar_('Familia duplicada; requiere revision.', 409);
+    vistos[f.familia_id] = true;
+  });
+  return { familias: familias };
+}
+
+function obtenerFamiliaProductoAdmin_(id) {
+  var encontrada = listarFamiliasProductoAdmin_().familias.filter(function (f) { return f.familia_id === limpiar_(id); });
+  if (encontrada.length !== 1) lanzar_('Familia no encontrada.', 404);
+  return encontrada[0];
+}
+
+function validarAsociacionSkuAdminB3_(ss, sku) {
+  if (!limpiar_(sku.familia_id)) return; // V1 no exige nuevas columnas ni familias.
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  if (productos.filas.filter(function (f) { return limpiar_(filaAObjeto_(productos, f).id_producto) === sku.id_producto; }).length > 1) lanzar_('SKU duplicado; asociacion ambigua.', 409);
+  var familias = leerFamiliasProductoFaseA_(ss).filter(function (f) { return f.familia_id === limpiar_(sku.familia_id); });
+  if (familias.length !== 1) lanzar_('Familia inexistente o duplicada.', 409);
+  var validacion = DominioFamiliasFaseA.validarRelacionSkuFamilia(sku, familias[0]);
+  if (!validacion.valido) lanzar_('Identidad SKU incompatible: ' + validacion.inconsistencias.map(function (i) { return i.codigo; }).join(', '), 400);
+}
+
+function auditarMapaFamiliasSkuAdmin_(params) {
+  var ss = destinoFamiliasAdminB3_();
+  var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
+  var skus = productos.filas.map(function (f) { return filaAObjeto_(productos, f); }).filter(function (p) { return limpiar_(p.id_producto); });
+  var contexto = {};
+  if (limpiar_(params.apertura_id)) {
+    contexto.apertura_id = limpiar_(params.apertura_id);
+    var apertura = leerHoja_(ss, HOJAS.APERTURA_PRODUCTOS);
+    contexto.sku_habilitados = apertura.filas.map(function (f) { return filaAObjeto_(apertura, f); })
+      .filter(function (p) { return p.apertura_id === contexto.apertura_id && p.habilitado === 'SI'; })
+      .map(function (p) { return p.producto_id; });
+  }
+  return DominioFamiliasFaseA.auditarMapaFamiliasSku(leerFamiliasProductoFaseA_(ss), skus, contexto);
+}
+
+/** Audit log durable: replay devuelve el resultado original, no relee la oferta vigente. */
+function mutarFamiliaProductoAdmin_(body, crear) {
+  exigirIdempotencyKey_(body.idempotency_key);
+  var actor = limpiar_(body.responsable);
+  if (!/^[a-z0-9][a-z0-9._@-]{0,99}$/.test(actor)) lanzar_('Actor administrativo invalido.', 400);
+  var entrada = body.familia;
+  if (!entrada || typeof entrada !== 'object' || Array.isArray(entrada)) lanzar_('Familia invalida.', 400);
+  var campos = COLUMNAS_FAMILIAS_PRODUCTO.filter(function (c) { return c !== 'version_oferta' && c !== 'actualizado_en'; });
+  if (Object.keys(entrada).some(function (c) { return campos.indexOf(c) < 0; })) lanzar_('Campo familiar no editable.', 400);
+  var normalizada = {};
+  campos.forEach(function (c) { if (entrada[c] !== undefined) normalizada[c] = typeof entrada[c] === 'string' ? entrada[c].trim() : entrada[c]; });
+  var accion = crear ? 'crear_familia' : 'actualizar_familia';
+  var hash = hashPayload_({ accion: accion, actor: actor, familia: normalizada, version_esperada: body.version_esperada || null });
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) lanzar_('El backend TEST esta ocupado.', 503);
+  try {
+    var ss = destinoFamiliasAdminB3_();
+    var audit = leerHoja_(ss, HOJAS.AUDITORIA_PRODUCTOS);
+    ['entidad_tipo', 'entidad_id', 'payload_hash', 'resultado_json'].forEach(function (c) { columnaUnicaContrato_(audit.sheet, c); });
+    var replays = audit.filas.map(function (f) { return filaAObjeto_(audit, f); }).filter(function (r) {
+      return r.entidad_tipo === 'FAMILIA' && r.referencia_id === body.idempotency_key;
+    });
+    if (replays.length) {
+      if (replays.length !== 1 || replays[0].payload_hash !== hash) lanzar_('Conflicto de idempotencia familiar.', 409);
+      if (JSON.parse(replays[0].cambios_json).estado !== 'COMPLETADA') lanzar_('Operacion familiar incompleta; REQUIERE_REVISION.', 409);
+      return JSON.parse(replays[0].resultado_json);
+    }
+    // Fail closed ante una interrupción previa sobre la misma familia.
+    if (audit.filas.some(function (f) { var r = filaAObjeto_(audit, f); return r.entidad_tipo === 'FAMILIA' && r.entidad_id === normalizada.familia_id && JSON.parse(r.cambios_json).estado !== 'COMPLETADA'; })) lanzar_('Familia con operacion incompleta; REQUIERE_REVISION.', 409);
+    var familias = leerFamiliasProductoFaseA_(ss), hoja = leerHoja_(ss, HOJAS.FAMILIAS_PRODUCTO);
+    var coincidencias = familias.filter(function (f) { return f.familia_id === normalizada.familia_id; });
+    if (coincidencias.length > 1 || (crear && coincidencias.length)) lanzar_('Familia ya existe o esta duplicada.', 409);
+    if (!crear && coincidencias.length !== 1) lanzar_('Familia no encontrada.', 404);
+    var antes = coincidencias[0], nueva;
+    try { nueva = DominioFamiliasFaseA.prepararCambioFamilia(antes, normalizada, body.version_esperada); }
+    catch (err) { lanzar_(err.message, /CONFLICTO_VERSION/.test(err.message) ? 409 : 400); }
+    var productos = leerHoja_(ss, HOJAS.PRODUCTOS), vistosSku = {};
+    productos.filas.forEach(function (f) {
+      var sku = filaAObjeto_(productos, f), id = limpiar_(sku.id_producto);
+      if (!id) return;
+      if (vistosSku[id]) lanzar_('SKU duplicado; requiere revision.', 409);
+      vistosSku[id] = true;
+      if (sku.familia_id === nueva.familia_id) {
+        var v = DominioFamiliasFaseA.validarRelacionSkuFamilia(sku, nueva);
+        if (!v.valido) lanzar_('Cambio incompatible con SKU asociado.', 409);
+      }
+    });
+    var fila = buscarFila_(hoja, col_(hoja, 'familia_id'), nueva.familia_id);
+    var filaAnterior = fila < 0 ? null : hoja.filas[fila].slice();
+    var ultimoFamilia = hoja.sheet.getLastRow(), ultimoAudit = audit.sheet.getLastRow();
+    var ahora = new Date(); nueva.actualizado_en = marcaIso_(ahora);
+    var evento = { estado: 'PREPARADA', antes: antes || null, despues: nueva };
+    try {
+      agregarFila_(audit, { auditoria_id: generarIdOperacion_('AUD', ahora), fecha_hora: marca_(ahora), producto_id: '',
+        accion: accion, cambios_json: JSON.stringify(evento), responsable: actor, referencia_id: body.idempotency_key,
+        entidad_tipo: 'FAMILIA', entidad_id: nueva.familia_id, payload_hash: hash, resultado_json: JSON.stringify(nueva) });
+      SpreadsheetApp.flush();
+      if (crear) agregarFila_(hoja, nueva); else escribirObjetoEnFila_(hoja, fila, nueva);
+      SpreadsheetApp.flush();
+      evento.estado = 'COMPLETADA';
+      audit.sheet.getRange(ultimoAudit + 1, col_(audit, 'cambios_json') + 1).setValue(JSON.stringify(evento));
+      SpreadsheetApp.flush();
+      return nueva;
+    } catch (err) {
+      if (filaAnterior) hoja.sheet.getRange(fila + 2, 1, 1, hoja.headers.length).setValues([filaAnterior]);
+      else eliminarFilasAgregadas_(hoja.sheet, ultimoFamilia);
+      SpreadsheetApp.flush();
+      eliminarFilasAgregadas_(audit.sheet, ultimoAudit);
+      SpreadsheetApp.flush();
+      throw err;
+    }
+  } finally { lock.releaseLock(); }
 }
