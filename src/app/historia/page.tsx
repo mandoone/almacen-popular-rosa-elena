@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { crearMetadataPublica } from "@/lib/fase10/metadataPublica";
+import { HORARIO_APERTURAS, LUGAR_APERTURAS } from "@/lib/fase9/contenidoPublico";
 
 export const metadata = crearMetadataPublica({
   title: "Historia",
@@ -11,7 +12,7 @@ export const metadata = crearMetadataPublica({
 const tarjetas = [
   {
     title: "2 sábados al mes",
-    desc: "Las próximas aperturas informadas funcionan de 11:00 a 15:00 en Gamero 2670, Independencia",
+    desc: `Las próximas aperturas informadas funcionan de ${HORARIO_APERTURAS} en ${LUGAR_APERTURAS}`,
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -28,8 +29,8 @@ const tarjetas = [
     ),
   },
   {
-    title: "Precio de costo",
-    desc: "Los productos se venden al precio de costo, sin margen de ganancia para nadie",
+    title: "Precios justos",
+    desc: "Productos básicos a precios justos y económicos para apoyar a las familias y sostener un proyecto comunitario sin fines de lucro",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
@@ -55,17 +56,17 @@ export default function HistoriaPage() {
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-primary-dark mb-8">
-            Todo comenzó en 2020
+            Un camino de organización desde 2019
           </h2>
           <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
             <p>
-              En agosto de 2020, en plena pandemia y crisis económica, un grupo de vecinos y vecinas de la Población Juan Antonio Ríos decidió organizarse para enfrentar juntos el alza del costo de la vida.
+              En <strong className="text-primary-dark">octubre de 2019</strong>, tras la revuelta social, nació la Asamblea Territorial Juan Antonio Ríos: un espacio autoconvocado de vecinas y vecinos para organizarse en el territorio.
             </p>
             <p>
-              Así nació la <strong className="text-primary-dark">RED DE ABASTECIMIENTO ROSA ELENA MORALES</strong>, una compra colectiva de productos básicos que permitía generar ahorro en el presupuesto mensual de alimentación e higiene de las familias participantes.
+              En <strong className="text-primary-dark">marzo de 2020</strong>, ante la pandemia, la asamblea activó comisiones de salud, acopio y emergencia para responder a las necesidades de la comunidad.
             </p>
             <p>
-              El nombre fue un homenaje a Rosa Elena Morales, dirigenta vecinal de la población secuestrada y desaparecida por la DINA el 18 de agosto de 1976 — exactamente 44 años antes del lanzamiento de la red.
+              En <strong className="text-primary-dark">agosto de 2020</strong> surgió la <strong className="text-primary-dark">Red de Abastecimiento Rosa Elena Morales</strong>, mediante compras colectivas y canastas de alimentos e higiene. Su nombre homenajea a Rosa Elena Morales, vecina y dirigenta de la población que permanece detenida desaparecida desde el 18 de agosto de 1976.
             </p>
           </div>
         </div>
@@ -93,26 +94,23 @@ export default function HistoriaPage() {
           </h2>
           <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
             <p>
-              Con el tiempo, y gracias al compromiso creciente de los pobladores y pobladoras, la red evolucionó hacia algo más permanente.
+              Las compras colectivas y el trabajo compartido de vecinas y vecinos dieron paso a un punto de venta y acopio comunitario.
             </p>
             <p>
-              Nació así el <strong className="text-primary-dark">ALMACÉN POPULAR ROSA ELENA MORALES</strong>, un espacio físico en la sede vecinal donde cada cierto tiempo — actualmente 2 sábados al mes — los vecinos pueden acceder a productos básicos a precio de costo.
+              En <strong className="text-primary-dark">diciembre de 2021</strong> se inauguró el <strong className="text-primary-dark">Almacén Popular Rosa Elena Morales</strong>. La iniciativa pasó de las compras por encargo a un espacio de abastecimiento comunitario con productos básicos a precios justos y económicos.
             </p>
             <p>
-              En su inauguración, la comunidad celebró este nuevo proyecto que representa un paso más en la construcción de una economía solidaria y popular en el territorio.
+              En <strong className="text-primary-dark">abril de 2023</strong>, el Almacén se trasladó y abrió en {LUGAR_APERTURAS}, donde continúa este proyecto de economía solidaria y organización vecinal.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 5. CITA INAUGURACIÓN */}
+      {/* 5. SENTIDO COMUNITARIO */}
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <blockquote className="border-l-4 border-primary pl-6 text-gray-700 italic text-lg leading-relaxed mb-4">
-            &ldquo;Hace un tiempo con nuestrxs compañerxs quisimos dar un giro a lo que era la red de abastecimiento y llegamos a la idea que hoy en día está en funcionamiento. Queremos agradecer a todas las personas que estuvieron con nosotrxs en la inauguración del Almacén Popular Rosa Elena Morales.&rdquo;
-          </blockquote>
-          <p className="text-gray-500 text-sm pl-6">
-            — Publicación Instagram, inauguración del almacén
+          <p className="border-l-4 border-primary pl-6 text-gray-700 italic text-lg leading-relaxed">
+            El Almacén se construye con el trabajo voluntario de vecinas y vecinos. Las compras, la organización y los turnos de atención sostienen un espacio que pone el abastecimiento y el cuidado de la comunidad en el centro.
           </p>
         </div>
       </section>

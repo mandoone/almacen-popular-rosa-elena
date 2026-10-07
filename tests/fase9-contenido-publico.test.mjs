@@ -62,7 +62,7 @@ test('las páginas públicas contienen las secciones principales de Fase 9', asy
   ]) {
     assert.match(contenido, new RegExp(titulo.replace(/[¿?]/g, '.')));
   }
-  assert.doesNotMatch(contenido, /9 y 23 de mayo|Morales Morales/i);
+  assert.doesNotMatch(contenido, /9 y 23 de mayo|Almacén Popular Rosa Elena Morales Morales/i);
 });
 
 test('Fase 9: contacto publicado tiene una única fuente compartida', async () => {

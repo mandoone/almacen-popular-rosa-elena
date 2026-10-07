@@ -5,11 +5,10 @@ export const LUGAR_APERTURAS =
 
 export const HORARIO_APERTURAS = '11:00–15:00';
 
-// Valores ya publicados, centralizados para evitar divergencias entre páginas.
-// Cualquier cambio de contacto sigue requiriendo confirmación del Almacén.
-export const CONTACTO_WHATSAPP_NUMERO = '56950807172';
+// Contactos oficiales confirmados por el Almacén, compartidos entre páginas.
+export const CONTACTO_WHATSAPP_NUMERO = '56942839926';
 export const CONTACTO_WHATSAPP_URL = `https://wa.me/${CONTACTO_WHATSAPP_NUMERO}`;
-export const CONTACTO_EMAIL = 'almacenpopular.rosaelenamorarles@gmail.com';
+export const CONTACTO_EMAIL = 'redrosamorales@gmail.com';
 export const CONTACTO_INSTAGRAM_USUARIO = 'almacenpopular.rosamoralesm';
 export const CONTACTO_INSTAGRAM_URL = `https://instagram.com/${CONTACTO_INSTAGRAM_USUARIO}`;
 
@@ -64,11 +63,11 @@ export const FORMAS_DE_PARTICIPAR = [
   {
     titulo: 'Participar en los turnos',
     descripcion:
-      'Las aperturas se sostienen con organización y trabajo compartido entre vecinas y vecinos.',
+      'Puedes sumarte a los turnos rotativos y apoyar la organización junto a vecinas y vecinos.',
   },
   {
     titulo: 'Difundir y aportar',
     descripcion:
-      'Puedes compartir la información del proyecto y consultar por las formas vigentes de colaboración.',
+      'Puedes difundir el proyecto y aportar económicamente para sostener su funcionamiento y fortalecer este espacio comunitario.',
   },
 ] as const;

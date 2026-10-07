@@ -17,7 +17,7 @@ import {
   nombreCategoriaVisible,
   rutaImagenProducto,
 } from '@/lib/fase4/catalogo';
-import { CONTACTO_WHATSAPP_NUMERO } from '@/lib/fase9/contenidoPublico';
+import { CONTACTO_WHATSAPP_NUMERO, LUGAR_APERTURAS } from '@/lib/fase9/contenidoPublico';
 import {
   obtenerIntentoCreacionPedido,
   type IntentoCreacionPedido,
@@ -450,7 +450,7 @@ export default function TiendaPage() {
           Productos disponibles
         </h1>
         <p className="text-primary-light text-sm md:text-lg">
-          Precios al costo • Sin fines de lucro • Retiro en Gamero 2670, Independencia
+          Precios justos • Sin fines de lucro • Retiro en {LUGAR_APERTURAS}
         </p>
       </section>
 

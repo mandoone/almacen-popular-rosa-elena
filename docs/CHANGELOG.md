@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Contenido institucional incorporado en TEST — 2026-10-07
+
+- Contactos oficiales centralizados, precios justos/económicos, cronología 2019–2023 y biografía desde Nadia; participación incluye organización y aportes generales en las tres tarjetas existentes.
+- Fuente editorial recibida; revisión de la implementación por Omar pendiente, `contenido_editorial` PENDING. Fotos, catálogo y datos reales intactos; sin deploy productivo. [Detalle y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+
 ## Continuidad segura del runner histórico — 2026-10-01
 
 - F56 septiembre conserva preflight de destino; modos de escritura se retiran antes de red para no tratar Arroz como unidad ni operar una apertura histórica. Runners vigentes: piloto con fixtures propios y escenario granel sintético.

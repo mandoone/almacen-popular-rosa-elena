@@ -16,8 +16,8 @@ const fotos = [
 
 const legado = [
   {
-    title: "Junta de Abastecimiento",
-    desc: "Dirigió la distribución justa de alimentos durante la Unidad Popular",
+    title: "Abastecimiento y cuidados",
+    desc: "Participó en las JAP junto a dueñas de casa y dirigencias vecinales, por el abastecimiento de la comunidad",
   },
   {
     title: "Organización popular",
@@ -77,16 +77,19 @@ export default function RosaElenaPage() {
           </h2>
           <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
             <p>
-              Rosa Elena Morales fue una destacada dirigenta vecinal de la Población Juan Antonio Ríos, en Santiago de Chile. Militante del Partido Comunista, ocupó el cargo de Secretaria del Comité local Juan Antonio Ríos de dicha organización.
+              Rosa Elena Morales Morales, llamada cariñosamente “tía Nena”, era oriunda de Talca. Participó en la Juventud Obrera Cristiana (JOC) y fue profesora normalista. Enseñó a leer y escribir a jóvenes, principalmente en Vilches, en la comuna de San Clemente.
             </p>
             <p>
-              Durante el gobierno del Presidente Salvador Allende, Rosa Elena asumió un rol fundamental en el abastecimiento popular: fue Secretaria del Ministro del Trabajo y dirigenta de la Junta de Abastecimiento y Control de Precios (JAP), organismos creados para garantizar el acceso a productos básicos a precios justos para el pueblo.
+              Posteriormente llegó a Santiago y vivió en la Población Juan Antonio Ríos. Trabajó en el diario El Siglo y, junto a su familia, participó en su distribución en la población. Fue dirigenta vecinal, militante del Partido Comunista y secretaria del Comité Local.
             </p>
             <p>
-              Tras el golpe de Estado del 11 de septiembre de 1973, Rosa Elena continuó su labor organizativa clandestina en la población. El 18 de agosto de 1976, fue secuestrada por agentes de la DINA — la policía secreta de la dictadura de Pinochet — y desde entonces permanece como detenida desaparecida.
+              Durante el gobierno de Salvador Allende llegó a desempeñarse como secretaria de ministros del Trabajo. También participó en las Juntas de Abastecimiento y Control de Precios (JAP), junto a dueñas de casa y dirigencias vecinales, preocupada por el cuidado y el abastecimiento de su familia, vecinas y vecinos.
             </p>
             <p>
-              Su figura representa a las miles de mujeres que sostuvieron la vida comunitaria, el cuidado y la organización popular, trabajo históricamente invisibilizado pero esencial. Hoy, el Almacén Popular lleva su nombre como homenaje a ella y a todas las mujeres de nuestra población.
+              Tras el golpe de Estado tuvo que dejar La Río. El 18 de agosto de 1976, alrededor de las 20:00, fue detenida por agentes de la Dirección de Inteligencia Nacional (DINA) en el sector de Avenida Matta con Lord Cochrane, mientras viajaba en un taxi junto a su amiga Berta. Desde entonces permanece detenida desaparecida.
+            </p>
+            <p>
+              El Almacén Popular adopta su nombre como homenaje y continuidad de su memoria comunitaria. Su legado inspira el trabajo compartido y recuerda el papel de las mujeres en el abastecimiento, los cuidados y la organización de la población.
             </p>
           </div>
         </div>
@@ -113,10 +116,10 @@ export default function RosaElenaPage() {
       <section className="bg-primary-dark py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
         <div className="max-w-4xl mx-auto">
           <blockquote className="font-serif text-2xl sm:text-3xl text-white italic leading-snug mb-8">
-            &ldquo;En su figura homenajeamos a las mujeres de nuestra población, quienes históricamente han asumido la tarea de cuidados y abastecimiento del hogar.&rdquo;
+            &ldquo;¡Rosa Morales vive en el Almacén Popular!&rdquo;
           </blockquote>
           <p className="text-primary-light text-lg font-medium tracking-wide">
-            — Almacén Popular Rosa Elena Morales, agosto 2020
+            — Almacén Popular Rosa Elena Morales
           </p>
         </div>
       </section>

@@ -1,6 +1,6 @@
 # Fases 9–10 — inventario, decisiones y Go/No-Go
 
-**Fecha de corte:** 2026-10-01
+**Fecha de corte:** 2026-10-07 (actualización editorial; resto conserva corte 01/10)
 **Alcance:** preparación técnica y editorial; producción no autorizada ni tocada.  
 **Estado global:** **NO-GO productivo** hasta resolver los bloqueos humanos indicados.
 
@@ -18,7 +18,7 @@ Corte local: roles_aprobados READY, 19 PENDING, 0 FAIL. Asignación 2 Administra
 | Sesión/secreto | 8 h, HMAC, versión de cuenta, clave actual+anterior, cookie estricta | SÍ, falta configurar secreto/rotación/responsable | SÍ | Código CERRADO |
 | Capacidades | Matriz aprobada; todos confirman, solo Operación/Admin cancelan | NO por matriz; SÍ por cuentas sin ensayo | RESUELTA 01/10 | Implementada UI/API; nombres fuera de src |
 | CSP/orígenes/headers | CSP, control cross-site, HSTS/COOP y cookies comprobados en Preview TEST | SÍ, validar dominio final | SÍ, dominio | Preview CERRADO; dominio final pendiente |
-| Contenido/contactos/derechos | F9-01 a F9-04 pendientes | SÍ | SÍ, Almacén | NO sin fuente/aprobación |
+| Contenido/contactos/derechos | Fuente editorial y contactos recibidos e incorporados en TEST; revisión de implementación e imágenes/derechos pendientes | SÍ | Revisión por Omar; derechos por Almacén | Incorporación TEST realizada, sin promover gates |
 | Stock/precios/costos | 18 GRANEL acreditados; 31 precios corregidos acumulados, 30 costos activos acreditados | SÍ por conteo/variantes/22 costos pendientes | SÍ para faltantes reales | Backup/diff/readback e idempotencia solo TEST |
 | Caja/saldos | Corte real no informado | SÍ para caja/abastecimiento | SÍ, Almacén | NO cargar aún |
 | Backup/rollback | Procedimiento y manifiesto listos; evidencia productiva no ejecutada | SÍ | SÍ, responsables/ventana | Preparación CERRADA |
@@ -36,9 +36,9 @@ Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visua
 | Elemento | Evidencia | Clasificación | Tratamiento |
 |---|---|---|---|
 | Inicio | funcionamiento, aperturas, propósito, historia y participación | OK técnico | Fechas pasadas ya no se presentan como próximas. |
-| Historia | origen 2020, transición, cita y funcionamiento | HUMAN_DECISION_REQUIRED | Hechos, fecha, cita y atribución necesitan aprobación editorial/fuente. |
-| Rosa Elena | biografía, cuatro retratos, legado y cita | HUMAN_DECISION_REQUIRED | Biografía, identidad, fecha, cita, créditos y derechos necesitan validación institucional. |
-| Participar | compra, difusión, turnos y contacto | HUMAN_DECISION_REQUIRED | No publica calendario de turnos ni aportes monetarios porque no existe procedimiento aprobado. |
+| Historia | cronología 2019–2023 y funcionamiento desde Nadia | REVISIÓN_IMPLEMENTACIÓN | Fuente recibida; Omar revisa síntesis y presentación en TEST. |
+| Rosa Elena | biografía y legado desde Nadia; cuatro retratos existentes | REVISIÓN_IMPLEMENTACIÓN / DERECHOS | Fuente recibida; Omar revisa implementación. Imágenes/derechos mantienen su gate separado. |
+| Participar | compra, difusión, turnos, organización, aportes generales y contacto | REVISIÓN_IMPLEMENTACIÓN | Fuente recibida; tres tarjetas sin datos bancarios ni procedimiento inventado. |
 | Tienda | orientación, categorías, unidades, apertura, fallback y errores | OK técnico | Se mantuvo intacta la lógica F4–F8; se añadió accesibilidad y reintento de lectura. |
 | Navbar/footer | cinco rutas, dirección, correo, WhatsApp e Instagram | CORREGIBLE_AUTOMÁTICAMENTE | Menú móvil, foco y estado de página corregidos; contacto centralizado. |
 | Imágenes usadas | `logo.png`, `logo-red.png`, `rosa-elena-1..4.jpg` | HUMAN_DECISION_REQUIRED | No hay créditos/licencias documentados. Se eliminaron pies interpretativos no sustentados. |
@@ -46,25 +46,19 @@ Clasificación actual: `CERRADO` para QA técnica sintética local, HTTP y visua
 | Textos alternativos | logos, retratos y fallback de productos | CORREGIBLE_AUTOMÁTICAMENTE | Los retratos ahora se describen solo por rasgos visuales inequívocos. |
 | Datos hardcodeados | contacto, lugar, horario y siete fechas 2026 | OK técnico / humano para cambios | Una fuente compartida evita divergencias; todo cambio requiere confirmación del Almacén. |
 
-No se encontró un corpus histórico independiente en el repositorio que permita
-corroborar las afirmaciones biográficas. La repetición entre Home, Historia y
-Rosa Elena es principalmente temática; no se eliminó texto cuando hacerlo
-podía cambiar el significado editorial.
+Fuente editorial institucional recibida e incorporada el 07/10: documento de Nadia. No se requiere investigación externa ni una nueva entrega de textos. [Cambios, límites de fuente y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
 
 ## 2. Paquete editorial — decisiones F9
 
 ### DECISIÓN F9-01
 
-**Problema:** historia, biografía, fechas, cargos y contexto represivo carecen de
-fuente aprobada dentro del repo.  
-**Evidencia:** `/historia` y `/rosa-elena`; no existe ficha de fuentes o acta de aprobación. La versión previa combinaba “1930” con “tenía 44 años” al 18 de agosto de 1976, datos incompatibles sin una fecha de nacimiento completa; ambos se retiraron sin escoger uno.  
-**Opciones:**  
-A. Aprobar el texto actual y registrar sus fuentes.  
-B. Corregirlo entregando texto institucional definitivo y fuentes.  
-C. Retirar temporalmente los pasajes no confirmados.  
-**Recomendación:** B; conservar la estructura y reemplazar solo el contenido validado.  
-**Impacto:** exactitud histórica, reputación y memoria.  
-**Bloquea producción:** **SÍ**.
+**Estado:** fuente editorial del Almacén recibida, documento de Nadia; Historia y Rosa Elena actualizadas en TEST.
+
+**Evidencia:** [fuente y cambios](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md). No se añaden edad ni fecha de nacimiento sin fuente.
+
+**Pendiente:** revisión visual/funcional por Omar y validación final de implementación si se estima necesaria; no nuevo levantamiento editorial.
+
+**Bloquea producción:** **SÍ**, conserva PENDING hasta revisión humana.
 
 ### DECISIÓN F9-02
 
@@ -81,33 +75,23 @@ C. Retirar de la publicación los archivos no autorizados.
 
 ### DECISIÓN F9-03
 
-**Problema:** turnos, aportes y funcionamiento comunitario se describen en
-términos generales; no existe procedimiento vigente documentado.  
-**Evidencia:** `/participar` invita a contactar, pero no define inscripción,
-responsables, frecuencia ni aportes monetarios/materiales.  
-**Opciones:**  
-A. Aprobar el texto general actual.  
-B. Entregar un procedimiento concreto para publicarlo.  
-C. Limitar la página a compra, difusión y contacto.  
-**Recomendación:** A para un lanzamiento inicial y B cuando el procedimiento exista.  
-**Impacto:** claridad de expectativas y carga de coordinación.  
-**Bloquea producción:** **SÍ**, porque requiere aprobación institucional del llamado público.
+**Estado:** Nadia entregó el contenido sobre turnos, organización, difusión y aportes económicos; comprar también sostiene el proyecto.
+
+**Evidencia:** contenido compartido en Inicio/Participar, tres tarjetas y aportes generales sin datos bancarios. [Implementación](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+
+**Pendiente:** revisión de la implementación resultante por Omar; no se necesita un nuevo texto ni inventar un procedimiento.
+
+**Bloquea producción:** **SÍ**, conserva el gate editorial humano.
 
 ### DECISIÓN F9-04
 
-**Problema:** correo, WhatsApp, Instagram, dirección, horario y calendario deben
-ser confirmados como canales públicos vigentes.  
-**Evidencia:** fuente compartida `src/lib/fase9/contenidoPublico.ts`; la fecha
-2026-09-19 ya se oculta por haber pasado.  
-**Opciones:**  
-A. Confirmar todos los datos actuales.  
-B. Corregir los que hayan cambiado.  
-C. Publicar solo los canales confirmados.  
-**Recomendación:** C hasta contar con confirmación explícita.  
-**Impacto:** contacto y asistencia a aperturas.  
-Horario 11:00–15:00 confirmado; los demás canales/aprobación institucional final siguen pendientes.
+**Estado:** contactos oficiales cerrados por la instrucción de Omar; WhatsApp y correo corregidos en la fuente compartida TEST. Instagram, dirección, horario y calendario confirmados se conservan.
 
-**Bloquea producción:** **SÍ** para datos públicos restantes.
+**Evidencia:** [cambios y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+
+**Pendiente:** revisar enlaces y presentación resultante por Omar, sin volver a pedir los datos.
+
+**Bloquea producción:** **SÍ**, conserva PENDING hasta revisión de implementación.
 
 ## 3. Preparación técnica F10
 
@@ -282,6 +266,6 @@ la revisión de evidencia ni la aprobación de Producción.
 
 ### HUMAN_DECISION_REQUIRED
 
-- F9-01 a F9-04.
+- Revisión de implementación F9-01/F9-03/F9-04 por Omar; imágenes/derechos F9-02. Fuente editorial y contactos ya recibidos.
 - Dominio SITE_URL, credenciales/ensayo humanos, activación WAF bajo gate productivo,
   datos físicos/ambigüedades comerciales y responsables/ventana de backup/rollback.

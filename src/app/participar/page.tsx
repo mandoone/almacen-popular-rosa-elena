@@ -1,6 +1,7 @@
 import {
   CONTACTO_INSTAGRAM_URL,
   CONTACTO_WHATSAPP_URL,
+  FORMAS_DE_PARTICIPAR,
 } from '@/lib/fase9/contenidoPublico';
 import AperturasPublicas from '@/components/AperturasPublicas';
 import { crearMetadataPublica } from '@/lib/fase10/metadataPublica';
@@ -13,8 +14,7 @@ export const metadata = crearMetadataPublica({
 
 const formas = [
   {
-    title: "Turnos de atención",
-    desc: "Consulta por los turnos rotativos de atención y por las necesidades de cada sábado de apertura.",
+    ...FORMAS_DE_PARTICIPAR[1],
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -22,8 +22,7 @@ const formas = [
     ),
   },
   {
-    title: "Difusión",
-    desc: "Ayuda corriendo la voz entre vecinos y vecinas, compartiendo en redes sociales y promoviendo el almacén en tu entorno.",
+    ...FORMAS_DE_PARTICIPAR[2],
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
@@ -31,8 +30,7 @@ const formas = [
     ),
   },
   {
-    title: "Comprar en el almacén",
-    desc: "La forma más directa de apoyar es siendo cliente del almacén. Cada compra sostiene el proyecto y demuestra que la economía solidaria es posible.",
+    ...FORMAS_DE_PARTICIPAR[0],
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -73,13 +71,13 @@ export default function ParticiparPage() {
             ¿Cómo puedo participar?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {formas.map(({ title, desc, icon }) => (
-              <div key={title} className="bg-white rounded-xl shadow-sm p-8 flex flex-col gap-4">
+            {formas.map(({ titulo, descripcion, icon }) => (
+              <div key={titulo} className="bg-white rounded-xl shadow-sm p-8 flex flex-col gap-4">
                 <div className="w-14 h-14 bg-primary-light/30 rounded-lg flex items-center justify-center text-primary-dark">
                   {icon}
                 </div>
-                <h3 className="font-bold text-xl text-primary-dark">{title}</h3>
-                <p className="text-gray-600 leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-xl text-primary-dark">{titulo}</h3>
+                <p className="text-gray-600 leading-relaxed">{descripcion}</p>
               </div>
             ))}
           </div>

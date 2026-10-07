@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D42 — Fuente editorial recibida y criterio público de precios (2026-10-07)
+
+Documento institucional de Nadia recibido: guía la síntesis pública de Historia, Rosa Elena, comunidad y participación. La instrucción vigente de Omar cierra los contactos y autoriza mencionar aportes económicos en general, sin datos bancarios. Publicar precios justos/económicos y propósito sin fines de lucro; no afirmar equivalencia al costo base ni divulgar porcentajes o desglose operativo. Implementación solo TEST, revisión humana pendiente, sin promover gates F10 ni autorizar Producción. [Fuente, textos y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+
 ## D40 — Granel real con peso libre y referencias explícitas (2026-10-01)
 
 Complemento técnico: conteo físico en kg/1 g convertido a la base histórica; importación TEST exige dry-run, acta humana y stock esperado bajo lock. Compras/ajustes no admiten medio gramo; mínimos/prioridad requieren aprobación. Ninguna cantidad real se deduce del diseño de compra.

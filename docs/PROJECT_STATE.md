@@ -1,9 +1,13 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-10-01.
+> tarea que cambie el estado. Última actualización: 2026-10-07.
 
 ---
+
+## Contenido público TEST — 2026-10-07
+
+Fuente editorial del Almacén recibida e incorporada desde el documento de Nadia. Contactos oficiales corregidos, criterio público de precios ajustado y textos de Historia/Rosa Elena/participación actualizados. Falta revisión visual/funcional por Omar y validación final de la implementación; no existe un nuevo levantamiento de textos pendiente. `contenido_editorial` conserva PENDING y el NO-GO productivo sigue vigente. [Cambios y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
 
 ## Cierre operativo 2026-10-01
 
@@ -238,7 +242,7 @@ TEST explícita.
 ## Datos hardcodeados a tener presentes
 
 - Contactos, lugar, horario y fechas centralizados en
-  `src/lib/fase9/contenidoPublico.ts`; falta confirmación institucional final.
+  `src/lib/fase9/contenidoPublico.ts`; valores oficiales confirmados, implementación actualizada en TEST y revisión humana pendiente.
 - Datos temporales de CONFIG aún pendientes de reemplazo por valores oficiales.
 - Fechas y lugar de aperturas 2026 centralizados en
   `src/lib/fase9/contenidoPublico.ts`; deben actualizarse cuando el Almacén

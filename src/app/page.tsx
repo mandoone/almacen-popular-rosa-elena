@@ -129,7 +129,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-bold text-xl text-primary-dark mb-2">Precios justos</h3>
-                <p className="text-gray-600 text-lg">No buscamos ganancia monetaria. Los productos se entregan al precio de costo para apoyar la economía familiar.</p>
+                <p className="text-gray-600 text-lg">No buscamos generar ganancias. Ofrecemos productos básicos a precios justos y económicos para apoyar la economía de las familias y sostener este proyecto comunitario.</p>
               </div>
             </div>
             {/* Tarjeta 2 */}

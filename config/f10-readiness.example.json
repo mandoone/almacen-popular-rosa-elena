@@ -4,9 +4,9 @@
   "checks": {
     "identidad_cuentas": { "resultado": "PENDING", "evidencia": "Asignación humana pendiente." },
     "roles_aprobados": { "resultado": "PENDING", "evidencia": "Matriz provisional; falta aprobación del Almacén." },
-    "contenido_editorial": { "resultado": "PENDING", "evidencia": "Decisiones F9-01 a F9-04 pendientes." },
+    "contenido_editorial": { "resultado": "PENDING", "evidencia": "Fuente editorial del Almacén recibida: documento de Nadia. Incorporación en TEST documentada en docs/operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md; falta revisión visual/funcional por Omar y validación final de la implementación, sin nuevo levantamiento de textos." },
     "derechos_imagenes": { "resultado": "PENDING", "evidencia": "Créditos y permisos pendientes." },
-    "contactos_publicos": { "resultado": "PENDING", "evidencia": "Canales públicos por confirmar." },
+    "contactos_publicos": { "resultado": "PENDING", "evidencia": "Canales oficiales confirmados e incorporados en la fuente compartida de TEST; falta revisar sus enlaces renderizados por Omar, sin volver a pedir los datos." },
     "dominio_https": { "resultado": "PENDING", "evidencia": "SITE_URL definitivo pendiente." },
     "stock_fisico": { "resultado": "PENDING", "evidencia": "Conteo físico no cargado." },
     "precios_venta": { "resultado": "PENDING", "evidencia": "Validación comercial pendiente." },

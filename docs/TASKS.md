@@ -5,6 +5,11 @@
 
 ---
 
+## CONTENIDO PÚBLICO TEST 2026-10-07
+
+- ✅ Incorporar la fuente editorial recibida de Nadia en Historia, Rosa Elena y participación; corregir contactos centrales y criterio público de precios. [Cambios y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+- ⬜ Omar revisa visual y funcionalmente la implementación; validación final posterior si se estima necesaria. `contenido_editorial` sigue PENDING, sin nuevo levantamiento de textos.
+
 ## BLOQUE OPERATIVO 2026-10-01
 
 - ✅ Revisados los 20 checks: 1 técnico resuelto, 15 HUMAN_GATE, 4 SOLO_CORTE_PRODUCTIVO; estados 1 READY/19 PENDING sin promover evidencia. [Detalle exacto](operativa/REVISION_F10_2026-10-01.md).
@@ -24,7 +29,7 @@
 - ✅ roles_aprobados READY; selección WAF IP + local IP/actor cerrada, sin activación.
 - ✅ E2E por apertura/roles/granel y QA visual PASS; fixtures/stock restaurados, historia intacta. Suite 470/470, lint/build/typecheck/secrets/preflight PASS. Runner F56 histórico retirado para escrituras; preflight de destino conserva solo lectura.
 - ✅ Auditoría concreta de cuatro alertas: dos DEV_ONLY, PostCSS transitiva sin ruta HTTP expuesta y Next heredada; [mantenimiento separado](operativa/AUDITORIA_DEPENDENCIAS_2026-10-01.md). ⬜ Upgrade separado, sin cambiar paquetes en esta sesión; reauditar al corte.
-- ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos/textos, capacitación y ensayo final.
+- ⬜ Credenciales humanas, datos físicos/saldos, fotos/derechos, revisión de la implementación editorial, capacitación y ensayo final.
 - ✅ Tres guías por rol y ensayo presencial de 40 minutos preparados, con firma/evidencia por persona y restauración de fixtures; cinco gates humanos siguen PENDING.
 - ✅ Paquete de activación: comandos nominales privados, hashes sin eco/salida ignorada, registro validado, revocación/rotación/session_version/rollback y checklist de las diez personas. [Procedimiento](operativa/ACTIVACION_CUENTAS_TEST.md). Ejecución humana pendiente.
 - ⬜ Dominio, backup/rollback/ventana finales y activación productiva solo tras HUMAN GATE.
@@ -325,8 +330,7 @@ Modo presencial y cualquier paso productivo continúan pendientes.**
   comunidad, participación y aportes.
 - ✅ Publicar las siete próximas aperturas 2026 con horario y lugar informados.
 - ✅ Mantener diseño responsive y reutilizar únicamente imágenes existentes.
-- ⬜ Validar textos e imágenes públicas finales con el Almacén —
-  `docs/GO_NO_GO_FASE_9_10.md`.
+- ✅ Fuente editorial del Almacén recibida e incorporada en TEST; ⬜ revisión visual/funcional por Omar y validación final de implementación. Imágenes/derechos pendientes en su propio gate — [estado vigente](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
 
 ### Lote F9-A — seguridad, roles y pedidos
 

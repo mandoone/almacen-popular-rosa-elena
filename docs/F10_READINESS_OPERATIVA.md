@@ -3,6 +3,8 @@
 Este documento prepara el trabajo; **no autoriza Producción**, no contiene
 secretos y no reemplaza el Go/No-Go humano de `GO_NO_GO_FASE_9_10.md`.
 
+Actualización editorial 07/10: fuente del Almacén recibida desde Nadia e incorporada en TEST. Falta revisar la implementación por Omar y su validación final si se estima necesaria; no pedir una nueva entrega de textos. Contactos oficiales cerrados, revisión de enlaces pendiente. Se conservan resultados F10 y NO-GO. [Evidencia vigente](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).
+
 ## Uso del preflight
 
 1. Copiar `config/f10-readiness.example.json` como
@@ -71,7 +73,7 @@ Corte 2026-10-01: manifiesto local v2 válido, **1 READY / 19 PENDING / 0 FAIL**
 | Grupo | Checks / trabajo siguiente |
 |---|---|
 | RESUELTO | roles_aprobados; usernames y distribución definidos, sin credenciales |
-| NECESITA_ALMACEN | identidad_cuentas (credenciales/ensayo), contenido_editorial, derechos_imagenes/fotos, contactos restantes (horario 11–15 confirmado), stock_fisico/unidades, precios_venta ambiguos, costos_iniciales incompletos, saldo_efectivo, saldo_bancario, minimos_prioridades, responsable_ventana |
+| NECESITA_ALMACEN | identidad_cuentas (credenciales/ensayo), revisión de implementación contenido_editorial/contactos_publicos (fuente y datos recibidos), derechos_imagenes/fotos, stock_fisico/unidades, precios_venta ambiguos, costos_iniciales incompletos, saldo_efectivo, saldo_bancario, minimos_prioridades, responsable_ventana |
 | HUMAN_GATE_REUNION | Tres capacitaciones y ensayo_test con titulares en TEST; no necesitan Production |
 | SOLO_CORTE_PRODUCTIVO | dominio_https, backup_sheet, version_apps_script, rollback_web; después de datos/personas y autorización |
 
@@ -162,6 +164,6 @@ de backup verificable implica **NO-GO**.
 
 ## Próxima intervención del Almacén
 
-Roles, usernames, asignación 2/2/6 y horario 11:00–15:00 cerrados. Matriz nominativa local ignorada. Faltan credenciales privadas/ensayo, validadores de textos/contactos/fotos/derechos, conteo/unidades, ambigüedades SKU/costos, arqueo/conciliación, mínimos/prioridades, reunión/capacitaciones y responsable/suplente/ventana. No se envió ningún mensaje a terceros.
+Roles, usernames, asignación 2/2/6 y contactos públicos cerrados. Matriz nominativa local ignorada. Fuente editorial recibida e incorporada en TEST; falta revisión de implementación por Omar. Faltan credenciales privadas/ensayo, validadores de fotos/derechos, conteo/unidades, ambigüedades SKU/costos, arqueo/conciliación, mínimos/prioridades, reunión/capacitaciones y responsable/suplente/ventana. No se envió ningún mensaje a terceros.
 
 Primer lanzamiento: WAF por IP + local IP/actor, riesgo residual regional aceptado. Sin activación ni contador global por actor. Dominio, cuota/umbral, publicación WAF, secretos, backup/rollback finales solo ante gate de Producción.
