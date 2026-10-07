@@ -22,7 +22,50 @@ DETALLE_PEDIDOS y DETALLE_VENTAS agregan `modo_venta`, `gramos_solicitados`, `gr
 
 APERTURA_PRODUCTOS: apertura_id + producto_id (pareja única), habilitado SI/NO, actualizado_por y actualizado_en. Sin apertura: REGULAR activos. Con apertura: REGULAR activos + especiales habilitados. Duplicados rechazan el catálogo; valores inválidos no habilitan. Administrador gestiona oferta sin editar Sheet; no hay precio por apertura. Backend valida bajo lock en pedido/venta; snapshots y diario durable conservados.
 
-TEST: 56 maestros (54 comerciales y 2 fixtures), 2 comerciales históricos inactivos y Empanadas POR_APERTURA sin habilitación real. Jerarquía: respuesta humana directa más reciente > documento Nadia > comanda/diseño > histórico > suposición. Comanda 03/10 acredita precio público; Diseño acredita costo/compras, nunca stock físico actual. Marca/formato distinguen SKU; no fusionar historia. Arroz y demás 18 granel tienen unidad resuelta, sin pendiente de presentación.
+TEST: 56 maestros (54 comerciales y 2 fixtures), 2 comerciales históricos inactivos y Empanadas POR_APERTURA sin habilitación real. Jerarquía: respuesta humana directa más reciente > documento Nadia > comanda/diseño > histórico > suposición. Comanda 03/10 acredita precio público; Diseño acredita costo/compras, nunca stock físico actual. Marca física distinta distingue SKU interno; la oferta pública futura puede agrupar SKU equivalentes mediante familia, sin fusionar inventario ni historia. Arroz y demás 18 granel tienen unidad resuelta, sin pendiente de presentación.
+
+### Contrato paralelo de familias — Fase A, 2026-10-07 (D43)
+
+Implementado exclusivamente en código/fixtures locales. No se creó FAMILIAS_PRODUCTO en ninguna Sheet, no se migraron productos ni se desplegó Apps Script. SKU_V1 continúa siendo el contrato operativo: catálogo, carrito, pedidos, confirmación, cancelación, ventas, compras y movimientos conservan producto_id. F10 no cambia de estado. [Entrega y QA](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
+`src/lib/familiasProducto.ts` es la fuente única del dominio puro. Su bloque GAS se genera localmente con `node scripts/generar-contrato-familias-gs.mjs --write`; `--check` verifica igualdad sin escribir. No importa transportes ni accede a red/Sheets. El setup solo incorpora encabezados para una futura base nueva; no es un migrador de bases existentes y no se ejecutó.
+
+#### FAMILIAS_PRODUCTO
+
+Clave: `familia_id`, única, formato `FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}`. No se utiliza en columnas producto_id. La familia no admite stock_actual, precio_costo ni proveedor, aunque vengan vacíos.
+
+| Campos | Contrato |
+|---|---|
+| `familia_id`, `activo` | ID obligatorio; activo SI/NO. |
+| `nombre_publico`, `categoria` | Nombre obligatorio; mismas cuatro categorías actuales, sin categorías nuevas. Comparación de categoría ignora capitalización/tildes/espacios exteriores, no deduce identidad desde el nombre. |
+| `precio_venta` | CLP entero seguro no negativo. Cero permite preparar el contrato pero impide anunciar disponibilidad vendible. No se deriva del costo ni se sincroniza con PRODUCTOS. |
+| `modo_venta`, `unidad_venta` | UNIDAD/GRANEL. UNIDAD usa unidad/pack/kg/litro compatibles con el SKU; GRANEL recibe g. |
+| `permite_decimal`, `paso_venta` | SI/NO y paso positivo. Envasado entero usa NO/1; granel usa NO/1 porque solicita gramos enteros libres, no pasos comerciales de 100/250/500 g. |
+| `gramos_referencia` | Entero seguro positivo solo para GRANEL; vacío/ausente en UNIDAD. |
+| `contenido_cantidad`, `contenido_unidad` | Contenido positivo y unidad normalizada g/ml/unidad para envasados. 1 L se declara como 1000 ml; no hay conversiones implícitas por nombre. Vacíos/ausentes en GRANEL. |
+| `presentacion_publica` | Etiqueta legible obligatoria; no prueba equivalencia por sí sola. |
+| `politica_marca`, `marca_publica` | VARIABLE/EXPLICITA/NO_APLICA. Marca pública obligatoria solamente en EXPLICITA; vacía en las otras políticas. |
+| `imagen_url` | Opcional; no se asocian ni modifican fotos en esta fase. |
+| `version_oferta` | Entero seguro positivo; reservado para contratos comerciales posteriores. |
+| `actualizado_en` | Texto opcional de auditoría. El lector GAS convierte Date de celda a ISO sin escribirla. |
+
+#### Relación física opcional en PRODUCTOS
+
+Campos aditivos: `familia_id`, `marca`, `presentacion`, `contenido_cantidad`, `contenido_unidad`. SKU sin familia conserva validez V1 y no necesita ninguno de los nuevos campos. Cada fila puede referenciar como máximo una familia; IDs duplicados o familia inexistente fallan en la auditoría paralela. No se infiere marca ni se asigna familia automáticamente. No se modifican DTOs de escritura ni validadores operativos actuales para admitir estas ediciones.
+
+Al vincular un SKU se exige categoría/modo compatibles y presentación física legible. VARIABLE permite diferentes marcas físicas documentadas; EXPLICITA exige la misma marca pública (comparación textual normalizada, sin equiparar marcas diferentes); NO_APLICA no exige marca física. En UNIDAD se exige contenido numérico/unidad idénticos, misma unidad de venta y reglas de cantidad compatibles. 750 ml y 1000 ml no son equivalentes. La asociación explícita aprobada sigue siendo necesaria incluso si los contenidos coinciden.
+
+GRANEL conserva base nativa 100/250/1000 g, kg exige base 1000 y referencia legada positiva. La referencia legada de precio y el paso nativo pueden diferir entre SKU: no definen la cantidad comercial de familia. D40 permanece intacto; no se activan familias reales para los 18 graneles.
+
+#### Lectura y agregación de diagnóstico
+
+`agregarDisponibilidadFamilia` devuelve familia_id, precio familiar, cantidad agregada interna, unidad, disponible, IDs de SKU elegibles e inconsistencias. Solo aporta un SKU relacionado, equivalente, activo, con stock numérico no negativo válido y habilitado: REGULAR como hoy; POR_APERTURA exige apertura explícita válida y pertenencia a la lista de SKU habilitados de ese contexto. Sin apertura, una lista de habilitados sola no habilita especiales.
+
+UNIDAD entera suma unidades; fracciones compatibles conservan precisión de milésimas. GRANEL convierte cada saldo nativo a gramos enteros antes de sumar: 4×250 + 2×1000 = 3000 g, nunca 6 unidades. Rechaza medio gramo, stock textual/no finito, bases inválidas y desbordes. Inactivos/especiales no habilitados aportan cero; cero saldo es válido. Duplicados físicos se excluyen para impedir inflar disponibilidad.
+
+La cantidad diagnóstica puede mostrar el subtotal de SKU correctos ante una inconsistencia, pero `disponible` falla cerrado. Una auditoría global inválida también impide anunciar cualquier vista paralela como vendible. Familia inactiva agrega cero; precio cero no es vendible. Esta cifra no es stock persistido de familia ni reserva.
+
+GAS incorpora helpers internos `leerFamiliasProductoFaseA_` y `leerVistaFamiliasFaseA_`, restringidos al destino TEST conocido. La hoja faltante se tolera como lista vacía; un SKU con familia_id que referencia una familia ausente falla en auditoría, mientras que un SKU sin familia_id sigue permitido como legado V1. El caller aporta contexto de apertura/habilitados. No se añade ninguna acción HTTP, no se abre un spreadsheet remoto desde estos helpers y ninguna acción V1 los invoca. Fuente operativa, precios V1, stocks, costos y snapshots históricos permanecen intactos.
 
 ## 1. Estado actual
 

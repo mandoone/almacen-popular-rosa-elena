@@ -6,24 +6,26 @@ No hay autorización para cargar datos reales ni tocar Production. La fuente
 operativa autorizada y sus responsables los define el Almacén. Este plan evita
 pasar de una planilla incompleta a operaciones con stock/caja sin conciliación.
 
+Fase A de familias implementa únicamente contrato, auditoría y lectura paralela local. `familia_id` es opcional durante convivencia SKU_V1/V2; PRODUCTOS sigue siendo fuente física operativa. No se creó hoja real, no se migraron IDs/productos ni se cargó stock. F10 conserva sus estados. Contrato dueño: [DATA_MODEL](DATA_MODEL.md#contrato-paralelo-de-familias--fase-a-2026-10-07-d43); [entrega local](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 ## Paquete mínimo y decisión humana
 
 | Paquete | Origen/responsable por confirmar | Comprobación previa | Evidencia para F10 |
 |---|---|---|---|
 | Catálogo vigente | Lista aprobada por Almacén | `id_producto` único, nombre/categoría, unidad, fraccionamiento, estado activo | Lista firmada y readback |
-| Presentaciones y marcas | Catálogo físico + responsable comercial | Variantes distinguibles por ID; no colapsar envases/marcas con precio o stock distinto | Tabla de correspondencias aprobada |
+| Presentaciones y marcas | Catálogo físico + responsable comercial | Marca física distinta = SKU interno distinto; familias públicas pueden agrupar SKU equivalentes sin fusionar stocks | Tabla familia→SKU aprobada |
 | Stock físico | Conteo por unidad + segundo revisor | Diferencias contra Sheet resueltas; corte horario común | Acta de conteo y conciliación |
 | Precios/costos | Lista comercial, facturas + aprobadores | No negativos; costo/venta y vigencia revisados | Lista fechada y muestras de readback |
-| Mínimos/proveedores | Operación/compras | Mínimos y proveedor por producto aprobados; sin inventar oferta | Acta de abastecimiento |
+| Mínimos/proveedores | Operación/compras | Mínimos físicos aprobados y proveedor identificado por compra; sin inventar oferta | Acta de abastecimiento |
 | Caja/banco | Arqueo y conciliación, responsable financiero | Corte único; gastos, cobrar/pagar si aplican | Actas separadas en gestor seguro |
 
 El contrato técnico vigente se valida con `src/lib/fase4/auditoriaCatalogo.ts`
 (`id_producto`, `nombre`, `categoria`, `unidad_medida`, `permite_decimal`,
 `paso_venta`, `precio_costo`, `precio_venta`, `stock_actual`, `stock_minimo`,
-`active`). La lista de marca/presentación/proveedor **no queda absorbida
-automáticamente** por esos campos: antes de importar, el Almacén debe aprobar
-cómo distinguir cada variante y dónde reside el dato. No inventar columnas ni
-mapear dos variantes a un mismo ID. El auditor detecta formato, duplicados,
+`activo`). El contrato paralelo ya define marca/presentación/contenido por SKU
+y relación opcional de familia; proveedor permanece en cada compra. Antes de
+importar debe aprobarse la correspondencia física, sin inferir marcas, convertir
+filas ni mapear dos marcas a un mismo ID. El auditor V1 detecta formato, duplicados,
 rangos y algunas decisiones humanas; no valida precios, costos ni cantidades
 contra la realidad física.
 

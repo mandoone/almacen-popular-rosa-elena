@@ -8,6 +8,12 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D43 — Familia pública y SKU físico: Fase A paralela (2026-10-07)
+
+Arquitectura aprobada por Omar: marca física distinta = SKU interno distinto; una oferta pública puede agrupar SKU equivalentes mediante familia. PRODUCTOS conserva inventario/costo físicos, proveedor pertenece a cada compra y precio público futuro reside en FAMILIAS_PRODUCTO. Sin SKU virtual, stock familiar ni lotes en esta fase.
+
+Fase A incorpora contrato puro, relación opcional familia_id, identidad física estructurada, auditoría y agregación con fixtures/mocks locales. SKU_V1 permanece operativo; no se activa catálogo/carrito/pedido/venta por familia, ni se implementan asignaciones. D40, IDs e históricos intactos. No hay creación de hoja, migración real ni deploy; F10 conserva estado. [Contrato](DATA_MODEL.md#contrato-paralelo-de-familias--fase-a-2026-10-07-d43) y [entrega](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 ## D42 — Fuente editorial recibida y criterio público de precios (2026-10-07)
 
 Documento institucional de Nadia recibido: guía la síntesis pública de Historia, Rosa Elena, comunidad y participación. La instrucción vigente de Omar cierra los contactos y autoriza mencionar aportes económicos en general, sin datos bancarios. Publicar precios justos/económicos y propósito sin fines de lucro; no afirmar equivalencia al costo base ni divulgar porcentajes o desglose operativo. Implementación solo TEST, revisión humana pendiente, sin promover gates F10 ni autorizar Producción. [Fuente, textos y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).

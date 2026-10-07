@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Familias — Fase A exclusivamente local (2026-10-07)
+
+Ejecutar `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-producto-fase-a.test.mjs`: validadores TypeScript/GAS con fixtures, 750 ml vs 1 L, marcas explícitas, SKU sin familia, inactivos/especiales, precio familiar independiente del costo, errores/duplicados/desbordes y pureza. Cloro A+B = 11/$650; Clorinda independiente = 9; granel 4×250 + 2×1000 = 3000 g. Una inconsistencia impide anunciar vendibilidad. El test V1 ejecuta catálogo, creación sin descuento, confirmación y cancelación con campos familiares presentes sin consultarlos. Ninguna prueba llama servicios reales.
+
+Verificar además `node scripts/generar-contrato-familias-gs.mjs --check` y suite completa. No ejecutar setup, migración, E2E remoto ni deploy para esta fase. [Resultados y límites](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 Control editorial TEST 07/10: abrir Inicio, Historia, Rosa Elena y Participar en escritorio/móvil; comprobar cronología de cinco hitos, biografía fiel a Nadia, tres tarjetas de participación, WhatsApp/mail/Instagram y dirección compartidos. No deben aparecer equivalencia al costo base, porcentaje interno, desglose operativo ni datos bancarios. Marca del Almacén conserva un apellido Morales; la biografía usa el nombre completo de Rosa Elena. QA técnica/visual del agente y revisión pendiente por Omar en [evidencia editorial](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md). Sin envíos de pedidos ni escrituras remotas.
 
 Último control de continuidad D40: **470/470 PASS**. Dos pruebas nuevas ejecutan ambos modos históricos F56 con opt-in y comprueban rechazo antes de red/filtración. Runner read-only confirma destino TEST sin asumir Arroz unitario ni horario de septiembre; remote preflight PASS. Piloto/granel son los runners vigentes de escritura sintética. Lint/build/preflight y clasp dry-run PASS; ninguna escritura adicional.

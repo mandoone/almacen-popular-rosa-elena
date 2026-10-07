@@ -1,5 +1,10 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## Familias de producto — Fase A local — 2026-10-07
+
+- Contrato de familia pública separado de SKU físico, relación opcional, identidad estructurada, validadores y disponibilidad agregada pura. Copia GAS generada y helpers TEST de lectura interna; ningún endpoint nuevo ni activación en tienda/pedidos/ventas.
+- Setup futuro y documentación preparados; fixtures sintéticos envasados/granel, continuidad SKU_V1 y precio familiar independiente del costo. No hay hojas/datos reales modificados ni deploy; F10 mantiene estados. [Entrega y QA](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 ## Contenido institucional incorporado en TEST — 2026-10-07
 
 - Contactos oficiales centralizados, precios justos/económicos, cronología 2019–2023 y biografía desde Nadia; participación incluye organización y aportes generales en las tres tarjetas existentes.

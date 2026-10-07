@@ -34,7 +34,20 @@ var HOJAS = [
       'id_producto', 'activo', 'nombre', 'categoria', 'prioridad',
       'unidad_medida', 'permite_decimal', 'paso_venta', 'precio_costo',
       'margen_pct', 'precio_venta', 'stock_actual', 'stock_minimo',
-      'imagen_url', 'observaciones', 'actualizado_en'
+      'imagen_url', 'observaciones', 'actualizado_en',
+      // Fase A: columnas opcionales; sin carga ni conversión de productos.
+      'familia_id', 'marca', 'presentacion', 'contenido_cantidad', 'contenido_unidad'
+    ]
+  },
+  {
+    // Solo para una futura base NUEVA. Este setup no se ejecuta en Fase A.
+    nombre: 'FAMILIAS_PRODUCTO',
+    encabezados: [
+      'familia_id', 'activo', 'nombre_publico', 'categoria', 'precio_venta',
+      'modo_venta', 'unidad_venta', 'permite_decimal', 'paso_venta',
+      'gramos_referencia', 'contenido_cantidad', 'contenido_unidad',
+      'presentacion_publica', 'politica_marca', 'marca_publica', 'imagen_url',
+      'version_oferta', 'actualizado_en'
     ]
   },
   {
@@ -113,6 +126,14 @@ var HOJAS = [
  * (desde la fila 2 hacia abajo) de la columna cuyo encabezado coincide.
  */
 var VALIDACIONES = {
+  FAMILIAS_PRODUCTO: {
+    activo: ['SI', 'NO'],
+    modo_venta: ['UNIDAD', 'GRANEL'],
+    unidad_venta: ['unidad', 'pack', 'kg', 'litro', 'g'],
+    permite_decimal: ['SI', 'NO'],
+    politica_marca: ['VARIABLE', 'EXPLICITA', 'NO_APLICA'],
+    contenido_unidad: ['g', 'ml', 'unidad']
+  },
   PRODUCTOS: {
     activo: ['SI', 'NO'],
     prioridad: ['alta', 'media', 'baja'],

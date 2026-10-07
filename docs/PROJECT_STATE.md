@@ -5,6 +5,10 @@
 
 ---
 
+## Familias de producto — Fase A local, 2026-10-07
+
+Contrato paralelo implementado: dominio puro, identidad SKU opcional, equivalencias/política de marca y disponibilidad agregada diagnóstica. GAS contiene una copia generada y helpers internos TEST sin acciones HTTP nuevas; setup preparado solamente para futura base nueva. No se ejecutó setup ni se creó hoja/migró producto real. Catálogo, carrito, pedidos, ventas, compras y stock siguen SKU_V1; PRODUCTOS sigue siendo fuente física. F10 continúa 1 READY/19 PENDING, sin cambio por esta fase. [Contrato](DATA_MODEL.md) y [archivos/QA/continuidad](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 ## Contenido público TEST — 2026-10-07
 
 Fuente editorial del Almacén recibida e incorporada desde el documento de Nadia. Contactos oficiales corregidos, criterio público de precios ajustado y textos de Historia/Rosa Elena/participación actualizados. Falta revisión visual/funcional por Omar y validación final de la implementación; no existe un nuevo levantamiento de textos pendiente. `contenido_editorial` conserva PENDING y el NO-GO productivo sigue vigente. [Cambios y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).

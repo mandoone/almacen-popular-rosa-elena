@@ -5,6 +5,12 @@
 
 ---
 
+## FAMILIAS PRODUCTO — FASE A LOCAL 2026-10-07
+
+- ✅ Contrato de familia, relación opcional SKU, validadores puros y lectura/agregación paralela con fixtures. Copia GAS generada, sin rutas nuevas ni cambios operativos V1. [Entrega y QA](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+- ⬜ Siguiente tarea separada: identidad física y snapshots de compras por SKU, primero con mocks; definir después plan aprobado para eventual migración TEST con backup/readback.
+- ⬜ Asignación durable, carrito/pedido V2 y activación pública quedan en fases posteriores; ninguna ejecutada en Fase A. F10 sin cambios.
+
 ## CONTENIDO PÚBLICO TEST 2026-10-07
 
 - ✅ Incorporar la fuente editorial recibida de Nadia en Historia, Rosa Elena y participación; corregir contactos centrales y criterio público de precios. [Cambios y QA](operativa/CONTENIDO_PUBLICO_TEST_2026-10-07.md).

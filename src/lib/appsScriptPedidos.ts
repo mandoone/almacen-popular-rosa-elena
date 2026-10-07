@@ -34,6 +34,7 @@ import {
   resolverConfigPorEntorno,
 } from './env';
 import type { VentaPresencialInput } from './fase5/ventaPresencial';
+import type { IdentidadSkuFamilia } from './familiasProducto';
 import { payloadAdminFase78 } from './fase9/dtoAdmin';
 import {
   diagnosticarRespuestaNoJson,
@@ -397,7 +398,7 @@ async function getScript<T>(params: Record<string, string>): Promise<T> {
 
 // ── Acciones públicas ─────────────────────────────────────────────────────────
 
-export interface ProductoCatalogo {
+export interface ProductoCatalogo extends IdentidadSkuFamilia {
   id_producto: string;
   nombre: string;
   categoria: string;

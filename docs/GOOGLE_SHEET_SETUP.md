@@ -16,6 +16,8 @@ del Almacén Popular Rosa Elena Morales.
 
 ## Pasos
 
+Fase A 2026-10-07 solo prepara el contrato local. **No ejecutar este setup sobre el proyecto actual ni como migración TEST.** Los helpers familiares permanecen paralelos; no se creó ninguna hoja real. [Contrato](DATA_MODEL.md) y [entrega](operativa/FAMILIAS_PRODUCTO_FASE_A_2026-10-07.md).
+
 1. Abrir **https://script.google.com/** con la cuenta de Google que será **dueña**
    de la base de datos (idealmente la cuenta del proyecto, no una personal externa).
 2. Crear un **proyecto nuevo** (botón *Nuevo proyecto*).
@@ -45,10 +47,12 @@ del Almacén Popular Rosa Elena Morales.
 
 ## Qué crea el script
 
-Una planilla con **10 hojas**, cada una con sus encabezados en la fila 1:
+Para una futura base nueva, el script versionado define **12 hojas**, cada una con sus encabezados en la fila 1:
 
-`CONFIG` · `PRODUCTOS` · `CLIENTES` · `PEDIDOS` · `DETALLE_PEDIDOS` · `VENTAS` ·
-`DETALLE_VENTAS` · `COMPRAS` · `DETALLE_COMPRAS` · `MOVIMIENTOS_STOCK`
+`CONFIG` · `PRODUCTOS` · `FAMILIAS_PRODUCTO` · `CLIENTES` · `PEDIDOS` · `DETALLE_PEDIDOS` · `VENTAS` ·
+`DETALLE_VENTAS` · `COMPRAS` · `DETALLE_COMPRAS` · `MOVIMIENTOS_STOCK` · `OPERACIONES_PEDIDOS`
+
+PRODUCTOS agrega cinco campos opcionales de identidad familiar; FAMILIAS_PRODUCTO tiene el contrato de 18 columnas documentado en DATA_MODEL. Esta definición no reemplaza las preparaciones operativas históricas ni significa que esas columnas existan en las bases actuales.
 
 En cada hoja:
 - Encabezados en negrita, fondo morado (`#3B0764`) y texto blanco.
