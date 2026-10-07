@@ -7,6 +7,8 @@
 
 ## Familias B3 — administración técnica, 2026-10-07
 
+Contrato C1 local completado: solicitud FAMILIA_V2, oferta congelada y ASIGNACIONES_PEDIDO futura. Ninguna ruta importa el dominio V2; TEST continúa backend B3 v20. [Contrato](DATA_MODEL.md#pedido-familiar-c1--contrato-local-paralelo-2026-10-07-d47).
+
 CRUD de familias e identidad SKU preparado en backend TEST v20 y UI exclusiva TEST con permiso productos:gestionar. Diario de familias separado por entidad y dry-run sin correcciones. Ninguna familia/asociación comercial cargada; tienda y operación V1 conservadas. UI compilada, revisión visual humana pendiente. C1/C2 no desplegados y F10 sin cambios. [Acta y rollback](operativa/FAMILIAS_B3_TEST_2026-10-07.md).
 
 ## Familias B2 — estructura TEST, 2026-10-07

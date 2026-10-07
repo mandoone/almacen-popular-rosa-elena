@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C1 — contrato local paralelo (2026-10-07)
+
+`tests/pedido-familia-c1.test.mjs` comprueba versión explícita/legados, IDs separados, cantidad/unidad/versiones, snapshot comercial coherente, inyección de precio ignorada, granel 150 g = $203 y aislamiento de rutas/GAS. ASIGNACIONES_PEDIDO no existe remotamente y ningún pedido V2 se acepta públicamente.
+
 ## B3 — administración técnica TEST (2026-10-07)
 
 `tests/familias-producto-fase-b3.test.mjs`: CRUD, versión/ID, validación de asociación, destino estricto, migración/backup idempotente, replay histórico, payload distinto, compensación y bloqueo durable incompleto. UI/APIs cerradas fuera de TEST; DTO de identidad rechaza stock/costo/precio, actor siempre servidor. Solo mocks para escrituras. Lecturas remotas y esquema constan en [acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md). Revisión visual por Omar pendiente, sin familias reales ni cambio de F10.

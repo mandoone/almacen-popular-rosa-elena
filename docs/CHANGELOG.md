@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## C1 — contrato pedido V2 local — 2026-10-07
+
+- Modelo de línea explícito y contrato de asignaciones físicas; snapshot de oferta evita reinterpretación histórica. 13 tests puros, sin integración ni deploy. [Modelo](DATA_MODEL.md).
+
 ## B3 — administración familias/SKU TEST — 2026-10-07
 
 - CRUD TEST con versión optimista y auditoría por entidad; identidad física separada y validada. UI exclusiva TEST, sin carga comercial. Cuatro headers auditados/backupeados, historia intacta, Apps Script v20 con rollback v19. [Acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md).

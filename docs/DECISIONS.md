@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D47 — Solicitud familiar y asignaciones físicas explícitas (2026-10-07)
+
+C1 congela oferta completa y separa cantidad comercial de stock nativo. Histórico modelo vacío es SKU_V1; FAMILIA_V2 explícito nunca usa familia_id como producto_id. Asignaciones son entidad futura separada, snapshots físicos y una o varias marcas equivalentes por detalle. Solamente contratos puros locales; no ampliar Sheets/deploy/rutas ni aceptar pedidos V2. [Contrato](DATA_MODEL.md).
+
 ## D46 — Administración TEST de oferta e identidad separadas (2026-10-07)
 
 B3 usa el permiso vigente de gestión de productos. Familia tiene versión optimista, precio explícito y auditoría con entidad propia; nunca se introduce FAM-* en producto_id. Identidad física se valida contra familia bajo lock y se edita separada de stock/costo. El diario administrativo bloquea operaciones incompletas para revisión y conserva replay original; no se cargan familias/asociaciones reales. [Contrato](DATA_MODEL.md) y [QA/acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md).

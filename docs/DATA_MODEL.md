@@ -8,6 +8,14 @@
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
+### Pedido familiar C1 — contrato local paralelo (2026-10-07, D47)
+
+`src/lib/familias/pedidoV2.ts` define columnas futuras aditivas de DETALLE_PEDIDOS: id_detalle_pedido, modelo_linea, familia_id, cantidad_solicitada, unidad_solicitada, presentacion_publica_snapshot, version_oferta_snapshot, oferta_snapshot_json. Vacío histórico en modelo_linea significa SKU_V1; valor desconocido se rechaza. V1 usa id_producto físico; V2 deja id_producto/cantidad nativa vacíos y guarda solicitud comercial. No rellenar familia en id_producto ni crear SKU virtual. IDs de detalle futuros son estables, emitidos por servidor; no se asignan a históricos en esta sesión.
+
+Snapshot JSON adicional congela la oferta completa (contenido, marca, modo, referencia, precio/versiones) para evitar reinterpretarla si el maestro cambia. Nombre_producto, precio_unitario y subtotal continúan siendo snapshots comerciales autoritativos. Solicitud solo indica familia/cantidad/unidad/versión; no acepta precio del navegador. Granel g libres y precio por referencia D40; subtotal se redondea una vez por línea.
+
+ASIGNACIONES_PEDIDO es únicamente un contrato futuro de 13 columnas: asignacion_id, id_detalle_pedido, producto_id, cantidad_asignada, cantidad_stock, unidad_stock_snapshot, gramos_unidad_stock_snapshot, nombre_sku_snapshot, marca_snapshot, presentacion_snapshot, operacion_id, actor, creado_en. Relación detalle→varias asignaciones→SKU; cantidad_asignada usa unidad solicitada y cantidad_stock base nativa. No se creó hoja real, no se extendió setup ejecutable/GAS ni se conectó carrito/API. Selección física y stock corresponden a C2 local.
+
 ### Administración familiar B3 (2026-10-07, D46)
 
 FAMILIAS_PRODUCTO existe vacía en TEST tras B2. Backend administrativo separado del catálogo V1; exige APP_ENV TEST, ID/nombre exactos y token interno. Next exige sesión con `productos:gestionar`; página y APIs bloqueadas fuera de TEST. Creación v1, ID inmutable, edición con versión esperada; cualquier cambio de oferta incrementa versión y valida todos los SKU asociados antes de escribir. Asociación SKU valida familia única/existente, categoría, contenido, modo, marca y reglas; desasociación permite V1. No cambia stock/costo/precio físico.
