@@ -13,6 +13,8 @@ export const COLUMNAS_ASIGNACIONES_PEDIDO = [
   'nombre_sku_snapshot', 'marca_snapshot', 'presentacion_snapshot',
   'operacion_id', 'actor', 'creado_en',
 ] as const;
+/** Puntero futuro para reasignación: permite conservar todas las filas históricas. */
+export const COLUMNAS_PEDIDOS_V2_ADITIVAS = ['operacion_asignacion_vigente'] as const;
 export type ModeloLineaPedido = 'SKU_V1' | 'FAMILIA_V2';
 
 export interface SolicitudFamiliaV2 {

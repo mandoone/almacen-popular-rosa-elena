@@ -8,6 +8,16 @@
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
+### Motor de asignación C2 — exclusivamente local (2026-10-07, D48)
+
+`src/lib/familias/asignacionV2.ts`: operación aporta reparto por detalle; familia nunca tiene saldo. Confirma recibido→pendiente mediante SKU elegibles equivalentes y solicitud exacta. Cantidades/stock se operan como enteros (unidades, milésimas o gramos), sin NaN/desborde. SKU compartidos por líneas se validan sobre saldo acumulado. No se elige marca automáticamente.
+
+Plan durable local PREPARADA→APLICANDO→COMPLETADA o REQUIERE_REVISION congela pedido/estados, líneas, oferta, asignaciones, apertura, stocks anteriores/resultantes, escala física, IDs de movimientos y actor. SHA-256 de input real y snapshot inmutable; mismo reparto/key retorna plan original, diferente reparto409. Reconciliación exige movimiento estable y saldo correspondiente; stock escrito sin movimiento, cursor sin evidencia o cambio concurrente bloquean progreso. El paso local es atómico en memoria: NO constituye adaptador Sheets ni transacción remota. Adaptador futuro requiere lock, diario persistido previo a efectos, bloqueo por pedido/SKU con operación incompleta, readback y manejo de rollback/revisión. No está conectado/desplegado.
+
+Cancelar recibido no mueve stock; cancelar pendiente/listo devuelve cantidades/base de asignaciones históricas aun si SKU ahora inactivo o asociado a otra familia. Base histórica cambiada o snapshot corrupto requiere revisión; entregado no cancela. Reasignación es plan explícito que revierte el reparto anterior y aplica uno nuevo validado, registra antes/después y conserva IDs/asignaciones anteriores; no editar asignaciones confirmadas.
+
+Contrato futuro PEDIDOS agrega `operacion_asignacion_vigente`: permite seleccionar asignaciones vigentes por operacion_id sin borrar filas anteriores de ASIGNACIONES_PEDIDO. Cancelado conserva referencia histórica. Este puntero/hojas NO se migraron remotamente. Subtotal comercial granel se conserva por detalle; fragmentos solo convierten stock por bases 100/250/1000 g. D40 intacto.
+
 ### Pedido familiar C1 — contrato local paralelo (2026-10-07, D47)
 
 `src/lib/familias/pedidoV2.ts` define columnas futuras aditivas de DETALLE_PEDIDOS: id_detalle_pedido, modelo_linea, familia_id, cantidad_solicitada, unidad_solicitada, presentacion_publica_snapshot, version_oferta_snapshot, oferta_snapshot_json. Vacío histórico en modelo_linea significa SKU_V1; valor desconocido se rechaza. V1 usa id_producto físico; V2 deja id_producto/cantidad nativa vacíos y guarda solicitud comercial. No rellenar familia en id_producto ni crear SKU virtual. IDs de detalle futuros son estables, emitidos por servidor; no se asignan a históricos en esta sesión.

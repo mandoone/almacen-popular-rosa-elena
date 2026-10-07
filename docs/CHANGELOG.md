@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## C2 — asignación/reversión local — 2026-10-07
+
+- Motor puro con reparto operativo, planes y hashes inmutables, cancelación histórica y reasignación auditable. 38 pruebas locales; stock por SKU y subtotal granel por línea. Sin integración/deploy. [Modelo](DATA_MODEL.md).
+
 ## C1 — contrato pedido V2 local — 2026-10-07
 
 - Modelo de línea explícito y contrato de asignaciones físicas; snapshot de oferta evita reinterpretación histórica. 13 tests puros, sin integración ni deploy. [Modelo](DATA_MODEL.md).

@@ -8,6 +8,10 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D48 — Reparto operativo y reversión histórica local (2026-10-07)
+
+C2 valida reparto decidido por operación, stock físico acumulado y snapshots de oferta. Plan SHA-256 congela efectos/IDs; reintentos no recalculan marca ni precio, evidencia incompleta requiere revisión. Cancelación devuelve exactamente SKU/cantidades históricos; reasignación conserva historia y usa futuro puntero de operación vigente. Solo motor/mocks, sin adaptador Sheets ni deploy. [Contrato y límites](DATA_MODEL.md).
+
 ## D47 — Solicitud familiar y asignaciones físicas explícitas (2026-10-07)
 
 C1 congela oferta completa y separa cantidad comercial de stock nativo. Histórico modelo vacío es SKU_V1; FAMILIA_V2 explícito nunca usa familia_id como producto_id. Asignaciones son entidad futura separada, snapshots físicos y una o varias marcas equivalentes por detalle. Solamente contratos puros locales; no ampliar Sheets/deploy/rutas ni aceptar pedidos V2. [Contrato](DATA_MODEL.md).

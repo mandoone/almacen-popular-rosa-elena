@@ -10,7 +10,8 @@
 - ✅ B2: esquema aditivo TEST, backup/readback, segunda ejecución sin cambios y Apps Script TEST v19. [Evidencia](operativa/FAMILIAS_B2_TEST_2026-10-07.md).
 - ✅ B3 administración técnica TEST con validación/auditoría y UI separada, sin carga real. [Acta](operativa/FAMILIAS_B3_TEST_2026-10-07.md).
 - ✅ C1 contrato paralelo y snapshots comerciales, asignaciones futuras; 13 tests locales. Ningún deploy ni Sheet nueva.
-- ⬜ C2 motor puro y C3 auditoría. Sin autorización para activar catálogo o cargar familias/identidad reales.
+- ✅ C2 motor puro local y 38 tests de reparto, durable/replay/revisión, reversión/reasignación y granel.
+- ⬜ C3 auditoría y plan de activación. Sin autorización para activar catálogo o cargar familias/identidad reales.
 
 ## IDENTIDAD SKU / COMPRAS — FASE B1 LOCAL 2026-10-07
 

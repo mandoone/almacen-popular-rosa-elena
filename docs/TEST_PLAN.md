@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C2 — motor local (2026-10-07)
+
+`tests/asignacion-familia-c2.test.mjs`: A4+B2→A0/B5 y reversión exacta, rechazo de incompatibilidades/duplicados/cantidades/stock, múltiples líneas, apertura, replay/conflicto409, maestro cambiado, checkpoints, cursor atrasado con evidencia, escritura parcial/concurrencia/plan corrupto requieren revisión, cancelación recibido/confirmado/inactivo, reasignación íntegra y granel100/250/1000. Mocks sin red; ningún caso comercial real. Plan puro no sustituye pruebas futuras del adaptador durable remoto.
+
 ## C1 — contrato local paralelo (2026-10-07)
 
 `tests/pedido-familia-c1.test.mjs` comprueba versión explícita/legados, IDs separados, cantidad/unidad/versiones, snapshot comercial coherente, inyección de precio ignorada, granel 150 g = $203 y aislamiento de rutas/GAS. ASIGNACIONES_PEDIDO no existe remotamente y ningún pedido V2 se acepta públicamente.
