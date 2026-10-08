@@ -272,10 +272,10 @@ try {
 
   $headInventory = Assert-CloneInventory -Directory $headDirectory -Label 'HEAD'
   $versionInventory = Assert-CloneInventory -Directory $versionDirectory -Label 'version desplegada'
-  $headCode = Get-Content -LiteralPath $headInventory.Code.FullName -Raw
-  $versionCode = Get-Content -LiteralPath $versionInventory.Code.FullName -Raw
-  $headManifest = Get-Content -LiteralPath $headInventory.Manifest.FullName -Raw
-  $versionManifest = Get-Content -LiteralPath $versionInventory.Manifest.FullName -Raw
+  $headCode = Get-Content -LiteralPath $headInventory.Code.FullName -Raw -Encoding UTF8
+  $versionCode = Get-Content -LiteralPath $versionInventory.Code.FullName -Raw -Encoding UTF8
+  $headManifest = Get-Content -LiteralPath $headInventory.Manifest.FullName -Raw -Encoding UTF8
+  $versionManifest = Get-Content -LiteralPath $versionInventory.Manifest.FullName -Raw -Encoding UTF8
   if ($headCode -cne $versionCode -or $headManifest -cne $versionManifest) {
     Stop-Safe 'HEAD remoto y deployment TEST difieren; despliegue bloqueado.'
   }
@@ -308,7 +308,7 @@ try {
     Stop-Safe 'La configuracion embebida remota no coincide inequivocamente con TEST.'
   }
 
-  $localCode = Get-Content -LiteralPath $FuenteAppsScript -Raw
+  $localCode = Get-Content -LiteralPath $FuenteAppsScript -Raw -Encoding UTF8
   $localSpreadsheet = Get-OnlyMatch `
     -Text $localCode `
     -Pattern "(?m)^var SPREADSHEET_ID = 'PEGAR_ID_BASE_OPERATIVA_AQUI';\s*$" `

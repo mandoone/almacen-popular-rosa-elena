@@ -1,5 +1,14 @@
 # DATA_MODEL.md — Modelo de datos
 
+Frontera C5 vigente: tipo legacy mantiene entrada/salida/ajuste/devolucion; origen mantiene pedido/venta/compra/ajuste/cancelacion. tipo_movimiento y observacion JSON preservan semántica C4 y plan_hash. No se añaden columnas para recovery; su evidencia se conserva en observacion y AUDITORIA_PRODUCTOS. [D55 y contrato completo](DECISIONS.md).
+
+## Preparación QA C5 y STOP actual (2026-10-08)
+
+PREPARACION_FIXTURE_C5_2 persiste plan/hash/estado/evidencia en AUDITORIA_PRODUCTOS antes de preparar APERTURAS/familia/SKU/habilitaciones/pedido/detalle. No añade hoja ni columna comercial. Recuperación autorizada de campos vacíos, identidad/detalle exactos y0 efectos; replay readback produce0 cambios.
+
+MOVIMIENTOS_STOCK conserva dos contratos: tipo legacy solo entrada/salida/ajuste/devolucion según dropdown, mientras tipo_movimiento lleva el tipo moderno V2. El puerto v23 todavía copia el tipo moderno a ambos: STOP real al primer append, operación APLICANDO con2 asignaciones y fila de movimiento parcial, sin stock descontado. No se considera completo ni se relaja el enum. [Estado, readback y contrato del puerto](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+
 ## Resolución de revisiones V1 — D52 (2026-10-07)
 
 OPERACIONES_PEDIDOS añade seis campos al final: revision_resuelta (SI/vacío), revision_tipo (dos clasificaciones reconocidas), revision_evidencia_hash (SHA256), revision_detalle (JSON ACREDITACION_CREACION_V1_1), revision_resuelta_por, revision_resuelta_en. Estado/paso/errores/snapshot/resultado originales inmutables. Acreditación válida y única libera recursos conservando REQUIERE_REVISION; evidencia corrupta/desconocida no libera. SHA verifica integridad, no firma. movimiento_id no vacío es identidad canónica única; id_movimiento conserva alias histórico aun si se repite. Nuevo movimiento V2 requiere canónico. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
@@ -13,28 +22,28 @@ OPERACIONES_PEDIDOS añade seis campos al final: revision_resuelta (SI/vacío), 
 
 ## 0. Contrato operativo vigente TEST (2026-10-01)
 
-### Esquema durable C5 — diseño local, no migrado (2026-10-07, D51)
+### Esquema durable C5 — TEST aislado (2026-10-08, D51/D53/D54)
 
-`src/lib/familias/esquemaDurableV2.ts` y `scripts/lib/familias-c5.mjs` preparan contrato y migrador con almacenamiento inyectado, sin cliente Google ni acción HTTP. El preflight real detuvo la integración; **estas columnas NO existen todavía en TEST**. [Auditoría y estado parcial](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+`src/lib/familias/esquemaDurableV2.ts` y `scripts/lib/familias-c5.mjs` conservan contrato y migrador con almacenamiento inyectado. Tras remediación acreditada, se migró TEST:19 hojas,26 headers nuevos,0 alteraciones históricas y segunda ejecución0. Puerto GAS v23 limitado a fixtures QA C5; preparación recuperada con plan/readback/replay0. E2E STOP al primer movimiento por enum legacy incompatible:2 asignaciones y1 fila parcial, sin descuento; sin rutas públicas V2. [Evidencia y límites](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
 | Hoja | Campos al final / estrategia | Motivo |
 |---|---|---|
 | PRODUCTOS | revision_stock_v2, evidencia_stock_v2 | CAS y autoría del saldo; ambos necesarios para reproducir C4. Históricos vacíos. |
 | PEDIDOS | operacion_asignacion_vigente, evidencia_estado_v2, evidencia_puntero_v2 | Vigencia append-only y autoría diferenciada de estado/puntero. Históricos vacíos. |
 | DETALLE_PEDIDOS | id_detalle_pedido, modelo_linea, familia_id, cantidad_solicitada, unidad_solicitada, presentacion_publica_snapshot, version_oferta_snapshot, oferta_snapshot_json | Contrato C1. IDs solo para nuevas líneas; 27 históricos intactos, modelo vacío significa V1. |
-| ASIGNACIONES_PEDIDO | Las 13 columnas C1 documentadas abajo | Nueva hoja vacía. Hashes/vigencia se prueban contra plan/diario/puntero; no duplicarlos en cada fila. |
-| OPERACIONES_PEDIDOS | 14 columnas actuales, sin agregados | Tipos CONFIRMAR_V2/CANCELAR_V2/REASIGNAR_V2; plan PEDIDO_MIXTO_V2_1 en snapshot_json. |
+| ASIGNACIONES_PEDIDO | Las 13 columnas C1 documentadas abajo | Nueva hoja append-only, actualmente2 asignaciones QA. Hashes/vigencia se prueban contra plan/diario/puntero; no duplicarlos en cada fila. |
+| OPERACIONES_PEDIDOS | 20 columnas tras D52, sin más agregados |14 originales+6 acreditación; tipos CONFIRMAR_V2/CANCELAR_V2/REASIGNAR_V2 y plan PEDIDO_MIXTO_V2_1 en snapshot_json. |
 | MOVIMIENTOS_STOCK | 20 columnas actuales, sin agregados | Campos C4 directos en columnas existentes; observacion guarda contrato MOVIMIENTO_PEDIDO_V2_1 con id_detalle_pedido, asignacion_ids, unidad_stock_snapshot, gramos_unidad_stock_snapshot y escala_stock_snapshot. |
 
-Recibo JSON: operacion_id, payload_hash, plan_hash y efecto_id. Debe escribirse junto al saldo o estado correspondiente, con readback; no inferir autoría por saldo coincidente. Apertura: el puerto futuro derivará contexto_apertura_snapshot.apertura_id del **apertura_id ya congelado en PEDIDOS**. Habilitaciones actuales de esa apertura se congelan en el plan de confirmación. No agregar otro contexto JSON redundante en PEDIDOS.
+Recibo JSON: operacion_id, payload_hash, plan_hash y efecto_id. Debe escribirse junto al saldo o estado correspondiente, con readback; no inferir autoría por saldo coincidente. El puerto deriva contexto_apertura_snapshot.apertura_id del **apertura_id congelado en PEDIDOS**. Si falta, la confirmación rechaza PEDIDO_CONTEXTO_CAMBIO; no inventa apertura ni reconstruye cabecera. Habilitaciones actuales se congelan en el plan. No se agrega otro contexto JSON redundante.
 
-Plan local desde el esquema actual: PRODUCTOS25→27, PEDIDOS15→18, DETALLE_PEDIDOS11→19, ASIGNACIONES_PEDIDO13 nueva. Trece headers al final de hojas existentes y trece en la hoja nueva; ampliación física de PRODUCTOS26→27 columnas. Ni costo, stock, precio ni contenido histórico se rellenan. Migrador en mocks exige destino exacto, IDs/headers únicos, ausencia de bloqueos, backup nativo legible con valores/fórmulas/celdas/estructura, relectura sin concurrencia, readback histórico y segunda ejecución0.
+Migración aditiva ya aplicada: PRODUCTOS25→27, PEDIDOS15→18, DETALLE_PEDIDOS11→19, ASIGNACIONES_PEDIDO13 nueva. Trece headers al final de hojas existentes y trece en la hoja nueva; ampliación física de PRODUCTOS26→27 columnas. Ni costo, stock, precio ni contenido histórico se rellenan. Migrador en mocks exige destino exacto, IDs/headers únicos, ausencia de bloqueos, backup nativo legible con valores/fórmulas/celdas/estructura, relectura sin concurrencia, readback histórico y segunda ejecución0.
 
-El puerto GAS aún debe acreditar CAS lógico bajo LockService con setValues/flush/readback, conservación de tipos/fórmulas, serialización exacta, límite de celda snapshot_json y bloqueo compartido con escritores V1. Una escritura parcial de saldo/recibo exige REQUIERE_REVISION; no existe promesa ACID. La propuesta de movimiento todavía es un mapa de persistencia, no un serializador remoto implementado.
+Puerto/serializador implementados y probados localmente; acreditación E2E remota de CAS/setValues/flush/readback aún pendiente. Guardrails compartidos protegen SKU con operación V2 incompleta. Escritura parcial de saldo/recibo exige REQUIERE_REVISION; no existe promesa ACID. Preparación de fixture requiere plan previo, acreditación y readback antes de replay; D54 permite completar exclusivamente faltantes QA acreditados. Se desplegó en v23 y pasó en TEST; el nuevo STOP corresponde a tipo legacy de movimiento.
 
 ### Adaptador durable C4 — exclusivamente local (2026-10-07, D49)
 
-`adaptadorDurableV2.ts` orquesta un plan mixto completo mediante un puerto de almacenamiento; `planMixtoV2.ts` reutiliza C2 y conserva cantidades nativas históricas V1. `almacenSheetsMemoriaV2.ts` simula filas, lock y CAS. No existe puerto Google ni integración con rutas/GAS. [Orden, pruebas y límites](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+`adaptadorDurableV2.ts` orquesta un plan mixto mediante un puerto; `planMixtoV2.ts` reutiliza C2 y conserva cantidades nativas históricas V1. `almacenSheetsMemoriaV2.ts` simula filas/lock/CAS. La entrega original C4 fue solo local; C5 añade puerto TEST aislado descrito arriba, sin rutas públicas. [Orden, pruebas y límites originales C4](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
 
 OPERACIONES_PEDIDOS conserva contrato de columnas; tipos locales CONFIRMAR_V2/CANCELAR_V2/REASIGNAR_V2 y snapshot_json versionado PEDIDO_MIXTO_V2_1 guardan plan/hash, reservas V1, asignaciones familiares y efectos deterministas. Paso/resultado_json permiten reconciliar/replay. Asignaciones append-only se seleccionan por operacion_asignacion_vigente; cancelado mantiene referencia histórica. Reasignación escribe saldos netos por SKU y registra reversión/aplicación, sin modificar filas anteriores.
 

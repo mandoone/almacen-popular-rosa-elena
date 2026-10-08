@@ -1,5 +1,20 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+Checkpoint recovery M-0:1015 tests PASS/0 skipped; frontera salida/devolucion y origen native, campos no finitos/faltantes, prevalidación sin efectos, prefijo/hash/stock/asignaciones exactos, caída/replay y filtro de intenciones V2. Lint/typecheck/build aislado/scan/diff/V1 PASS. Validación remota sigue pendiente en este checkpoint. [Evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## C5 recuperación de preparación y enum real (2026-10-08)
+
+19 tests focales de preparación: ausente/parcial real/replay, apertura faltante, detalle/identidad/stock/precio/apertura incompatibles, efectos existentes, plan/readback corrupto y caída después de cada hoja. El fixture inmutable v22 reproduce validación de pago y prefijo A:I. Encoding UTF8 del ejecutor tiene prueba focal. Dos pruebas nuevas incorporan enum nativo de movimiento: STOP exacto v23 y retry LOCAL que exige revisión sin descontar.
+
+Suite982 PASS; preparación REAL acreditada con backup/readback/replay0. A4+B2 REAL detenido en tipo legacy; no se aprueban cancelación/reasignación/mixto/granel/D50/faults ni cleanup remoto. [Matriz local versus TEST y próximos requisitos](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+
+## Estado histórico previo a recuperación: C5 puerto GAS y migración TEST (2026-10-08)
+
+61 tests de puerto GAS simulado: misma fuente compilada que C4,15 puntos de confirmación,13 de cancelación y15 de reasignación, setValues exitoso con respuesta perdida, reparto vigente append-only, mixto/stock compartido, granel100/250/1000, D50, autoría incierta y reconciliación QA limitada. Incluye runtime sin Array.at y rechazo de preparación parcial sin reparar.4 tests HTTP,4 de readback y35 del migrador, incluyendo cuadrícula completa/filas vacías.
+
+Suite960 PASS. Migración real: backup18 pestañas legible,19 posteriores,26 headers añadidos, históricos intactos y segunda ejecución0. E2E real STOP: cabecera QA sin apertura,409 PEDIDO_CONTEXTO_CAMBIO,0 operaciones/asignaciones/movimientos V2. Stocks QA4/7; cleanup no ejecutado. Catálogo V1 y huellas comerciales iguales. Mixto/granel/D50/reversión/faults siguen pendientes en TEST; sus PASS locales no acreditan E2E remoto. [Acta C5](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## Remediación C5 R0–R10 (2026-10-07)
 
 32 tests focales: SHA256/UTF8/seriales, forense, ID canónico/alias, dos acreditaciones, corrupción, bloqueo PREPARADA/APLICANDO, desconocidos, duplicados, referencias externas, efectos de stock y replay0. Readback TEST nativo:20 cambios previstos,0 ajenos; preflight limpio. V1 diferencial sin cambios comerciales. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).

@@ -111,6 +111,14 @@ test('C5 backup y readback: fórmulas/celdas históricas intactas, segunda ejecu
   assert.equal((await prepararPedidoFamiliasC5Test(c.adapter)).cambios, 0);
   assert.deepEqual(c.contadores(), { backups: 1, aplicaciones: 1 });
 });
+for (const corrupcion of [false,true]) test('C5 cuadrícula nativa completa: headers autorizados, filas vacías protegidas '+corrupcion,async()=>{
+  const c=escenario();
+  for(const rows of Object.values(c.estado.celdas))for(const row of rows)while(row.length<26)row.push({});
+  const aplicar=c.adapter.aplicar;
+  if(corrupcion)c.adapter.aplicar=async requests=>{await aplicar(requests);c.estado.celdas.PEDIDOS[1][17]={userEnteredValue:{stringValue:'NO AUTORIZADA'}};};
+  if(corrupcion)await assert.rejects(prepararPedidoFamiliasC5Test(c.adapter),/ESTRUCTURA_HISTORICA/);
+  else assert.ok((await prepararPedidoFamiliasC5Test(c.adapter)).cambios>0);
+});
 for (const caso of ['id', 'title', 'value', 'formula', 'structure', 'missingCells']) test(`C5 backup no confiable ${caso}:0 aplicaciones`, async () => {
   const c = escenario(), crear = c.adapter.backup;
   c.adapter.backup = async title => { const b = await crear(title);

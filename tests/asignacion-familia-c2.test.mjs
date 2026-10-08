@@ -169,7 +169,8 @@ for (const base of [100, 250, 1000]) test(`C2: granel base ${base}, 75+75g subto
 test('C2: metadata sin actor/key no se convierte a strings; módulo aislado', async () => {
   const c = escenario();
   for (const m of [{ ...meta(), actor: undefined }, { ...meta(), idempotency_key: undefined }]) await assert.rejects(prepararConfirmacionFamiliaV2(c.pedido, c.cloros, c.reparto, {}, m));
-  for (const p of ['scripts/apps-script-pedidos.gs', 'src/lib/appsScriptPedidos.ts', 'src/app/api/pedidos/route.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /asignacionV2|CONFIRMAR_V2|REASIGNAR_V2/);
+  // El puerto GAS QA C5 tiene auditoría diferencial acotada; transporte/rutas públicas siguen aislados.
+  for (const p of ['src/lib/appsScriptPedidos.ts', 'src/app/api/pedidos/route.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /asignacionV2|CONFIRMAR_V2|REASIGNAR_V2/);
 });
 
 test('C2: identidad, modo y escala cambiados tras preparar bloquean antes de descontar', async () => {

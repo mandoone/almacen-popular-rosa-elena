@@ -1,0 +1,202 @@
+{
+  "operacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+  "idempotency_key": "qa_c5_eco_confirmar",
+  "actor": "qa-c5",
+  "creado_en": "2026-10-08T15:19:04.453Z",
+  "modelo": "PEDIDO_MIXTO_V2_1",
+  "tipo": "CONFIRMAR_V2",
+  "payload_hash": "96a1e189067230010413f093a4e16e0b89f82ffa42fa79fb55ca33d47ce16818",
+  "plan_hash": "2725af3817e762bfa48116bd2282c9205311688a0a3da1f16e9cba376dc6f3d9",
+  "pedido_antes": {
+    "id_pedido": "PED-QA-C5-ECO-PRINCIPAL",
+    "estado": "recibido",
+    "contexto_apertura_snapshot": {
+      "apertura_id": "APE-20991231"
+    }
+  },
+  "pedido_resultante": {
+    "id_pedido": "PED-QA-C5-ECO-PRINCIPAL",
+    "estado": "pendiente",
+    "contexto_apertura_snapshot": {
+      "apertura_id": "APE-20991231"
+    },
+    "operacion_asignacion_vigente": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f"
+  },
+  "detalles": [
+    {
+      "id_pedido": "PED-QA-C5-ECO-PRINCIPAL",
+      "id_detalle_pedido": "DPE-PED-QA-C5-ECO-PRINCIPAL-F",
+      "modelo_linea": "FAMILIA_V2",
+      "id_producto": "",
+      "cantidad": "",
+      "familia_id": "FAM-QA-C5-ECO",
+      "cantidad_solicitada": 6,
+      "unidad_solicitada": "unidad",
+      "nombre_producto": "Cloro QA EconÃ³mico 1 L",
+      "precio_unitario": 650,
+      "subtotal": 3900,
+      "presentacion_publica_snapshot": "Botella 1 L",
+      "version_oferta_snapshot": 1,
+      "oferta_snapshot_json": "{\"familia_id\":\"FAM-QA-C5-ECO\",\"activo\":\"SI\",\"nombre_publico\":\"Cloro QA EconÃ³mico 1 L\",\"categoria\":\"Limpieza\",\"precio_venta\":650,\"modo_venta\":\"UNIDAD\",\"unidad_venta\":\"unidad\",\"permite_decimal\":\"NO\",\"paso_venta\":1,\"contenido_cantidad\":1000,\"contenido_unidad\":\"ml\",\"presentacion_publica\":\"Botella 1 L\",\"politica_marca\":\"VARIABLE\",\"version_oferta\":1,\"actualizado_en\":\"2026-10-08T13:15:06.909Z\"}"
+    }
+  ],
+  "contexto_snapshot": {
+    "apertura_id": "APE-20991231",
+    "sku_habilitados": [
+      "PROD-QA-C5-ECO-A",
+      "PROD-QA-C5-ECO-B"
+    ]
+  },
+  "familias_observadas": [
+    {
+      "familia_id": "FAM-QA-C5-ECO",
+      "activo": "SI",
+      "nombre_publico": "Cloro QA EconÃ³mico 1 L",
+      "categoria": "Limpieza",
+      "precio_venta": 650,
+      "modo_venta": "UNIDAD",
+      "unidad_venta": "unidad",
+      "permite_decimal": "NO",
+      "paso_venta": 1,
+      "contenido_cantidad": 1000,
+      "contenido_unidad": "ml",
+      "presentacion_publica": "Botella 1 L",
+      "politica_marca": "VARIABLE",
+      "version_oferta": 1,
+      "actualizado_en": "2026-10-08T13:15:06.909Z"
+    }
+  ],
+  "decisiones_familia": [],
+  "asignaciones_anteriores": [],
+  "asignaciones_nuevas": [
+    {
+      "asignacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-0",
+      "id_detalle_pedido": "DPE-PED-QA-C5-ECO-PRINCIPAL-F",
+      "producto_id": "PROD-QA-C5-ECO-A",
+      "cantidad_asignada": 4,
+      "cantidad_stock": 4,
+      "unidad_stock_snapshot": "unidad",
+      "nombre_sku_snapshot": "Cloro QA C5 ECO A",
+      "marca_snapshot": "QA-A",
+      "presentacion_snapshot": "Botella 1 L",
+      "operacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "actor": "qa-c5",
+      "creado_en": "2026-10-08T15:19:04.453Z"
+    },
+    {
+      "asignacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-1",
+      "id_detalle_pedido": "DPE-PED-QA-C5-ECO-PRINCIPAL-F",
+      "producto_id": "PROD-QA-C5-ECO-B",
+      "cantidad_asignada": 2,
+      "cantidad_stock": 2,
+      "unidad_stock_snapshot": "unidad",
+      "nombre_sku_snapshot": "Cloro QA C5 ECO B",
+      "marca_snapshot": "QA-B",
+      "presentacion_snapshot": "Botella 1 L",
+      "operacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "actor": "qa-c5",
+      "creado_en": "2026-10-08T15:19:04.453Z"
+    }
+  ],
+  "reservas_v1": [],
+  "movimientos": [
+    {
+      "movimiento_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-M-0",
+      "operacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "producto_id": "PROD-QA-C5-ECO-A",
+      "tipo": "ASIGNACION_V2",
+      "cantidad_stock": -4,
+      "stock_anterior": 4,
+      "stock_resultante": 0,
+      "unidad_stock_snapshot": "unidad",
+      "escala_stock_snapshot": 1,
+      "actor": "qa-c5",
+      "creado_en": "2026-10-08T15:19:04.453Z",
+      "id_detalle_pedido": "DPE-PED-QA-C5-ECO-PRINCIPAL-F",
+      "asignacion_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-0"
+      ],
+      "referencia_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "payload_hash": "96a1e189067230010413f093a4e16e0b89f82ffa42fa79fb55ca33d47ce16818"
+    },
+    {
+      "movimiento_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-M-1",
+      "operacion_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "producto_id": "PROD-QA-C5-ECO-B",
+      "tipo": "ASIGNACION_V2",
+      "cantidad_stock": -2,
+      "stock_anterior": 7,
+      "stock_resultante": 5,
+      "unidad_stock_snapshot": "unidad",
+      "escala_stock_snapshot": 1,
+      "actor": "qa-c5",
+      "creado_en": "2026-10-08T15:19:04.453Z",
+      "id_detalle_pedido": "DPE-PED-QA-C5-ECO-PRINCIPAL-F",
+      "asignacion_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-1"
+      ],
+      "referencia_id": "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f",
+      "payload_hash": "96a1e189067230010413f093a4e16e0b89f82ffa42fa79fb55ca33d47ce16818"
+    }
+  ],
+  "saldos": [
+    {
+      "producto_id": "PROD-QA-C5-ECO-A",
+      "antes": {
+        "id_producto": "PROD-QA-C5-ECO-A",
+        "nombre": "Cloro QA C5 ECO A",
+        "categoria": "Limpieza",
+        "activo": "SI",
+        "modo_venta": "UNIDAD",
+        "unidad_medida": "unidad",
+        "permite_decimal": "NO",
+        "paso_venta": 1,
+        "tipo_disponibilidad": "POR_APERTURA",
+        "stock_actual": 4,
+        "precio_costo": 590,
+        "precio_venta": 700,
+        "familia_id": "FAM-QA-C5-ECO",
+        "marca": "QA-A",
+        "presentacion": "Botella 1 L",
+        "contenido_cantidad": 1000,
+        "contenido_unidad": "ml"
+      },
+      "stock_resultante": 0,
+      "movimiento_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-M-0"
+      ],
+      "asignacion_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-0"
+      ]
+    },
+    {
+      "producto_id": "PROD-QA-C5-ECO-B",
+      "antes": {
+        "id_producto": "PROD-QA-C5-ECO-B",
+        "nombre": "Cloro QA C5 ECO B",
+        "categoria": "Limpieza",
+        "activo": "SI",
+        "modo_venta": "UNIDAD",
+        "unidad_medida": "unidad",
+        "permite_decimal": "NO",
+        "paso_venta": 1,
+        "tipo_disponibilidad": "POR_APERTURA",
+        "stock_actual": 7,
+        "precio_costo": 610,
+        "precio_venta": 700,
+        "familia_id": "FAM-QA-C5-ECO",
+        "marca": "QA-B",
+        "presentacion": "Botella 1 L",
+        "contenido_cantidad": 1000,
+        "contenido_unidad": "ml"
+      },
+      "stock_resultante": 5,
+      "movimiento_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-M-1"
+      ],
+      "asignacion_ids": [
+        "OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-A-1"
+      ]
+    }
+  ]
+}

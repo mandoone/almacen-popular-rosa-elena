@@ -1,9 +1,24 @@
 # TASKS.md — Tareas vivas y backlog
 
+Continuación C5 autorizada: serializador V2/legacy, recovery M-0 con plan exacto y reporte sin intenciones incompletas verificados localmente; v23 reproducible, backup previo al movimiento verificado. Pendiente inmediato: deploy TEST, recovery, misma key y E2E/cleanup/readback. No iniciar C6 hasta cerrar C5. [Seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## C5 continuación desde30e047e — nuevo STOP técnico (2026-10-08)
+
+- [x] Preservar25 archivos, incluidos untracked, diff binario y hashes de recuperación.
+- [x] Diagnosticar preparación: APERTURAS omitida y forma_pago fuera del dropdown; reproducir prefijo parcial v22.
+- [x] Preparación durable con plan/hash/auditoría/readback, backup pre-recovery verificado, deploy TEST v23 y recuperación explícita del mismo fixture.
+- [x] Segunda preparación0 cambios; fecha/detalle/snapshot y stocks4/7 intactos.
+- [x] QA982 PASS y readback histórico/comercial0 cambios.
+- [ ] Corregir puerto de movimientos: tipo moderno no puede copiarse al enum legacy. Incorporar validaciones nativas completas y prevalidación antes de efectos.
+- [ ] Diseñar reconciliación explícita del movimiento QA parcial; operación APLICANDO/pedido/SKU permanecen bloqueados, sin reparación automática. Nuevo backup antes de escribir.
+- [ ] Completar A4+B2, cancelación/reasignación, mixto/granel/D50/faults, cleanup de apertura/habilitaciones y cierre Git.
+
+Sin escrituras TEST tras STOP; sin commit/push incompleto. F10 sin cambio. [Evidencia y archivos conservados](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## Remediación previa C5 (2026-10-07)
 
 - [x] R0–R10: preservar trabajo, forense, backup TEST, remediación mínima, readback20/0, replay0 y preflight limpio.
-- [ ] Continuar C5: puerto GAS, QA, backup/migración/deploy TEST y E2E sintéticos aislados. F10 no cambia.
+- [ ] Continuación C5 parcial: esquema y puerto/deploy alcanzados; E2E detenido por fixture incompleto. Usar el estado actual de arriba, sin repetir R0–R10.
 
 
 > Tareas por fase. Estado: ⬜ pendiente · 🔄 en curso · ✅ hecho · 🚧 bloqueada.

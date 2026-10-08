@@ -56,6 +56,9 @@ test('clasp TEST: preserva configuracion remota y limita el payload', () => {
   assert.match(fuente, /un archivo Apps Script y manifest/);
 });
 
+test('clasp TEST: lee fuente y clones UTF8 explícito en Windows, sin mojibake',()=>{
+  for(const name of ['headCode','versionCode','headManifest','versionManifest','localCode'])assert.match(fuente,new RegExp('\\$'+name+' = Get-Content[^\\r\\n]+-Encoding UTF8'));
+});
 test('clasp TEST: dry-run es el modo por defecto y deploy requiere doble opt-in', () => {
   assert.match(fuente, /if \(-not \$Execute\)/);
   assert.match(fuente, /PASS \| dry-run clasp TEST; no hubo push ni deploy/);

@@ -37,5 +37,6 @@ export const MAPEO_MOVIMIENTO_C5 = {
 export const CAMPOS_OBSERVACION_MOVIMIENTO_C5 = [
   'id_detalle_pedido', 'asignacion_ids', 'unidad_stock_snapshot',
   'gramos_unidad_stock_snapshot', 'escala_stock_snapshot',
+  'idempotency_key', // Metadata C4 presente en movimientos de reserva V1 dentro de un plan mixto.
 ] as const;
 export const MODELO_OBSERVACION_MOVIMIENTO_C5 = 'MOVIMIENTO_PEDIDO_V2_1' as const;

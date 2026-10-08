@@ -7,6 +7,7 @@ import vm from 'node:vm';
 import ts from 'typescript';
 import { crearEscenario } from '../tests/helpers/granel-escenario.mjs';
 import { crearEscenarioCompra } from '../tests/helpers/compra-identidad-escenario.mjs';
+import { sinGuardC5, sinLineasVacias, GUARDS_V1_C5 } from './lib/auditoria-guardrails-c5.mjs';
 
 const inicial = 'f2730011afd139bd61d69d4246086de486f5c872';
 const anterior = path => execFileSync('git', ['show', `${inicial}:${path}`], { encoding: 'utf8' });
@@ -32,7 +33,7 @@ function funciones(src, path) {
   return new Map(sf.statements.filter(ts.isFunctionDeclaration).map(n => [n.name.text, normal(n.getText(sf))]));
 }
 const oldGas = funciones(gasInicial, pathGas), newGas = funciones(gasFinal, pathGas);
-const modificadas = [...oldGas].filter(([k, v]) => newGas.get(k) !== v).map(([k]) => k);
+const modificadas = [...oldGas].filter(([k, v]) => sinLineasVacias(sinGuardC5(k,newGas.get(k))) !== sinLineasVacias(v)).map(([k]) => k);
 assert.deepEqual(modificadas, ['doGet', 'doPost', 'actualizarProductoAdmin_', 'crearProductoAdmin_', 'obtenerReportesFase78_']);
 function casos(src, fn) {
   const sf = ts.createSourceFile(pathGas, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS), out = new Map();
@@ -103,7 +104,7 @@ for (const [nombre, fn] of [['pedido_unidad', f => pedidoV1(f)], ...[100, 250, 1
   const viejo = JSON.parse(JSON.stringify(await fn(gasInicial))), nuevo = JSON.parse(JSON.stringify(await fn(gasFinal)));
   assert.deepEqual(nuevo, viejo, `Resultado V1 distinto: ${nombre}`); diferenciales.push({ nombre, hash: sha(nuevo), igual: true });
 }
-const evidencia = { inicial, archivos_sin_cambios: archivosV1.length, funciones_GAS_iguales: oldGas.size - modificadas.length, funciones_modificadas: modificadas, acciones_V1_iguales: casosV1, funciones_transporte_iguales: antesTransporte.size, diferenciales, solo_local: true };
+const evidencia = { inicial, archivos_sin_cambios: archivosV1.length, funciones_GAS_iguales_salvo_guards: oldGas.size - modificadas.length, guards_aditivos_verificados:Object.keys(GUARDS_V1_C5), funciones_modificadas: modificadas, acciones_V1_iguales: casosV1, funciones_transporte_iguales: antesTransporte.size, diferenciales, solo_local: true };
 if (!process.argv.includes('--no-write')) {
   await mkdir('operativa.local', { recursive: true }); await writeFile('operativa.local/auditoria-v1-familias.json', JSON.stringify(evidencia, null, 2));
 }

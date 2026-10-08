@@ -34,6 +34,6 @@ test('C1: asignación futura usa SKU físico y snapshots; ningún contrato permi
   validarContratoAsignacionV2(a); assert.throws(() => validarContratoAsignacionV2({ ...a, producto_id: 'FAM-QA' }));
   assert.equal(COLUMNAS_ASIGNACIONES_PEDIDO.includes('stock_actual'), false);
 });
-test('C1: contratos aislados sin import desde rutas, tienda, transporte o Apps Script', async () => {
-  for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/productos/route.ts', 'src/app/tienda/page.tsx', 'src/lib/appsScriptPedidos.ts', 'scripts/apps-script-pedidos.gs']) assert.doesNotMatch(await readFile(p, 'utf8'), /pedidoV2|ASIGNACIONES_PEDIDO|FAMILIA_V2/);
+test('C1: contratos aislados del catálogo/rutas/transporte público; GAS QA se audita en C5', async () => {
+  for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/productos/route.ts', 'src/app/tienda/page.tsx', 'src/lib/appsScriptPedidos.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /pedidoV2|ASIGNACIONES_PEDIDO|FAMILIA_V2/);
 });

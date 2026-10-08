@@ -243,12 +243,12 @@ test('C4 diario V1 completo se preserva; incierto desconocido bloquea conservado
   c.estado.hojas.OPERACIONES_PEDIDOS.push(historico); await confirmar(c); assert.deepEqual(c.estado.hojas.OPERACIONES_PEDIDOS[0], historico);
   assert.equal(obtenerBloqueosOperativos([{ ...historico, estado_operacion: 'REQUIERE_REVISION' }]).global, true);
 });
-test('C4 fuente C1/C2 y todos los archivos operativos permanecen idénticos al HEAD inicial', async () => {
-  for (const p of ['src/lib/familias/pedidoV2.ts', 'src/lib/familias/asignacionV2.ts', 'scripts/apps-script-pedidos.gs', 'scripts/setup-google-sheet.gs', 'src/lib/appsScriptPedidos.ts']) {
+test('C4 fuente C1/C2 y transporte público permanecen idénticos; GAS aditivo se audita en C5', async () => {
+  for (const p of ['src/lib/familias/pedidoV2.ts', 'src/lib/familias/asignacionV2.ts', 'scripts/setup-google-sheet.gs', 'src/lib/appsScriptPedidos.ts']) {
     const original = execFileSync('git', ['show', `8b1d105b33659ce7468c92fc10413167922bc879:${p}`], { encoding: 'utf8' });
     assert.equal((await readFile(p, 'utf8')).replaceAll('\r\n', '\n'), original.replaceAll('\r\n', '\n'), p);
   }
-  for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/admin/pedidos/route.ts', 'src/lib/appsScriptPedidos.ts', 'scripts/apps-script-pedidos.gs']) assert.doesNotMatch(await readFile(p, 'utf8'), /adaptadorDurableV2|planMixtoV2|almacenSheetsMemoriaV2/);
+  for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/admin/pedidos/route.ts', 'src/lib/appsScriptPedidos.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /adaptadorDurableV2|planMixtoV2|almacenSheetsMemoriaV2/);
 });
 
 test('C4 respuesta incierta conserva estado observado y no anuncia stock/asignaciones previstas como aplicadas', async () => {

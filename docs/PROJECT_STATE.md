@@ -1,7 +1,15 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+Continuación autorizada C5: v23 acreditada/reproducible; serializador legacy, prevalidación completa, recovery M-0 y filtro de intenciones en reportes preparados y verificados localmente. Backup nuevo previo al movimiento verificado; TEST todavía conserva la operación parcial, sin nuevas escrituras. [Checkpoint y seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## C5 TEST — preparación recuperada; STOP en movimiento (2026-10-08)
+
+Continuación exacta de30e047e, con respaldo verificado de los25 archivos previos. Preparación QA durable cerrada: backup pre-recovery completo, apertura sintética y cuatro celdas QA faltantes completadas, readback y replay0. Apps Script TEST v22→v23 con rollback disponible.
+
+Confirmación detenida por enum legacy MOVIMIENTOS_STOCK.tipo incompatible con ASIGNACION_V2: diario APLICANDO,2 asignaciones,1 movimiento parcial; stocks QA4/7 y pedido recibido sin puntero. Pedido/SKU bloqueados. Sin escrituras después de STOP; sin cleanup, commit ni push. QA982 PASS, histórico/comercial intacto. F10 sigue1 READY/19 PENDING. [Causas, backups, readback y próximo paso](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
-> tarea que cambie el estado. Última actualización: 2026-10-07.
+> tarea que cambie el estado. Última actualización: 2026-10-08.
 
 ---
 

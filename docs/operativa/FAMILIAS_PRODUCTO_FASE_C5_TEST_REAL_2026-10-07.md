@@ -1,124 +1,200 @@
-# C5 — integración TEST en curso tras remediación acreditada
+# Familias / SKU — C5 TEST real: preparación recuperada, nuevo STOP
 
-Actualización: R0–R10 completados y preflight limpio. [Acta de remediación, backup y readback](REMEDIACION_PRE_C5_2026-10-07.md). El STOP narrado abajo corresponde al intento anterior, preservado como evidencia; ya no bloquea C5. OPERACIONES_PEDIDOS tiene ahora20 headers con resolución aditiva. Apps Script sigue v20; integración/deploy/E2E C5 todavía pendientes en este checkpoint.
+## Continuación autorizada: frontera legacy y recovery local (2026-10-08)
 
-Fecha: 2026-10-07. Rama exclusiva: `feature/fase-3a-operativa`.
-HEAD inicial y final: `f3a457c327e2d4f3c2d9b1d549edaa53ae6b9ee5`.
+Se preservaron los29 archivos iniciales mediante copia/diff/manifest SHA256 y se acreditó la fuente inmutable TEST v23: idéntica al template conservado al reemplazar únicamente ID/token por placeholders. El patch y su SHA256 permiten reproducirla desde Git sin credenciales. No se rehízo preparación, R0 ni esquema.
 
-**No se ejecutó la integración real C5.** Las stop conditions detuvieron escrituras TEST antes de backup, migración y deploy. Se completaron únicamente el análisis del esquema, la política PERMITIR_SNAPSHOT, el migrador con puerto inyectado, tests locales y documentación. No se declara C5 completo.
+Contrato real leído: tipo=entrada/salida/ajuste/devolucion; origen=pedido/venta/compra/ajuste/cancelacion. Confirmación y nueva asignación serializan salida/pedido; cancelación, devolucion/cancelacion; reversión de reasignación, devolucion/pedido. tipo_movimiento conserva ASIGNACION_V2/DEVOLUCION_V2 o tipos mixtos V1. JSON conserva modelo, tipo lógico, plan_hash y snapshots. No se cambia ningún enum ni el dominio C4.
 
-## 1. Preflight real y motivo de STOP
+La fila completa se construye y valida en memoria, incluidas validaciones nativas de todo el plan antes de efectos; luego setValues de rango exacto, flush y readback. No se afirma atomicidad Sheets. Los reportes omiten intenciones V2 cuyo diario no sea COMPLETADA; V1 conserva su filtro y las siete excepciones diferenciales están verificadas exactamente.
 
-Destino verificado por conector nativo y preflight Apps Script read-only:
+Recovery TEST-only autoriza únicamente M-0/operación/key/hash existentes. Acredita prefijo ID/fecha, ausencia de M-1/efectos, pedido y stock exactos del plan, dos asignaciones y contexto. Persiste auditoría antes de completar la misma fila; conserva ID/fecha, registra recuperación y reintento0. No modifica stock ni desbloquea por sí mismo. Pruebas locales incluyen modificaciones incompatibles, caída tras completar M-0, replay del plan original y cero duplicados.
 
-- ID: `1U1nj_DKExmMV3pOA50JprcQ2d4TOQqb-4ORaJUagEoM`.
-- Nombre exacto: `TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES`.
-- 18 pestañas; PRODUCTOS56, PEDIDOS23, DETALLE_PEDIDOS27, MOVIMIENTOS_STOCK72, OPERACIONES_PEDIDOS18, DETALLE_COMPRAS4.
-- FAMILIAS_PRODUCTO0; identidad familiar de PRODUCTOS vacía; ASIGNACIONES_PEDIDO inexistente.
-- Inventario de headers y conteos coincide con el cierre C3/C4. Se compararon 5.107 posiciones de las matrices recuperadas contra la lectura conservada de C3. Ocho teléfonos diferían solo por renderizado fórmula/valor numérico: su userEnteredValue.formulaValue coincide exactamente con la fuente anterior. No se corrigieron ni imprimieron contactos.
+Nuevo backup nativo previo a movimiento: [BACKUP TEST C5 PRE RECOVERY MOVIMIENTO 2026-10-08T16:25:53Z](https://docs.google.com/spreadsheets/d/1vkulc2sjuBo7JZ8E8rdYOhmfMd1y7UDRCQoNJ3UiFcM/edit?usp=drivesdk).19 pestañas, valores/fórmulas usados, formatos/validaciones y estructura coincidentes; fuente releída sin cambios. Los dos backups C5 anteriores permanecen.
 
-**Bloqueos acreditados:**
+En este checkpoint local todavía no se desplegó el serializador ni se recuperó M-0 remoto. TEST sigue v23/APLICANDO paso2, stocks4/7. QA local1015 tests previstos,0 skipped; build aislado PASS, V1 diferencial PASS. Continúan deploy TEST, recovery misma fila/key y E2E/cleanup completos; C6 sigue condicionado al cierre integral C5.
 
-1. `MOVIMIENTOS_STOCK!A59:T60`: el mismo identificador aparece en ambas filas, tanto en `movimiento_id` como en `id_movimiento`. Corresponden a SKU diferentes y comparten referencia de compra. Esto demuestra colisión de identidad; NO demuestra que una fila deba borrarse. Consta igual en la lectura conservada de C3: es preexistente.
-2. Dos operaciones históricas `CREAR_PEDIDO` están en `REQUIERE_REVISION`. Su snapshot V1 carece del contrato `PEDIDO_MIXTO_V2_1`. C4 produce bloqueo global conservador para un diario incompleto no interpretable; los fixtures C5 tampoco pueden omitirlo. No se recalculó ni modificó esas operaciones.
+Fecha efectiva: 2026-10-08. El archivo conserva la fecha solicitada. Rama exclusiva: feature/fase-3a-operativa. HEAD inicial y final: 30e047eaea33d94aaddc5611082cc545c5e913fb. No se creó commit ni se hizo push: C5 integral sigue incompleto. Los 29 archivos pendientes permanecen conservados.
 
-La instrucción exige detener escrituras ante IDs duplicados y no degradar las garantías C4. Se aplicó STOP; no se inventó una excepción por tratarse de fixtures o datos anteriores. Ninguna deduplicación, renumeración histórica o exclusión de diarios fue ejecutada.
+## 1. Resultado actual
 
-## 2. Esquema antes / propuesta / estado final real
+La preparación QA quedó cerrada con plan persistido, recuperación explícita, readback nativo y replay de cero cambios. Se conserva el mismo PED-QA-C5-ECO-PRINCIPAL y su fecha/detalle/snapshot original. Apps Script TEST pasó de v22 a v23.
 
-Se revisaron `pedidoV2.ts`, `asignacionV2.ts`, `planMixtoV2.ts`, `adaptadorDurableV2.ts` y `almacenSheetsMemoriaV2.ts`. El esquema mínimo y la estrategia de serialización son propiedad de [DATA_MODEL, D51](../DATA_MODEL.md#esquema-durable-c5--diseño-local-no-migrado-2026-10-07-d51).
+La confirmación A4+B2 alcanzó PREPARADA/APLICANDO y dos asignaciones, pero falló al escribir el primer movimiento: la columna legacy MOVIMIENTOS_STOCK.tipo rechaza ASIGNACION_V2. Su validación estricta admite únicamente entrada/salida/ajuste/devolucion. El puerto copiaba el tipo moderno en esa columna legacy. Se detuvieron todas las escrituras TEST, sin relajar el dropdown ni completar manualmente el movimiento.
 
-| Hoja | Antes y final TEST | Propuesta local, NO aplicada |
+Estado final acreditado:
+
+- Operación OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f: APLICANDO, paso 2.
+- Dos asignaciones append-only completas: A4 y B2, ligadas al plan.
+- Una fila MOVIMIENTOS_STOCK parcial: solo id_movimiento legacy y fecha_hora; el ID coincide con el primer movimiento del plan. tipo, movimiento_id canónico, producto_id, operacion_id, hash y demás campos están vacíos. No se considera un movimiento completo.
+- Pedido recibido; puntero vigente y recibos de estado/puntero vacíos.
+- Stock QA A4/B7; revisiones y recibos de stock vacíos. No hubo descuento.
+- Pedido y ambos SKU QA bloqueados por la operación incompleta; bloqueo global false.
+- 0 cambios históricos/comerciales, 0 cambios de stock/costo/precio comercial.
+
+No se ejecutó retry remoto de confirmación, reconciliación, cancelación ni cleanup después del STOP. La prueba local con la misma fila parcial demuestra que un retry debe exigir REQUIERE_REVISION, sin adivinar ni descontar; el estado remoto sigue APLICANDO porque no se escribió después del STOP.
+
+## 2. Preservación local y destino
+
+Se respaldaron los 25 archivos pendientes iniciales byte a byte, incluidos los nueve untracked, junto con diff binario completo y manifest SHA256 verificado. Ubicación privada: operativa.local/backups/working-tree-c5-pre-recovery-2026-10-08T14-45-37-331Z. Sin reset, clean, checkout destructivo, stash ni descarte. La remediación R0 cerrada en30e047e no se repitió.
+
+Destino verificado antes de escritura:
+
+- Spreadsheet ID: 1U1nj_DKExmMV3pOA50JprcQ2d4TOQqb-4ORaJUagEoM.
+- Nombre real: TEST - BD_WEB_ALMACEN_ROSA_ELENA_MORALES.
+- Lectura nativa completa de 19 pestañas: coincidió con el STOP previo, sin diferencias inesperadas.
+- Las dos revisiones V1 acreditadas conservan estado/histórico. F10 permanece 1 READY/19 PENDING.
+
+## 3. Esquema C5 ya preparado
+
+No se rehizo la migración. Permanece aditiva, con históricos sin rellenar:
+
+| Hoja | Antes de C5 | Actual |
+|---|---:|---:|
+| PRODUCTOS | 25 headers | 27 |
+| PEDIDOS | 15 | 18 |
+| DETALLE_PEDIDOS | 11 | 19 |
+| ASIGNACIONES_PEDIDO | ausente | 13 headers |
+| OPERACIONES_PEDIDOS | 20 después de R0 | 20 |
+| MOVIMIENTOS_STOCK | 20 | 20 |
+
+PRODUCTOS añade revision_stock_v2/evidencia_stock_v2. PEDIDOS añade operacion_asignacion_vigente/evidencia_estado_v2/evidencia_puntero_v2. DETALLE_PEDIDOS añade id_detalle_pedido/modelo_linea/familia_id/cantidad_solicitada/unidad_solicitada/presentacion_publica_snapshot/version_oferta_snapshot/oferta_snapshot_json.
+
+ASIGNACIONES_PEDIDO conserva asignacion_id, id_detalle_pedido, producto_id, cantidad_asignada, cantidad_stock, unidad_stock_snapshot, gramos_unidad_stock_snapshot, nombre_sku_snapshot, marca_snapshot, presentacion_snapshot, operacion_id, actor, creado_en. Append-only, con vigencia mediante puntero de pedido. No se modificó ni reinterpretó ninguna de las 27 líneas históricas.
+
+La migración anterior añadió 13 headers a hojas existentes y 13 a la nueva hoja. Readback íntegro y segunda ejecución 0 cambios. No se ejecutó setup ni hubo nueva migración en esta continuación.
+
+## 4. Backups y rollback
+
+Se conserva el backup original:
+
+[BACKUP TEST FAMILIAS C5 2026-10-08T13-06-06Z](https://docs.google.com/spreadsheets/d/1lczVTyrT6vC6z-iyvosau3zQgJ0MYpbjvrEYF1yT7qk/edit), copia nativa completa previa a la migración, 18 hojas verificadas.
+
+Antes de recuperar el fixture se creó otro backup, sin sustituirlo:
+
+[BACKUP TEST C5 PREPARACION QA 2026-10-08T15:10:32Z](https://docs.google.com/spreadsheets/d/1J46RVkiXFv0UEyTZtnL0OucKzAmUlEt7hiPMe_BZurI/edit), ID1J46RVkiXFv0UEyTZtnL0OucKzAmUlEt7hiPMe_BZurI. Las 19 hojas, estructura, valores/fórmulas y CellData con formatos/validaciones coincidieron exactamente. Se releyó la fuente después de copiar y seguía igual.
+
+Apps Script TEST: v20→v21→v22 en la continuación anterior, v22→v23 en esta recuperación. El deploy protegido conserva destino, token y deployment TEST existente, compara HEAD remoto contra versión inmutable y verifica endpoint antes/después. Lectura UTF8 explícita evita nuevas alteraciones de texto en Windows. No se desplegó nada después del nuevo STOP.
+
+Backup v22 y manifest: operativa.local/backups/apps-script-test-v22-e195494053b74f0d9662aa5bf4a1e2bb. Se conservan v20/v19/v18 y v22 para rollback, además de backups v20/v21 anteriores. No se ejecutó rollback. Restaurar una Sheet o retargetear el deployment requiere comparar cambios posteriores; no elimina por sí solo el HEAD del proyecto ni acredita una operación parcial.
+
+## 5. RECUPERACIÓN FIXTURE PARCIAL C5
+
+### Causa raíz de la preparación
+
+El código v21/v22 omitía crear APERTURAS. Creaba únicamente APERTURA_PRODUCTOS, por eso quedaban referencias a APE-20991231 sin fila de apertura.
+
+La cabecera enviaba forma_pago=efectivo, pero PEDIDOS!J25 tiene dropdown estricto transferencia/efectivo_al_retirar. Se acreditó la discrepancia mediante fuente inmutable, lectura de validación nativa y reproducción local: prefijo A:I persistido, J en adelante vacío, relaciones de apertura y detalle existentes, sin efectos de stock. El mock anterior omitía esa validación. Además, el replay antiguo retornaba éxito únicamente por existir cabecera.
+
+El deploy Windows leía UTF8 sin encoding explícito y produjo mojibake en textos QA. Se corrigió la lectura del ejecutor, conservando el nombre/snapshot histórico del fixture existente; no se renombraron sus datos.
+
+### Plan y clasificación
+
+La preparación TEST-only usa lock compartido y valida ID/nombre/APP_ENV/token. El servidor construye el fixture, sin costos/marcas/stock arbitrarios del navegador. Clasifica AUSENTE, PARCIAL_ACREDITABLE o COMPLETO; una discrepancia es STOP INCONSISTENTE.
+
+Antes de efectos persiste un plan/hash en AUDITORIA_PRODUCTOS con modelo PREPARACION_FIXTURE_C5_2, estado PREPARADA, actor qa-c5, timestamp y campos previstos. No crea una operación comercial V2 para preparar fixtures. Verifica headers/dropdowns antes de escribir; append y completado de celdas vacías se basan exclusivamente en el plan acreditado. Readback integral y evidencia persistida preceden COMPLETADA.
+
+Una operación, asignación, movimiento huérfano, stock distinto, otra identidad/apertura o detalle incompatible impiden reconstrucción. Históricos completos de otros pedidos QA pueden conservarse cuando un nuevo fixture reutiliza el mismo SKU y su stock ya fue restituido. El replay verifica plan/fixture y no modifica filas. Confirmación conserva 409 PEDIDO_CONTEXTO_CAMBIO; no asume una apertura por defecto.
+
+### Cambios reales recuperados
+
+Se acreditaron canal/nombre/telefono/total3900/estado recibido/pago pendiente, detalle exacto FAM-QA-C5-ECO×6 y ausencia de operación/asignación/movimiento. Se crearon únicamente:
+
+- APERTURAS: APE-20991231, fecha2099-12-31, lugar QA sintético, estado por_confirmar, pedidos anticipados pausado y presencial inactivo; creada_por qa-c5 y observación interna inequívoca. Valores validados por el contrato vigente, sin copiar una apertura comercial.
+- Una fila de auditoría de preparación.
+
+Se completaron estas cuatro celdas existentes:
+
+| Celda | Campo | Valor |
 |---|---|---|
-| PRODUCTOS |25 headers /56 filas|27 headers: revisión y recibo de stock|
-| PEDIDOS |15 /23|18: puntero y recibos estado/puntero|
-| DETALLE_PEDIDOS |11 /27|19: los ocho campos C1|
-| ASIGNACIONES_PEDIDO |No existe|13 headers C1, inicialmente vacía|
-| OPERACIONES_PEDIDOS |14 /18|Sin columnas nuevas|
-| MOVIMIENTOS_STOCK |20 /72|Sin columnas nuevas; observacion JSON versionado|
-| FAMILIAS_PRODUCTO |18 /0|Sin cambios|
+| PEDIDOS!J25 | forma_pago | efectivo_al_retirar |
+| PEDIDOS!K25 | observaciones | Fixture sintético C5 ECO |
+| PEDIDOS!N25 | apertura_id | APE-20991231 |
+| PEDIDOS!O25 | origen_pedido | QA_C5 |
 
-La propuesta preserva recibos con operación/payload/plan/efecto y revisión física; no usa el saldo por sí solo como evidencia. Reutiliza `PEDIDOS.apertura_id` para el ID de apertura esperado y congela habilitaciones actuales en el plan. No duplica ese ID en un nuevo JSON de pedido. No genera IDs para las27 líneas históricas. V1 no depende de los campos nuevos.
+id_pedido, fecha_hora2026-10-08T13:15:06.909Z, nombre original, total, estados, detalle, precio650, subtotal3900, snapshot y PRODUCTOS permanecieron idénticos. Readback nativo de todas las celdas acreditó solo esas cuatro modificaciones y las dos filas nuevas autorizadas. En ese punto: A4/B7,0 operaciones V2,0 asignaciones,0 movimientos nuevos.
 
-`scripts/lib/familias-c5.mjs` construye requests como datos y permite un puerto **inyectado local**. No contiene Google APIs, credenciales ni llamadas HTTP. Solo extiende headers al final; amplía PRODUCTOS26→27 columnas físicas y crea la hoja de asignaciones vacía si falta. Antes de aplicar exige destino, ausencia de duplicados/bloqueos, backup nativo completo recuperable, comparación de valores/fórmulas/celdas/estructura y relectura sin concurrencia. Readback protege históricos; repetir en mocks produce0 cambios y0 segundo backup. No se conectó un ejecutor remoto.
+La primera respuesta HTTP fue ambigua; reintentar el mismo fixture/plan devolvió COMPLETO y0 cambios, con evidencia histórica de recuperación. Una segunda llamada explícita también devolvió0 cambios. Hash de plan persistido: f518ea401e0135189c4dfa1a71e29722d8216061be0be9e6f57868ee94d3d964. Timestamp:2026-10-08T15:14:29.844Z. Actor qa-c5. No se creó otro pedido ni se alteró el detalle.
 
-## 3. Backup, versión y rollback
+## 6. Puerto durable y nuevo STOP de movimiento
 
-- **Backup Sheet C5: no creado**, porque STOP ocurrió antes de cualquier escritura. No se presenta un CSV o hash como backup recuperable.
-- **Apps Script TEST v20 verificado** mediante inventario clasp del deployment configurado y dry-run protegido. HEAD remoto y versión desplegada coincidieron; destino embebido/token TEST y preflight fueron validados por el script existente. No se imprimieron secretos ni URL privada.
-- Nueva versión: ninguna. Backup del código v20 para deploy C5: no ejecutado; esa fase no se alcanzó.
-- No hay efectos C5 remotos que revertir. Se conservan las versiones previas y respaldos B2/B3; no se ejecutó rollback. Restaurar una copia histórica completa sobre TEST actual requeriría un plan que evite perder cambios posteriores, no se propone como solución automática a los duplicados.
+El mismo dominio C1/C2/C4 se compila a ES2019 síncrono, con SHA256 equivalente, sin reescribirlo. Port real bajo LockService, append de diario/asignaciones/movimientos, CAS fila+recibo y readback. No se afirma ACID. Orden: PREPARADA→APLICANDO→asignaciones→movimientos→stock con revisión/recibo→estado→puntero→readback→COMPLETADA. IDs/hashes deterministas; saldo coincidente solo no acredita autoría.
 
-## 4. Política humana cerrada
+Los diarios CONFIRMAR_V2/CANCELAR_V2/REASIGNAR_V2 reutilizan columnas existentes. Movimientos conservan metadata versionada en observacion JSON, incluidos snapshots y metadata V1 mixta. Incertidumbre bloquea pedido/SKU; seis writers V1 consultan guard bajo su lock, sin cambiar semántica cuando no hay V2 pendiente.
 
-[D50, PERMITIR_SNAPSHOT](../DECISIONS.md#d50--familia-desactivada-permitir_snapshot-2026-10-07) reemplaza el gate anterior. El adaptador local permite confirmar pedidos recibidos cuando la familia está inactiva, registrando la decisión en el plan. Precio, nombre, presentación, subtotal y versión originales se conservan; no cambia costos ni precio familiar. C1 sigue rechazando un pedido nuevo de esa familia.
+La confirmación real falló antes de stock porque serializarFilaC5_ asigna el tipo moderno ASIGNACION_V2 tanto a tipo_movimiento como al campo legacy tipo. Esta última columna tiene enum incompatible. El nuevo test con la validación nativa reproduce exactamente operación APLICANDO, dos asignaciones y prefijo A:B del movimiento. Es un defecto del puerto/serialización, no del motor ni de la preparación ya recuperada.
 
-Stock suficiente, SKU activos/equivalentes, marca conforme y apertura vigente siguen siendo obligatorios. Desactivar no cancela; si operación decide no cumplir, cancela explícitamente. La incertidumbre técnica después de PREPARADA conserva REQUIERE_REVISION/readback; no se rehace un plan parcialmente aplicado, no se adivina autoría y no se convierte esa incertidumbre en una nueva decisión comercial.
+No se completó, borró ni sustituyó esa fila parcial; no se liberaron bloqueos. La reconciliación QA existente solo restaura un recibo perdido mediante una inyección previamente auditada; no autoriza reparar este movimiento. Readback durable NO PASA; el readback histórico sí pasa.
 
-## 5. Puerto real, recibos, lock y bloqueos
+## 7. E2E y cleanup
 
-**No implementado/desplegado:** almacenamiento GAS equivalente, endpoints V2, guardrail real compartido y readback real V2. No se cambiaron `apps-script-pedidos.gs` ni `setup-google-sheet.gs`.
+| Caso | Local | TEST real |
+|---|---|---|
+| Preparación ausente/parcial/replay | PASS, con validación nativa de pago | Recuperación/readback/replay PASS |
+| A4+B2→A0/B5 | PASS en mock sin dropdown legacy de movimiento | STOP al primer movimiento; A4/B7 |
+| Confirmación/cancelación/reasignación y replay | PASS local | Pendientes |
+| Mixto V1/V2, un plan/3 efectos/2 asignaciones | PASS local | No ejecutado |
+| Granel100/250/1000,150g a1350/kg=$203 | PASS local, sin recalcular fragmentos | No ejecutado |
+| PERMITIR_SNAPSHOT | PASS local | No ejecutado |
+| Fault/recovery durable | Matriz local PASS | No ejecutado; ambigüedad HTTP de preparación recuperada |
+| Enum legacy de movimiento | Nuevo test reproduce STOP; retry local exige revisión | STOP real acreditado, sin retry posterior |
+| Cleanup | Preparado/testeado; cierre QA y apertura/habilitaciones auditados | No ejecutado por operación incompleta |
 
-El análisis establece que la capa futura debe reproducir diario antes de efectos, asignaciones/movimientos deterministas, CAS saldo+recibo, estado/puntero verificables y lectura integral bajo LockService. Sheets no es ACID. Flush/readback incierto o escritura parcial de recibo deben bloquear; no se acepta el mero saldo esperado. C4 no permite ignorar los dos diarios V1 incompletos para acceder a TEST.
+Fixtures retenidos: FAM-QA-C5-ECO activa, oferta650 VARIABLE1000ml; SKU A/B activos, marcas QA-A/QA-B, stocks4/7, costos590/610, precio SKU_V1 700. POR_APERTURA habilitados solo en la apertura QA pausada. Pedido recibido ya recuperado, dos asignaciones, diario incompleto y movimiento parcial. Ninguna otra familia/SKU/pedido del ejecutor se creó: el primer escenario detuvo la ejecución.
 
-Pendiente acreditar también límites de celda/plan, normalización reversible de fechas/números/fórmulas y estrategia sincrónica del runtime Apps Script frente al dominio TypeScript async. Movimientos V2 pendientes son intenciones: futuros reportes no deben contarlos como efectos completados. No se prometió una garantía remota basándose en el mock.
+Cleanup requiere cancelar los pedidos QA y devolver stock mediante operación durable, después de reconciliar con certeza. Conserva historial; inactiva familias/SKU, deshabilita relaciones QA y cancela la apertura QA. No se ejecutó ni se declaró falsamente terminado.
 
-## 6. QA local y ejemplos
+## 8. Integridad histórica y V1
 
-| Verificación | Resultado |
-|---|---|
-| Focal C4+C5 |209 PASS (176 C4 +33 nuevas C5)|
-| Focal C5 después del ajuste de esquema |33 PASS|
-| npm test final |857 PASS,0 fallos|
-| npm run lint |PASS|
-| npx tsc --noEmit --incremental false |PASS|
-| Build Next completo |PASS, salida aislada fuera de Dropbox|
-| Scan secretos |PASS, valores suprimidos|
-| git diff --check |PASS|
-| Auditoría V1 diferencial |PASS|
+Captura final independiente de19 pestañas. Comparación celda a celda excluye únicamente las cuatro celdas QA recuperadas y nuevas filas QA acreditadas. 0 modificaciones históricas/comerciales,0 stock/costo/precio comercial. Compras, ventas, costos, caja, calendario previo y las dos revisiones V1 intactos.
 
-Build aislado: `%LOCALAPPDATA%/Temp/almacen-c5-qa-20261007/build`; configuración temporal del proceso, variables remotas vacías y tsconfig restaurado. No cambios de dependencias/configuración versionada.
+SHA256 de valores preexistentes antes/final: a394129a80f3fec376ec49446e4a0147d61189787876283b7cbd9b51eb770735, idéntico. SHA256 de cuadrícula preservada de esta continuación: cac4aa111d98d98112d549fa058c57242840756058c99db0f4135eae4101a742, idéntico antes/final.
 
-Las33 nuevas pruebas cubren destino incorrecto, ambos alias duplicados, diarios V1 inciertos, headers/mapa inesperados, backup inválido de ID/título/valor/fórmula/estructura, concurrencia y readback corrupto. Migración/idempotencia son **mocks**, no pruebas ejecutadas sobre TEST.
+Diferencial V1:23 archivos iguales,187 funciones GAS conservadas salvo seis guards exactos,47 acciones antiguas y51 funciones transporte iguales; seis escenarios VM idénticos (pedido unidad, granel100/250/1000, compra/admin legado, venta presencial granel). No se ejecutaron mutaciones comerciales como regresión. GET de catálogo V1 post-recovery idéntico al inicial (datos): SHA25623c00f8584db2c96fcabe7f28d32bcaae183f7c15846b2885b31b5c55502c9e4. Ningún SKU QA aparece en esa respuesta. Esta lectura no constituye aprobación del flujo V2.
 
-Ejemplos locales mantenidos/verificados:
+Conteos finales:
 
-- Familia650: A4+B2 para solicitud6 produce A0/B5. Cancelar devuelve A4/B7; replay no duplica. Con familia inactiva se conserva oferta original.
-- Reasignar A4+B2→A1+B5 conserva cuatro asignaciones append-only; stock A3/B2; cancelar revierte el reparto vigente y restaura A4/B7.
-- Pedido mixto V1/V2, saldo compartido y validación global antes de efectos siguen cubiertos por C4.
-- Granel bases100/250/1000,150g dividido75+75 conserva subtotal203 y reversión/replay exactos: tests C4, D40 intacto.
-- Matriz C4 de fallos después de cada escritura/checkpoint, timeout/502, corrupción, bloqueo y concurrencia volvió a pasar. **No hubo fault injection remoto C5**.
+| Hoja | Filas |
+|---|---:|
+| PRODUCTOS |58:56 anteriores+2 QA|
+| FAMILIAS_PRODUCTO |1 QA|
+| APERTURAS |17:16 anteriores+1 QA|
+| APERTURA_PRODUCTOS |3:1 anterior+2 QA|
+| PEDIDOS |24:23 anteriores+1 QA|
+| DETALLE_PEDIDOS |28:27 anteriores+1 QA|
+| OPERACIONES_PEDIDOS |19:18 anteriores+1 V2 QA incompleta|
+| ASIGNACIONES_PEDIDO |2 QA|
+| MOVIMIENTOS_STOCK |73:72 anteriores+1 fila parcial QA|
+| AUDITORIA_PRODUCTOS |73:72 anteriores+1 preparación QA|
 
-## 7. Evidencia V1 y readback TEST
+## 9. QA y límites
 
-Contra HEAD inicial C5, `git diff --quiet` confirmó igualdad de rutas/tienda/componentes, módulos F4/F5/F7/F8/F9, granel, transportes, C1/C2, plan C4, Apps Script y setup. Solo la política local del adaptador cambió en el dominio existente.
+Suite final982 PASS/0 fallos; focal C4/C5/R333 PASS:93 nuevas respecto del checkpoint889. Incluye19 de preparación,63 GAS (dos reproducen nuevo STOP),4 HTTP,4 readback,2 adicionales del migrador y1 de encoding del deploy. Lint/typecheck/build aislado/secrets/diff/diferencial V1 PASS. Build fuera de Dropbox con WASM por bloqueo nativo; configuración temporal restaurada, sin cambios de dependencias ni tsconfig versionado.
 
-`scripts/auditar-v1-familias.mjs --no-write`:23 archivos V1 conservados;187 funciones GAS iguales contra baseline de sesión f273,47 acciones antiguas y51 funciones transporte; seis escenarios diferenciales VM idénticos (pedido unidad, granel100/250/1000, compras/admin legado y venta presencial granel). No se interpretan esos mocks como E2E remoto.
+Cobertura local de puerto:15 puntos de confirmación,13 cancelación y15 reasignación, caída tras escritura, replay/conflicto, corrupción/autoría/bloqueos. Preparación: ausencia, parcial real, detalle incompatible, stock/precio/identidad/apertura diferentes, operación/asignación/movimiento existente, corrupción de plan/readback y caída tras cada hoja. La suite reproduce rechazos esperados; no convierte C5 real en READY ni oculta el enum faltante en el mock inicial.
 
-Readback de CellData de las18 pestañas antes/final, incluyendo valores ingresados, efectivos, formatos y validaciones, produjo la misma huella FNV64 sobre JSON canónico: **a1f772fe7d5c1040**. Los teléfonos/formulas originales y todos los valores recuperados se preservaron. La comparación fue read-only; no constituye backup ni prueba de atomicidad. No se cambiaron stock/costo/precio comerciales.
+Evidencia privada: c5-recuperacion-readback.json, c5-preparacion-recovery-primera.json, c5-preparacion-recovery-replay.json, c5-recovery-backup-evidencia.json, c5-recovery-antes-nativo.json, c5-recovery-stop-final-nativo.json, c5-recovery-stop-integridad.json, e2e-familias-c5-preparacion-recuperada.json y logs QA/deploy. El checkpoint fallido v22 original también se conserva. Datos/URLs privadas/tokens no se versionan.
 
-La igualdad de CellData también se comprobó por comparación canónica exacta, además de la huella. Verificación GET-only del backend v20: catálogo, productos admin, tres cabeceras de compra y sus detalles idénticos al readback conservado del cierre previo. SHA256 de catálogo: `23c00f8584db2c96fcabe7f28d32bcaae183f7c15846b2885b31b5c55502c9e4`. Familias0 y auditoría familiar válida. No se ejecutaron confirmaciones/cancelaciones/compras/ventas reales V1.
+## 10. Archivos pendientes
 
-## 8. E2E, recuperación y cleanup
+Scripts: apps-script-pedidos.gs, generar-durable-c5-gs.mjs, e2e-familias-c5.mjs, deploy-apps-script-test.ps1, auditar-v1-familias.mjs y lib/familias-c5.mjs, lib/http-test-c5.mjs, lib/readback-familias-c5.mjs, lib/auditoria-guardrails-c5.mjs.
 
-E2E real A4+B2, mixto, insuficiencia, granel, familia desactivada, timeout/caídas, reasignación y cancelación: **NO ejecutados** por STOP. No se crearon endpoints ni fixtures `FAM-QA-C5-*`, `PROD-QA-C5-*` o `PED-QA-C5-*`. Cleanup C5:0 registros; no había efectos C5 que neutralizar. No se borró ni ocultó evidencia previa.
+Dominio: src/lib/familias/esquemaDurableV2.ts (metadata opcional de movimiento V1 mixto). Fuentes C1/C2/C4 y flujos públicos conservados.
 
-## 9. Fases, archivos y siguiente paso
+Tests: familias-c5-gas.test.mjs, familias-c5-http.test.mjs, familias-c5-readback.test.mjs, familias-c5-preflight.test.mjs, preparacion-fixture-c5.test.mjs, deploy-apps-script-test.test.mjs, helpers/sheets-c5-escenario.mjs, fixtures/preparacion-c5-v22.gs, pedido-familia-c1.test.mjs, asignacion-familia-c2.test.mjs, familias-durable-c4.test.mjs y remediacion-c5.test.mjs (solo línea vacía final).
 
-| Fase C5 | Estado |
-|---|---|
-| A |Análisis/contrato local completo; puerto real pendiente|
-| B |Preflight real leído y detenido por bloqueos|
-| C–Q |No ejecutadas remotamente; D/E preparados solo con mocks|
-| R |Informe y documentos vivos actualizados|
-| S |QA local PASS; integración/E2E TEST bloqueados|
+Documentos: DATA_MODEL, DECISIONS, PROJECT_STATE, TASKS, TEST_PLAN, CHANGELOG y este informe. Total29 archivos. No UI, tienda, carrito, transportes públicos, setup, fotos, datos comerciales ni dependencias nuevos.
 
-Archivos modificados/creados: `src/lib/familias/adaptadorDurableV2.ts`, `src/lib/familias/esquemaDurableV2.ts`, `scripts/lib/familias-c5.mjs`, `tests/familias-durable-c4.test.mjs`, `tests/familias-c5-preflight.test.mjs`; DATA_MODEL, DECISIONS, PROJECT_STATE, TASKS, TEST_PLAN, CHANGELOG y este informe. No cambios de secretos, UI, flujos V1 ni backend desplegable.
+## 11. Próximo paso seguro
 
-Commit/push: **0**, porque la condición solicitada «si todo pasa» no se cumplió para C5 real. HEAD se conserva; cambios locales revisables sin stage. Main local/remoto conserva `f203e0c1f1d74ffd9e826032a8c0a60df4ce6c3f`.
+1. Mantener bloqueados PED-QA-C5-ECO-PRINCIPAL y ambos SKU; no reintentar ni ejecutar cleanup automáticamente.
+2. Corregir localmente el mapeo del tipo moderno al campo legacy, modelando TODAS las validaciones nativas de las filas a escribir y prevalidándolas antes de efectos. Conservar tipo_movimiento/metadata/hash del contrato C4; no cambiar el enum ni degradar autoría.
+3. Diseñar una reconciliación QA específica del movimiento parcial mediante plan/IDs/fecha/snapshots/readback, preservando asignaciones e histórico. Si la evidencia no alcanza, exigir revisión, sin rellenar por suposición.
+4. Antes de cualquier escritura, crear otra copia verificada del estado actual y conservar código v23. Deploy TEST coordinado solo después de QA; no tocar Production.
+5. Reconciliar con certeza y reanudar los checkpoints explícitamente: A4+B2, cancelación/reasignación, mixto, granel, D50, faults/recovery, cleanup, readback y cierre Git.
 
-**Próximo paso exacto:** auditar los movimientos59/60 y ambos diarios V1 con su compra/pedido/evidencia originales; definir una remediación explícitamente autorizada que conserve todas las líneas y trazabilidad. No renumerar/borrar ni resolver automáticamente el diario. Después repetir preflight. Solo con preflight válido: completar puerto y QA local, backup nativo verificado, migración/readback, backup v20 y deploy TEST, E2E aislado/cleanup/readback según el orden C5 original.
+No hay HUMAN_GATE de familia desactivada: D50 PERMITIR_SNAPSHOT sigue cerrada. El bloqueo actual es técnico. La preparación es un resultado acreditado, pero el mismo archivo GAS contiene el puerto incompleto; no se hizo un commit final C5 ni se declaró árbol limpio.
 
-PERMITIR_SNAPSHOT ya no es HUMAN_GATE. Siguen pendientes la acreditación humana del mapa comercial y revisión visual/funcional antes de activación; no se cargó ese mapa. F10 sigue1 READY/19 PENDING.
+## 12. Guardrails
 
-**Guardrails:** main intacto; Production y Google Sheet productiva intactas; TEST Sheet intacta en esta tarea; Apps Script TEST siguev20, sin deploy;0 datos comerciales/stock/costos/precios reales modificados;0 familias comerciales cargadas; catálogo/carrito/creación pública V2 sin activar.
+Main/origin main intactos (f203e0c1f1d74ffd9e826032a8c0a60df4ce6c3f). Production, Sheet productiva y Apps Script productivo intactos. Solo estructura y fixtures/esquema TEST C5 autorizados. Sin datos comerciales, stocks/costos/precios comerciales modificados, familias comerciales cargadas, catálogo/carrito familiar o pedidos públicos V2 activados. Sin nuevas marcas/SKU reales, fotos, caja, usuarios ni conteo físico. F10 sin cambio de estado.

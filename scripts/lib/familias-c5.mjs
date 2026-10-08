@@ -1,4 +1,4 @@
-/** C5 parcial: preflight/planificador y migrador con puerto INYECTADO. Cero Google APIs. */
+/** C5: preflight/planificador y migrador con puerto INYECTADO. Cero Google APIs en el dominio. */
 import { COLUMNAS_ADITIVAS_C5, COLUMNAS_ASIGNACIONES_PEDIDO, COLUMNAS_DIARIO_REQUERIDAS_C5 } from '../../src/lib/familias/esquemaDurableV2.ts';
 import { obtenerBloqueosOperativos } from '../../src/lib/familias/adaptadorDurableV2.ts';
 import { revisionV1Acreditada } from '../../src/lib/familias/revisionV1.ts';
@@ -102,7 +102,7 @@ export function verificarBackupC5(antes, backup) {
     && firmaEstadoB2(antes.celdas) === firmaEstadoB2(backup.celdas));
 }
 
-/** Local/inyección solamente; no se ejecutó contra TEST. STOP precede incluso al backup. */
+/** STOP precede incluso al backup. Un ejecutor autorizado puede inyectar un puerto TEST real. */
 export async function prepararPedidoFamiliasC5Test(adapter) {
   const antes = await adapter.leer();
   const plan = planificarEsquemaPedidoFamiliasC5Test(antes.meta, antes.valores);
@@ -118,8 +118,13 @@ export async function prepararPedidoFamiliasC5Test(adapter) {
     for (let c = 0; c < matriz[r].length; c++)
       exigir((despues.valores[hoja]?.[r]?.[c] ?? '') === (matriz[r][c] ?? ''), 'STOP_C5_CELDA_HISTORICA_MODIFICADA');
   for (const [hoja, matriz] of Object.entries(antes.celdas)) for (let r = 0; r < matriz.length; r++)
-    for (let c = 0; c < matriz[r].length; c++)
+    for (let c = 0; c < matriz[r].length; c++) {
+      // Las lecturas de la cuadrícula completa incluyen headers vacíos reservados.
+      // Únicamente los headers añadidos por ESTE plan pueden ocupar esas celdas.
+      const inicio = antes.valores[hoja][0].length;
+      if (r === 0 && c >= inicio && c < inicio + (plan.columnas[hoja]?.length ?? 0)) continue;
       exigir(firmaEstadoB2(despues.celdas?.[hoja]?.[r]?.[c] ?? {}) === firmaEstadoB2(matriz[r][c] ?? {}), 'STOP_C5_ESTRUCTURA_HISTORICA_MODIFICADA');
+    }
   exigir(planificarEsquemaPedidoFamiliasC5Test(despues.meta, despues.valores).cambios === 0, 'STOP_C5_READBACK_INCOMPLETO');
   return { cambios: plan.cambios, backup: backup.meta.spreadsheetId, readback: despues };
 }

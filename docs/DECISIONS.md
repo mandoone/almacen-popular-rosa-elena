@@ -1,5 +1,25 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D55 — Frontera V2/legacy y recuperación M-0 acreditada (2026-10-08)
+
+Autorización explícita de Omar: conservar tipos lógicos C4 y enums legacy de Sheet. Salidas usan salida/pedido; cancelaciones devolucion/cancelacion; reversión de reasignación devolucion/pedido. Metadata moderna y JSON conservan operación/hash/snapshots. Validación de fila/plan completo precede efectos; readback sigue obligatorio, sin ACID.
+
+Solo el prefijo M-0 acreditado del plan/key originales puede completarse en la misma fila bajo lock, sin borrar evidencia ni modificar stock. Auditoría precede reparación y replay reconoce esa fila. Reportes excluyen intenciones V2 hasta COMPLETADA, sin reinterpretar V1. [Contrato, pruebas y estado real](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## D54 — Recuperación QA acreditada y validaciones nativas (2026-10-08)
+
+Autorización explícita de Omar: conservar el mismo fixture, acreditar identidad/detalle/precios/snapshots y ausencia de efectos, completar solo campos QA vacíos mediante un plan previo auditado y crear la apertura sintética faltante. La preparación usa clasificaciones/lock/readback/replay; no asume apertura en confirmación ni modifica datos comerciales. Históricos con mojibake se conservan; el deploy lee UTF8 explícito.
+
+La recuperación pasó en TEST v23, supersediendo el rechazo local sin recuperación descrito al final deD53. El nuevo STOP está en el puerto de movimientos: ASIGNACION_V2 no pertenece al enum legacy tipo. Se preservan diario/asignaciones/fila parcial y bloqueos; no se modifica validación ni se repara automáticamente. D50 PERMITIR_SNAPSHOT continúa cerrada. [Evidencia y siguiente paso técnico](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## D53 — Puerto durable C5 aislado y compilación GAS (2026-10-08)
+
+El mismo dominio C1/C2/C4 se transpila a ES2019 síncrono, con SHA256 equivalente y sin reescribir el motor. GAS no admite los campos de clase emitidos inicialmente con ES2022; ese push fue rechazado antes de crear versión. El puerto real preserva diario previo a efectos, IDs deterministas, CAS fila+recibo, readback y bloqueos bajo LockService. No se afirma ACID.
+
+Las acciones nuevas exigen token, APP_ENV TEST, ID/nombre exactos y prefijos QA C5. Ninguna ruta Next pública las usa. Movimientos conservan columnas y metadata JSON versionada, incluyendo idempotency_key cuando C4 lo incluye en una línea V1 mixta. Incertidumbre de autoría bloquea; la reconciliación QA solo restaura un recibo previamente auditado con igualdad exacta, nunca reconstruye stock. Cleanup exige reversión durable previa y conserva evidencia. [Contrato y estado](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+Estado histórico previo aD54: TEST v22, E2E detenido por cabecera QA parcial y contexto faltante antes de efectos. No se acredita una preparación únicamente por existir su cabecera, ni se reconstruyen campos faltantes. Rechazo añadido localmente, sin deploy tras STOP. La política comercial D50 no cambia.
+
 ## D52 — Acreditación aditiva de revisiones V1 y movimiento canónico (2026-10-07)
 
 Autorización expresa de Omar: preservar REQUIERE_REVISION y todos los14 campos originales, acreditar únicamente CREACION_V1_ACREDITADA/FALLO_PARCIAL_V1_ACREDITADO con evidencia derivada y SHA256. Resolución válida libera bloqueo; PREPARADA/APLICANDO, desconocidos, duplicados y corruptos permanecen bloqueados. id_movimiento es alias legado no necesariamente único; movimiento_id moderno es único, obligatorio para nuevos efectos V2. Dos IDs corregidos solo en TEST con backup/readback; no se borró histórico. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
@@ -21,9 +41,11 @@ El adaptador local registra PERMITIR_SNAPSHOT en el plan cuando encuentra la fam
 
 ## D51 — Esquema mínimo C5 y STOP antes de escritura (2026-10-07)
 
-Conservar revisiones/recibos por SKU y estado/puntero por pedido. Reutilizar apertura_id existente y las columnas del diario; ASIGNACIONES_PEDIDO conserva las 13 columnas C1. Metadatos adicionales del movimiento caben en observacion JSON versionado. [Contrato local](DATA_MODEL.md#esquema-durable-c5--diseño-local-no-migrado-2026-10-07-d51).
+Conservar revisiones/recibos por SKU y estado/puntero por pedido. Reutilizar apertura_id existente y las columnas del diario; ASIGNACIONES_PEDIDO conserva las13 columnas C1. Metadata de movimiento cabe en observacion JSON versionado. [Contrato actual TEST](DATA_MODEL.md#esquema-durable-c5--test-aislado-2026-10-08-d51d53).
 
 Preflight encontró un ID de movimiento duplicado en ambos alias históricos y dos diarios V1 REQUIERE_REVISION, cuyo modelo produce bloqueo global C4. Aunque preexistentes, no se deduplican ni se excluyen para hacer pasar fixtures. Se aplican las stop conditions de Omar: C5 remoto detenido antes de backup/migración/deploy. Continuar solo con contrato, política, mocks y documentación locales.
+
+Ese STOP inicial es histórico y quedó resuelto por D52; no se repite su remediación. La continuación C5 migró esquema y desplegó v22, pero se detuvo después por preparación QA parcial. Se conserva evidencia y estado, sin afirmar E2E completo.
 
 ## D49 — Persistencia durable mixta, con evidencia de autoría (2026-10-07)
 

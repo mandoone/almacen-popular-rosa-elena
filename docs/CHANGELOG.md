@@ -1,5 +1,15 @@
 # CHANGELOG.md — Hitos del proyecto
 
+2026-10-08: v23 reproducible desde Git, frontera persistente V2/legacy y recuperación M-0 acreditada verificadas localmente;1015 tests PASS y backup nativo adicional comprobado. Este checkpoint precede deploy/recovery remotos; no declara C5 completo. [Acta](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## 2026-10-08 — Preparación C5 recuperada; STOP de movimiento
+
+Respaldo local25 archivos, causa de preparación reproducida, backup nativo pre-recovery19 hojas y TEST v22→v23. Misma cabecera QA recuperada en cuatro campos, apertura sintética creada y replay0; fecha/detalle/snapshot/stock conservados. Confirmación detuvo en enum legacy tipo: diario APLICANDO,2 asignaciones y1 movimiento parcial; sin descuento ni escrituras posteriores. QA982 PASS, histórico/comercial intacto; sin cleanup ni commit/push final. [Informe y bloqueo actual](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## 2026-10-08 — C5 integración TEST, STOP de E2E
+
+Puerto durable generado desde C4, migración TEST19 pestañas/26 headers con backup/readback y repetición0; Apps Script v20→v21→v22. E2E detenido por cabecera QA parcial sin apertura,409 antes de diario/stock;0 efectos V2. Guard de preparación parcial y960 tests locales PASS, sin nuevo deploy después de STOP. Datos comerciales y catálogo V1 idénticos; árbol conservado sin commit/push C5. [Evidencia y estado retenido](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## 2026-10-07 — Remediación previa C5 autorizada TEST
 
 Preserva doce archivos C5; acredita dos movimientos/creaciones V1 y añade resolución auditable sin cambiar estados históricos. Backup nativo verificado;20 celdas autorizadas/0 ajenas, replay0 y preflight limpio. Apps Script permanece v20; C5 continúa después del checkpoint. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).

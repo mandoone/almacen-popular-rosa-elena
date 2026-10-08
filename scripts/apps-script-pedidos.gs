@@ -470,6 +470,19 @@ function doPost(e) {
       case 'prepararGranelTest':
         exigirToken_(body.token);
         return jsonOk_(prepararGranelTest_());
+      case 'prepararFixturePedidoV2Test':
+      case 'confirmarPedidoV2Test':
+      case 'cancelarPedidoV2Test':
+      case 'reasignarPedidoV2Test':
+      case 'obtenerOperacionV2Test':
+      case 'obtenerAsignacionesPedidoV2Test':
+      case 'verificarOperacionV2Test':
+      case 'configurarFixtureC5Test':
+      case 'reconciliarFixtureC5Test':
+      case 'recuperarMovimientoParcialC5Test':
+      case 'cleanupFixturesC5Test':
+        exigirToken_(body.token);
+        return jsonOk_(ejecutarAccionDurableC5Test_(action, body));
       case 'prepararDisponibilidadProductosTest':
         exigirToken_(body.token);
         validarEntornoTestFase78_();
@@ -1312,6 +1325,8 @@ function prepararPlanStockPedido_(ss, tipo, idPedido, actor, estadoAnterior, aho
       'El pedido no tiene detalle para mover stock.', 409);
   }
 
+  exigirSinBloqueoDurableC5_(ss, idPedido, ids);
+
   var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
   var cId = col_(productos, 'id_producto');
   var cStock = col_(productos, 'stock_actual');
@@ -1489,6 +1504,7 @@ function aplicarPlanOperacionPedido_(ss, operacion, plan) {
     lanzarOperacionPedido_('CONSISTENCIA_INCIERTA',
       'El snapshot durable contiene valores numéricos inválidos.', 500);
   }
+  exigirSinBloqueoDurableC5_(ss, plan.id_pedido, plan.productos.map(function (p) { return p.id_producto; }));
   var productos = leerHoja_(ss, HOJAS.PRODUCTOS);
   var cId = col_(productos, 'id_producto');
   var cStock = col_(productos, 'stock_actual');
@@ -1914,6 +1930,7 @@ function normalizarEntradaVentaPresencial_(body) {
 
 function persistirVentaPresencial_(entrada) {
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  exigirSinBloqueoDurableC5_(ss, '', entrada.lineas.map(function (p) { return p.producto_id; }));
   var aperturas = leerHoja_(ss, HOJAS.APERTURAS);
   validarEncabezadosAperturas_(aperturas);
   var apertura = obtenerAperturaEnHoja_(aperturas, entrada.apertura_id).apertura;
@@ -2668,6 +2685,8 @@ function persistirCompraIdempotente_(entrada, key) {
     return obtenerCompraDesdeHojas_(compras, detalles, limpiar_(previa.compra_id));
   }
 
+  exigirSinBloqueoDurableC5_(ss, '', entrada.lineas.map(function (p) { return p.producto_id; }));
+
   var cId = col_(productos, 'id_producto');
   var cActivo = col_(productos, 'activo');
   var cNombre = col_(productos, 'nombre');
@@ -2894,12 +2913,13 @@ function listarHistorialCostos_(productoId, desde, hasta) {
 
 function listarMovimientosStockAdmin_(productoId, desde, hasta) {
   var hoja = leerHoja_(SpreadsheetApp.openById(SPREADSHEET_ID), HOJAS.MOVIMIENTOS_STOCK);
+  var operacionesV2Reporte = operacionesMovimientoReporteC5_();
   productoId = limpiar_(productoId);
   return hoja.filas.map(function (fila) { return serializarRegistroF78_(filaAObjeto_(hoja, fila)); })
     .filter(function (movimiento) {
       var id = limpiar_(movimiento.movimiento_id || movimiento.id_movimiento);
       var prod = limpiar_(movimiento.producto_id || movimiento.id_producto);
-      return id && (!productoId || prod === productoId) && dentroPeriodo_(movimiento.fecha_hora, desde, hasta);
+      return id && (!productoId || prod === productoId) && dentroPeriodo_(movimiento.fecha_hora, desde, hasta) && movimientoCompletadoReporteC5_(movimiento, operacionesV2Reporte);
     }).reverse();
 }
 
@@ -2923,6 +2943,7 @@ function actualizarProductoAdmin_(body) {
   try {
     return ejecutarIdempotenteBajoLock_('actualizarProductoAdmin', body.idempotency_key, entrada, function () {
       var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      exigirSinBloqueoDurableC5_(ss, '', [entrada.producto_id]);
       var hoja = leerHoja_(ss, HOJAS.PRODUCTOS);
       var auditoria = leerHoja_(ss, HOJAS.AUDITORIA_PRODUCTOS);
       var costos = leerHoja_(ss, HOJAS.HISTORIAL_COSTOS);
@@ -3092,6 +3113,7 @@ function ajustarStockAdmin_(body) {
       }
     }
     var ultimaFilaMovimiento = movimientos.sheet.getLastRow();
+    exigirSinBloqueoDurableC5_(ss, '', [entrada.producto_id]);
     var fila = buscarFila_(productos, col_(productos, 'id_producto'), entrada.producto_id);
     if (fila === -1) lanzar_('Producto no encontrado.', 404);
     var cStock = col_(productos, 'stock_actual');
@@ -4816,4 +4838,1899 @@ function mutarFamiliaProductoAdmin_(body, crear) {
       throw err;
     }
   } finally { lock.releaseLock(); }
+}
+
+// INICIO DOMINIO DURABLE C5 GENERADO
+var DominioPedidoDurableC5=(function(){
+function structuredClone(v){return JSON.parse(JSON.stringify(v));}
+var factories={
+"granel.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.esGranel = esGranel;
+exports.gramosValidos = gramosValidos;
+exports.cantidadStock = cantidadStock;
+exports.subtotalVenta = subtotalVenta;
+exports.formatoPeso = formatoPeso;
+exports.formatoCantidad = formatoCantidad;
+exports.referenciaPrecio = referenciaPrecio;
+exports.formatoDetalle = formatoDetalle;
+function esGranel(p) { return p.modo_venta === 'GRANEL'; }
+function gramosValidos(n) { return Number.isSafeInteger(n) && n > 0; }
+function cantidadStock(p, cantidad) {
+    if (!esGranel(p))
+        return cantidad;
+    if (!gramosValidos(cantidad) || ![100, 250, 1000].includes(Number(p.gramos_unidad_stock)))
+        throw new Error('Peso o base de stock inválidos.');
+    return cantidad / Number(p.gramos_unidad_stock);
+}
+function subtotalVenta(p, precio, cantidad) {
+    if (!esGranel(p))
+        return Math.round(precio * cantidad);
+    if (!gramosValidos(cantidad) || !gramosValidos(Number(p.gramos_referencia)) || !Number.isSafeInteger(precio) || precio <= 0 || !Number.isSafeInteger(precio * cantidad))
+        throw new Error('Referencia de precio o peso inválidos.');
+    const numerador = precio * cantidad, referencia = Number(p.gramos_referencia);
+    return Math.floor(numerador / referencia) + (numerador % referencia >= referencia / 2 ? 1 : 0);
+}
+function formatoPeso(g) { return g % 1000 === 0 ? `${g / 1000} kg` : `${g} g`; }
+function formatoCantidad(p, cantidad) { return esGranel(p) ? formatoPeso(cantidad) : String(cantidad); }
+function referenciaPrecio(p, precio) {
+    const valor = '$' + precio.toLocaleString('es-CL');
+    return esGranel(p) ? `${valor} / ${Number(p.gramos_referencia) === 1000 ? 'kg' : formatoPeso(Number(p.gramos_referencia))}` : valor;
+}
+function formatoDetalle(p) {
+    var _a;
+    return Number(p.gramos_solicitados) > 0 ? formatoPeso(Number(p.gramos_solicitados)) : `${p.cantidad} ${(_a = p.unidad_medida) !== null && _a !== void 0 ? _a : ''}`.trim();
+}
+
+},
+"familiasProducto.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.COLUMNAS_IDENTIDAD_SKU_FAMILIA = exports.COLUMNAS_FAMILIAS_PRODUCTO = void 0;
+exports.validarIdentidadSkuFisica = validarIdentidadSkuFisica;
+exports.validarFamiliaProducto = validarFamiliaProducto;
+exports.presentacionesEquivalentes = presentacionesEquivalentes;
+exports.validarRelacionSkuFamilia = validarRelacionSkuFamilia;
+exports.auditarModeloFamilias = auditarModeloFamilias;
+exports.agregarDisponibilidadFamilia = agregarDisponibilidadFamilia;
+exports.leerVistaFamiliasParalela = leerVistaFamiliasParalela;
+exports.auditarMapaFamiliasSku = auditarMapaFamiliasSku;
+exports.prepararCambioFamilia = prepararCambioFamilia;
+/** Fase A: contrato paralelo puro. No sustituye ninguna operación SKU_V1. */
+exports.COLUMNAS_FAMILIAS_PRODUCTO = [
+    'familia_id', 'activo', 'nombre_publico', 'categoria', 'precio_venta',
+    'modo_venta', 'unidad_venta', 'permite_decimal', 'paso_venta',
+    'gramos_referencia', 'contenido_cantidad', 'contenido_unidad',
+    'presentacion_publica', 'politica_marca', 'marca_publica', 'imagen_url',
+    'version_oferta', 'actualizado_en',
+];
+exports.COLUMNAS_IDENTIDAD_SKU_FAMILIA = [
+    'familia_id', 'marca', 'presentacion', 'contenido_cantidad', 'contenido_unidad',
+];
+function registro(valor) {
+    return valor !== null && typeof valor === 'object' && !Array.isArray(valor)
+        ? valor : {};
+}
+function texto(valor) { return typeof valor === 'string' ? valor.trim() : ''; }
+function vacio(valor) { return valor === undefined || valor === null || (typeof valor === 'string' && !valor.trim()); }
+function normalizado(valor) { return texto(valor).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+function positivo(valor) { return typeof valor === 'number' && Number.isFinite(valor) && valor > 0; }
+function enteroPositivo(valor) { return positivo(valor) && Number.isSafeInteger(valor); }
+function resultado(inconsistencias) { return { valido: inconsistencias.length === 0, inconsistencias }; }
+/** Identidad opcional del maestro físico; no consulta familias ni infiere datos. */
+function validarIdentidadSkuFisica(valor) {
+    const sku = registro(valor), inconsistencias = [];
+    const error = (codigo, campo) => inconsistencias.push({ codigo, campo, producto_id: texto(sku.id_producto) });
+    if (!vacio(sku.familia_id) && (typeof sku.familia_id !== 'string' || !/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id))))
+        error('FAMILIA_ID_INVALIDO', 'familia_id');
+    for (const [campo, maximo] of [['marca', 120], ['presentacion', 200]]) {
+        if (!vacio(sku[campo]) && (typeof sku[campo] !== 'string' || texto(sku[campo]).length > maximo || /^=|[\u0000-\u001f]/.test(texto(sku[campo]))))
+            error('TEXTO_IDENTIDAD_INVALIDO', campo);
+    }
+    if (!vacio(sku.contenido_cantidad) && (!positivo(sku.contenido_cantidad) || sku.contenido_cantidad > Number.MAX_SAFE_INTEGER))
+        error('CONTENIDO_INVALIDO', 'contenido_cantidad');
+    if (!vacio(sku.contenido_unidad) && !['g', 'ml', 'unidad'].includes(sku.contenido_unidad))
+        error('UNIDAD_CONTENIDO_INVALIDA', 'contenido_unidad');
+    return resultado(inconsistencias);
+}
+function validarFamiliaProducto(valor) {
+    const f = registro(valor), inconsistencias = [];
+    const error = (codigo, campo) => inconsistencias.push({ codigo, campo, familia_id: texto(f.familia_id) });
+    if (!/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(f.familia_id)))
+        error('FAMILIA_ID_INVALIDO', 'familia_id');
+    for (const campo of ['stock_actual', 'precio_costo', 'proveedor']) {
+        if (Object.prototype.hasOwnProperty.call(f, campo))
+            error('CAMPO_FISICO_EN_FAMILIA', campo);
+    }
+    if (!['SI', 'NO'].includes(f.activo))
+        error('ACTIVO_INVALIDO', 'activo');
+    if (!texto(f.nombre_publico) || texto(f.nombre_publico).length > 200)
+        error('NOMBRE_PUBLICO_INVALIDO', 'nombre_publico');
+    if (!['granel', 'alimentos', 'limpieza', 'higiene'].includes(normalizado(f.categoria)))
+        error('CATEGORIA_INVALIDA', 'categoria');
+    if (typeof f.precio_venta !== 'number' || !Number.isSafeInteger(f.precio_venta) || f.precio_venta < 0)
+        error('PRECIO_FAMILIAR_INVALIDO', 'precio_venta');
+    if (!enteroPositivo(f.version_oferta))
+        error('VERSION_OFERTA_INVALIDA', 'version_oferta');
+    if (!['VARIABLE', 'EXPLICITA', 'NO_APLICA'].includes(f.politica_marca))
+        error('POLITICA_MARCA_INVALIDA', 'politica_marca');
+    if (f.politica_marca === 'EXPLICITA' && !texto(f.marca_publica))
+        error('MARCA_PUBLICA_REQUERIDA', 'marca_publica');
+    if (f.politica_marca !== 'EXPLICITA' && !vacio(f.marca_publica))
+        error('MARCA_PUBLICA_NO_CORRESPONDE', 'marca_publica');
+    if (!vacio(f.marca_publica) && (typeof f.marca_publica !== 'string' || texto(f.marca_publica).length > 120))
+        error('MARCA_PUBLICA_INVALIDA', 'marca_publica');
+    if (!texto(f.presentacion_publica) || texto(f.presentacion_publica).length > 200)
+        error('PRESENTACION_PUBLICA_INVALIDA', 'presentacion_publica');
+    if (!vacio(f.imagen_url) && (typeof f.imagen_url !== 'string' || f.imagen_url.length > 500))
+        error('IMAGEN_INVALIDA', 'imagen_url');
+    if (!vacio(f.actualizado_en) && typeof f.actualizado_en !== 'string')
+        error('FECHA_AUDITORIA_INVALIDA', 'actualizado_en');
+    if (!['SI', 'NO'].includes(f.permite_decimal))
+        error('DECIMALES_INVALIDOS', 'permite_decimal');
+    if (!positivo(f.paso_venta))
+        error('PASO_VENTA_INVALIDO', 'paso_venta');
+    if (f.modo_venta === 'UNIDAD') {
+        if (!['unidad', 'pack', 'kg', 'litro'].includes(f.unidad_venta))
+            error('UNIDAD_VENTA_INVALIDA', 'unidad_venta');
+        if (!positivo(f.contenido_cantidad))
+            error('CONTENIDO_INVALIDO', 'contenido_cantidad');
+        if (!['g', 'ml', 'unidad'].includes(f.contenido_unidad))
+            error('UNIDAD_CONTENIDO_INVALIDA', 'contenido_unidad');
+        if (f.permite_decimal === 'NO' && f.paso_venta !== 1)
+            error('PASO_ENTERO_INVALIDO', 'paso_venta');
+        if (!vacio(f.gramos_referencia))
+            error('REFERENCIA_GRANEL_NO_CORRESPONDE', 'gramos_referencia');
+    }
+    else if (f.modo_venta === 'GRANEL') {
+        if (f.unidad_venta !== 'g' || f.permite_decimal !== 'NO' || f.paso_venta !== 1)
+            error('ENTRADA_GRANEL_INVALIDA', 'unidad_venta');
+        if (!enteroPositivo(f.gramos_referencia))
+            error('REFERENCIA_GRANEL_INVALIDA', 'gramos_referencia');
+        if (!vacio(f.contenido_cantidad) || !vacio(f.contenido_unidad))
+            error('CONTENIDO_ENVASADO_EN_GRANEL', 'contenido_cantidad');
+    }
+    else
+        error('MODO_VENTA_INVALIDO', 'modo_venta');
+    return resultado(inconsistencias);
+}
+/** Solo compara contenido estructurado; jamás deduce equivalencia desde nombres. */
+function presentacionesEquivalentes(familia, sku) {
+    return positivo(familia.contenido_cantidad) && positivo(sku.contenido_cantidad)
+        && familia.contenido_cantidad === sku.contenido_cantidad
+        && familia.contenido_unidad === sku.contenido_unidad;
+}
+function validarRelacionSkuFamilia(sku, familia) {
+    var _a;
+    if (vacio(sku.familia_id))
+        return resultado([]); // Legado V1: no exige campos nuevos.
+    const inconsistencias = [];
+    const error = (codigo, campo) => inconsistencias.push({ codigo, campo, familia_id: texto(sku.familia_id), producto_id: texto(sku.id_producto) });
+    if (!/^FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}$/.test(texto(sku.familia_id)))
+        error('FAMILIA_ID_INVALIDO', 'familia_id');
+    if (!familia || texto(familia.familia_id) !== texto(sku.familia_id)) {
+        error('FAMILIA_INEXISTENTE', 'familia_id');
+        return resultado(inconsistencias);
+    }
+    inconsistencias.push(...validarFamiliaProducto(familia).inconsistencias);
+    if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(texto(sku.id_producto)))
+        error('SKU_ID_INVALIDO', 'id_producto');
+    if (normalizado(sku.categoria) !== normalizado(familia.categoria))
+        error('CATEGORIA_NO_EQUIVALENTE', 'categoria');
+    const modo = vacio(sku.modo_venta) ? 'UNIDAD' : sku.modo_venta;
+    if (modo !== familia.modo_venta)
+        error('MODO_NO_EQUIVALENTE', 'modo_venta');
+    if (!vacio(sku.permite_decimal) && !['SI', 'NO', true, false].includes(sku.permite_decimal))
+        error('DECIMALES_SKU_INVALIDOS', 'permite_decimal');
+    if (!texto(sku.presentacion))
+        error('PRESENTACION_FISICA_REQUERIDA', 'presentacion');
+    if (familia.politica_marca !== 'NO_APLICA' && !texto(sku.marca))
+        error('MARCA_FISICA_REQUERIDA', 'marca');
+    if (familia.politica_marca === 'EXPLICITA' && normalizado(sku.marca) !== normalizado(familia.marca_publica))
+        error('MARCA_NO_EQUIVALENTE', 'marca');
+    if (familia.modo_venta === 'UNIDAD') {
+        if (!presentacionesEquivalentes(familia, sku))
+            error('CONTENIDO_NO_EQUIVALENTE', 'contenido_cantidad');
+        if (sku.unidad_medida !== familia.unidad_venta)
+            error('UNIDAD_NO_EQUIVALENTE', 'unidad_medida');
+        const decimal = sku.permite_decimal === true || sku.permite_decimal === 'SI';
+        if (decimal !== (familia.permite_decimal === 'SI') || ((_a = sku.paso_venta) !== null && _a !== void 0 ? _a : 1) !== familia.paso_venta)
+            error('REGLA_CANTIDAD_NO_EQUIVALENTE', 'paso_venta');
+    }
+    else if (familia.modo_venta === 'GRANEL') {
+        if (![100, 250, 1000].includes(Number(sku.gramos_unidad_stock)) || !enteroPositivo(sku.gramos_unidad_stock)
+            || !['kg', 'unidad'].includes(sku.unidad_medida) || (sku.unidad_medida === 'kg' && sku.gramos_unidad_stock !== 1000))
+            error('BASE_STOCK_GRANEL_INVALIDA', 'gramos_unidad_stock');
+        if (!enteroPositivo(sku.gramos_referencia))
+            error('REFERENCIA_SKU_GRANEL_INVALIDA', 'gramos_referencia');
+        // Referencia de precio legada y paso nativo NO limitan gramos libres de la familia.
+    }
+    return resultado(inconsistencias);
+}
+function auditarModeloFamilias(familias, skus) {
+    const inconsistencias = [];
+    const familiasVistas = new Set(), skuVistos = new Set();
+    for (const familia of familias) {
+        inconsistencias.push(...validarFamiliaProducto(familia).inconsistencias);
+        const id = texto(familia.familia_id);
+        if (familiasVistas.has(id))
+            inconsistencias.push({ codigo: 'FAMILIA_DUPLICADA', familia_id: id });
+        familiasVistas.add(id);
+    }
+    for (const sku of skus) {
+        const id = texto(sku.id_producto);
+        if (skuVistos.has(id))
+            inconsistencias.push({ codigo: 'SKU_DUPLICADO', producto_id: id, familia_id: texto(sku.familia_id) });
+        skuVistos.add(id);
+        inconsistencias.push(...validarRelacionSkuFamilia(sku, familias.find(f => texto(f.familia_id) === texto(sku.familia_id))).inconsistencias);
+    }
+    return resultado(inconsistencias);
+}
+/** Vista interna de diagnóstico; no es una reserva ni un contrato de catálogo público. */
+function agregarDisponibilidadFamilia(familia, skus, contexto = {}) {
+    var _a, _b;
+    const inconsistencias = [...validarFamiliaProducto(familia).inconsistencias];
+    const sku_elegibles = [];
+    const miembros = skus.filter(s => !vacio(s.familia_id) && texto(s.familia_id) === texto(familia.familia_id));
+    const ids = skus.map(s => texto(s.id_producto));
+    const duplicados = new Set(miembros.map(s => texto(s.id_producto)).filter(id => ids.indexOf(id) !== ids.lastIndexOf(id)));
+    for (const id of duplicados)
+        inconsistencias.push({ codigo: 'SKU_DUPLICADO', familia_id: familia.familia_id, producto_id: id });
+    const aperturaValida = !vacio(contexto.apertura_id) && /^APE-\d{8}$/.test(texto(contexto.apertura_id));
+    if (!vacio(contexto.apertura_id) && !aperturaValida)
+        inconsistencias.push({ codigo: 'APERTURA_INVALIDA', campo: 'apertura_id', familia_id: familia.familia_id });
+    const escala = familia.modo_venta === 'GRANEL' || familia.permite_decimal === 'NO' ? 1 : 1000;
+    let suma = 0;
+    for (const sku of miembros) {
+        const relacion = validarRelacionSkuFamilia(sku, familia);
+        inconsistencias.push(...relacion.inconsistencias);
+        if (!relacion.valido || duplicados.has(texto(sku.id_producto)))
+            continue;
+        const error = (codigo, campo) => inconsistencias.push({ codigo, campo, familia_id: familia.familia_id, producto_id: sku.id_producto });
+        if (!['SI', 'NO'].includes(sku.activo)) {
+            error('SKU_ACTIVO_INVALIDO', 'activo');
+            continue;
+        }
+        const tipo = vacio(sku.tipo_disponibilidad) ? 'REGULAR' : (_a = sku.tipo_disponibilidad) !== null && _a !== void 0 ? _a : 'REGULAR';
+        if (!['REGULAR', 'POR_APERTURA'].includes(tipo)) {
+            error('TIPO_DISPONIBILIDAD_INVALIDO', 'tipo_disponibilidad');
+            continue;
+        }
+        const stock = sku.stock_actual;
+        const cantidad = typeof stock === 'number' ? stock * (familia.modo_venta === 'GRANEL' ? Number(sku.gramos_unidad_stock) : escala) : NaN;
+        if (!Number.isFinite(cantidad) || cantidad < 0 || !Number.isSafeInteger(Math.round(cantidad)) || Math.abs(cantidad - Math.round(cantidad)) > 1e-7) {
+            error('STOCK_INVALIDO', 'stock_actual');
+            continue;
+        }
+        if (sku.activo !== 'SI' || familia.activo !== 'SI' || (tipo === 'POR_APERTURA' && (!aperturaValida || !((_b = contexto.sku_habilitados) === null || _b === void 0 ? void 0 : _b.some(id => texto(id) === texto(sku.id_producto))))))
+            continue;
+        suma += Math.round(cantidad);
+        sku_elegibles.push(texto(sku.id_producto));
+    }
+    if (!Number.isSafeInteger(suma)) {
+        inconsistencias.push({ codigo: 'AGREGADO_FUERA_RANGO', familia_id: familia.familia_id });
+        suma = 0;
+    }
+    const cantidad_agregada = suma / escala;
+    const precio = Number.isSafeInteger(familia.precio_venta) && familia.precio_venta >= 0 ? familia.precio_venta : null;
+    return {
+        familia_id: texto(familia.familia_id), precio_venta: precio, cantidad_agregada,
+        unidad_disponibilidad: familia.modo_venta === 'GRANEL' ? 'g' : familia.unidad_venta,
+        disponible: inconsistencias.length === 0 && familia.activo === 'SI' && precio !== null && precio > 0 && cantidad_agregada >= familia.paso_venta,
+        sku_elegibles, inconsistencias,
+    };
+}
+function leerVistaFamiliasParalela(familias, skus, contexto = {}) {
+    const auditoria = auditarModeloFamilias(familias, skus);
+    return {
+        auditoria,
+        familias: familias.map(f => {
+            const vista = agregarDisponibilidadFamilia(f, skus, contexto);
+            if (!auditoria.valido)
+                vista.disponible = false; // Diagnóstico incompleto nunca se anuncia vendible.
+            return vista;
+        }),
+    };
+}
+/** Dry-run administrativo: informa problemas sin cambiar ni inferir identidad. */
+function auditarMapaFamiliasSku(familias, skus, contexto = {}) {
+    const inconsistencias = [...auditarModeloFamilias(familias, skus).inconsistencias];
+    for (const f of familias) {
+        const miembros = skus.filter(s => s.familia_id === f.familia_id);
+        if (!miembros.length)
+            inconsistencias.push({ codigo: 'FAMILIA_SIN_SKU', familia_id: f.familia_id });
+        for (const sku of miembros.filter(s => s.activo === 'NO'))
+            inconsistencias.push({ codigo: 'SKU_ASOCIADO_INACTIVO', familia_id: f.familia_id, producto_id: sku.id_producto });
+        const vista = agregarDisponibilidadFamilia(f, skus, contexto);
+        inconsistencias.push(...vista.inconsistencias);
+        if (f.activo === 'SI' && !vista.disponible)
+            inconsistencias.push({ codigo: 'FAMILIA_ACTIVA_SIN_SKU_ELEGIBLE', familia_id: f.familia_id });
+    }
+    return resultado(inconsistencias.filter((i, n, todos) => todos.findIndex(j => JSON.stringify(j) === JSON.stringify(i)) === n));
+}
+/** Versionado de oferta independiente de costos/stock. Versiones gestionadas por servidor. */
+function prepararCambioFamilia(anterior, entrada, versionEsperada) {
+    var _a;
+    const campos = exports.COLUMNAS_FAMILIAS_PRODUCTO.filter(c => c !== 'actualizado_en' && c !== 'version_oferta');
+    if (Object.keys(entrada).some(c => !campos.includes(c)))
+        throw new Error('CAMPO_FAMILIA_NO_EDITABLE');
+    if (anterior && (entrada.familia_id !== anterior.familia_id || versionEsperada !== anterior.version_oferta))
+        throw new Error('CONFLICTO_VERSION_FAMILIA');
+    const nuevo = { ...anterior, ...entrada, version_oferta: (_a = anterior === null || anterior === void 0 ? void 0 : anterior.version_oferta) !== null && _a !== void 0 ? _a : 1 };
+    if (Object.values(entrada).some(v => typeof v === 'string' && /^=|[\u0000-\u001f]/.test(v.trim())))
+        throw new Error('TEXTO_FAMILIA_INVALIDO');
+    for (const c of campos)
+        if (typeof nuevo[c] === 'string')
+            nuevo[c] = nuevo[c].trim();
+    // Cualquier cambio de oferta invalida snapshots futuros; no se sincronizan SKU.
+    if (anterior && campos.some(c => { var _a, _b; return ((_a = anterior[c]) !== null && _a !== void 0 ? _a : '') !== ((_b = nuevo[c]) !== null && _b !== void 0 ? _b : ''); }))
+        nuevo.version_oferta++;
+    const validacion = validarFamiliaProducto(nuevo);
+    if (!validacion.valido)
+        throw new Error(validacion.inconsistencias.map(i => i.codigo).join(','));
+    if (nuevo.activo === 'SI' && nuevo.precio_venta === 0)
+        throw new Error('PRECIO_FAMILIAR_NO_VENDIBLE');
+    return nuevo;
+}
+
+},
+"familias/sha256.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sha256Texto = sha256Texto;
+/** SHA256 síncrono puro para verificar evidencia también en el puerto GAS. No firma/autentica actores. */
+function sha256Texto(texto) {
+    const bytes = [];
+    for (const c of texto) {
+        const cp = c.codePointAt(0);
+        const n = cp >= 0xd800 && cp <= 0xdfff ? 0xfffd : cp;
+        if (n < 128)
+            bytes.push(n);
+        else if (n < 2048)
+            bytes.push(192 | n >> 6, 128 | n & 63);
+        else if (n < 65536)
+            bytes.push(224 | n >> 12, 128 | n >> 6 & 63, 128 | n & 63);
+        else
+            bytes.push(240 | n >> 18, 128 | n >> 12 & 63, 128 | n >> 6 & 63, 128 | n & 63);
+    }
+    const bits = bytes.length * 8;
+    bytes.push(128);
+    while (bytes.length % 64 !== 56)
+        bytes.push(0);
+    for (let i = 7; i >= 0; i--)
+        bytes.push(Math.floor(bits / 2 ** (i * 8)) & 255);
+    const k = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+    const h = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    const rr = (x, n) => x >>> n | x << (32 - n);
+    for (let offset = 0; offset < bytes.length; offset += 64) {
+        const w = Array(64).fill(0);
+        for (let i = 0; i < 16; i++)
+            w[i] = bytes[offset + i * 4] << 24 | bytes[offset + i * 4 + 1] << 16 | bytes[offset + i * 4 + 2] << 8 | bytes[offset + i * 4 + 3];
+        for (let i = 16; i < 64; i++) {
+            const x = w[i - 15], y = w[i - 2];
+            w[i] = (w[i - 16] + (rr(x, 7) ^ rr(x, 18) ^ x >>> 3) + w[i - 7] + (rr(y, 17) ^ rr(y, 19) ^ y >>> 10)) | 0;
+        }
+        let [a, b, c, d, e, f, g, z] = h;
+        for (let i = 0; i < 64; i++) {
+            const t1 = (z + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) | 0;
+            const t2 = ((rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+            z = g;
+            g = f;
+            f = e;
+            e = (d + t1) | 0;
+            d = c;
+            c = b;
+            b = a;
+            a = (t1 + t2) | 0;
+        }
+        [a, b, c, d, e, f, g, z].forEach((x, i) => { h[i] = (h[i] + x) | 0; });
+    }
+    return h.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+}
+
+},
+"familias/revisionV1.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.COLUMNAS_ORIGINALES_OPERACION = exports.COLUMNAS_RESOLUCION_REVISION = void 0;
+exports.canonRevision = canonRevision;
+exports.hashRevision = hashRevision;
+exports.hashOriginalOperacion = hashOriginalOperacion;
+exports.revisionV1Acreditada = revisionV1Acreditada;
+/** Acreditación aditiva: no modifica estado/paso/snapshot/resultado originales del diario V1. */
+const sha256_ts_1 = require("./sha256.ts");
+exports.COLUMNAS_RESOLUCION_REVISION = ['revision_resuelta', 'revision_tipo', 'revision_evidencia_hash', 'revision_detalle', 'revision_resuelta_por', 'revision_resuelta_en'];
+exports.COLUMNAS_ORIGINALES_OPERACION = ['operacion_id', 'idempotency_key', 'tipo_operacion', 'id_pedido', 'actor', 'estado_operacion', 'paso', 'payload_hash', 'snapshot_json', 'resultado_json', 'error_codigo', 'error_detalle', 'creado_en', 'actualizado_en'];
+function canonRevision(v) {
+    if (Array.isArray(v))
+        return '[' + v.map(canonRevision).join(',') + ']';
+    if (v && typeof v === 'object')
+        return '{' + Object.entries(v).filter(([, x]) => x !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([k, x]) => JSON.stringify(k) + ':' + canonRevision(x)).join(',') + '}';
+    return JSON.stringify(v);
+}
+function hashRevision(v) { return (0, sha256_ts_1.sha256Texto)(canonRevision(v)); }
+function hashOriginalOperacion(op) {
+    // Sheets serial y GET GAS representan el mismo timestamp sin alterar la celda original.
+    const fecha = (v) => typeof v === 'number'
+        ? new Date(Date.UTC(1899, 11, 30) + Math.round(v * 86400000)).toISOString().slice(0, 23)
+        : typeof v === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z?$/.test(v) ? v.slice(0, 23) : v;
+    return hashRevision(Object.fromEntries(exports.COLUMNAS_ORIGINALES_OPERACION.map(k => {
+        var _a, _b;
+        return [k,
+            ['creado_en', 'actualizado_en'].includes(k) ? fecha((_a = op[k]) !== null && _a !== void 0 ? _a : '') : (_b = op[k]) !== null && _b !== void 0 ? _b : ''];
+    })));
+}
+/** Hashes verifican integridad/vinculación, no sustituyen auditoría autenticada de la Sheet. */
+function revisionV1Acreditada(op) {
+    var _a, _b;
+    try {
+        if (op.estado_operacion !== 'REQUIERE_REVISION' || op.tipo_operacion !== 'CREAR_PEDIDO' || op.revision_resuelta !== 'SI')
+            return false;
+        if (!['CREACION_V1_ACREDITADA', 'FALLO_PARCIAL_V1_ACREDITADO'].includes(String(op.revision_tipo)))
+            return false;
+        const e = JSON.parse(String(op.revision_detalle)), p = JSON.parse(String(op.snapshot_json));
+        if (p.version !== 1 || p.tipo_operacion !== 'CREAR_PEDIDO' || p.id_pedido !== op.id_pedido || ((_a = p.cabecera) === null || _a === void 0 ? void 0 : _a.id_pedido) !== op.id_pedido
+            || ((_b = p.resultado) === null || _b === void 0 ? void 0 : _b.id_pedido) !== op.id_pedido || !Array.isArray(p.detalles) || !p.detalles.length)
+            return false;
+        if (e.modelo !== 'ACREDITACION_CREACION_V1_1' || e.operacion_id !== op.operacion_id || e.id_pedido !== op.id_pedido
+            || e.tipo !== op.revision_tipo || e.actor !== op.revision_resuelta_por || e.creado_en !== op.revision_resuelta_en
+            || !/^[A-Za-z0-9][A-Za-z0-9_.@-]{0,99}$/.test(e.actor) || !Number.isFinite(Date.parse(e.creado_en))
+            || !e.explicacion || e.explicacion.length > 1000 || e.operacion_original_hash !== hashOriginalOperacion(op)
+            || hashRevision(e) !== op.revision_evidencia_hash)
+            return false;
+        const b = e.pruebas;
+        if (!b || b.cabeceras !== 1 || b.movimientos !== 0 || b.total_coincide !== true || b.identidad_coincide !== true || b.fecha_coincide !== true
+            || ![b.cabecera_hash, b.detalles_hash, b.inventario_hash].every(h => /^[a-f0-9]{64}$/.test(h)) || !Array.isArray(b.diferencias_normalizadas))
+            return false;
+        return e.tipo === 'CREACION_V1_ACREDITADA'
+            ? b.estado_pedido === 'recibido' && b.detalles === p.detalles.length && b.diferencias_normalizadas.length === 0
+            : b.estado_pedido === '' && b.detalles === 0 && b.diferencias_normalizadas.length > 0;
+    }
+    catch {
+        return false;
+    }
+}
+
+},
+"familias/pedidoV2.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorPedidoFamilia = exports.COLUMNAS_PEDIDOS_V2_ADITIVAS = exports.COLUMNAS_ASIGNACIONES_PEDIDO = exports.COLUMNAS_DETALLE_PEDIDOS_V2_ADITIVAS = void 0;
+exports.exigirV2 = exigirV2;
+exports.idInternoV2 = idInternoV2;
+exports.modeloLineaPedido = modeloLineaPedido;
+exports.validarCantidadFamiliaV2 = validarCantidadFamiliaV2;
+exports.crearDetallePedidoFamiliaV2 = crearDetallePedidoFamiliaV2;
+exports.leerOfertaSnapshotV2 = leerOfertaSnapshotV2;
+exports.validarContratoAsignacionV2 = validarContratoAsignacionV2;
+/** C1 paralelo y local: ninguna ruta V1 ni Apps Script importa este contrato. */
+const familiasProducto_ts_1 = require("../familiasProducto.ts");
+const granel_ts_1 = require("../granel.ts");
+exports.COLUMNAS_DETALLE_PEDIDOS_V2_ADITIVAS = [
+    'id_detalle_pedido', 'modelo_linea', 'familia_id', 'cantidad_solicitada',
+    'unidad_solicitada', 'presentacion_publica_snapshot', 'version_oferta_snapshot',
+    'oferta_snapshot_json',
+];
+exports.COLUMNAS_ASIGNACIONES_PEDIDO = [
+    'asignacion_id', 'id_detalle_pedido', 'producto_id', 'cantidad_asignada',
+    'cantidad_stock', 'unidad_stock_snapshot', 'gramos_unidad_stock_snapshot',
+    'nombre_sku_snapshot', 'marca_snapshot', 'presentacion_snapshot',
+    'operacion_id', 'actor', 'creado_en',
+];
+/** Puntero futuro para reasignación: permite conservar todas las filas históricas. */
+exports.COLUMNAS_PEDIDOS_V2_ADITIVAS = ['operacion_asignacion_vigente'];
+class ErrorPedidoFamilia extends Error {
+    constructor(codigo, status = 400) { super(codigo); this.name = 'ErrorPedidoFamilia'; this.codigo = codigo; this.status = status; }
+}
+exports.ErrorPedidoFamilia = ErrorPedidoFamilia;
+function exigirV2(condicion, codigo, status = 400) {
+    if (!condicion)
+        throw new ErrorPedidoFamilia(codigo, status);
+}
+function idInternoV2(valor) { return typeof valor === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(valor); }
+/** Compatibilidad explícita: solo vacío histórico = V1; nunca inferir desde prefijos. */
+function modeloLineaPedido(fila) {
+    const modelo = fila.modelo_linea;
+    if (modelo === undefined || modelo === null || modelo === '' || modelo === 'SKU_V1') {
+        exigirV2(typeof fila.id_producto === 'string' && !!fila.id_producto && !fila.id_producto.startsWith('FAM-'), 'SKU_V1_ID_FISICO_REQUERIDO');
+        exigirV2(!fila.familia_id, 'LINEA_AMBIGUA');
+        return 'SKU_V1';
+    }
+    exigirV2(modelo === 'FAMILIA_V2', 'MODELO_LINEA_DESCONOCIDO');
+    exigirV2(!fila.id_producto && !fila.cantidad, 'V2_SIN_SKU_VIRTUAL');
+    return 'FAMILIA_V2';
+}
+function validarCantidadFamiliaV2(f, cantidad) {
+    const escala = f.modo_venta === 'GRANEL' || f.permite_decimal === 'NO' ? 1 : 1000;
+    const n = cantidad * escala, paso = f.paso_venta * escala;
+    exigirV2(typeof cantidad === 'number' && Number.isFinite(cantidad) && cantidad > 0 && Number.isSafeInteger(Math.round(n)) && Math.abs(n - Math.round(n)) < 1e-7, 'CANTIDAD_V2_INVALIDA');
+    exigirV2(Number.isSafeInteger(Math.round(paso)) && Math.abs(paso - Math.round(paso)) < 1e-7 && paso > 0 && Math.round(n) % Math.round(paso) === 0, 'PASO_V2_INVALIDO');
+    return Math.round(n);
+}
+/** Snapshot comercial autoritativo: precios/campos del navegador no forman parte del input. */
+function crearDetallePedidoFamiliaV2(id_pedido, id_detalle_pedido, solicitud, familia) {
+    exigirV2(idInternoV2(id_pedido) && idInternoV2(id_detalle_pedido), 'ID_DETALLE_V2_INVALIDO');
+    exigirV2(solicitud.modelo_linea === 'FAMILIA_V2', 'MODELO_LINEA_DESCONOCIDO');
+    exigirV2((0, familiasProducto_ts_1.validarFamiliaProducto)(familia).valido && familia.activo === 'SI' && familia.precio_venta > 0, 'FAMILIA_NO_VENDIBLE', 409);
+    exigirV2(solicitud.familia_id === familia.familia_id && solicitud.version_oferta === familia.version_oferta, 'OFERTA_DESACTUALIZADA', 409);
+    exigirV2(solicitud.unidad_solicitada === familia.unidad_venta, 'UNIDAD_SOLICITADA_INVALIDA');
+    validarCantidadFamiliaV2(familia, solicitud.cantidad_solicitada);
+    const numerador = familia.precio_venta * solicitud.cantidad_solicitada;
+    exigirV2(Number.isFinite(numerador) && numerador <= Number.MAX_SAFE_INTEGER, 'SUBTOTAL_FUERA_RANGO');
+    const subtotal = (0, granel_ts_1.subtotalVenta)(familia, familia.precio_venta, solicitud.cantidad_solicitada);
+    exigirV2(Number.isSafeInteger(subtotal) && subtotal >= 0, 'SUBTOTAL_FUERA_RANGO');
+    return { id_pedido, id_detalle_pedido, modelo_linea: 'FAMILIA_V2', id_producto: '', cantidad: '', familia_id: familia.familia_id,
+        cantidad_solicitada: solicitud.cantidad_solicitada, unidad_solicitada: solicitud.unidad_solicitada,
+        nombre_producto: familia.nombre_publico, precio_unitario: familia.precio_venta, subtotal,
+        presentacion_publica_snapshot: familia.presentacion_publica, version_oferta_snapshot: familia.version_oferta,
+        oferta_snapshot_json: JSON.stringify(familia) };
+}
+function leerOfertaSnapshotV2(linea) {
+    exigirV2(modeloLineaPedido(linea) === 'FAMILIA_V2', 'LINEA_NO_V2');
+    let f;
+    try {
+        f = JSON.parse(linea.oferta_snapshot_json);
+    }
+    catch {
+        throw new ErrorPedidoFamilia('SNAPSHOT_OFERTA_INVALIDO');
+    }
+    exigirV2((0, familiasProducto_ts_1.validarFamiliaProducto)(f).valido && f.familia_id === linea.familia_id && f.version_oferta === linea.version_oferta_snapshot
+        && f.nombre_publico === linea.nombre_producto && f.precio_venta === linea.precio_unitario && f.presentacion_publica === linea.presentacion_publica_snapshot, 'SNAPSHOT_OFERTA_INCOHERENTE');
+    const esperado = crearDetallePedidoFamiliaV2(linea.id_pedido, linea.id_detalle_pedido, { modelo_linea: 'FAMILIA_V2', familia_id: f.familia_id, cantidad_solicitada: linea.cantidad_solicitada, unidad_solicitada: linea.unidad_solicitada, version_oferta: f.version_oferta }, f);
+    exigirV2(esperado.subtotal === linea.subtotal, 'SUBTOTAL_SNAPSHOT_INCOHERENTE');
+    return f;
+}
+function validarContratoAsignacionV2(a) {
+    exigirV2(idInternoV2(a.asignacion_id) && idInternoV2(a.id_detalle_pedido) && idInternoV2(a.operacion_id), 'ID_ASIGNACION_INVALIDO');
+    exigirV2(/^PROD-[A-Za-z0-9-]{1,80}$/.test(a.producto_id), 'SKU_FISICO_REQUERIDO');
+    exigirV2(Number.isFinite(a.cantidad_asignada) && a.cantidad_asignada > 0 && Number.isFinite(a.cantidad_stock) && a.cantidad_stock > 0, 'CANTIDAD_ASIGNACION_INVALIDA');
+    exigirV2(typeof a.unidad_stock_snapshot === 'string' && !!a.unidad_stock_snapshot && !!a.nombre_sku_snapshot && !!a.presentacion_snapshot, 'SNAPSHOT_FISICO_INCOMPLETO');
+    exigirV2(typeof a.actor === 'string' && /^[a-z0-9][a-z0-9._@-]{0,99}$/.test(a.actor) && typeof a.creado_en === 'string' && Number.isFinite(Date.parse(a.creado_en)), 'AUDITORIA_ASIGNACION_INVALIDA');
+    if (a.gramos_unidad_stock_snapshot !== undefined)
+        exigirV2([100, 250, 1000].includes(a.gramos_unidad_stock_snapshot), 'BASE_GRANEL_INVALIDA');
+}
+
+},
+"familias/asignacionV2.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validarYCongelarAsignacionesV2 = validarYCongelarAsignacionesV2;
+exports.prepararConfirmacionFamiliaV2 = prepararConfirmacionFamiliaV2;
+exports.prepararCancelacionFamiliaV2 = prepararCancelacionFamiliaV2;
+exports.reasignarAsignacionPedido = reasignarAsignacionPedido;
+exports.avanzarPlanDurableV2 = avanzarPlanDurableV2;
+exports.ejecutarPlanLocalV2 = ejecutarPlanLocalV2;
+/** C2: motor puro local. Sin red, Sheets, rutas, selección automática ni deploy. */
+const familiasProducto_ts_1 = require("../familiasProducto.ts");
+const pedidoV2_ts_1 = require("./pedidoV2.ts");
+function copia(valor) { return structuredClone(valor); }
+function canon(valor) {
+    if (Array.isArray(valor))
+        return '[' + valor.map(canon).join(',') + ']';
+    if (valor && typeof valor === 'object')
+        return '{' + Object.entries(valor).filter(([, v]) => v !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => JSON.stringify(k) + ':' + canon(v)).join(',') + '}';
+    return JSON.stringify(valor);
+}
+function sha(valor) {
+    return require("./sha256.ts").sha256Texto(canon(valor));
+}
+function enteroExacto(n, codigo = 'STOCK_V2_INVALIDO') {
+    (0, pedidoV2_ts_1.exigirV2)(Number.isFinite(n) && n >= 0 && Number.isSafeInteger(Math.round(n)) && Math.abs(n - Math.round(n)) < 1e-7, codigo);
+    return Math.round(n);
+}
+function escalaSku(s, base) {
+    if (base !== undefined || s.modo_venta === 'GRANEL') {
+        const gramos = base !== null && base !== void 0 ? base : s.gramos_unidad_stock;
+        (0, pedidoV2_ts_1.exigirV2)(typeof gramos === 'number' && [100, 250, 1000].includes(gramos), 'BASE_GRANEL_INVALIDA');
+        return gramos;
+    }
+    return s.permite_decimal === 'SI' || s.permite_decimal === true ? 1000 : 1;
+}
+function saldoEntero(s) {
+    (0, pedidoV2_ts_1.exigirV2)(typeof s.stock_actual === 'number', 'STOCK_V2_INVALIDO');
+    return enteroExacto(s.stock_actual * escalaSku(s));
+}
+function skuUnico(skus, id) {
+    const encontrados = skus.filter(s => s.id_producto === id);
+    (0, pedidoV2_ts_1.exigirV2)(encontrados.length === 1, 'SKU_INEXISTENTE_O_DUPLICADO', 409);
+    return encontrados[0];
+}
+function validarMetadata(m) {
+    (0, pedidoV2_ts_1.exigirV2)((0, pedidoV2_ts_1.idInternoV2)(m.operacion_id) && m.operacion_id.length <= 60 && typeof m.idempotency_key === 'string' && /^[A-Za-z0-9_-]{8,100}$/.test(m.idempotency_key), 'ID_OPERACION_INVALIDO');
+    (0, pedidoV2_ts_1.exigirV2)(typeof m.actor === 'string' && /^[a-z0-9][a-z0-9._@-]{0,99}$/.test(m.actor) && typeof m.creado_en === 'string' && Number.isFinite(Date.parse(m.creado_en)), 'ACTOR_FECHA_INVALIDOS');
+}
+function validarPedido(p) {
+    (0, pedidoV2_ts_1.exigirV2)((0, pedidoV2_ts_1.idInternoV2)(p.id_pedido) && p.lineas.length > 0, 'PEDIDO_V2_INVALIDO');
+    (0, pedidoV2_ts_1.exigirV2)(new Set(p.lineas.map(l => l.id_detalle_pedido)).size === p.lineas.length, 'DETALLE_DUPLICADO');
+    for (const l of p.lineas) {
+        (0, pedidoV2_ts_1.exigirV2)(l.id_pedido === p.id_pedido, 'DETALLE_OTRO_PEDIDO');
+        (0, pedidoV2_ts_1.leerOfertaSnapshotV2)(l);
+    }
+}
+/** Operación decide el reparto. Cada SKU distinto aparece una vez por detalle. */
+function validarYCongelarAsignacionesV2(linea, seleccion, skus, contexto, meta, inicioId = 0) {
+    validarMetadata(meta);
+    const familia = (0, pedidoV2_ts_1.leerOfertaSnapshotV2)(linea);
+    (0, pedidoV2_ts_1.exigirV2)(seleccion.length > 0 && new Set(seleccion.map(s => s.producto_id)).size === seleccion.length, 'ASIGNACION_DUPLICADA_O_VACIA');
+    const escala = familia.modo_venta === 'GRANEL' || familia.permite_decimal === 'NO' ? 1 : 1000;
+    let total = 0;
+    const resultado = seleccion.map((s, i) => {
+        var _a, _b;
+        const sku = skuUnico(skus, s.producto_id);
+        (0, pedidoV2_ts_1.exigirV2)(sku.familia_id === familia.familia_id && (0, familiasProducto_ts_1.validarRelacionSkuFamilia)(sku, familia).valido, 'SKU_NO_EQUIVALENTE');
+        const vista = (0, familiasProducto_ts_1.agregarDisponibilidadFamilia)(familia, [sku], contexto);
+        (0, pedidoV2_ts_1.exigirV2)(vista.inconsistencias.length === 0 && vista.sku_elegibles.includes(sku.id_producto), 'SKU_NO_ELEGIBLE', 409);
+        const cantidad = (0, pedidoV2_ts_1.validarCantidadFamiliaV2)(familia, s.cantidad_asignada);
+        (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(total + cantidad), 'ASIGNACION_FUERA_RANGO');
+        total += cantidad;
+        const fisica = familia.modo_venta === 'GRANEL' ? cantidad : enteroExacto(s.cantidad_asignada * escalaSku(sku));
+        (0, pedidoV2_ts_1.exigirV2)(fisica <= saldoEntero(sku), 'STOCK_INSUFICIENTE', 409);
+        const a = { asignacion_id: meta.operacion_id + '-A-' + (inicioId + i), id_detalle_pedido: linea.id_detalle_pedido,
+            producto_id: sku.id_producto, cantidad_asignada: cantidad / escala, cantidad_stock: fisica / escalaSku(sku),
+            unidad_stock_snapshot: sku.unidad_medida, ...(familia.modo_venta === 'GRANEL' ? { gramos_unidad_stock_snapshot: sku.gramos_unidad_stock } : {}),
+            nombre_sku_snapshot: sku.nombre, marca_snapshot: (_a = sku.marca) !== null && _a !== void 0 ? _a : '', presentacion_snapshot: (_b = sku.presentacion) !== null && _b !== void 0 ? _b : '',
+            operacion_id: meta.operacion_id, actor: meta.actor, creado_en: meta.creado_en };
+        (0, pedidoV2_ts_1.validarContratoAsignacionV2)(a);
+        return a;
+    });
+    (0, pedidoV2_ts_1.exigirV2)(total === (0, pedidoV2_ts_1.validarCantidadFamiliaV2)(familia, linea.cantidad_solicitada), 'ASIGNACION_NO_COMPLETA');
+    return resultado;
+}
+function mover(stocks, producto_id, cantidad, devolver, base, unidad, meta, indice) {
+    const s = skuUnico(stocks, producto_id);
+    (0, pedidoV2_ts_1.exigirV2)(s.unidad_medida === unidad && (base === undefined ? s.modo_venta !== 'GRANEL' : s.modo_venta === 'GRANEL' && s.gramos_unidad_stock === base), 'BASE_HISTORICA_CAMBIADA', 409);
+    const escala = escalaSku(s, base), anterior = saldoEntero(s), delta = enteroExacto(cantidad * escala, 'CANTIDAD_STOCK_INVALIDA');
+    const nuevo = devolver ? anterior + delta : anterior - delta;
+    (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(nuevo) && nuevo >= 0, 'STOCK_INSUFICIENTE_O_DESBORDE', 409);
+    const m = { movimiento_id: meta.operacion_id + '-M-' + indice, operacion_id: meta.operacion_id, producto_id,
+        tipo: devolver ? 'DEVOLUCION_V2' : 'ASIGNACION_V2', cantidad_stock: devolver ? cantidad : -cantidad,
+        stock_anterior: anterior / escala, stock_resultante: nuevo / escala, unidad_stock_snapshot: unidad, escala_stock_snapshot: escala,
+        ...(base !== undefined ? { gramos_unidad_stock_snapshot: base } : {}), actor: meta.actor, creado_en: meta.creado_en };
+    s.stock_actual = nuevo / escala;
+    return m;
+}
+function asignarPedido(p, stocks, reparto, contexto, meta, movimientos) {
+    (0, pedidoV2_ts_1.exigirV2)(reparto.length === p.lineas.length && new Set(reparto.map(r => r.id_detalle_pedido)).size === reparto.length, 'REPARTO_LINEAS_INCOMPLETO');
+    (0, pedidoV2_ts_1.exigirV2)(reparto.every(r => p.lineas.some(l => l.id_detalle_pedido === r.id_detalle_pedido)), 'REPARTO_LINEA_DESCONOCIDA');
+    const asignaciones = [];
+    for (const l of p.lineas) {
+        const selecciones = reparto.find(r => r.id_detalle_pedido === l.id_detalle_pedido).selecciones;
+        const a = validarYCongelarAsignacionesV2(l, selecciones, stocks, contexto, meta, asignaciones.length);
+        for (const s of a)
+            movimientos.push(mover(stocks, s.producto_id, s.cantidad_stock, false, s.gramos_unidad_stock_snapshot, s.unidad_stock_snapshot, meta, movimientos.length));
+        asignaciones.push(...a);
+    }
+    return asignaciones;
+}
+/** Reversión exclusivamente histórica; activo/familia/marca vigente no decide devoluciones. */
+function devolverPedido(p, stocks, meta, movimientos) {
+    (0, pedidoV2_ts_1.exigirV2)(p.asignaciones.length > 0 && new Set(p.asignaciones.map(a => a.asignacion_id)).size === p.asignaciones.length, 'HISTORICO_ASIGNACION_INVALIDO');
+    (0, pedidoV2_ts_1.exigirV2)(p.asignaciones.every(a => p.lineas.some(l => l.id_detalle_pedido === a.id_detalle_pedido) && a.operacion_id === p.operacion_asignacion_vigente), 'HISTORICO_ASIGNACION_AJENO');
+    for (const l of p.lineas) {
+        const f = (0, pedidoV2_ts_1.leerOfertaSnapshotV2)(l), asignadas = p.asignaciones.filter(a => a.id_detalle_pedido === l.id_detalle_pedido);
+        (0, pedidoV2_ts_1.exigirV2)(new Set(asignadas.map(a => a.producto_id)).size === asignadas.length, 'HISTORICO_SKU_DUPLICADO');
+        let suma = 0;
+        for (const a of asignadas) {
+            (0, pedidoV2_ts_1.validarContratoAsignacionV2)(a);
+            const cantidad = (0, pedidoV2_ts_1.validarCantidadFamiliaV2)(f, a.cantidad_asignada);
+            (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(suma + cantidad), 'HISTORICO_FUERA_RANGO');
+            suma += cantidad;
+            const sku = skuUnico(stocks, a.producto_id);
+            const esperado = f.modo_venta === 'GRANEL' ? a.cantidad_asignada / Number(a.gramos_unidad_stock_snapshot) : a.cantidad_asignada;
+            (0, pedidoV2_ts_1.exigirV2)(Math.abs(esperado - a.cantidad_stock) < 1e-10, 'SNAPSHOT_STOCK_INCOHERENTE');
+            // Escala/unidad física conserva significado histórico, aunque SKU esté inactivo.
+            (0, pedidoV2_ts_1.exigirV2)(f.modo_venta === 'GRANEL' ? a.gramos_unidad_stock_snapshot !== undefined : a.gramos_unidad_stock_snapshot === undefined, 'SNAPSHOT_BASE_INCOHERENTE');
+            saldoEntero(sku);
+            movimientos.push(mover(stocks, a.producto_id, a.cantidad_stock, true, a.gramos_unidad_stock_snapshot, a.unidad_stock_snapshot, meta, movimientos.length));
+        }
+        (0, pedidoV2_ts_1.exigirV2)(suma === (0, pedidoV2_ts_1.validarCantidadFamiliaV2)(f, l.cantidad_solicitada), 'HISTORICO_NO_COMPLETO');
+    }
+}
+function repartoCanon(reparto) {
+    return reparto.map(r => ({ id_detalle_pedido: r.id_detalle_pedido, selecciones: r.selecciones.map(s => ({ producto_id: s.producto_id, cantidad_asignada: s.cantidad_asignada })).sort((a, b) => a.producto_id.localeCompare(b.producto_id)) })).sort((a, b) => a.id_detalle_pedido.localeCompare(b.id_detalle_pedido));
+}
+function snapshotPlan(plan) {
+    return Object.fromEntries(Object.entries(plan).filter(([k]) => !['estado', 'paso', 'error_codigo', 'snapshot_hash'].includes(k)));
+}
+function prepararOperacion(tipo, pedido, skus, reparto, contexto, meta, previo) {
+    var _a;
+    validarMetadata(meta);
+    // NaN/Infinity no se pueden canonizar como null ni compartir key accidentalmente.
+    for (const r of reparto)
+        for (const s of r.selecciones)
+            (0, pedidoV2_ts_1.exigirV2)(typeof s.cantidad_asignada === 'number' && Number.isFinite(s.cantidad_asignada), 'CANTIDAD_ASIGNACION_INVALIDA');
+    const payload_hash = sha({ tipo, id_pedido: pedido.id_pedido, actor: meta.actor, reparto: repartoCanon(reparto), apertura_id: (_a = contexto.apertura_id) !== null && _a !== void 0 ? _a : '' });
+    if (previo) {
+        (0, pedidoV2_ts_1.exigirV2)(previo.idempotency_key === meta.idempotency_key && previo.payload_hash === payload_hash, 'CONFLICTO_IDEMPOTENCIA', 409);
+        (0, pedidoV2_ts_1.exigirV2)(previo.snapshot_hash === sha(snapshotPlan(previo)), 'PLAN_ALTERADO', 409);
+        return copia(previo); // Ni master ni snapshots se recalculan en replay.
+    }
+    validarPedido(pedido);
+    const stocks = copia([...skus]), antes = copia(pedido), nuevo = copia(pedido), movimientos = [];
+    (0, pedidoV2_ts_1.exigirV2)(new Set(stocks.map(s => s.id_producto)).size === stocks.length, 'SKU_DUPLICADO', 409);
+    if (tipo === 'CONFIRMAR_V2') {
+        (0, pedidoV2_ts_1.exigirV2)(pedido.estado === 'recibido' && pedido.asignaciones.length === 0 && !pedido.operacion_asignacion_vigente, 'ESTADO_CONFIRMACION_INVALIDO', 409);
+        nuevo.asignaciones = asignarPedido(pedido, stocks, reparto, contexto, meta, movimientos);
+        nuevo.estado = 'pendiente';
+        nuevo.operacion_asignacion_vigente = meta.operacion_id;
+    }
+    else {
+        (0, pedidoV2_ts_1.exigirV2)(['recibido', 'pendiente', 'listo'].includes(pedido.estado), 'ESTADO_REVERSA_INVALIDO', 409);
+        if (pedido.estado === 'recibido')
+            (0, pedidoV2_ts_1.exigirV2)(pedido.asignaciones.length === 0 && !pedido.operacion_asignacion_vigente, 'RECIBIDO_CON_ASIGNACION');
+        else
+            devolverPedido(pedido, stocks, meta, movimientos);
+        if (tipo === 'CANCELAR_V2') {
+            (0, pedidoV2_ts_1.exigirV2)(reparto.length === 0, 'CANCELACION_SIN_REPARTO');
+            nuevo.estado = 'cancelado';
+        }
+        else {
+            (0, pedidoV2_ts_1.exigirV2)(pedido.estado !== 'recibido', 'REASIGNACION_NO_CONFIRMADA', 409);
+            nuevo.asignaciones = asignarPedido(pedido, stocks, reparto, contexto, meta, movimientos);
+            nuevo.operacion_asignacion_vigente = meta.operacion_id;
+        }
+    }
+    const plan = { ...meta, tipo, estado: 'PREPARADA', paso: 0, payload_hash, snapshot_hash: '', pedido_antes: antes, pedido_resultante: nuevo, contexto_snapshot: copia(contexto), movimientos };
+    plan.snapshot_hash = sha(snapshotPlan(plan));
+    return plan;
+}
+function prepararConfirmacionFamiliaV2(p, skus, reparto, contexto, meta, previo) {
+    return prepararOperacion('CONFIRMAR_V2', p, skus, reparto, contexto, meta, previo);
+}
+function prepararCancelacionFamiliaV2(p, skus, meta, previo) {
+    return prepararOperacion('CANCELAR_V2', p, skus, [], {}, meta, previo);
+}
+function reasignarAsignacionPedido(p, skus, reparto, contexto, meta, previo) {
+    return prepararOperacion('REASIGNAR_V2', p, skus, reparto, contexto, meta, previo);
+}
+/** Un paso local es atómico en memoria. El adaptador futuro debe persistir intentos y reconciliar ambas escrituras bajo lock. */
+function avanzarPlanDurableV2(plan, estado) {
+    var _a, _b;
+    const p = copia(plan), e = copia(estado);
+    const revision = (codigo) => ({ plan: { ...p, estado: 'REQUIERE_REVISION', error_codigo: codigo }, estado: e });
+    if (p.snapshot_hash !== sha(snapshotPlan(p)))
+        return revision('PLAN_ALTERADO');
+    if (p.estado === 'COMPLETADA' || p.estado === 'REQUIERE_REVISION')
+        return { plan: p, estado: e };
+    if (!Number.isSafeInteger(p.paso) || p.paso < 0 || p.paso > p.movimientos.length)
+        return revision('PASO_INVALIDO');
+    if (p.estado === 'PREPARADA') {
+        if (p.paso !== 0)
+            return revision('PASO_INVALIDO');
+        p.estado = 'APLICANDO';
+        return { plan: p, estado: e };
+    }
+    if (p.estado !== 'APLICANDO')
+        return revision('ESTADO_PLAN_INVALIDO');
+    if (canon(e.pedido) !== canon(p.pedido_antes) && canon(e.pedido) !== canon(p.pedido_resultante))
+        return revision('PEDIDO_CAMBIO_CONCURRENTE');
+    const anteriores = p.movimientos.slice(0, p.paso);
+    for (const m of anteriores)
+        if (e.movimientos.filter(x => x.movimiento_id === m.movimiento_id).length !== 1 || !e.movimientos.some(x => canon(x) === canon(m)))
+            return revision('PROGRESO_SIN_EVIDENCIA');
+    const ultimoAnterior = new Map(anteriores.map(m => [m.producto_id, m]));
+    for (const [id, m] of ultimoAnterior) {
+        const actual = p.movimientos[p.paso];
+        const recuperable = (actual === null || actual === void 0 ? void 0 : actual.producto_id) === id && e.movimientos.some(x => canon(x) === canon(actual));
+        const esperado = recuperable ? actual.stock_resultante : m.stock_resultante;
+        if (e.skus.filter(s => s.id_producto === id && s.stock_actual === esperado).length !== 1)
+            return revision('STOCK_PROGRESO_INCOHERENTE');
+    }
+    if (p.paso < p.movimientos.length) {
+        const m = p.movimientos[p.paso], matches = e.movimientos.filter(x => x.movimiento_id === m.movimiento_id);
+        let s;
+        try {
+            s = skuUnico(e.skus, m.producto_id);
+            saldoEntero(s);
+        }
+        catch {
+            return revision('STOCK_IDENTIDAD_INVALIDOS');
+        }
+        if (s.unidad_medida !== m.unidad_stock_snapshot || escalaSku(s) !== m.escala_stock_snapshot || (m.gramos_unidad_stock_snapshot === undefined ? s.modo_venta === 'GRANEL' : s.modo_venta !== 'GRANEL' || s.gramos_unidad_stock !== m.gramos_unidad_stock_snapshot))
+            return revision('BASE_HISTORICA_CAMBIADA');
+        if (m.tipo === 'ASIGNACION_V2') {
+            const a = p.pedido_resultante.asignaciones.find(x => x.producto_id === s.id_producto);
+            const l = p.pedido_resultante.lineas.find(x => x.id_detalle_pedido === (a === null || a === void 0 ? void 0 : a.id_detalle_pedido));
+            if (!a || !l || s.activo !== 'SI' || ((_a = s.marca) !== null && _a !== void 0 ? _a : '') !== a.marca_snapshot || ((_b = s.presentacion) !== null && _b !== void 0 ? _b : '') !== a.presentacion_snapshot)
+                return revision('IDENTIDAD_FISICA_CAMBIADA');
+            const vista = (0, familiasProducto_ts_1.agregarDisponibilidadFamilia)((0, pedidoV2_ts_1.leerOfertaSnapshotV2)(l), [s], p.contexto_snapshot);
+            if (vista.inconsistencias.length || !vista.sku_elegibles.includes(s.id_producto))
+                return revision('ELEGIBILIDAD_CAMBIADA');
+        }
+        if (matches.length) {
+            if (matches.length !== 1 || canon(matches[0]) !== canon(m) || s.stock_actual !== m.stock_resultante)
+                return revision('MOVIMIENTO_STOCK_INCOHERENTE');
+        }
+        else {
+            if (s.stock_actual !== m.stock_anterior || canon(e.pedido) !== canon(p.pedido_antes))
+                return revision('ESCRITURA_PARCIAL_O_CONCURRENCIA');
+            s.stock_actual = m.stock_resultante;
+            e.movimientos.push(copia(m));
+        }
+        p.paso++;
+        return { plan: p, estado: e };
+    }
+    // Antes de cerrar, cada efecto debe estar completo y cada saldo final verificado.
+    for (const m of p.movimientos)
+        if (e.movimientos.filter(x => x.movimiento_id === m.movimiento_id && canon(x) === canon(m)).length !== 1 || e.movimientos.filter(x => x.movimiento_id === m.movimiento_id).length !== 1)
+            return revision('MOVIMIENTO_FALTANTE_O_DUPLICADO');
+    const ultimos = new Map(p.movimientos.map(m => [m.producto_id, m]));
+    for (const [id, m] of ultimos)
+        if (e.skus.filter(s => s.id_producto === id && s.stock_actual === m.stock_resultante).length !== 1)
+            return revision('STOCK_FINAL_INCOHERENTE');
+    for (const a of p.pedido_resultante.asignaciones) {
+        const existentes = e.asignaciones_historicas.filter(x => x.asignacion_id === a.asignacion_id);
+        if (existentes.length && (existentes.length !== 1 || canon(existentes[0]) !== canon(a)))
+            return revision('ASIGNACION_HISTORICA_INCOHERENTE');
+    }
+    const audits = e.auditoria.filter(a => a.operacion_id === p.operacion_id);
+    const evento = { operacion_id: p.operacion_id, tipo: p.tipo, actor: p.actor, creado_en: p.creado_en, antes: p.pedido_antes, despues: p.pedido_resultante };
+    if (audits.length && (audits.length !== 1 || canon(audits[0]) !== canon(evento)))
+        return revision('AUDITORIA_INCOHERENTE');
+    e.pedido = copia(p.pedido_resultante);
+    for (const a of p.pedido_resultante.asignaciones)
+        if (!e.asignaciones_historicas.some(x => x.asignacion_id === a.asignacion_id))
+            e.asignaciones_historicas.push(copia(a));
+    if (!audits.length)
+        e.auditoria.push(copia(evento));
+    p.estado = 'COMPLETADA';
+    return { plan: p, estado: e };
+}
+function ejecutarPlanLocalV2(plan, estado) {
+    let r = { plan: copia(plan), estado: copia(estado) };
+    for (let i = 0; i <= plan.movimientos.length + 2 && !['COMPLETADA', 'REQUIERE_REVISION'].includes(r.plan.estado); i++)
+        r = avanzarPlanDurableV2(r.plan, r.estado);
+    return r;
+}
+
+},
+"familias/planMixtoV2.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.copiaV2 = copiaV2;
+exports.canonV2 = canonV2;
+exports.hashV2 = hashV2;
+exports.hashInputV2 = hashInputV2;
+exports.construirPlanMixtoV2 = construirPlanMixtoV2;
+exports.validarHashPlanSheetsV2 = validarHashPlanSheetsV2;
+exports.evidenciaPlanV2 = evidenciaPlanV2;
+exports.productoResultanteV2 = productoResultanteV2;
+exports.pedidoResultanteV2 = pedidoResultanteV2;
+const pedidoV2_ts_1 = require("./pedidoV2.ts");
+const asignacionV2_ts_1 = require("./asignacionV2.ts");
+function copiaV2(v) { return structuredClone(v); }
+function canonV2(v) {
+    if (Array.isArray(v))
+        return '[' + v.map(canonV2).join(',') + ']';
+    if (v && typeof v === 'object')
+        return '{' + Object.entries(v).filter(([, x]) => x !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([k, x]) => JSON.stringify(k) + ':' + canonV2(x)).join(',') + '}';
+    return JSON.stringify(v);
+}
+function hashV2(v) {
+    return require("./sha256.ts").sha256Texto(canonV2(v));
+}
+function hashInputV2(tipo, input) {
+    var _a;
+    (0, pedidoV2_ts_1.exigirV2)((0, pedidoV2_ts_1.idInternoV2)(input.id_pedido) && typeof input.actor === 'string' && /^[a-z0-9][a-z0-9._@-]{0,99}$/.test(input.actor)
+        && typeof input.idempotency_key === 'string' && /^[A-Za-z0-9_-]{8,100}$/.test(input.idempotency_key), 'INPUT_DURABLE_INVALIDO');
+    (0, pedidoV2_ts_1.exigirV2)(['recibido', 'pendiente', 'listo', 'entregado', 'cancelado'].includes(input.estado_esperado)
+        && typeof input.apertura_id_esperada === 'string' && (input.apertura_id_esperada === '' || /^APE-\d{8}$/.test(input.apertura_id_esperada)), 'CONTEXTO_ESPERADO_INVALIDO');
+    const reparto = (_a = input.asignaciones) !== null && _a !== void 0 ? _a : [];
+    (0, pedidoV2_ts_1.exigirV2)(Array.isArray(reparto), 'REPARTO_INVALIDO');
+    if (tipo === 'CANCELAR_V2')
+        (0, pedidoV2_ts_1.exigirV2)(reparto.length === 0, 'CANCELACION_SIN_REPARTO');
+    for (const r of reparto) {
+        (0, pedidoV2_ts_1.exigirV2)(r && (0, pedidoV2_ts_1.idInternoV2)(r.id_detalle_pedido) && Array.isArray(r.selecciones), 'REPARTO_INVALIDO');
+        for (const s of r.selecciones)
+            (0, pedidoV2_ts_1.exigirV2)(s && typeof s.producto_id === 'string' && typeof s.cantidad_asignada === 'number' && Number.isFinite(s.cantidad_asignada), 'CANTIDAD_ASIGNACION_INVALIDA');
+    }
+    return hashV2({ tipo, id_pedido: input.id_pedido, actor: input.actor, estado_esperado: input.estado_esperado,
+        apertura_id_esperada: input.apertura_id_esperada,
+        reparto: reparto.map(r => ({ id_detalle_pedido: r.id_detalle_pedido, selecciones: r.selecciones.map(s => ({ producto_id: s.producto_id, cantidad_asignada: s.cantidad_asignada })).sort((a, b) => a.producto_id.localeCompare(b.producto_id)) })).sort((a, b) => a.id_detalle_pedido.localeCompare(b.id_detalle_pedido)) });
+}
+function exacto(n, codigo) {
+    (0, pedidoV2_ts_1.exigirV2)(Number.isFinite(n) && n >= 0 && Number.isSafeInteger(Math.round(n)) && Math.abs(n - Math.round(n)) < 1e-7, codigo);
+    return Math.round(n);
+}
+function escala(s) {
+    if (s.modo_venta === 'GRANEL') {
+        (0, pedidoV2_ts_1.exigirV2)([100, 250, 1000].includes(Number(s.gramos_unidad_stock)), 'BASE_GRANEL_INVALIDA');
+        return Number(s.gramos_unidad_stock);
+    }
+    return s.permite_decimal === 'SI' || s.permite_decimal === true ? 1000 : 1;
+}
+function unico(skus, id) {
+    const r = skus.filter(s => s.id_producto === id);
+    (0, pedidoV2_ts_1.exigirV2)(r.length === 1, 'SKU_INEXISTENTE_O_DUPLICADO', 409);
+    return r[0];
+}
+function moverV1(stocks, r, devolver, meta) {
+    const s = unico(stocks, r.producto_id), base = r.gramos_unidad_stock_snapshot;
+    (0, pedidoV2_ts_1.exigirV2)(s.unidad_medida === r.unidad_stock_snapshot && escala(s) === r.escala_stock_snapshot
+        && (base === undefined ? s.modo_venta !== 'GRANEL' : s.modo_venta === 'GRANEL' && s.gramos_unidad_stock === base), 'BASE_HISTORICA_CAMBIADA', 409);
+    const anterior = exacto(s.stock_actual * escala(s), 'STOCK_V1_INVALIDO'), delta = exacto(r.cantidad_stock * escala(s), 'CANTIDAD_V1_INVALIDA');
+    const nuevo = anterior + (devolver ? delta : -delta);
+    (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(nuevo) && nuevo >= 0, 'STOCK_INSUFICIENTE_O_DESBORDE', 409);
+    s.stock_actual = nuevo / escala(s);
+    return { ...meta, movimiento_id: '', producto_id: r.producto_id, tipo: devolver ? 'DEVOLUCION_SKU_V1' : 'SALIDA_SKU_V1',
+        cantidad_stock: devolver ? r.cantidad_stock : -r.cantidad_stock, stock_anterior: anterior / escala(s), stock_resultante: s.stock_actual,
+        unidad_stock_snapshot: r.unidad_stock_snapshot, escala_stock_snapshot: r.escala_stock_snapshot,
+        ...(base !== undefined ? { gramos_unidad_stock_snapshot: base } : {}),
+        id_detalle_pedido: r.id_detalle_pedido, asignacion_ids: [], referencia_id: meta.operacion_id, payload_hash: '' };
+}
+function reservarV1(l, stocks, contexto) {
+    var _a, _b, _c;
+    const s = unico(stocks, l.id_producto);
+    (0, pedidoV2_ts_1.exigirV2)(s.activo === 'SI' && (((_a = s.tipo_disponibilidad) !== null && _a !== void 0 ? _a : 'REGULAR') === 'REGULAR' || s.tipo_disponibilidad === 'POR_APERTURA'
+        && !!contexto.apertura_id && ((_b = contexto.sku_habilitados) === null || _b === void 0 ? void 0 : _b.includes(s.id_producto))), 'SKU_V1_NO_ELEGIBLE', 409);
+    (0, pedidoV2_ts_1.exigirV2)(typeof l.cantidad === 'number' && l.cantidad > 0, 'CANTIDAD_V1_INVALIDA');
+    // Ausencia histórica significa UNIDAD. Nunca reinterpretar cantidad V1 como gramos.
+    const granel = l.modo_venta === 'GRANEL';
+    (0, pedidoV2_ts_1.exigirV2)(granel ? s.modo_venta === 'GRANEL' && l.gramos_unidad_stock === s.gramos_unidad_stock : s.modo_venta !== 'GRANEL', 'BASE_HISTORICA_CAMBIADA', 409);
+    if (l.unidad_medida)
+        (0, pedidoV2_ts_1.exigirV2)(l.unidad_medida === s.unidad_medida, 'BASE_HISTORICA_CAMBIADA', 409);
+    exacto(l.cantidad * escala(s), 'CANTIDAD_V1_INVALIDA');
+    if (granel)
+        (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(l.gramos_solicitados) && Number(l.gramos_solicitados) > 0
+            && Math.abs(l.cantidad * Number(l.gramos_unidad_stock) - Number(l.gramos_solicitados)) < 1e-7, 'SNAPSHOT_GRANEL_V1_INVALIDO');
+    return { id_detalle_pedido: l.id_detalle_pedido, producto_id: l.id_producto, cantidad_stock: l.cantidad,
+        unidad_stock_snapshot: (_c = l.unidad_medida) !== null && _c !== void 0 ? _c : s.unidad_medida, escala_stock_snapshot: escala(s),
+        ...(granel ? { gramos_unidad_stock_snapshot: l.gramos_unidad_stock } : {}) };
+}
+/** Valida TODO antes de cualquier efecto. C2 continúa siendo autoridad de cada línea V2. */
+function construirPlanMixtoV2(args) {
+    var _a, _b;
+    const { tipo, input, pedido, detalles, contexto, meta, vigente } = args;
+    (0, pedidoV2_ts_1.exigirV2)(pedido.estado === input.estado_esperado && ((_a = pedido.contexto_apertura_snapshot.apertura_id) !== null && _a !== void 0 ? _a : '') === input.apertura_id_esperada, 'PEDIDO_CONTEXTO_CAMBIO', 409);
+    (0, pedidoV2_ts_1.exigirV2)(detalles.length > 0 && new Set(detalles.map(l => l.id_detalle_pedido)).size === detalles.length
+        && detalles.every(l => l.id_pedido === pedido.id_pedido && (0, pedidoV2_ts_1.idInternoV2)(l.id_detalle_pedido)), 'DETALLE_MIXTO_INVALIDO');
+    (0, pedidoV2_ts_1.exigirV2)(new Set(args.productos.map(s => s.id_producto)).size === args.productos.length, 'SKU_DUPLICADO', 409);
+    const v2 = detalles.filter(l => (0, pedidoV2_ts_1.modeloLineaPedido)(l) === 'FAMILIA_V2');
+    const v1 = detalles.filter(l => (0, pedidoV2_ts_1.modeloLineaPedido)(l) === 'SKU_V1');
+    // C4 es un flujo nuevo explícito; no se enruta un pedido enteramente V1 a él.
+    (0, pedidoV2_ts_1.exigirV2)(v2.length > 0, 'PEDIDO_SIN_LINEAS_V2');
+    for (const l of v2)
+        (0, pedidoV2_ts_1.leerOfertaSnapshotV2)(l);
+    const stocks = copiaV2(args.productos), movimientos = [];
+    let reservas = [];
+    if (tipo === 'CONFIRMAR_V2') {
+        (0, pedidoV2_ts_1.exigirV2)(pedido.estado === 'recibido' && !pedido.operacion_asignacion_vigente && args.asignaciones_vigentes.length === 0, 'ESTADO_CONFIRMACION_INVALIDO', 409);
+        reservas = v1.map(l => { const r = reservarV1(l, stocks, contexto); movimientos.push(moverV1(stocks, r, false, meta)); return r; });
+    }
+    else if (pedido.estado !== 'recibido') {
+        (0, pedidoV2_ts_1.exigirV2)(!!vigente && vigente.operacion_id === pedido.operacion_asignacion_vigente
+            && canonV2(vigente.detalles) === canonV2(detalles), 'HISTORICO_VIGENTE_INVALIDO', 409);
+        reservas = copiaV2(vigente.reservas_v1);
+        (0, pedidoV2_ts_1.exigirV2)(reservas.length === v1.length && reservas.every(r => v1.some(l => l.id_detalle_pedido === r.id_detalle_pedido && l.id_producto === r.producto_id && l.cantidad === r.cantidad_stock)), 'HISTORICO_V1_INVALIDO', 409);
+        if (tipo === 'CANCELAR_V2')
+            for (const r of reservas)
+                movimientos.push(moverV1(stocks, r, true, meta));
+    }
+    const p = { id_pedido: pedido.id_pedido, estado: pedido.estado, lineas: v2,
+        asignaciones: copiaV2(args.asignaciones_vigentes), operacion_asignacion_vigente: pedido.operacion_asignacion_vigente };
+    const reparto = (_b = input.asignaciones) !== null && _b !== void 0 ? _b : [];
+    const c2 = tipo === 'CONFIRMAR_V2' ? (0, asignacionV2_ts_1.prepararConfirmacionFamiliaV2)(p, stocks, reparto, contexto, meta)
+        : tipo === 'CANCELAR_V2' ? (0, asignacionV2_ts_1.prepararCancelacionFamiliaV2)(p, stocks, meta)
+            : (0, asignacionV2_ts_1.reasignarAsignacionPedido)(p, stocks, reparto, contexto, meta);
+    const nuevas = tipo === 'CANCELAR_V2' ? [] : c2.pedido_resultante.asignaciones;
+    const referencias = tipo === 'CONFIRMAR_V2' ? nuevas : tipo === 'CANCELAR_V2' ? p.asignaciones : [...p.asignaciones, ...nuevas];
+    (0, pedidoV2_ts_1.exigirV2)(referencias.length === c2.movimientos.length, 'PLAN_C2_INCOHERENTE');
+    c2.movimientos.forEach((m, i) => movimientos.push({ ...m, id_detalle_pedido: referencias[i].id_detalle_pedido,
+        asignacion_ids: [referencias[i].asignacion_id], referencia_id: meta.operacion_id, payload_hash: '' }));
+    movimientos.forEach((m, i) => { m.movimiento_id = meta.operacion_id + '-M-' + i; m.payload_hash = args.payload_hash; });
+    const saldos = [];
+    for (const id of new Set(movimientos.map(m => m.producto_id))) {
+        const ms = movimientos.filter(m => m.producto_id === id), antes = copiaV2(unico(args.productos, id));
+        (0, pedidoV2_ts_1.exigirV2)(ms[0].stock_anterior === antes.stock_actual && ms.every((m, i) => i === 0 || m.stock_anterior === ms[i - 1].stock_resultante), 'CADENA_STOCK_INVALIDA');
+        saldos.push({ producto_id: id, antes, stock_resultante: ms[ms.length - 1].stock_resultante,
+            movimiento_ids: ms.map(m => m.movimiento_id), asignacion_ids: [...new Set(ms.flatMap(m => m.asignacion_ids))] });
+    }
+    const plan = { ...meta, modelo: 'PEDIDO_MIXTO_V2_1', tipo, payload_hash: args.payload_hash, plan_hash: '',
+        pedido_antes: copiaV2(pedido), pedido_resultante: { ...copiaV2(pedido), estado: c2.pedido_resultante.estado,
+            ...(c2.pedido_resultante.operacion_asignacion_vigente ? { operacion_asignacion_vigente: c2.pedido_resultante.operacion_asignacion_vigente } : {}) },
+        detalles: copiaV2(detalles), contexto_snapshot: copiaV2(contexto), familias_observadas: copiaV2(args.familias_observadas),
+        decisiones_familia: copiaV2(args.decisiones_familia), asignaciones_anteriores: copiaV2(p.asignaciones),
+        asignaciones_nuevas: copiaV2(nuevas), reservas_v1: reservas, movimientos, saldos };
+    plan.plan_hash = hashV2({ ...plan, plan_hash: '' });
+    return plan;
+}
+function validarHashPlanSheetsV2(plan) {
+    (0, pedidoV2_ts_1.exigirV2)(plan.modelo === 'PEDIDO_MIXTO_V2_1' && plan.plan_hash === hashV2({ ...plan, plan_hash: '' }), 'PLAN_ALTERADO', 409);
+}
+function evidenciaPlanV2(p, efecto_id) {
+    return { operacion_id: p.operacion_id, payload_hash: p.payload_hash, plan_hash: p.plan_hash, efecto_id };
+}
+function productoResultanteV2(p, s) {
+    var _a;
+    const revision = (_a = s.antes.revision_stock_v2) !== null && _a !== void 0 ? _a : 0;
+    (0, pedidoV2_ts_1.exigirV2)(Number.isSafeInteger(revision) && revision >= 0 && Number.isSafeInteger(revision + 1), 'REVISION_STOCK_INVALIDA');
+    return { ...copiaV2(s.antes), stock_actual: s.stock_resultante, revision_stock_v2: revision + 1,
+        evidencia_stock_v2: evidenciaPlanV2(p, p.operacion_id + '-S-' + s.producto_id) };
+}
+function pedidoResultanteV2(p, conPuntero = true) {
+    const result = { ...copiaV2(p.pedido_antes), estado: p.pedido_resultante.estado,
+        evidencia_estado_v2: evidenciaPlanV2(p, p.operacion_id + '-ESTADO') };
+    return conPuntero ? { ...result, operacion_asignacion_vigente: p.pedido_resultante.operacion_asignacion_vigente,
+        evidencia_puntero_v2: evidenciaPlanV2(p, p.operacion_id + '-PUNTERO') } : result;
+}
+
+},
+"familias/adaptadorDurableV2.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.POLITICA_FAMILIA_DESACTIVADA = void 0;
+exports.obtenerBloqueosOperativos = obtenerBloqueosOperativos;
+exports.exigirRecursosLibresV2 = exigirRecursosLibresV2;
+exports.verificarOperacionV2 = verificarOperacionV2;
+exports.confirmarPedidoV2Durable = confirmarPedidoV2Durable;
+exports.cancelarPedidoV2Durable = cancelarPedidoV2Durable;
+exports.reasignarPedidoV2Durable = reasignarPedidoV2Durable;
+/** C4: puerto local sobre hojas simuladas. Ninguna implementación Google/HTTP. */
+const pedidoV2_ts_1 = require("./pedidoV2.ts");
+const revisionV1_ts_1 = require("./revisionV1.ts");
+const planMixtoV2_ts_1 = require("./planMixtoV2.ts");
+/** D50: decisión de Omar. Afecta pedidos recibidos; C1 sigue rechazando nuevas ofertas inactivas. */
+exports.POLITICA_FAMILIA_DESACTIVADA = 'PERMITIR_SNAPSHOT';
+/** Un diario antiguo/desconocido incompleto no se reinterpreta: bloqueo conservador global. */
+function obtenerBloqueosOperativos(ops, excluir = '') {
+    var _a, _b;
+    const pedidos = new Set(), sku = new Set(), operaciones = [];
+    let global = false;
+    for (const op of ops) {
+        if (op.estado_operacion === 'COMPLETADA' || op.operacion_id === excluir)
+            continue;
+        const identidadUnica = ops.filter(x => x.operacion_id === op.operacion_id || x.idempotency_key === op.idempotency_key).length === 1;
+        if (identidadUnica && (0, revisionV1_ts_1.revisionV1Acreditada)(op))
+            continue;
+        operaciones.push(op.operacion_id);
+        pedidos.add(op.id_pedido);
+        if (/^(PLAN_|DIARIO_|RESULTADO_)/.test((_a = op.error_codigo) !== null && _a !== void 0 ? _a : '')
+            || ops.filter(x => x.operacion_id === op.operacion_id || x.idempotency_key === op.idempotency_key).length !== 1)
+            global = true;
+        try {
+            const p = JSON.parse(op.snapshot_json);
+            if (p.modelo !== 'PEDIDO_MIXTO_V2_1' || p.operacion_id !== op.operacion_id || ((_b = p.pedido_antes) === null || _b === void 0 ? void 0 : _b.id_pedido) !== op.id_pedido
+                || !Array.isArray(p.saldos) || !p.saldos.every(s => typeof s.producto_id === 'string'))
+                global = true;
+            else
+                p.saldos.forEach(s => sku.add(s.producto_id));
+        }
+        catch {
+            global = true;
+        }
+    }
+    return { pedidos: [...pedidos].sort(), sku: [...sku].sort(), operaciones, global };
+}
+function exigirRecursosLibresV2(b, recursos) {
+    (0, pedidoV2_ts_1.exigirV2)(!b.global && (!recursos.id_pedido || !b.pedidos.includes(recursos.id_pedido))
+        && !recursos.sku.some(s => b.sku.includes(s)), 'RECURSO_BLOQUEADO_OPERACION_INCOMPLETA', 423);
+}
+function uno(filas, campo, id, codigo) {
+    const r = filas.filter(f => f[campo] === id);
+    (0, pedidoV2_ts_1.exigirV2)(r.length === 1, codigo, 409);
+    return r[0];
+}
+function resultado(p) {
+    var _a;
+    return { operacion_id: p.operacion_id, id_pedido: p.pedido_antes.id_pedido, tipo_operacion: p.tipo,
+        estado_operacion: 'COMPLETADA', estado_pedido: p.pedido_resultante.estado,
+        operacion_asignacion_vigente: (_a = p.pedido_resultante.operacion_asignacion_vigente) !== null && _a !== void 0 ? _a : '',
+        asignacion_ids: (p.tipo === 'CANCELAR_V2' ? p.asignaciones_anteriores : p.asignaciones_nuevas).map(a => a.asignacion_id),
+        stocks: p.saldos.map(s => ({ producto_id: s.producto_id, stock_resultante: s.stock_resultante })) };
+}
+function leerPlan(op) {
+    let p;
+    try {
+        p = JSON.parse(op.snapshot_json);
+    }
+    catch {
+        throw new pedidoV2_ts_1.ErrorPedidoFamilia('PLAN_JSON_INVALIDO', 409);
+    }
+    (0, pedidoV2_ts_1.exigirV2)(p && typeof p === 'object' && !Array.isArray(p), 'PLAN_JSON_INVALIDO', 409);
+    (0, planMixtoV2_ts_1.validarHashPlanSheetsV2)(p);
+    (0, pedidoV2_ts_1.exigirV2)(p.operacion_id === op.operacion_id && p.pedido_antes.id_pedido === op.id_pedido && p.tipo === op.tipo_operacion
+        && p.actor === op.actor && p.payload_hash === op.payload_hash && p.idempotency_key === op.idempotency_key
+        && p.creado_en === op.creado_en, 'DIARIO_PLAN_INCOHERENTE', 409);
+    (0, pedidoV2_ts_1.exigirV2)(['PREPARADA', 'APLICANDO', 'COMPLETADA', 'REQUIERE_REVISION'].includes(op.estado_operacion)
+        && Number.isSafeInteger(op.paso) && op.paso >= 0 && op.paso <= 7, 'DIARIO_PROGRESO_INVALIDO', 409);
+    return p;
+}
+function contextoActual(a, pedido) {
+    const id = pedido.contexto_apertura_snapshot.apertura_id;
+    if (!id)
+        return {};
+    const filas = (a.leer('APERTURA_PRODUCTOS')).filter(f => f.apertura_id === id);
+    (0, pedidoV2_ts_1.exigirV2)(new Set(filas.map(f => f.producto_id)).size === filas.length && filas.every(f => ['SI', 'NO'].includes(f.habilitado)), 'APERTURA_DUPLICADA_O_INVALIDA', 409);
+    return { apertura_id: id, sku_habilitados: filas.filter(f => f.habilitado === 'SI').map(f => f.producto_id).sort() };
+}
+function resolverFamilias(a, ds) {
+    const familias = a.leer('FAMILIAS_PRODUCTO'), observadas = [], decisiones = [];
+    for (const l of ds.filter(l => l.modelo_linea === 'FAMILIA_V2')) {
+        const snapshot = (0, pedidoV2_ts_1.leerOfertaSnapshotV2)(l);
+        if (observadas.some(f => f.familia_id === snapshot.familia_id))
+            continue;
+        const actual = uno(familias, 'familia_id', snapshot.familia_id, 'FAMILIA_ACTUAL_INEXISTENTE_O_DUPLICADA');
+        (0, pedidoV2_ts_1.exigirV2)(actual.activo === 'SI' || actual.activo === 'NO', 'FAMILIA_ACTUAL_INVALIDA', 409);
+        if (actual.activo === 'NO') {
+            decisiones.push({ familia_id: actual.familia_id, decision: exports.POLITICA_FAMILIA_DESACTIVADA });
+        }
+        observadas.push((0, planMixtoV2_ts_1.copiaV2)(actual));
+    }
+    return { observadas, decisiones };
+}
+function comprobarFilas(actuales, esperadas, campo, obligatorio) {
+    for (const fila of esperadas) {
+        const r = actuales.filter(x => x[campo] === fila[campo]);
+        (0, pedidoV2_ts_1.exigirV2)(r.length <= 1 && (!obligatorio || r.length === 1) && (!r.length || (0, planMixtoV2_ts_1.canonV2)(r[0]) === (0, planMixtoV2_ts_1.canonV2)(fila)), 'EFECTO_FALTANTE_DUPLICADO_O_ALTERADO', 409);
+    }
+}
+/** Preflight reconoce solo antes exacto o después con recibo exacto. Nunca saldo aislado. */
+function inspeccionar(a, p, paso, final) {
+    (0, planMixtoV2_ts_1.validarHashPlanSheetsV2)(p);
+    const [pedidos, detalles, productos, asignaciones, movimientos, familias] = [
+        a.leer('PEDIDOS'), a.leer('DETALLE_PEDIDOS'), a.leer('PRODUCTOS'), a.leer('ASIGNACIONES_PEDIDO'), a.leer('MOVIMIENTOS_STOCK'), a.leer('FAMILIAS_PRODUCTO'),
+    ];
+    const pedido = uno(pedidos, 'id_pedido', p.pedido_antes.id_pedido, 'PEDIDO_INEXISTENTE_O_DUPLICADO');
+    (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(detalles.filter(l => l.id_pedido === pedido.id_pedido)) === (0, planMixtoV2_ts_1.canonV2)(p.detalles), 'DETALLE_CAMBIO_CONCURRENTE', 409);
+    (0, pedidoV2_ts_1.exigirV2)([p.pedido_antes, (0, planMixtoV2_ts_1.pedidoResultanteV2)(p, false), (0, planMixtoV2_ts_1.pedidoResultanteV2)(p)].some(x => (0, planMixtoV2_ts_1.canonV2)(x) === (0, planMixtoV2_ts_1.canonV2)(pedido)), 'PEDIDO_CAMBIO_SIN_AUTORIA', 409);
+    if (final || paso >= 6)
+        (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(pedido) === (0, planMixtoV2_ts_1.canonV2)((0, planMixtoV2_ts_1.pedidoResultanteV2)(p)), 'PEDIDO_O_PUNTERO_INCOMPLETO', 409);
+    if (paso >= 5)
+        (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(pedido) !== (0, planMixtoV2_ts_1.canonV2)(p.pedido_antes), 'ESTADO_PEDIDO_SIN_EVIDENCIA', 409);
+    const propias = asignaciones.filter(x => x.operacion_id === p.operacion_id);
+    (0, pedidoV2_ts_1.exigirV2)(propias.every(x => p.asignaciones_nuevas.some(e => e.asignacion_id === x.asignacion_id)), 'ASIGNACION_INESPERADA', 409);
+    comprobarFilas(asignaciones, p.asignaciones_anteriores, 'asignacion_id', true);
+    comprobarFilas(asignaciones, p.asignaciones_nuevas, 'asignacion_id', final || paso >= 2);
+    const ms = movimientos.filter(x => x.operacion_id === p.operacion_id || x.referencia_id === p.operacion_id);
+    (0, pedidoV2_ts_1.exigirV2)(ms.every(x => p.movimientos.some(e => e.movimiento_id === x.movimiento_id)), 'MOVIMIENTO_INESPERADO', 409);
+    comprobarFilas(movimientos, p.movimientos, 'movimiento_id', final || paso >= 3);
+    for (const s of p.saldos) {
+        const actual = uno(productos, 'id_producto', s.producto_id, 'SKU_INEXISTENTE_O_DUPLICADO');
+        const aplicado = (0, planMixtoV2_ts_1.canonV2)(actual) === (0, planMixtoV2_ts_1.canonV2)((0, planMixtoV2_ts_1.productoResultanteV2)(p, s));
+        (0, pedidoV2_ts_1.exigirV2)(aplicado || (!final && paso < 4 && (0, planMixtoV2_ts_1.canonV2)(actual) === (0, planMixtoV2_ts_1.canonV2)(s.antes)), 'STOCK_SIN_AUTORIA_O_CONCURRENCIA', 409);
+        if (aplicado) {
+            comprobarFilas(movimientos, p.movimientos, 'movimiento_id', true);
+            comprobarFilas(asignaciones, p.asignaciones_nuevas, 'asignacion_id', true);
+        }
+    }
+    // Cancelar usa identidad histórica y omite familia/apertura actual. Otras operaciones congelan ambas.
+    if (p.tipo !== 'CANCELAR_V2') {
+        for (const f of p.familias_observadas)
+            (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(uno(familias, 'familia_id', f.familia_id, 'FAMILIA_CAMBIO')) === (0, planMixtoV2_ts_1.canonV2)(f), 'FAMILIA_CAMBIO_DURANTE_OPERACION', 409);
+        (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(contextoActual(a, p.pedido_antes)) === (0, planMixtoV2_ts_1.canonV2)(p.contexto_snapshot), 'APERTURA_CAMBIO_DURANTE_OPERACION', 409);
+    }
+}
+/** Readback integral público y puro respecto de mutaciones: no marca COMPLETADA por sí mismo. */
+function verificarOperacionV2(a, id) {
+    try {
+        const op = uno(a.leer('OPERACIONES_PEDIDOS'), 'operacion_id', id, 'DIARIO_INEXISTENTE_O_DUPLICADO');
+        const p = leerPlan(op);
+        (0, pedidoV2_ts_1.exigirV2)(['APLICANDO', 'COMPLETADA'].includes(op.estado_operacion) && op.paso >= 6, 'READBACK_OPERACION_NO_CERRABLE', 409);
+        inspeccionar(a, p, op.paso, true);
+        return { valido: true };
+    }
+    catch (e) {
+        if (e instanceof pedidoV2_ts_1.ErrorPedidoFamilia)
+            return { valido: false, error_codigo: e.codigo };
+        throw e;
+    }
+}
+function guardarOp(a, op, cambios, punto) {
+    const nuevo = { ...op, ...cambios };
+    a.reemplazar('OPERACIONES_PEDIDOS', 'operacion_id', op.operacion_id, op, nuevo, punto);
+    return nuevo;
+}
+function avanzarPaso(a, op, paso) {
+    return op.paso >= paso ? op : guardarOp(a, op, { paso }, 'CHECKPOINT_' + paso);
+}
+function marcarRevision(a, op, codigo) {
+    const actual = uno(a.leer('OPERACIONES_PEDIDOS'), 'operacion_id', op.operacion_id, 'DIARIO_INEXISTENTE_O_DUPLICADO');
+    return guardarOp(a, actual, { estado_operacion: 'REQUIERE_REVISION', error_codigo: codigo }, 'REQUIERE_REVISION');
+}
+function resultadoRevision(a, op, tipo, codigo) {
+    var _a;
+    const pedidos = (a.leer('PEDIDOS')).filter(x => x.id_pedido === op.id_pedido);
+    const pedido = pedidos.length === 1 ? pedidos[0] : undefined;
+    // La respuesta incierta nunca presenta saldos/resultados previstos como hechos completados.
+    return { operacion_id: op.operacion_id, id_pedido: op.id_pedido, tipo_operacion: tipo, estado_operacion: 'REQUIERE_REVISION',
+        estado_pedido: pedido === null || pedido === void 0 ? void 0 : pedido.estado, operacion_asignacion_vigente: (_a = pedido === null || pedido === void 0 ? void 0 : pedido.operacion_asignacion_vigente) !== null && _a !== void 0 ? _a : '',
+        asignacion_ids: [], stocks: [], error_codigo: codigo };
+}
+function reanudar(a, opInicial, p) {
+    var _a, _b;
+    let op = opInicial;
+    if (op.estado_operacion === 'REQUIERE_REVISION')
+        return resultadoRevision(a, op, p.tipo, op.error_codigo);
+    if (op.estado_operacion === 'COMPLETADA') {
+        let res;
+        try {
+            res = JSON.parse(op.resultado_json);
+        }
+        catch {
+            throw new pedidoV2_ts_1.ErrorPedidoFamilia('RESULTADO_JSON_INVALIDO', 409);
+        }
+        (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(res) === (0, planMixtoV2_ts_1.canonV2)(resultado(p)), 'RESULTADO_PERSISTIDO_ALTERADO', 409);
+        return res; // Histórico: no validar contra stock de operaciones posteriores.
+    }
+    try {
+        exigirRecursosLibresV2(obtenerBloqueosOperativos(a.leer('OPERACIONES_PEDIDOS'), op.operacion_id), { id_pedido: op.id_pedido, sku: p.saldos.map(s => s.producto_id) });
+        inspeccionar(a, p, op.paso, false);
+        if (op.estado_operacion === 'PREPARADA')
+            op = guardarOp(a, op, { estado_operacion: 'APLICANDO', paso: 1 }, 'APLICANDO');
+        for (const [i, fila] of p.asignaciones_nuevas.entries()) {
+            const existentes = (a.leer('ASIGNACIONES_PEDIDO')).filter(x => x.asignacion_id === fila.asignacion_id);
+            if (!existentes.length)
+                a.insertar('ASIGNACIONES_PEDIDO', fila, 'ASIGNACION_' + (i + 1));
+        }
+        op = avanzarPaso(a, op, 2);
+        for (const [i, fila] of p.movimientos.entries()) {
+            const existentes = (a.leer('MOVIMIENTOS_STOCK')).filter(x => x.movimiento_id === fila.movimiento_id);
+            if (!existentes.length)
+                a.insertar('MOVIMIENTOS_STOCK', fila, 'MOVIMIENTO_' + (i + 1));
+        }
+        op = avanzarPaso(a, op, 3);
+        inspeccionar(a, p, op.paso, false); // Evidencia completa ANTES de aplicar saldos.
+        for (const [i, saldo] of p.saldos.entries()) {
+            const actual = uno(a.leer('PRODUCTOS'), 'id_producto', saldo.producto_id, 'SKU_INEXISTENTE_O_DUPLICADO');
+            const despues = (0, planMixtoV2_ts_1.productoResultanteV2)(p, saldo);
+            if ((0, planMixtoV2_ts_1.canonV2)(actual) !== (0, planMixtoV2_ts_1.canonV2)(despues))
+                a.reemplazar('PRODUCTOS', 'id_producto', saldo.producto_id, saldo.antes, despues, 'STOCK_' + (i + 1));
+        }
+        op = avanzarPaso(a, op, 4);
+        let pedido = uno(a.leer('PEDIDOS'), 'id_pedido', op.id_pedido, 'PEDIDO_INEXISTENTE_O_DUPLICADO');
+        const intermedio = (0, planMixtoV2_ts_1.pedidoResultanteV2)(p, false), final = (0, planMixtoV2_ts_1.pedidoResultanteV2)(p);
+        if ((0, planMixtoV2_ts_1.canonV2)(pedido) === (0, planMixtoV2_ts_1.canonV2)(p.pedido_antes)) {
+            a.reemplazar('PEDIDOS', 'id_pedido', op.id_pedido, pedido, intermedio, 'ESTADO_PEDIDO');
+            pedido = intermedio;
+        }
+        op = avanzarPaso(a, op, 5);
+        if ((0, planMixtoV2_ts_1.canonV2)(pedido) !== (0, planMixtoV2_ts_1.canonV2)(final))
+            a.reemplazar('PEDIDOS', 'id_pedido', op.id_pedido, intermedio, final, 'PUNTERO_VIGENTE');
+        op = avanzarPaso(a, op, 6);
+        a.punto('ANTES_READBACK');
+        const check = verificarOperacionV2(a, op.operacion_id);
+        (0, pedidoV2_ts_1.exigirV2)(check.valido, (_a = check.error_codigo) !== null && _a !== void 0 ? _a : 'READBACK_INCORRECTO', 409);
+        a.punto('DESPUES_READBACK');
+        op = avanzarPaso(a, op, 7);
+        // Segunda lectura bajo el mismo lock: también detecta corrupción inyectada entre readback y cierre.
+        const ultima = verificarOperacionV2(a, op.operacion_id);
+        (0, pedidoV2_ts_1.exigirV2)(ultima.valido, (_b = ultima.error_codigo) !== null && _b !== void 0 ? _b : 'READBACK_INCORRECTO', 409);
+        const res = resultado(p);
+        guardarOp(a, op, { estado_operacion: 'COMPLETADA', resultado_json: JSON.stringify(res) }, 'COMPLETADA');
+        return res;
+    }
+    catch (e) {
+        if (!(e instanceof pedidoV2_ts_1.ErrorPedidoFamilia))
+            throw e; // Caída/timeout no compensa ni inventa progreso.
+        marcarRevision(a, op, e.codigo);
+        return resultadoRevision(a, op, p.tipo, e.codigo);
+    }
+}
+function mutar(a, tipo, input, opciones) {
+    return a.conLock(() => {
+        var _a;
+        const payload_hash = (0, planMixtoV2_ts_1.hashInputV2)(tipo, input), ops = a.leer('OPERACIONES_PEDIDOS');
+        const previas = ops.filter(o => o.idempotency_key === input.idempotency_key);
+        (0, pedidoV2_ts_1.exigirV2)(previas.length <= 1, 'KEY_DUPLICADA', 409);
+        if (previas.length) {
+            const op = previas[0];
+            (0, pedidoV2_ts_1.exigirV2)(op.id_pedido === input.id_pedido && op.tipo_operacion === tipo && op.payload_hash === payload_hash, 'CONFLICTO_IDEMPOTENCIA', 409);
+            try {
+                return reanudar(a, op, leerPlan(op));
+            }
+            catch (e) {
+                if (!(e instanceof pedidoV2_ts_1.ErrorPedidoFamilia))
+                    throw e;
+                marcarRevision(a, op, e.codigo);
+                return resultadoRevision(a, op, tipo, e.codigo);
+            }
+        }
+        const pedido = uno(a.leer('PEDIDOS'), 'id_pedido', input.id_pedido, 'PEDIDO_INEXISTENTE_O_DUPLICADO');
+        const detalles = (a.leer('DETALLE_PEDIDOS')).filter(l => l.id_pedido === input.id_pedido);
+        const productos = a.leer('PRODUCTOS');
+        exigirRecursosLibresV2(obtenerBloqueosOperativos(ops), { id_pedido: input.id_pedido,
+            sku: [...detalles.filter(l => l.modelo_linea !== 'FAMILIA_V2').map(l => l.id_producto), ...((_a = input.asignaciones) !== null && _a !== void 0 ? _a : []).flatMap(r => r.selecciones.map(s => s.producto_id))] });
+        let vigente;
+        let asignaciones_vigentes = [];
+        if (pedido.operacion_asignacion_vigente) {
+            const anterior = uno(ops, 'operacion_id', pedido.operacion_asignacion_vigente, 'PUNTERO_DIARIO_INVALIDO');
+            (0, pedidoV2_ts_1.exigirV2)(anterior.estado_operacion === 'COMPLETADA', 'ASIGNACION_VIGENTE_INCOMPLETA', 423);
+            vigente = leerPlan(anterior);
+            (0, pedidoV2_ts_1.exigirV2)(vigente.tipo !== 'CANCELAR_V2' && vigente.pedido_antes.id_pedido === pedido.id_pedido, 'PUNTERO_DIARIO_AJENO', 409);
+            (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(pedido.evidencia_puntero_v2) === (0, planMixtoV2_ts_1.canonV2)((0, planMixtoV2_ts_1.pedidoResultanteV2)(vigente).evidencia_puntero_v2), 'PUNTERO_SIN_AUTORIA', 409);
+            asignaciones_vigentes = (a.leer('ASIGNACIONES_PEDIDO')).filter(x => x.operacion_id === anterior.operacion_id);
+            (0, pedidoV2_ts_1.exigirV2)((0, planMixtoV2_ts_1.canonV2)(asignaciones_vigentes) === (0, planMixtoV2_ts_1.canonV2)(vigente.asignaciones_nuevas), 'HISTORICO_VIGENTE_ALTERADO', 409);
+        }
+        const contexto = tipo === 'CANCELAR_V2' ? {} : contextoActual(a, pedido);
+        const f = tipo === 'CANCELAR_V2' ? { observadas: [], decisiones: [] } : resolverFamilias(a, detalles);
+        const operacion_id = 'OP-C4-' + ((0, planMixtoV2_ts_1.hashV2)({ id_pedido: input.id_pedido, key: input.idempotency_key })).slice(0, 32);
+        (0, pedidoV2_ts_1.exigirV2)(!ops.some(o => o.operacion_id === operacion_id), 'OPERACION_ID_COLISION', 409);
+        const meta = { operacion_id, idempotency_key: input.idempotency_key, actor: input.actor, creado_en: opciones.ahora() };
+        const plan = (0, planMixtoV2_ts_1.construirPlanMixtoV2)({ tipo, input, pedido, detalles, productos, contexto, meta, payload_hash,
+            vigente, asignaciones_vigentes, familias_observadas: f.observadas, decisiones_familia: f.decisiones });
+        exigirRecursosLibresV2(obtenerBloqueosOperativos(ops), { id_pedido: input.id_pedido, sku: plan.saldos.map(s => s.producto_id) });
+        const op = { operacion_id, id_pedido: input.id_pedido, idempotency_key: input.idempotency_key,
+            tipo_operacion: tipo, actor: input.actor, estado_operacion: 'PREPARADA', paso: 0, payload_hash,
+            snapshot_json: JSON.stringify(plan), resultado_json: '', creado_en: meta.creado_en, actualizado_en: meta.creado_en };
+        a.insertar('OPERACIONES_PEDIDOS', op, 'PREPARADA');
+        return reanudar(a, op, plan);
+    });
+}
+function confirmarPedidoV2Durable(a, input, opciones) { return mutar(a, 'CONFIRMAR_V2', input, opciones); }
+function cancelarPedidoV2Durable(a, input, opciones) { return mutar(a, 'CANCELAR_V2', input, opciones); }
+function reasignarPedidoV2Durable(a, input, opciones) { return mutar(a, 'REASIGNAR_V2', input, opciones); }
+
+},
+"familias/esquemaDurableV2.ts":function(require,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MODELO_OBSERVACION_MOVIMIENTO_C5 = exports.CAMPOS_OBSERVACION_MOVIMIENTO_C5 = exports.MAPEO_MOVIMIENTO_C5 = exports.CAMPOS_RECIBO_DURABLE_V2 = exports.COLUMNAS_DIARIO_REQUERIDAS_C5 = exports.COLUMNAS_ASIGNACIONES_PEDIDO = exports.COLUMNAS_ADITIVAS_C5 = exports.COLUMNA_APERTURA_PEDIDO_C5 = exports.COLUMNAS_PEDIDOS_DURABLE_V2 = exports.COLUMNAS_PRODUCTOS_DURABLE_V2 = void 0;
+/** C5-A: esquema futuro mínimo. No crea hojas ni conecta rutas o servicios. */
+const pedidoV2_ts_1 = require("./pedidoV2.ts");
+Object.defineProperty(exports, "COLUMNAS_ASIGNACIONES_PEDIDO", { enumerable: true, get: function () { return pedidoV2_ts_1.COLUMNAS_ASIGNACIONES_PEDIDO; } });
+exports.COLUMNAS_PRODUCTOS_DURABLE_V2 = ['revision_stock_v2', 'evidencia_stock_v2'];
+exports.COLUMNAS_PEDIDOS_DURABLE_V2 = [
+    'operacion_asignacion_vigente', 'evidencia_estado_v2', 'evidencia_puntero_v2',
+];
+/** El puerto derivará contexto_apertura_snapshot.apertura_id del ID ya congelado en PEDIDOS.
+ * Habilitaciones se leen para ese ID al confirmar y se congelan en el plan, como C4.
+ * No duplicar apertura_id en otra columna JSON. */
+exports.COLUMNA_APERTURA_PEDIDO_C5 = 'apertura_id';
+exports.COLUMNAS_ADITIVAS_C5 = {
+    PRODUCTOS: exports.COLUMNAS_PRODUCTOS_DURABLE_V2,
+    PEDIDOS: exports.COLUMNAS_PEDIDOS_DURABLE_V2,
+    DETALLE_PEDIDOS: pedidoV2_ts_1.COLUMNAS_DETALLE_PEDIDOS_V2_ADITIVAS,
+};
+/** OPERACIONES_PEDIDOS ya tiene estos campos; no necesita columnas nuevas. */
+exports.COLUMNAS_DIARIO_REQUERIDAS_C5 = [
+    'operacion_id', 'idempotency_key', 'tipo_operacion', 'id_pedido', 'actor',
+    'estado_operacion', 'paso', 'payload_hash', 'snapshot_json', 'resultado_json',
+    'error_codigo', 'error_detalle', 'creado_en', 'actualizado_en',
+];
+/** Los recibos son JSON; nunca se acepta saldo final sin autoría. */
+exports.CAMPOS_RECIBO_DURABLE_V2 = ['operacion_id', 'payload_hash', 'plan_hash', 'efecto_id'];
+/** Diseño de serialización para el futuro puerto, aún sin implementación GAS.
+ * Campos directos existentes + observacion JSON versionado cubren el movimiento C4 completo.
+ * No se requiere una columna nueva por cada atributo del snapshot físico. */
+exports.MAPEO_MOVIMIENTO_C5 = {
+    movimiento_id: 'movimiento_id', operacion_id: 'operacion_id', producto_id: 'producto_id',
+    tipo: 'tipo_movimiento', cantidad_stock: 'cantidad', stock_anterior: 'stock_anterior',
+    stock_resultante: 'stock_resultante', actor: 'usuario', creado_en: 'fecha_hora',
+    referencia_id: 'referencia_id', payload_hash: 'payload_hash',
+};
+exports.CAMPOS_OBSERVACION_MOVIMIENTO_C5 = [
+    'id_detalle_pedido', 'asignacion_ids', 'unidad_stock_snapshot',
+    'gramos_unidad_stock_snapshot', 'escala_stock_snapshot',
+    'idempotency_key', // Metadata C4 presente en movimientos de reserva V1 dentro de un plan mixto.
+];
+exports.MODELO_OBSERVACION_MOVIMIENTO_C5 = 'MOVIMIENTO_PEDIDO_V2_1';
+
+}
+},cache={};
+function load(id){if(cache[id])return cache[id];var exports=cache[id]={};factories[id](function(rel){var parts=id.split("/");parts.pop();rel.split("/").forEach(function(x){if(x==="..")parts.pop();else if(x!==".")parts.push(x);});return load(parts.join("/"));},exports);return exports;}
+return {pedido:load("familias/pedidoV2.ts"),motor:load("familias/asignacionV2.ts"),plan:load("familias/planMixtoV2.ts"),durable:load("familias/adaptadorDurableV2.ts"),revision:load("familias/revisionV1.ts"),esquema:load("familias/esquemaDurableV2.ts"),sha:load("familias/sha256.ts")};
+})();
+// FIN DOMINIO DURABLE C5 GENERADO
+
+// ================= PUERTO DURABLE C5: TEST + FIXTURES QA EXCLUSIVOS =============
+function destinoDurableC5_() {
+  var ss = destinoFamiliasAdminB3_();
+  var d = DominioPedidoDurableC5;
+  var contratos = Object.assign({ ASIGNACIONES_PEDIDO: d.esquema.COLUMNAS_ASIGNACIONES_PEDIDO,
+    OPERACIONES_PEDIDOS: d.revision.COLUMNAS_ORIGINALES_OPERACION.concat(d.revision.COLUMNAS_RESOLUCION_REVISION) }, d.esquema.COLUMNAS_ADITIVAS_C5);
+  Object.keys(contratos).forEach(function (n) {
+    var h = leerHoja_(ss, n);
+    if (new Set(h.headers).size !== h.headers.length || h.headers.some(function (x) { return !x; })) lanzar_('C5_HEADERS_AMBIGUOS', 409);
+    contratos[n].forEach(function (k) { if (h.mapa[k] === undefined) lanzar_('C5_ESQUEMA_INCOMPLETO', 409); });
+  });
+  if (d.sha.sha256Texto('abc') !== 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad') lanzar_('C5_RUNTIME_HASH_INCOMPATIBLE', 409);
+  return ss;
+}
+function exigirQaC5_(id, prefijo) {
+  if (typeof id !== 'string' || !(new RegExp('^' + prefijo + '-QA-C5-[A-Za-z0-9-]{1,60}$')).test(id)) lanzar_('C5_RECURSO_NO_QA', 403);
+}
+function seleccionarCamposC5_(obj, campos, obligatorios) {
+  var r = {};
+  campos.forEach(function (k) { if ((obligatorios || []).indexOf(k) !== -1 || obj[k] !== '' && obj[k] !== undefined && obj[k] !== null) r[k] = obj[k]; });
+  return r;
+}
+function normalizarFilaC5_(tabla, raw) {
+  var d = DominioPedidoDurableC5, o = serializarRegistroF78_(raw);
+  if (tabla === 'PEDIDOS') {
+    var p = { id_pedido: o.id_pedido, estado: o.estado_pedido, contexto_apertura_snapshot: o.apertura_id ? { apertura_id: o.apertura_id } : {} };
+    ['operacion_asignacion_vigente','evidencia_estado_v2','evidencia_puntero_v2'].forEach(function (k) { if (o[k]) p[k] = k.indexOf('evidencia') === 0 ? JSON.parse(o[k]) : o[k]; });
+    return p;
+  }
+  if (tabla === 'PRODUCTOS') {
+    var s = seleccionarCamposC5_(o, ['id_producto','nombre','categoria','activo','modo_venta','unidad_medida','permite_decimal','paso_venta','gramos_referencia','gramos_unidad_stock','tipo_disponibilidad','stock_actual','precio_costo','precio_venta','familia_id','marca','presentacion','contenido_cantidad','contenido_unidad','revision_stock_v2','evidencia_stock_v2'], ['id_producto','nombre','categoria','activo','unidad_medida','stock_actual']);
+    if (s.evidencia_stock_v2) s.evidencia_stock_v2 = JSON.parse(s.evidencia_stock_v2);
+    return s;
+  }
+  if (tabla === 'DETALLE_PEDIDOS') return seleccionarCamposC5_(o, o.modelo_linea === 'FAMILIA_V2'
+    ? ['id_pedido','id_detalle_pedido','modelo_linea','id_producto','cantidad','familia_id','cantidad_solicitada','unidad_solicitada','nombre_producto','precio_unitario','subtotal','presentacion_publica_snapshot','version_oferta_snapshot','oferta_snapshot_json']
+    : ['id_pedido','id_detalle_pedido','modelo_linea','id_producto','cantidad','nombre_producto','precio_unitario','subtotal','unidad_medida','modo_venta','gramos_solicitados','gramos_referencia','gramos_unidad_stock'],
+    o.modelo_linea === 'FAMILIA_V2' ? ['id_producto','cantidad'] : []);
+  if (tabla === 'OPERACIONES_PEDIDOS') return seleccionarCamposC5_(o, d.revision.COLUMNAS_ORIGINALES_OPERACION.concat(d.revision.COLUMNAS_RESOLUCION_REVISION), ['resultado_json']);
+  if (tabla === 'ASIGNACIONES_PEDIDO') return seleccionarCamposC5_(o, d.esquema.COLUMNAS_ASIGNACIONES_PEDIDO, d.esquema.COLUMNAS_ASIGNACIONES_PEDIDO.filter(function(k){return k !== 'gramos_unidad_stock_snapshot';}));
+  if (tabla === 'FAMILIAS_PRODUCTO') return seleccionarCamposC5_(o, COLUMNAS_FAMILIAS_PRODUCTO);
+  if (tabla === 'APERTURA_PRODUCTOS') return seleccionarCamposC5_(o, ['apertura_id','producto_id','habilitado']);
+  if (tabla === 'MOVIMIENTOS_STOCK') {
+    var extra;
+    try { extra = JSON.parse(o.observacion); } catch (_) { extra = null; }
+    if (!extra || extra.modelo !== d.esquema.MODELO_OBSERVACION_MOVIMIENTO_C5) {
+      if (o.referencia_tipo === 'PEDIDO_V2_QA') lanzar_('C5_MOVIMIENTO_SNAPSHOT_CORRUPTO', 409);
+      return { movimiento_id: o.movimiento_id || o.id_movimiento, operacion_id: o.operacion_id || '', referencia_id: o.referencia_id || '' };
+    }
+    if (!o.movimiento_id) lanzar_('C5_MOVIMIENTO_CANONICO_REQUERIDO', 409);
+    var m = {};
+    Object.keys(d.esquema.MAPEO_MOVIMIENTO_C5).forEach(function (k) { m[k] = o[d.esquema.MAPEO_MOVIMIENTO_C5[k]]; });
+    d.esquema.CAMPOS_OBSERVACION_MOVIMIENTO_C5.forEach(function (k) { if (extra[k] !== undefined) m[k] = extra[k]; });
+    return m;
+  }
+  lanzar_('C5_TABLA_NO_PERMITIDA', 403);
+}
+/** Frontera C4 -> Sheet: conservar tipos lógicos modernos y enums legacy vigentes. */
+function serializarMovimientoV2ParaSheet_(fila, plan, recuperacion) {
+  var d=DominioPedidoDurableC5,canon=d.plan.canonV2;
+  if(!plan)lanzar_('C5_MOVIMIENTO_PLAN_REQUERIDO',409);
+  d.plan.validarHashPlanSheetsV2(plan);
+  var esperados=plan.movimientos.filter(function(m){return m.movimiento_id===fila.movimiento_id;});
+  if(esperados.length!==1||canon(esperados[0])!==canon(fila))lanzar_('C5_MOVIMIENTO_FUERA_PLAN',409);
+  var salida=['ASIGNACION_V2','SALIDA_SKU_V1'].includes(fila.tipo),devolucion=['DEVOLUCION_V2','DEVOLUCION_SKU_V1'].includes(fila.tipo);
+  if(!salida&&!devolucion)lanzar_('C5_TIPO_LOGICO_INVALIDO',409);
+  ['cantidad_stock','stock_anterior','stock_resultante','escala_stock_snapshot'].forEach(function(k){if(typeof fila[k]!=='number'||!Number.isFinite(fila[k]))lanzar_('C5_MOVIMIENTO_NUMERO_INVALIDO',409);});
+  if((salida?fila.cantidad_stock>=0:fila.cantidad_stock<=0)||fila.stock_anterior<0||fila.stock_resultante<0||!Number.isSafeInteger(fila.escala_stock_snapshot)||fila.escala_stock_snapshot<=0||Math.abs(fila.stock_anterior+fila.cantidad_stock-fila.stock_resultante)>1e-8)lanzar_('C5_MOVIMIENTO_DELTA_INVALIDO',409);
+  ['movimiento_id','operacion_id','producto_id','actor','creado_en','referencia_id','payload_hash','id_detalle_pedido','unidad_stock_snapshot'].forEach(function(k){if(typeof fila[k]!=='string'||!fila[k])lanzar_('C5_MOVIMIENTO_CAMPO_REQUERIDO',409);});
+  exigirQaC5_(fila.producto_id,'PROD');
+  if(!Array.isArray(fila.asignacion_ids)||!Number.isFinite(Date.parse(fila.creado_en))||fila.operacion_id!==plan.operacion_id||fila.payload_hash!==plan.payload_hash||fila.referencia_id!==plan.operacion_id)lanzar_('C5_MOVIMIENTO_IDENTIDAD_INVALIDA',409);
+  if(fila.gramos_unidad_stock_snapshot!==undefined&&(![100,250,1000].includes(fila.gramos_unidad_stock_snapshot)||fila.escala_stock_snapshot!==fila.gramos_unidad_stock_snapshot))lanzar_('C5_MOVIMIENTO_BASE_INVALIDA',409);
+  var r={},extra={modelo:d.esquema.MODELO_OBSERVACION_MOVIMIENTO_C5,tipo_logico_v2:fila.tipo,plan_hash:plan.plan_hash};
+  Object.keys(d.esquema.MAPEO_MOVIMIENTO_C5).forEach(function(k){r[d.esquema.MAPEO_MOVIMIENTO_C5[k]]=fila[k];});
+  d.esquema.CAMPOS_OBSERVACION_MOVIMIENTO_C5.forEach(function(k){if(fila[k]!==undefined)extra[k]=fila[k];});
+  if(recuperacion)extra.recuperacion=recuperacion;
+  r.observacion=JSON.stringify(extra);r.observaciones=r.observacion;
+  r.id_movimiento=fila.movimiento_id;r.id_producto=fila.producto_id;
+  r.tipo=salida?'salida':'devolucion';r.origen=plan.tipo==='CANCELAR_V2'?'cancelacion':'pedido';
+  r.id_origen=plan.pedido_antes.id_pedido;r.referencia_tipo='PEDIDO_V2_QA';
+  r.apertura_id=plan.contexto_snapshot.apertura_id||'';
+  return r;
+}
+/** Validar la fila COMPLETA antes de cualquier setValues o formato. Sin promesa ACID. */
+function validarFilaPersistenciaC5_(h,row,raw) {
+  if(raw.length!==h.headers.length||new Set(h.headers).size!==h.headers.length)lanzar_('C5_FILA_DIMENSION_INVALIDA',409);
+  var rules=h.sheet.getRange(row,1,1,h.headers.length).getDataValidations()[0];
+  raw.forEach(function(v,i){
+    if(typeof v==='number'&&!Number.isFinite(v)||typeof v==='string'&&v.length>49000)lanzar_('C5_CELDA_INVALIDA',409);
+    var rule=rules[i];if(!rule||rule.getAllowInvalid()||v==='')return;
+    if(String(rule.getCriteriaType())!=='VALUE_IN_LIST')lanzar_('C5_VALIDACION_NO_SOPORTADA_'+h.headers[i],409);
+    if(!rule.getCriteriaValues()[0].includes(String(v)))lanzar_('C5_VALIDACION_RECHAZA_'+h.headers[i],409);
+  });
+}
+function planMovimientoPersistenciaC5_(ss,id) {
+  var ops=filasQaPreparacionC5_(ss,'OPERACIONES_PEDIDOS').filter(function(o){return o.operacion_id===id;});
+  if(ops.length!==1)lanzar_('C5_MOVIMIENTO_DIARIO_NO_UNICO',409);
+  var p=JSON.parse(ops[0].snapshot_json);DominioPedidoDurableC5.plan.validarHashPlanSheetsV2(p);
+  if(p.operacion_id!==id||p.payload_hash!==ops[0].payload_hash||p.tipo!==ops[0].tipo_operacion)lanzar_('C5_MOVIMIENTO_DIARIO_INCOHERENTE',409);
+  return p;
+}
+/** Preflight de todas las representaciones/validaciones nativas antes del primer efecto. */
+function validarPlanPersistenciaC5_(ss,op) {
+  var d=DominioPedidoDurableC5,p=JSON.parse(op.snapshot_json);d.plan.validarHashPlanSheetsV2(p);
+  function check(tabla,fila,row){var h=leerHoja_(ss,tabla),obj=serializarFilaC5_(tabla,fila,p),raw=row?h.filas[row-2].slice():h.headers.map(function(){return '';});
+    Object.keys(obj).forEach(function(k){if(h.mapa[k]===undefined)lanzar_('C5_COLUMNA_NO_EXISTE',409);raw[h.mapa[k]]=obj[k]===undefined?'':obj[k];});
+    validarFilaPersistenciaC5_(h,row||h.sheet.getLastRow()+1,raw);
+  }
+  p.asignaciones_nuevas.forEach(function(a){check('ASIGNACIONES_PEDIDO',a);});
+  p.movimientos.forEach(function(m){check('MOVIMIENTOS_STOCK',m);});
+  p.saldos.forEach(function(s){var h=leerHoja_(ss,'PRODUCTOS'),i=h.filas.findIndex(function(f){return f[h.mapa.id_producto]===s.producto_id;});if(i<0)lanzar_('C5_SKU_INEXISTENTE',409);check('PRODUCTOS',d.plan.productoResultanteV2(p,s),i+2);});
+  var hp=leerHoja_(ss,'PEDIDOS'),ip=hp.filas.findIndex(function(f){return f[hp.mapa.id_pedido]===p.pedido_antes.id_pedido;});if(ip<0)lanzar_('C5_PEDIDO_INEXISTENTE',409);
+  check('PEDIDOS',d.plan.pedidoResultanteV2(p),ip+2);
+}
+function serializarFilaC5_(tabla, fila, plan) {
+  var d = DominioPedidoDurableC5, r = Object.assign({}, fila);
+  if (tabla === 'PEDIDOS') {
+    r = { estado_pedido: fila.estado, operacion_asignacion_vigente: fila.operacion_asignacion_vigente || '',
+      evidencia_estado_v2: fila.evidencia_estado_v2 ? JSON.stringify(fila.evidencia_estado_v2) : '',
+      evidencia_puntero_v2: fila.evidencia_puntero_v2 ? JSON.stringify(fila.evidencia_puntero_v2) : '' };
+  } else if (tabla === 'PRODUCTOS') {
+    r = { stock_actual: fila.stock_actual, revision_stock_v2: fila.revision_stock_v2,
+      evidencia_stock_v2: JSON.stringify(fila.evidencia_stock_v2) };
+  } else if (tabla === 'MOVIMIENTOS_STOCK') {
+    r = serializarMovimientoV2ParaSheet_(fila,plan);
+  }
+  return r;
+}
+/** Puerto síncrono: LockService compartido; CAS fila+recibo, flush y readback. No ACID. */
+function crearPuertoDurableC5_(ss, fallo) {
+  var d = DominioPedidoDurableC5, canon = d.plan.canonV2, enLock = false, utilizado = false;
+  var claves = { PEDIDOS:'id_pedido', PRODUCTOS:'id_producto', OPERACIONES_PEDIDOS:'operacion_id', ASIGNACIONES_PEDIDO:'asignacion_id', MOVIMIENTOS_STOCK:'movimiento_id' };
+  function leer(tabla) {
+    var h = leerHoja_(ss, tabla);
+    if (new Set(h.headers).size !== h.headers.length) lanzar_('C5_HEADERS_AMBIGUOS', 409);
+    return h.filas.filter(function (f) { return f.some(function (v) { return v !== '' && v !== undefined; }); }).map(function (f) { return normalizarFilaC5_(tabla, filaAObjeto_(h, f)); });
+  }
+  function guard(fila, tabla) {
+    if (!enLock) lanzar_('C5_ESCRITURA_SIN_LOCK', 423);
+    if (tabla === 'PRODUCTOS') exigirQaC5_(fila.id_producto, 'PROD');
+    else if (tabla === 'PEDIDOS') exigirQaC5_(fila.id_pedido, 'PED');
+    else if (tabla === 'MOVIMIENTOS_STOCK' || tabla === 'ASIGNACIONES_PEDIDO') exigirQaC5_(fila.producto_id, 'PROD');
+    else if (tabla === 'OPERACIONES_PEDIDOS') {
+      exigirQaC5_(fila.id_pedido, 'PED');
+      if (!/^OP-C4-[a-f0-9]{32}$/.test(fila.operacion_id) || !['CONFIRMAR_V2','CANCELAR_V2','REASIGNAR_V2'].includes(fila.tipo_operacion)) lanzar_('C5_DIARIO_NO_V2', 403);
+      var p = JSON.parse(fila.snapshot_json);
+      p.saldos.forEach(function (s) { exigirQaC5_(s.producto_id, 'PROD'); });
+    } else lanzar_('C5_ESCRITURA_NO_PERMITIDA', 403);
+  }
+  function punto(nombre) {
+    if (!utilizado && fallo === nombre) { utilizado = true; var e = new Error('C5_INTERRUPCION_QA_' + nombre); e.codigo = 503; throw e; }
+  }
+  function escribir(h, row, raw, nuevas) {
+    Object.keys(nuevas).forEach(function (k) {
+      if (h.mapa[k] === undefined) lanzar_('C5_COLUMNA_NO_EXISTE', 409);
+      if (typeof nuevas[k] === 'string' && nuevas[k].length > 49000) lanzar_('C5_CELDA_EXCEDE_LIMITE', 409);
+      raw[h.mapa[k]] = nuevas[k] === undefined ? '' : nuevas[k];
+    });
+    validarFilaPersistenciaC5_(h,row,raw);
+    h.headers.forEach(function(k,i){if(typeof raw[i]==='string'&&nuevas[k]!==undefined)h.sheet.getRange(row,i+1).setNumberFormat('@');});
+    h.sheet.getRange(row, 1, 1, h.headers.length).setValues([raw]); SpreadsheetApp.flush();
+  }
+  return {
+    conLock: function (trabajo) {
+      var lock = LockService.getScriptLock(); if (!lock.tryLock(30000)) lanzar_('C5_LOCK_OCUPADO', 503);
+      enLock = true; try { return trabajo(); } finally { enLock = false; lock.releaseLock(); }
+    }, leer: leer,
+    insertar: function (tabla, fila, evento) {
+      guard(fila, tabla); var k = claves[tabla];
+      if(tabla==='OPERACIONES_PEDIDOS')validarPlanPersistenciaC5_(ss,fila);
+      if (leer(tabla).some(function (x) { return x[k] === fila[k]; })) lanzar_('C5_APPEND_ID_DUPLICADO', 409);
+      var h = leerHoja_(ss, tabla), raw = h.headers.map(function () { return ''; }), nueva = serializarFilaC5_(tabla, fila,tabla==='MOVIMIENTOS_STOCK'?planMovimientoPersistenciaC5_(ss,fila.operacion_id):undefined), row = h.sheet.getLastRow() + 1;
+      escribir(h,row,raw,nueva);
+      var actual = leer(tabla).filter(function (x) { return x[claves[tabla]] === fila[claves[tabla]]; });
+      if (actual.length !== 1 || canon(actual[0]) !== canon(fila)) throw new d.pedido.ErrorPedidoFamilia('C5_APPEND_READBACK_INCIERTO',409);
+      punto(evento);
+    },
+    reemplazar: function (tabla, clave, id, esperado, nuevo, evento) {
+      guard(nuevo, tabla); if (tabla === 'ASIGNACIONES_PEDIDO' || tabla === 'MOVIMIENTOS_STOCK') lanzar_('C5_APPEND_ONLY', 403);
+      var h = leerHoja_(ss, tabla), indices = [];
+      h.filas.forEach(function (f,i) { if (filaAObjeto_(h,f)[clave] === id) indices.push(i); });
+      if (indices.length !== 1 || canon(normalizarFilaC5_(tabla,filaAObjeto_(h,h.filas[indices[0]]))) !== canon(esperado)) throw new d.pedido.ErrorPedidoFamilia('C5_CAS_CONFLICTO',409);
+      var row = indices[0]+2, raw = h.filas[indices[0]].slice(), formulas = h.sheet.getRange(row,1,1,h.headers.length).getFormulas()[0];
+      formulas.forEach(function (f,i) { if (f) raw[i]=f; });
+      punto('ANTES_' + evento); escribir(h,row,raw,serializarFilaC5_(tabla,nuevo));
+      var despues = normalizarFilaC5_(tabla,filaAObjeto_(h,h.sheet.getRange(row,1,1,h.headers.length).getValues()[0]));
+      if (canon(despues)!==canon(nuevo)) throw new d.pedido.ErrorPedidoFamilia('C5_CAS_READBACK_INCIERTO',409);
+      punto(evento);
+    }, eliminar: function () { lanzar_('C5_HISTORICO_APPEND_ONLY',403); }, punto: punto
+  };
+}
+function obtenerBloqueosDurableC5_(ss) {
+  if (!ss.getSheetByName('ASIGNACIONES_PEDIDO')) return { pedidos:[],sku:[],operaciones:[],global:false };
+  var h = leerHoja_(ss,'OPERACIONES_PEDIDOS');
+  return DominioPedidoDurableC5.durable.obtenerBloqueosOperativos(h.filas.map(function (f) { return normalizarFilaC5_('OPERACIONES_PEDIDOS',filaAObjeto_(h,f)); }));
+}
+/** Reportes operativos omiten intenciones V2 inciertas. V1 conserva exactamente su filtro. */
+function operacionesMovimientoReporteC5_() {
+  var ss=SpreadsheetApp.openById(SPREADSHEET_ID);if(!ss.getSheetByName('ASIGNACIONES_PEDIDO'))return [];
+  return filasQaPreparacionC5_(ss,'OPERACIONES_PEDIDOS').filter(function(o){return /^(CONFIRMAR|CANCELAR|REASIGNAR)_V2$/.test(o.tipo_operacion);});
+}
+function movimientoCompletadoReporteC5_(m,ops) {
+  if(m.referencia_tipo!=='PEDIDO_V2_QA'&&!/^OP-C4-/.test(m.id_movimiento||m.movimiento_id||''))return true;
+  var candidatos=ops.filter(function(o){return o.operacion_id===m.operacion_id;});
+  if(candidatos.length!==1||candidatos[0].estado_operacion!=='COMPLETADA')return false;
+  try{var d=DominioPedidoDurableC5,p=JSON.parse(candidatos[0].snapshot_json);d.plan.validarHashPlanSheetsV2(p);
+    var expected=p.movimientos.filter(function(x){return x.movimiento_id===m.movimiento_id;});
+    return expected.length===1&&d.plan.canonV2(normalizarFilaC5_('MOVIMIENTOS_STOCK',m))===d.plan.canonV2(expected[0]);
+  }catch(_){return false;}
+}
+/** Guardrail futuro/compartido: solo diarios V2 pendientes; sin V2 no cambia comportamiento V1. */
+function exigirSinBloqueoDurableC5_(ss, pedidoId, skuIds) {
+  if (!ss.getSheetByName('ASIGNACIONES_PEDIDO')) return;
+  var h = leerHoja_(ss,'OPERACIONES_PEDIDOS');
+  var hayV2 = h.filas.some(function (f) { var o=filaAObjeto_(h,f); return /^(CONFIRMAR|CANCELAR|REASIGNAR)_V2$/.test(o.tipo_operacion) && o.estado_operacion !== 'COMPLETADA'; });
+  if (!hayV2) return;
+  try { DominioPedidoDurableC5.durable.exigirRecursosLibresV2(obtenerBloqueosDurableC5_(ss),{id_pedido:pedidoId,sku:skuIds || []}); }
+  catch(e){ if(e instanceof DominioPedidoDurableC5.pedido.ErrorPedidoFamilia)lanzar_(e.codigo,e.status);throw e; }
+}
+function appendQaC5_(ss, tabla, obj, clave) {
+  var h=leerHoja_(ss,tabla), matches=h.filas.filter(function(f){return filaAObjeto_(h,f)[clave]===obj[clave];});
+  Object.keys(obj).forEach(function(k){if(h.mapa[k]===undefined)lanzar_('C5_FIXTURE_COLUMNA_FALTANTE',409);});
+  if(matches.length) { if(matches.length!==1) lanzar_('C5_FIXTURE_ID_DUPLICADO',409);return false; }
+  var row=h.sheet.getLastRow()+1;
+  h.headers.forEach(function(k,i){if(typeof obj[k]==='string')h.sheet.getRange(row,i+1).setNumberFormat('@');});
+  h.sheet.getRange(row,1,1,h.headers.length).setValues([h.headers.map(function(k){return obj[k]===undefined?'':obj[k];})]);SpreadsheetApp.flush();
+  var after=leerHoja_(ss,tabla), created=after.filas.filter(function(f){return filaAObjeto_(after,f)[clave]===obj[clave];});
+  if(created.length!==1) lanzar_('C5_FIXTURE_APPEND_INCIERTO',409);
+  Object.keys(obj).forEach(function(k){if(k in after.mapa && DominioPedidoDurableC5.plan.canonV2(filaAObjeto_(after,created[0])[k])!==DominioPedidoDurableC5.plan.canonV2(obj[k])) lanzar_('C5_FIXTURE_READBACK_INCIERTO',409);});
+  return true;
+}
+function auditarQaC5_(ss, accion, entidad, antes, despues, referencia) {
+  var campos={modelo:'AUDITORIA_QA_C5_1',antes:antes,despues:despues};
+  var hash=DominioPedidoDurableC5.revision.hashRevision(campos);
+  appendQaC5_(ss,'AUDITORIA_PRODUCTOS',{auditoria_id:'AUD-QA-C5-'+hash.slice(0,32),fecha_hora:new Date().toISOString(),producto_id:'',accion:accion,
+    cambios_json:JSON.stringify(campos),responsable:'qa-c5',referencia_id:referencia || entidad,entidad_tipo:'QA_C5',entidad_id:entidad,payload_hash:hash,resultado_json:JSON.stringify({ok:true})},'auditoria_id');
+}
+/** Fixtures definidos por servidor, nunca identidad/costo/stock arbitrarios del navegador. */
+function filasQaPreparacionC5_(ss,tabla){var h=leerHoja_(ss,tabla);if(new Set(h.headers).size!==h.headers.length)lanzar_('C5_HEADERS_AMBIGUOS',409);return h.filas.map(function(f){return serializarRegistroF78_(filaAObjeto_(h,f));});}
+function equivalenteTextoQaC5_(actual,esperado){
+  // Texto QA generado por el deploy Windows anterior; preservar bytes históricos, no corregir nombres.
+  var legacy=esperado.replace(/é/g,'Ã©').replace(/ó/g,'Ã³');return actual===esperado||actual===legacy;
+}
+function construirPlanPreparacionC5_(ss,body){
+  var grupo=body.grupo,escenario=body.escenario||'UNIDAD',id=body.id_pedido,d=DominioPedidoDurableC5;
+  if(typeof grupo!=='string'||!/^[A-Z0-9-]{1,35}$/.test(grupo)||!['UNIDAD','MIXTO','INSUFICIENTE','GRANEL100','GRANEL250','GRANEL1000'].includes(escenario))lanzar_('C5_FIXTURE_INVALIDO',400);
+  exigirQaC5_(id,'PED');var filas=[];
+  function registrar(tabla,obj,clave){filas.push({tabla:tabla,clave:clave,esperado:obj});}
+  var granel=escenario.indexOf('GRANEL')===0, base=granel?Number(escenario.slice(6)):0, familia_id='FAM-QA-C5-'+grupo, ahora=new Date().toISOString();
+  var familia={familia_id:familia_id,activo:'SI',nombre_publico:granel?'Granel QA C5':'Cloro QA Económico 1 L',categoria:granel?'Granel':'Limpieza',precio_venta:granel?1350:650,
+    modo_venta:granel?'GRANEL':'UNIDAD',unidad_venta:granel?'g':'unidad',permite_decimal:'NO',paso_venta:1,presentacion_publica:granel?'Granel libre QA':'Botella 1 L',
+    politica_marca:granel?'NO_APLICA':'VARIABLE',version_oferta:1,actualizado_en:ahora};
+  if(granel) familia.gramos_referencia=1000;else {familia.contenido_cantidad=1000;familia.contenido_unidad='ml';}
+  var previa=filasQaPreparacionC5_(ss,'FAMILIAS_PRODUCTO').filter(function(f){return f.familia_id===familia_id;});
+  if(previa.length>1)lanzar_('C5_FIXTURE_ID_DUPLICADO',409);
+  if(previa.length && previa[0].activo!=='SI')lanzar_('FAMILIA_NO_VENDIBLE',409);
+  if(previa.length && equivalenteTextoQaC5_(previa[0].nombre_publico,familia.nombre_publico))familia.nombre_publico=previa[0].nombre_publico;
+  registrar('FAMILIAS_PRODUCTO',familia,'familia_id');
+  if(previa.length)familia=seleccionarCamposC5_(previa[0],COLUMNAS_FAMILIAS_PRODUCTO);
+  var skuIds=['A','B'].map(function(letra){return 'PROD-QA-C5-'+grupo+'-'+letra;});
+  skuIds.forEach(function(sku,i){
+    var b=granel?(i?1000:base):0, stock=granel?2:i?7:4;
+    var obj={id_producto:sku,activo:'SI',nombre:(granel?'Granel':'Cloro')+' QA C5 '+grupo+' '+(i?'B':'A'),categoria:familia.categoria,prioridad:'media',unidad_medida:'unidad',
+      permite_decimal:granel?'SI':'NO',paso_venta:granel?1/b:1,precio_costo:i?610:590,precio_venta:granel?1350:700,stock_actual:stock,stock_minimo:0,
+      tipo_disponibilidad:'POR_APERTURA',modo_venta:granel?'GRANEL':'UNIDAD',familia_id:familia_id,marca:granel?'':'QA-'+(i?'B':'A'),presentacion:granel?'Granel QA base '+b+' g':'Botella 1 L',
+      observaciones:JSON.stringify({modelo:'FIXTURE_C5_1',grupo:grupo,stock_inicial:stock}),actualizado_en:ahora};
+    if(granel){obj.gramos_referencia=1000;obj.gramos_unidad_stock=b;}else{obj.contenido_cantidad=1000;obj.contenido_unidad='ml';}
+    registrar('PRODUCTOS',obj,'id_producto');
+  });
+  var x='PROD-QA-C5-'+grupo+'-X';
+  if(escenario==='MIXTO') {
+    registrar('PRODUCTOS',{id_producto:x,activo:'SI',nombre:'SKU V1 QA C5 '+grupo,categoria:'Alimentos',prioridad:'media',unidad_medida:'unidad',permite_decimal:'NO',paso_venta:1,
+      precio_costo:400,precio_venta:500,stock_actual:6,stock_minimo:0,tipo_disponibilidad:'POR_APERTURA',modo_venta:'UNIDAD',observaciones:JSON.stringify({modelo:'FIXTURE_C5_1',grupo:grupo,stock_inicial:6}),actualizado_en:ahora},'id_producto');
+  }
+  var ids=skuIds.concat(escenario==='MIXTO'?[x]:[]);
+  ids.forEach(function(sku){registrar('APERTURA_PRODUCTOS',{apertura_id:'APE-20991231',producto_id:sku,habilitado:'SI',actualizado_por:'qa-c5',actualizado_en:ahora},'producto_id');});
+  var l=d.pedido.crearDetallePedidoFamiliaV2(id,'DPE-'+id+'-F',{modelo_linea:'FAMILIA_V2',familia_id:familia_id,cantidad_solicitada:granel?150:6,unidad_solicitada:granel?'g':'unidad',version_oferta:familia.version_oferta},familia);
+  var detalles=[l];
+  if(escenario==='MIXTO'||escenario==='INSUFICIENTE')detalles.unshift({id_pedido:id,id_detalle_pedido:'DPE-'+id+'-V1',modelo_linea:'SKU_V1',id_producto:escenario==='MIXTO'?x:skuIds[0],cantidad:2,nombre_producto:'SKU V1 QA C5',precio_unitario:500,subtotal:1000,unidad_medida:'unidad',modo_venta:'UNIDAD'});
+  // Detalles primero; cabecera recibida solo al finalizar la preparación QA. Retry no reconstruye históricos.
+  detalles.forEach(function(linea){registrar('DETALLE_PEDIDOS',linea,'id_detalle_pedido');});
+  registrar('PEDIDOS',{id_pedido:id,fecha_hora:ahora,canal:'QA_C5',nombre_cliente:'Fixture sintético C5',telefono:'QA-C5',total:detalles.reduce(function(n,a){return n+a.subtotal;},0),estado_pedido:'recibido',estado_pago:'pendiente',forma_pago:'efectivo_al_retirar',observaciones:'Fixture sintético C5 '+grupo,apertura_id:'APE-20991231',origen_pedido:'QA_C5'},'id_pedido');
+
+  var apertura=validarYNormalizarApertura_({apertura_id:'APE-20991231',fecha_apertura:'2099-12-31',hora_inicio:'11:00',hora_termino:'15:00',lugar:'QA C5 sintético; no apertura comercial',cierre_pedidos_anticipados:'2099-12-30T23:59',estado_apertura:'por_confirmar',pedidos_anticipados_estado:'pausado',modo_presencial_estado:'inactivo',mensaje_publico:'',observaciones_internas:'FIXTURE_QA_C5: apertura sintética aislada, no operativa ni comercial'});
+  Object.assign(apertura,{creada_por:'qa-c5',actualizada_por:'qa-c5',creado_en:ahora,actualizado_en:ahora});
+  filas.unshift({tabla:'APERTURAS',clave:'apertura_id',esperado:apertura});
+  return {modelo:'PREPARACION_FIXTURE_C5_2',fixture_id:id,grupo:grupo,escenario:escenario,actor:'qa-c5',timestamp:ahora,filas:filas};
+}
+function analizarPreparacionC5_(ss,plan){
+  var d=DominioPedidoDurableC5,canon=d.plan.canonV2,pendientes=[],presentes=0;
+  var sku=plan.filas.filter(function(e){return e.tabla==='PRODUCTOS';}).map(function(e){return e.esperado.id_producto;});
+  exigirSinBloqueoDurableC5_(ss,plan.fixture_id,sku);
+  var ops=filasQaPreparacionC5_(ss,'OPERACIONES_PEDIDOS');
+  if(ops.some(function(o){return o.id_pedido===plan.fixture_id;}))lanzar_('C5_PREPARACION_EFECTOS_EXISTENTES',409);
+  var asignaciones=filasQaPreparacionC5_(ss,'ASIGNACIONES_PEDIDO');
+  if(asignaciones.some(function(a){return plan.filas.some(function(e){return e.tabla==='DETALLE_PEDIDOS'&&e.esperado.id_detalle_pedido===a.id_detalle_pedido;});}))lanzar_('C5_PREPARACION_EFECTOS_EXISTENTES',409);
+  asignaciones.forEach(function(a){if(sku.includes(a.producto_id)&&!ops.some(function(o){return o.operacion_id===a.operacion_id&&o.estado_operacion==='COMPLETADA'&&/^PED-QA-C5-/.test(o.id_pedido);}))lanzar_('C5_PREPARACION_ASIGNACION_NO_ACREDITADA',409);});
+  var movimientos=filasQaPreparacionC5_(ss,'MOVIMIENTOS_STOCK');
+  if(movimientos.some(function(m){return m.referencia_id===plan.fixture_id||m.id_origen===plan.fixture_id;}))lanzar_('C5_PREPARACION_EFECTOS_EXISTENTES',409);
+  // No aceptar efectos huérfanos en SKU: históricos completos de otros pedidos QA se preservan.
+  movimientos.forEach(function(m){if(sku.includes(m.producto_id||m.id_producto)&&!ops.some(function(o){return o.operacion_id===(m.operacion_id||m.id_origen)&&o.estado_operacion==='COMPLETADA'&&/^PED-QA-C5-/.test(o.id_pedido);}))lanzar_('C5_PREPARACION_MOVIMIENTO_NO_ACREDITADO',409);});
+  var detalleActual=filasQaPreparacionC5_(ss,'DETALLE_PEDIDOS').filter(function(l){return l.id_pedido===plan.fixture_id;});
+  var detalleIds=plan.filas.filter(function(e){return e.tabla==='DETALLE_PEDIDOS';}).map(function(e){return e.esperado.id_detalle_pedido;});
+  if(detalleActual.some(function(l){return !detalleIds.includes(l.id_detalle_pedido);}))lanzar_('C5_PREPARACION_DETALLE_INCOMPATIBLE',409);
+  var parcialLegacy=false;
+  plan.filas.forEach(function(e){
+    var h=leerHoja_(ss,e.tabla),obj=e.esperado;
+    Object.keys(obj).forEach(function(k){if(h.mapa[k]===undefined)lanzar_('C5_PREPARACION_COLUMNA_FALTANTE',409);});
+    var matches=filasQaPreparacionC5_(ss,e.tabla).filter(function(a){return a[e.clave]===obj[e.clave]&&(e.tabla!=='APERTURA_PRODUCTOS'||a.apertura_id===obj.apertura_id);});
+    if(matches.length>1)lanzar_('C5_FIXTURE_ID_DUPLICADO',409);
+    if(e.tabla==='APERTURA_PRODUCTOS'&&filasQaPreparacionC5_(ss,e.tabla).some(function(a){return a.producto_id===obj.producto_id&&a.apertura_id!=='APE-20991231';}))lanzar_('C5_PREPARACION_APERTURA_INESPERADA',409);
+    if(!matches.length){pendientes.push({entrada:e,insertar:true,campos:Object.keys(obj)});return;}
+    presentes++;var actual=matches[0],faltantes={};
+    Object.keys(obj).forEach(function(k){
+      if(['actualizado_en','creado_en','fecha_hora'].includes(k)){if(!actual[k]||!Number.isFinite(Date.parse(actual[k])))lanzar_('C5_PREPARACION_FECHA_INVALIDA',409);return;}
+      if(['nombre_publico','nombre_cliente','observaciones'].includes(k)&&equivalenteTextoQaC5_(actual[k],obj[k]))return;
+      if(canon(actual[k])===canon(obj[k]))return;
+      if(e.tabla==='PEDIDOS'&&['apertura_id','forma_pago','origen_pedido','observaciones'].includes(k)&&actual[k]===''){faltantes[k]=obj[k];parcialLegacy=true;return;}
+      lanzar_('C5_PREPARACION_INCONSISTENTE_'+e.tabla+'_'+k,409);
+    });
+    if(e.tabla==='PEDIDOS'&&Object.keys(faltantes).length&&detalleActual.length!==detalleIds.length)lanzar_('C5_PREPARACION_PARCIAL_NO_ACREDITABLE',409);
+    if(Object.keys(faltantes).length)pendientes.push({entrada:e,insertar:false,campos:Object.keys(faltantes),cambios:faltantes});
+  });
+  return {estado:pendientes.length?(presentes?'PARCIAL_ACREDITABLE':'AUSENTE'):'COMPLETO',fixture_c5_parcial_acreditado:parcialLegacy,pendientes:pendientes};
+}
+function validarCeldasPreparacionC5_(ss,entrada,campos){
+  var h=leerHoja_(ss,entrada.tabla),row=h.sheet.getLastRow()+1;
+  var i=h.filas.findIndex(function(f){return filaAObjeto_(h,f)[entrada.clave]===entrada.esperado[entrada.clave]&&(entrada.tabla!=='APERTURA_PRODUCTOS'||filaAObjeto_(h,f).apertura_id===entrada.esperado.apertura_id);});
+  if(i>=0)row=i+2;
+  var validations=h.sheet.getRange(row,1,1,h.headers.length).getDataValidations()[0];
+  campos.forEach(function(k){var rule=validations[h.mapa[k]],v=entrada.esperado[k];if(!rule||rule.getAllowInvalid()||v==='')return;
+    if(String(rule.getCriteriaType())!=='VALUE_IN_LIST')lanzar_('C5_PREPARACION_VALIDACION_NO_SOPORTADA',409);
+    if(!rule.getCriteriaValues()[0].includes(String(v)))lanzar_('C5_PREPARACION_VALIDACION_RECHAZA_'+k,409);
+  });
+}
+/** Plan previo en auditoría QA; faltantes acreditados, nunca descuentos ni reconstrucción histórica. */
+function prepararFixtureC5_(ss,body){
+  var d=DominioPedidoDurableC5,canon=d.plan.canonV2;
+  // Validar input incluso cuando existe plan persistido.
+  var esperado=construirPlanPreparacionC5_(ss,body),auditId='AUD-QA-C5-PREP-'+d.revision.hashRevision({id:body.id_pedido,grupo:body.grupo,escenario:body.escenario||'UNIDAD'}).slice(0,24);
+  var audits=filasQaPreparacionC5_(ss,'AUDITORIA_PRODUCTOS').filter(function(a){return a.auditoria_id===auditId;});
+  if(audits.length>1)lanzar_('C5_PREPARACION_DIARIO_DUPLICADO',409);
+  var plan=esperado,registro;
+  if(audits.length){registro=JSON.parse(audits[0].cambios_json);plan=registro.plan;if(registro.modelo!=='PREPARACION_FIXTURE_C5_2'||d.revision.hashRevision(plan)!==registro.hash_plan||audits[0].payload_hash!==registro.hash_plan||plan.fixture_id!==body.id_pedido||plan.grupo!==body.grupo||plan.escenario!==(body.escenario||'UNIDAD'))lanzar_('C5_PREPARACION_PLAN_CORRUPTO',409);}
+  var analisis=analizarPreparacionC5_(ss,plan);
+  analisis.pendientes.forEach(function(p){validarCeldasPreparacionC5_(ss,p.entrada,p.campos);});
+  if(!registro){
+    registro={modelo:'PREPARACION_FIXTURE_C5_2',estado:'PREPARADA',plan:plan,hash_plan:d.revision.hashRevision(plan),estado_anterior:analisis.estado,fixture_c5_parcial_acreditado:analisis.fixture_c5_parcial_acreditado,campos_previstos:analisis.pendientes.map(function(p){return {tabla:p.entrada.tabla,id:p.entrada.esperado[p.entrada.clave],campos:p.campos};})};
+    appendQaC5_(ss,'AUDITORIA_PRODUCTOS',{auditoria_id:auditId,fecha_hora:plan.timestamp,producto_id:'',accion:'PREPARAR_FIXTURE_C5',cambios_json:JSON.stringify(registro),responsable:'qa-c5',referencia_id:plan.fixture_id,entidad_tipo:'QA_C5',entidad_id:plan.fixture_id,payload_hash:registro.hash_plan,resultado_json:''},'auditoria_id');
+  }
+  var cambios=0,completados=[];
+  analisis.pendientes.forEach(function(p){
+    var e=p.entrada;
+    if(p.insertar){appendQaC5_(ss,e.tabla,e.esperado,e.clave);cambios++;}
+    else{var h=leerHoja_(ss,e.tabla),i=h.filas.findIndex(function(f){return filaAObjeto_(h,f)[e.clave]===e.esperado[e.clave];});
+      p.campos.forEach(function(k){if(h.filas[i][h.mapa[k]]!=='')lanzar_('C5_PREPARACION_CAS_CONFLICTO',409);h.sheet.getRange(i+2,h.mapa[k]+1).setNumberFormat('@');h.sheet.getRange(i+2,h.mapa[k]+1).setValues([[p.cambios[k]]]);cambios++;});
+    }
+    completados.push({tabla:e.tabla,id:e.esperado[e.clave],campos:p.campos});SpreadsheetApp.flush();
+  });
+  var after=analizarPreparacionC5_(ss,plan);if(after.estado!=='COMPLETO')lanzar_('C5_PREPARACION_READBACK_INCIERTO',409);
+  var evidencia={fixture_id:plan.fixture_id,estado_anterior:registro.estado_anterior,estado_final:'COMPLETO',fixture_c5_parcial_acreditado:registro.fixture_c5_parcial_acreditado,campos_completados:registro.campos_previstos,hash_plan:registro.hash_plan,readback_ok:true,timestamp:plan.timestamp,actor:plan.actor};
+  if(registro.estado!=='COMPLETADA'){registro.estado='COMPLETADA';registro.evidencia=evidencia;
+    var h=leerHoja_(ss,'AUDITORIA_PRODUCTOS'),i=h.filas.findIndex(function(f){return filaAObjeto_(h,f).auditoria_id===auditId;});
+    h.sheet.getRange(i+2,h.mapa.cambios_json+1).setValues([[JSON.stringify(registro)]]);h.sheet.getRange(i+2,h.mapa.resultado_json+1).setValues([[JSON.stringify(evidencia)]]);SpreadsheetApp.flush();
+    var ver=filasQaPreparacionC5_(ss,'AUDITORIA_PRODUCTOS').filter(function(a){return a.auditoria_id===auditId;})[0];if(ver.cambios_json!==JSON.stringify(registro)||ver.resultado_json!==JSON.stringify(evidencia))lanzar_('C5_PREPARACION_EVIDENCIA_INCIERTA',409);
+  }
+  var result=estadoFixtureC5_(crearPuertoDurableC5_(ss),plan.fixture_id);result.preparacion=Object.assign({cambios:cambios,aplicado_en_esta_llamada:completados},evidencia);return result;
+}
+function estadoFixtureC5_(puerto,id) {
+  exigirQaC5_(id,'PED');
+  var p=puerto.leer('PEDIDOS').filter(function(x){return x.id_pedido===id;}), ds=puerto.leer('DETALLE_PEDIDOS').filter(function(x){return x.id_pedido===id;});
+  if(p.length!==1) lanzar_('C5_PEDIDO_INEXISTENTE_DUPLICADO',409);
+  var familias=ds.filter(function(x){return x.modelo_linea==='FAMILIA_V2';}).map(function(x){return x.familia_id;});
+  var sku=puerto.leer('PRODUCTOS').filter(function(s){return familias.includes(s.familia_id)||ds.some(function(l){return l.id_producto===s.id_producto;});});
+  sku.forEach(function(s){exigirQaC5_(s.id_producto,'PROD');});
+  var ops=puerto.leer('OPERACIONES_PEDIDOS').filter(function(o){return o.id_pedido===id;}), opids=ops.map(function(o){return o.operacion_id;});
+  return {entorno:'TEST',contrato:'C5_DURABLE_QA_1',pedido:p[0],detalles:ds,productos:sku,
+    asignaciones:puerto.leer('ASIGNACIONES_PEDIDO').filter(function(a){return opids.includes(a.operacion_id);}),movimientos:puerto.leer('MOVIMIENTOS_STOCK').filter(function(m){return opids.includes(m.operacion_id);}),operaciones:ops,bloqueos:DominioPedidoDurableC5.durable.obtenerBloqueosOperativos(puerto.leer('OPERACIONES_PEDIDOS'))};
+}
+function actualizarQaC5_(ss,tabla,clave,id,cambios) {
+  var h=leerHoja_(ss,tabla),indices=[];h.filas.forEach(function(f,i){if(filaAObjeto_(h,f)[clave]===id)indices.push(i);});
+  if(indices.length!==1) lanzar_('C5_QA_IDENTIDAD_NO_UNICA',409);
+  var raw=h.filas[indices[0]].slice(),antes=serializarRegistroF78_(filaAObjeto_(h,raw));
+  if(Object.keys(cambios).every(function(k){return antes[k]===cambios[k];}))return false;
+  Object.keys(cambios).forEach(function(k){if(h.mapa[k]===undefined)lanzar_('C5_COLUMNA_NO_EXISTE',409);raw[h.mapa[k]]=cambios[k];});
+  h.sheet.getRange(indices[0]+2,1,1,h.headers.length).setValues([raw]);SpreadsheetApp.flush();
+  var nuevo=serializarRegistroF78_(filaAObjeto_(h,h.sheet.getRange(indices[0]+2,1,1,h.headers.length).getValues()[0]));
+  Object.keys(cambios).forEach(function(k){if(nuevo[k]!==cambios[k])lanzar_('C5_QA_READBACK_INCIERTO',409);});
+  auditarQaC5_(ss,'CONFIGURAR_FIXTURE_C5',id,antes,nuevo,id);
+  return true;
+}
+function configurarFixtureC5_(ss,body) {
+  var d=DominioPedidoDurableC5, puerto=crearPuertoDurableC5_(ss), id=body.id;
+  if(body.cambio==='DESACTIVAR_FAMILIA') {
+    exigirQaC5_(id,'FAM');
+    d.durable.exigirRecursosLibresV2(obtenerBloqueosDurableC5_(ss),{sku:puerto.leer('PRODUCTOS').filter(function(s){return s.familia_id===id;}).map(function(s){return s.id_producto;})});
+    actualizarQaC5_(ss,'FAMILIAS_PRODUCTO','familia_id',id,{activo:'NO'});
+  }else if(body.cambio==='INACTIVAR_SKU') {
+    exigirQaC5_(id,'PROD');exigirSinBloqueoDurableC5_(ss,'',[id]);actualizarQaC5_(ss,'PRODUCTOS','id_producto',id,{activo:'NO'});
+  }else if(body.cambio==='PERDER_RECIBO_STOCK_QA') {
+    exigirQaC5_(id,'PROD');var s=puerto.leer('PRODUCTOS').filter(function(x){return x.id_producto===id;})[0];
+    if(!s?.evidencia_stock_v2)lanzar_('C5_QA_SIN_RECIBO',409);
+    var op=puerto.leer('OPERACIONES_PEDIDOS').filter(function(o){return o.operacion_id===s.evidencia_stock_v2.operacion_id;})[0];
+    if(!op || op.estado_operacion!=='APLICANDO')lanzar_('C5_QA_OPERACION_NO_INTERMEDIA',409);
+    exigirQaC5_(op.id_pedido,'PED');
+    auditarQaC5_(ss,'QA_C5_RECIBO_ANTES_FALLO',id,s,{motivo:'Fallo QA controlado, restaurable'},op.operacion_id);
+    actualizarQaC5_(ss,'PRODUCTOS','id_producto',id,{evidencia_stock_v2:''});
+  }else lanzar_('C5_CONFIG_QA_NO_PERMITIDA',403);
+  return {ok:true,entorno:'TEST',id:id,cambio:body.cambio};
+}
+function reconciliarFixtureC5_(ss,body) {
+  var d=DominioPedidoDurableC5,puerto=crearPuertoDurableC5_(ss),ops=puerto.leer('OPERACIONES_PEDIDOS'),op=ops.filter(function(o){return o.operacion_id===body.operacion_id;})[0];
+  if(!op || op.estado_operacion!=='REQUIERE_REVISION')lanzar_('C5_QA_REVISION_REQUERIDA',409);
+  exigirQaC5_(op.id_pedido,'PED');var plan=JSON.parse(op.snapshot_json);d.plan.validarHashPlanSheetsV2(plan);
+  var h=leerHoja_(ss,'AUDITORIA_PRODUCTOS'), restores=[];
+  plan.saldos.forEach(function(saldo){
+    exigirQaC5_(saldo.producto_id,'PROD');var actual=puerto.leer('PRODUCTOS').filter(function(s){return s.id_producto===saldo.producto_id;})[0],esperado=d.plan.productoResultanteV2(plan,saldo);
+    if(d.plan.canonV2(actual)===d.plan.canonV2(saldo.antes)||d.plan.canonV2(actual)===d.plan.canonV2(esperado))return;
+    var pruebas=h.filas.map(function(f){return filaAObjeto_(h,f);}).filter(function(a){return a.accion==='QA_C5_RECIBO_ANTES_FALLO'&&a.entidad_id===saldo.producto_id&&a.referencia_id===op.operacion_id;});
+    if(pruebas.length!==1)lanzar_('C5_QA_AUTORIA_NO_ACREDITABLE',409);
+    var prueba=JSON.parse(pruebas[0].cambios_json),sinRecibo=Object.assign({},prueba.antes);delete sinRecibo.evidencia_stock_v2;
+    if(d.revision.hashRevision(prueba)!==pruebas[0].payload_hash || d.plan.canonV2(prueba.antes)!==d.plan.canonV2(esperado)||d.plan.canonV2(actual)!==d.plan.canonV2(sinRecibo))lanzar_('C5_QA_AUTORIA_NO_ACREDITABLE',409);
+    restores.push({id:saldo.producto_id,recibo:JSON.stringify(esperado.evidencia_stock_v2)});
+  });
+  restores.forEach(function(r){actualizarQaC5_(ss,'PRODUCTOS','id_producto',r.id,{evidencia_stock_v2:r.recibo});});
+  auditarQaC5_(ss,'QA_C5_RECONCILIAR',op.id_pedido,{estado:op.estado_operacion,error:op.error_codigo},{recibos:restores.map(function(x){return x.id;}),estado:'APLICANDO'},op.operacion_id);
+  actualizarQaC5_(ss,'OPERACIONES_PEDIDOS','operacion_id',op.operacion_id,{estado_operacion:'APLICANDO'});
+  return {entorno:'TEST',reconciliada:op.operacion_id,recibos_restaurados:restores.length};
+}
+/** Recuperación autorizada del prefijo v23. No borra filas ni aplica inventario. */
+function recuperarMovimientoParcialC5_(ss,body) {
+  var d=DominioPedidoDurableC5,canon=d.plan.canonV2,puerto=crearPuertoDurableC5_(ss);
+  var id='OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f',key='qa_c5_eco_confirmar';
+  if(body.operacion_id!==id||body.idempotency_key!==key)lanzar_('C5_RECOVERY_FUERA_ALCANCE',403);
+  var ops=puerto.leer('OPERACIONES_PEDIDOS'),matches=ops.filter(function(o){return o.operacion_id===id||o.idempotency_key===key;});
+  if(matches.length!==1)lanzar_('C5_RECOVERY_DIARIO_AMBIGUO',409);
+  var op=matches[0],p=JSON.parse(op.snapshot_json);d.plan.validarHashPlanSheetsV2(p);
+  if(op.estado_operacion!=='APLICANDO'||op.paso!==2||op.id_pedido!=='PED-QA-C5-ECO-PRINCIPAL'||op.tipo_operacion!=='CONFIRMAR_V2'||op.actor!=='qa-c5'||op.resultado_json!==''||op.error_codigo||p.operacion_id!==id||p.idempotency_key!==key||p.payload_hash!==op.payload_hash||p.creado_en!==op.creado_en||p.tipo!==op.tipo_operacion||p.actor!==op.actor)lanzar_('C5_RECOVERY_PLAN_INCOHERENTE',409);
+  if(p.plan_hash!=='2725af3817e762bfa48116bd2282c9205311688a0a3da1f16e9cba376dc6f3d9'||p.movimientos.length!==2||p.asignaciones_nuevas.length!==2||p.saldos.length!==2)lanzar_('C5_RECOVERY_PLAN_NO_ACREDITADO',409);
+  d.durable.exigirRecursosLibresV2(d.durable.obtenerBloqueosOperativos(ops,id),{id_pedido:op.id_pedido,sku:p.saldos.map(function(s){return s.producto_id;})});
+  var esperadoPedido=p.pedido_antes,actualPedido=puerto.leer('PEDIDOS').filter(function(x){return x.id_pedido===op.id_pedido;});
+  if(actualPedido.length!==1||canon(actualPedido[0])!==canon(esperadoPedido)||esperadoPedido.estado!=='recibido'||esperadoPedido.contexto_apertura_snapshot.apertura_id!=='APE-20991231')lanzar_('C5_RECOVERY_PEDIDO_CAMBIO',409);
+  var cab=filasQaPreparacionC5_(ss,'PEDIDOS').filter(function(x){return x.id_pedido===op.id_pedido;})[0];
+  if(cab.canal!=='QA_C5'||cab.telefono!=='QA-C5'||cab.total!==3900||!equivalenteTextoQaC5_(cab.nombre_cliente,'Fixture sintético C5'))lanzar_('C5_RECOVERY_PEDIDO_NO_QA',409);
+  if(canon(puerto.leer('DETALLE_PEDIDOS').filter(function(l){return l.id_pedido===op.id_pedido;}))!==canon(p.detalles))lanzar_('C5_RECOVERY_DETALLE_CAMBIO',409);
+  var as=puerto.leer('ASIGNACIONES_PEDIDO').filter(function(a){return a.operacion_id===id||p.asignaciones_nuevas.some(function(e){return e.asignacion_id===a.asignacion_id;});});
+  if(as.length!==2||p.asignaciones_nuevas.some(function(e){return as.filter(function(a){return canon(a)===canon(e);}).length!==1;}))lanzar_('C5_RECOVERY_ASIGNACION_CAMBIO',409);
+  p.saldos.forEach(function(s){exigirQaC5_(s.producto_id,'PROD');var sku=puerto.leer('PRODUCTOS').filter(function(a){return a.id_producto===s.producto_id;});if(sku.length!==1||canon(sku[0])!==canon(s.antes))lanzar_('C5_RECOVERY_STOCK_CAMBIO',409);});
+  var h=leerHoja_(ss,'MOVIMIENTOS_STOCK'),m=p.movimientos[0],indices=[];
+  h.filas.forEach(function(f,i){var r=filaAObjeto_(h,f);if(r.id_movimiento===m.movimiento_id||r.movimiento_id===m.movimiento_id)indices.push(i);
+    if((r.operacion_id===id||r.referencia_id===id||r.id_origen===id||p.movimientos.some(function(e){return e.movimiento_id===r.id_movimiento||e.movimiento_id===r.movimiento_id;}))&&r.id_movimiento!==m.movimiento_id)lanzar_('C5_RECOVERY_MOVIMIENTO_INESPERADO',409);
+  });
+  if(indices.length!==1)lanzar_('C5_RECOVERY_MOVIMIENTO_NO_UNICO',409);
+  var index=indices[0],raw=h.filas[index].slice(),obj=serializarRegistroF78_(filaAObjeto_(h,raw));
+  var auditId='AUD-QA-C5-REC-M0-'+id.slice(6),evidencia={modelo:'MOVIMIENTO_V2_PARCIAL_ACREDITADO',operacion_id:id,movimiento_id:m.movimiento_id,plan_hash:p.plan_hash,actor:'qa-c5',fecha_original:m.creado_en};
+  var serial=serializarMovimientoV2ParaSheet_(m,p,evidencia),row=h.headers.map(function(k){return serial[k]===undefined?'':serial[k];});
+  var completo=canon(raw)===canon(row),parcial=raw.every(function(v,i){return h.headers[i]==='id_movimiento'?v===m.movimiento_id:h.headers[i]==='fecha_hora'?String(obj.fecha_hora)===m.creado_en:v==='';});
+  if(!completo&&!parcial)lanzar_('C5_RECOVERY_PREFIJO_NO_ACREDITABLE',409);
+  var audits=filasQaPreparacionC5_(ss,'AUDITORIA_PRODUCTOS').filter(function(a){return a.auditoria_id===auditId;});
+  var prueba={modelo:'RECOVERY_MOVIMIENTO_C5_1',clasificacion:'MOVIMIENTO_V2_PARCIAL_ACREDITADO',operacion_id:id,plan_hash:p.plan_hash,antes:{id_movimiento:m.movimiento_id,fecha_hora:m.creado_en},fila_serializada:serial};
+  var hash=d.revision.hashRevision(prueba);
+  if(audits.length>1||audits.length===1&&(audits[0].payload_hash!==hash||audits[0].cambios_json!==JSON.stringify(prueba))||completo&&audits.length!==1)lanzar_('C5_RECOVERY_AUDITORIA_INCOHERENTE',409);
+  validarFilaPersistenciaC5_(h,index+2,row);validarPlanPersistenciaC5_(ss,op);
+  if(!audits.length)appendQaC5_(ss,'AUDITORIA_PRODUCTOS',{auditoria_id:auditId,fecha_hora:new Date().toISOString(),producto_id:'',accion:'RECUPERAR_MOVIMIENTO_PARCIAL_C5',cambios_json:JSON.stringify(prueba),responsable:'qa-c5',referencia_id:id,entidad_tipo:'QA_C5',entidad_id:m.movimiento_id,payload_hash:hash,resultado_json:''},'auditoria_id');
+  if(!completo){
+    if(canon(h.sheet.getRange(index+2,1,1,h.headers.length).getValues()[0])!==canon(raw))lanzar_('C5_RECOVERY_CAS_CONFLICTO',409);
+    h.headers.forEach(function(k,i){if(typeof row[i]==='string')h.sheet.getRange(index+2,i+1).setNumberFormat('@');});
+    h.sheet.getRange(index+2,1,1,h.headers.length).setValues([row]);SpreadsheetApp.flush();
+  }
+  var after=h.sheet.getRange(index+2,1,1,h.headers.length).getValues()[0];
+  if(canon(after)!==canon(row)||canon(normalizarFilaC5_('MOVIMIENTOS_STOCK',filaAObjeto_(h,after)))!==canon(m))lanzar_('C5_RECOVERY_READBACK_INCIERTO',409);
+  var resultado={entorno:'TEST',clasificacion:'MOVIMIENTO_V2_PARCIAL_ACREDITADO',operacion_id:id,movimiento_id:m.movimiento_id,plan_hash:p.plan_hash,hash_evidencia:hash,readback_ok:true,stock_modificado:false};
+  var auditActual=filasQaPreparacionC5_(ss,'AUDITORIA_PRODUCTOS').filter(function(a){return a.auditoria_id===auditId;})[0];
+  if(auditActual.resultado_json!==JSON.stringify(resultado))actualizarQaC5_(ss,'AUDITORIA_PRODUCTOS','auditoria_id',auditId,{resultado_json:JSON.stringify(resultado)});
+  return Object.assign({cambios:completo?0:1},resultado);
+}
+function cleanupFixturesC5_(ss) {
+  var d=DominioPedidoDurableC5,puerto=crearPuertoDurableC5_(ss),bloqueos=obtenerBloqueosDurableC5_(ss);
+  if(bloqueos.global || bloqueos.operaciones.length)lanzar_('C5_CLEANUP_OPERACION_INCOMPLETA',423);
+  var h=leerHoja_(ss,'PRODUCTOS'),sku=h.filas.map(function(f){return filaAObjeto_(h,f);}).filter(function(s){return /^PROD-QA-C5-/.test(s.id_producto);});
+  sku.forEach(function(s){exigirQaC5_(s.id_producto,'PROD');var m=JSON.parse(s.observaciones);if(m.modelo!=='FIXTURE_C5_1'||s.stock_actual!==m.stock_inicial)lanzar_('C5_CLEANUP_STOCK_NO_RESTAURADO',409);});
+  var pedidosQa=filasQaPreparacionC5_(ss,'PEDIDOS').filter(function(p){return /^PED-QA-C5-/.test(p.id_pedido);});
+  if(pedidosQa.some(function(p){return p.estado_pedido!=='cancelado';}))lanzar_('C5_CLEANUP_PEDIDO_NO_CANCELADO',409);
+  var aperturasQa=filasQaPreparacionC5_(ss,'APERTURAS').filter(function(a){return a.apertura_id==='APE-20991231';});
+  if(aperturasQa.length!==1||aperturasQa[0].creada_por!=='qa-c5'||!/^FIXTURE_QA_C5:/.test(aperturasQa[0].observaciones_internas))lanzar_('C5_CLEANUP_APERTURA_NO_QA',409);
+  var relacionesQa=filasQaPreparacionC5_(ss,'APERTURA_PRODUCTOS').filter(function(a){return /^PROD-QA-C5-/.test(a.producto_id);});
+  if(relacionesQa.some(function(a){return a.apertura_id!=='APE-20991231';}))lanzar_('C5_CLEANUP_APERTURA_INESPERADA',409);
+  // No reconstruir stock: confirmar/cancelar deben haberlo restituido con evidencia durable.
+  var cambios=0;sku.forEach(function(s){if(s.activo!=='NO'){actualizarQaC5_(ss,'PRODUCTOS','id_producto',s.id_producto,{activo:'NO'});cambios++;}});
+  puerto.leer('FAMILIAS_PRODUCTO').filter(function(f){return /^FAM-QA-C5-/.test(f.familia_id);}).forEach(function(f){exigirQaC5_(f.familia_id,'FAM');if(f.activo!=='NO'){actualizarQaC5_(ss,'FAMILIAS_PRODUCTO','familia_id',f.familia_id,{activo:'NO'});cambios++;}});
+  relacionesQa.forEach(function(a){if(a.habilitado!=='NO'){actualizarQaC5_(ss,'APERTURA_PRODUCTOS','producto_id',a.producto_id,{habilitado:'NO'});cambios++;}});
+  if(aperturasQa[0].estado_apertura!=='cancelada'){actualizarQaC5_(ss,'APERTURAS','apertura_id','APE-20991231',{estado_apertura:'cancelada',pedidos_anticipados_estado:'cerrado',modo_presencial_estado:'cerrado'});cambios++;}
+  return {entorno:'TEST',cambios:cambios,sku_qa:sku.length,apertura_qa_cancelada:true,habilitaciones_qa_desactivadas:true,pedidos_qa_cancelados:pedidosQa.length,evidencia_conservada:true,stock_qa_restaurado:true};
+}
+function ejecutarAccionDurableC5Test_(accion,body) {
+  var ss=destinoDurableC5_(),d=DominioPedidoDurableC5;
+  var fallos=['PREPARADA','APLICANDO','ASIGNACION_1','ASIGNACION_2','MOVIMIENTO_1','MOVIMIENTO_2','ANTES_STOCK_1','STOCK_1','STOCK_2','ANTES_ESTADO_PEDIDO','ESTADO_PEDIDO','PUNTERO_VIGENTE','ANTES_READBACK','DESPUES_READBACK','COMPLETADA'];
+  if(body.fallo_punto && !fallos.includes(body.fallo_punto))lanzar_('C5_FALLO_QA_INVALIDO',400);
+  var puerto=crearPuertoDurableC5_(ss,body.fallo_punto),input;
+  try {
+    if(['confirmarPedidoV2Test','cancelarPedidoV2Test','reasignarPedidoV2Test'].includes(accion)) {
+      exigirQaC5_(body.id_pedido,'PED');(body.asignaciones||[]).forEach(function(r){r.selecciones.forEach(function(s){exigirQaC5_(s.producto_id,'PROD');});});
+      input={id_pedido:body.id_pedido,actor:'qa-c5',idempotency_key:body.idempotency_key,estado_esperado:body.estado_esperado,apertura_id_esperada:body.apertura_id_esperada,asignaciones:body.asignaciones||[]};
+      var fn=accion==='confirmarPedidoV2Test'?'confirmarPedidoV2Durable':accion==='cancelarPedidoV2Test'?'cancelarPedidoV2Durable':'reasignarPedidoV2Durable';
+      return d.durable[fn](puerto,input,{ahora:function(){return new Date().toISOString();}});
+    }
+    return puerto.conLock(function(){
+      if(accion==='prepararFixturePedidoV2Test')return prepararFixtureC5_(ss,body);
+      if(accion==='configurarFixtureC5Test')return configurarFixtureC5_(ss,body);
+      if(accion==='reconciliarFixtureC5Test')return reconciliarFixtureC5_(ss,body);
+      if(accion==='recuperarMovimientoParcialC5Test')return recuperarMovimientoParcialC5_(ss,body);
+      if(accion==='cleanupFixturesC5Test')return cleanupFixturesC5_(ss);
+      if(accion==='obtenerAsignacionesPedidoV2Test')return estadoFixtureC5_(puerto,body.id_pedido);
+      var op=puerto.leer('OPERACIONES_PEDIDOS').filter(function(o){return o.operacion_id===body.operacion_id;});
+      if(op.length!==1)lanzar_('C5_DIARIO_NO_UNICO',409);exigirQaC5_(op[0].id_pedido,'PED');
+      if(accion==='obtenerOperacionV2Test')return {entorno:'TEST',operacion:op[0]};
+      if(accion==='verificarOperacionV2Test')return d.durable.verificarOperacionV2(puerto,body.operacion_id);
+      lanzar_('C5_ACCION_NO_PERMITIDA',403);
+    });
+  }catch(e){if(e instanceof d.pedido.ErrorPedidoFamilia)lanzar_(e.codigo,e.status);throw e;}
 }
