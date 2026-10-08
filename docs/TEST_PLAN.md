@@ -1,8 +1,19 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Remediación C5 R0–R10 (2026-10-07)
+
+32 tests focales: SHA256/UTF8/seriales, forense, ID canónico/alias, dos acreditaciones, corrupción, bloqueo PREPARADA/APLICANDO, desconocidos, duplicados, referencias externas, efectos de stock y replay0. Readback TEST nativo:20 cambios previstos,0 ajenos; preflight limpio. V1 diferencial sin cambios comerciales. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
+
+
+## C5 parcial — preflight y PERMITIR_SNAPSHOT local (2026-10-07)
+
+`tests/familias-c5-preflight.test.mjs`:33 pruebas nuevas de destino/IDs/headers/bloqueos, backup nativo, fórmulas, concurrencia/readback, migración en mocks y segunda ejecución0. D50: nuevo pedido inactivo rechazado; recibido conserva snapshot y puede confirmar/reasignar/cancelar; ninguna excepción para stock, marca, contenido o apertura. Los dos casos C4 de política fueron actualizados por D50; sigue con176 casos.
+
+Focal C4+C5:209 PASS. Suite857 PASS; lint/typecheck/build aislado/secrets/diff/auditoría V1 PASS. TEST real: lecturas/preflight/dry-run de deploy únicamente; STOP por ID duplicado y diario V1 incompleto. **0 E2E reales C5, 0 fallos inyectados remotos, 0 fixtures cargados.** [Entrega y bloqueos](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## C4 — persistencia simulada durable (2026-10-07)
 
-`node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-durable-c4.test.mjs`:176 casos. Todos los puntos de escritura/checkpoint y readback, nuevo proceso/replay, HTTP TIMEOUT/502, corrupción/autoría incierta, mixed V1/V2 con validación acumulada, cancelación/reasignación append-only, recibo de puntero, apertura, HUMAN_GATE sin política por defecto, granel100/250/1000 y bloqueo/concurrencia. Hojas/HTTP exclusivamente en memoria; cero servicios remotos. Suite824 PASS, lint/typecheck/build aislado por EBUSY/secrets/diffcheck y auditoría diferencial `scripts/auditar-v1-familias.mjs --no-write` PASS. [Matriz de fallos, supuestos del mock y límites C5](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+`node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/familias-durable-c4.test.mjs`:176 casos. Todos los puntos de escritura/checkpoint y readback, nuevo proceso/replay, HTTP TIMEOUT/502, corrupción/autoría incierta, mixed V1/V2 con validación acumulada, cancelación/reasignación append-only, recibo de puntero, apertura, política de familia desactivada (hoy D50), granel100/250/1000 y bloqueo/concurrencia. Hojas/HTTP exclusivamente en memoria; cero servicios remotos. Suite824 al cierre C4 y857 con C5 local. [Matriz de fallos y supuestos históricos](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
 
 ## C3 — auditoría integral (2026-10-07)
 

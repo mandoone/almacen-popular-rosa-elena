@@ -5,9 +5,19 @@
 
 ---
 
+## Remediación previa C5 — R0–R10 completos (2026-10-07)
+
+Trabajo C5 local preservado con backup reversible. Auditoría propia acreditó las dos líneas de compra y dos creaciones V1 sin inventario. TEST: solo2 movimiento_id canónicos,6 headers y12 celdas de acreditación;20 cambios autorizados/0 ajenos, históricos y stocks/costos/precios intactos. Backup nativo R0 verificado; segunda ejecución0; preflight C5 limpio con0 familias y sin ASIGNACIONES_PEDIDO. Apps Script TEST sigue v20. Continúa C5 automáticamente; F10 permanece1 READY/19 PENDING. [Acta y rollback](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
+
+## Familias / SKU — STOP C5 anterior, superado por remediación (2026-10-07)
+
+HEAD inicial/conservado f3a457c327e2d4f3c2d9b1d549edaa53ae6b9ee5, rama feature/fase-3a-operativa. Lectura TEST verificó destino, 18 pestañas, 0 familias y ausencia de ASIGNACIONES_PEDIDO. Preflight bloqueado por ID duplicado de movimiento y dos diarios V1 inciertos preexistentes; no se omitieron las garantías C4 para continuar. **Sin backup/migración/fixtures/deploy C5; backend TEST v20 verificado.**
+
+D50 PERMITIR_SNAPSHOT cerrada y aplicada localmente; esquema mínimo/migrador inyectado y33 pruebas nuevas, suite857 PASS, lint/typecheck/build aislado/secrets/diff/auditoría V1 PASS. Árbol con cambios locales sin commit/push: no se cumplió la condición de cierre integral C5. F10 continúa 1 READY/19 PENDING. [Informe, ubicaciones, huellas, límites y siguiente paso](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## Familias / SKU — C4 durable local, 2026-10-07
 
-Adaptador desacoplado con Sheets en memoria: confirmación mixta V1/V2, cancelación/reasignación históricas, planes y recibos de autoría, recuperación tras escrituras, HTTP ambiguo, bloqueos y concurrencia. 176 nuevos tests; suite824 PASS y QA completo (build con salida aislada por EBUSY en Dropbox). V1/C1/C2/GAS intactos. Ninguna escritura/lectura remota ni deploy; TEST Sheet sin cambios, Apps Script TEST continúa v20 según cierre anterior. HUMAN_GATE familia desactivada sigue pendiente; F10 continúa 1 READY/19 PENDING. [Entrega y eventual C5](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+Adaptador desacoplado con Sheets en memoria: confirmación mixta V1/V2, cancelación/reasignación históricas, planes y recibos de autoría, recuperación tras escrituras, HTTP ambiguo, bloqueos y concurrencia. 176 tests C4; suite824 al cierre C4 y QA completo (build con salida aislada por EBUSY en Dropbox). V1/C1/C2/GAS intactos. C4 no hizo lectura/escritura remota ni deploy. El gate de familia desactivada se cerró posteriormente por D50; estado actual C5 arriba. [Entrega histórica C4](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
 
 ## Sesión familias/SKU — cierre B2/B3/C1/C2/C3, 2026-10-07
 

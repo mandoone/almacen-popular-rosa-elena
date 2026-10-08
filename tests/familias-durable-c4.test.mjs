@@ -145,18 +145,19 @@ for (const punto of puntosReasignar) test(`C4 reasignación falla en ${punto}; c
   const antes = structuredClone(c.estado.hojas); assert.deepEqual(await reasignarPedidoV2Durable(c.nuevoProceso(), input, opcionesC4), r); assert.deepEqual(c.estado.hojas, antes);
 });
 
-test('C4 familia desactivada: sin política HUMAN_GATE423, snapshot intacto y cero escrituras', async () => {
-  const c = escenarioC4(); c.estado.hojas.FAMILIAS_PRODUCTO[0].activo = 'NO'; const antes = structuredClone(c.estado.hojas);
-  await assert.rejects(confirmar(c), e => e.status === 423 && e.codigo === 'HUMAN_GATE_FAMILIA_DESACTIVADA');
-  assert.deepEqual(c.estado.hojas, antes); assert.equal(c.estado.eventos.length, 0);
+test('C4/D50 familia desactivada: PERMITIR_SNAPSHOT sin HUMAN_GATE, snapshot intacto', async () => {
+  const c = escenarioC4(); c.estado.hojas.FAMILIAS_PRODUCTO[0].activo = 'NO'; const antes = structuredClone(c.estado.hojas.DETALLE_PEDIDOS);
+  assert.equal((await confirmar(c)).estado_operacion, 'COMPLETADA');
+  assert.deepEqual(stocks(c), [0, 5]); assert.deepEqual(c.estado.hojas.DETALLE_PEDIDOS, antes);
+  assert.equal(plan(c).decisiones_familia[0].decision, 'PERMITIR_SNAPSHOT');
 });
-test('C4 política inyectada explícita permite snapshot o bloquea; ninguna queda elegida por defecto', async () => {
-  for (const decision of ['PERMITIR_SNAPSHOT', 'BLOQUEAR']) {
-    const c = escenarioC4(); c.estado.hojas.FAMILIAS_PRODUCTO[0].activo = 'NO'; c.estado.hojas.FAMILIAS_PRODUCTO[0].precio_venta = 1000;
-    const opciones = { ...opcionesC4, resolverPoliticaFamiliaDesactivada: caso => { assert.equal(caso.snapshot.precio_venta, 650); return decision; } };
-    if (decision === 'BLOQUEAR') { await assert.rejects(confirmarPedidoV2Durable(c.almacen, c.input, opciones), /POLITICA_BLOQUEAR/); assert.deepEqual(stocks(c), [4, 7]); }
-    else { await confirmarPedidoV2Durable(c.almacen, c.input, opciones); assert.deepEqual(stocks(c), [0, 5]); assert.equal(plan(c).decisiones_familia[0].decision, decision); }
-  }
+test('C4/D50 precio y versión actuales no sustituyen la oferta del pedido recibido', async () => {
+  const c = escenarioC4(); c.estado.hojas.FAMILIAS_PRODUCTO[0].activo = 'NO';
+  c.estado.hojas.FAMILIAS_PRODUCTO[0].precio_venta = 1000; c.estado.hojas.FAMILIAS_PRODUCTO[0].version_oferta = 2;
+  await confirmar(c); assert.deepEqual(stocks(c), [0, 5]);
+  assert.equal(c.estado.hojas.DETALLE_PEDIDOS[0].precio_unitario, 650);
+  assert.equal(c.estado.hojas.DETALLE_PEDIDOS[0].version_oferta_snapshot, 1);
+  assert.equal(plan(c).decisiones_familia[0].decision, 'PERMITIR_SNAPSHOT');
 });
 test('C4 apertura congelada por ID, habilitación actual exigida según C2', async () => {
   const c = escenarioC4({ apertura: true }); await confirmar(c); assert.equal(plan(c).contexto_snapshot.apertura_id, 'APE-20261010');

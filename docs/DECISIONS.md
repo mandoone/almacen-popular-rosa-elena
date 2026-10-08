@@ -1,5 +1,10 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D52 — Acreditación aditiva de revisiones V1 y movimiento canónico (2026-10-07)
+
+Autorización expresa de Omar: preservar REQUIERE_REVISION y todos los14 campos originales, acreditar únicamente CREACION_V1_ACREDITADA/FALLO_PARCIAL_V1_ACREDITADO con evidencia derivada y SHA256. Resolución válida libera bloqueo; PREPARADA/APLICANDO, desconocidos, duplicados y corruptos permanecen bloqueados. id_movimiento es alias legado no necesariamente único; movimiento_id moderno es único, obligatorio para nuevos efectos V2. Dos IDs corregidos solo en TEST con backup/readback; no se borró histórico. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
+
+
 > Registro de decisiones (ADRs cortos). Una decisión cerrada no se re-discute aquí;
 > si cambia, se añade una nueva entrada que la supersede. Tareas abiertas en
 > `docs/TASKS.md`.
@@ -8,9 +13,21 @@ Formato: **contexto → decisión → consecuencias**.
 
 ---
 
+## D50 — Familia desactivada: PERMITIR_SNAPSHOT (2026-10-07)
+
+Decisión explícita de Omar, que supersede el HUMAN_GATE de D49: una familia desactivada rechaza pedidos nuevos; un pedido ya recibido conserva su snapshot comercial y puede confirmarse con SKU equivalentes, habilitados y con stock suficiente. Desactivar no cancela pedidos existentes. Para no cumplir uno, operación debe cancelarlo explícitamente. Nunca sustituir una presentación no equivalente.
+
+El adaptador local registra PERMITIR_SNAPSHOT en el plan cuando encuentra la familia inactiva. No requiere callback humano ni admite una regla silenciosa BLOQUEAR. C1 ya rechaza solicitudes nuevas contra familias inactivas. Esta política no omite validaciones físicas ni autoriza recomputar un plan parcialmente aplicado ante evidencia concurrente incierta. [Estado C5](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+## D51 — Esquema mínimo C5 y STOP antes de escritura (2026-10-07)
+
+Conservar revisiones/recibos por SKU y estado/puntero por pedido. Reutilizar apertura_id existente y las columnas del diario; ASIGNACIONES_PEDIDO conserva las 13 columnas C1. Metadatos adicionales del movimiento caben en observacion JSON versionado. [Contrato local](DATA_MODEL.md#esquema-durable-c5--diseño-local-no-migrado-2026-10-07-d51).
+
+Preflight encontró un ID de movimiento duplicado en ambos alias históricos y dos diarios V1 REQUIERE_REVISION, cuyo modelo produce bloqueo global C4. Aunque preexistentes, no se deduplican ni se excluyen para hacer pasar fixtures. Se aplican las stop conditions de Omar: C5 remoto detenido antes de backup/migración/deploy. Continuar solo con contrato, política, mocks y documentación locales.
+
 ## D49 — Persistencia durable mixta, con evidencia de autoría (2026-10-07)
 
-C4 compone V1/V2 sobre C2 y puerto local simulado: intención previa a efectos, asignaciones append-only, IDs deterministas, saldo/revisión/recibo en una escritura lógica, readback y bloqueo durable por pedido/SKU. Stock coincidente sin evidencia exige revisión. Reasignación registra reversión/aplicación y aplica saldo neto, conservando historia. No se afirma ACID ni se conecta a Google/GAS/rutas. Familia desactivada continúa HUMAN_GATE; política configurable sin decisión comercial por defecto. [Modelo](DATA_MODEL.md#adaptador-durable-c4--exclusivamente-local-2026-10-07-d49) y [evidencia/límites](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
+C4 compone V1/V2 sobre C2 y puerto local simulado: intención previa a efectos, asignaciones append-only, IDs deterministas, saldo/revisión/recibo en una escritura lógica, readback y bloqueo durable por pedido/SKU. Stock coincidente sin evidencia exige revisión. Reasignación registra reversión/aplicación y aplica saldo neto, conservando historia. No se afirma ACID ni se conecta a Google/GAS/rutas. Al cierre C4, familia desactivada quedó HUMAN_GATE; **D50 lo cierra y supersede esa parte**. [Modelo](DATA_MODEL.md#adaptador-durable-c4--exclusivamente-local-2026-10-07-d49) y [evidencia/límites](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).
 
 ## D48 — Reparto operativo y reversión histórica local (2026-10-07)
 

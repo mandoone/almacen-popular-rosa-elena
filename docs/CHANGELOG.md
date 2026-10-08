@@ -1,5 +1,14 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-07 — Remediación previa C5 autorizada TEST
+
+Preserva doce archivos C5; acredita dos movimientos/creaciones V1 y añade resolución auditable sin cambiar estados históricos. Backup nativo verificado;20 celdas autorizadas/0 ajenas, replay0 y preflight limpio. Apps Script permanece v20; C5 continúa después del checkpoint. [Acta](operativa/REMEDIACION_PRE_C5_2026-10-07.md).
+
+
+## C5 parcial — preflight STOP y política D50 local — 2026-10-07
+
+- PERMITIR_SNAPSHOT cerrada/aplicada localmente. Esquema mínimo y migrador con puerto inyectado, 33 pruebas nuevas y QA857 PASS. Preflight TEST detectó ID de movimiento duplicado y dos diarios V1 inciertos preexistentes; detuvo escrituras antes de backup/migración/deploy. TEST continúa v20, sin fixtures ni activación pública. [Informe parcial](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
 ## C4 — adaptador durable exclusivamente local — 2026-10-07
 
 - Plan mixto V1/V2, orquestación sobre C2 con almacenamiento simulado, recibos de autoría, fault recovery, bloqueos, cancelación y reasignación históricas. 176 pruebas nuevas, suite824 y QA/auditoría V1 PASS. Sin Sheets/deploy ni decisiones comerciales nuevas. [Entrega](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md).

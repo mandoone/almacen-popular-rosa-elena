@@ -1,5 +1,6 @@
 /** C4: puerto local sobre hojas simuladas. Ninguna implementación Google/HTTP. */
 import { ErrorPedidoFamilia, exigirV2, leerOfertaSnapshotV2, type AsignacionPedido } from './pedidoV2.ts';
+import { revisionV1Acreditada, type ResolucionRevisionV1 } from './revisionV1.ts';
 import { type FamiliaProducto, type ContextoDisponibilidadFamilia } from '../familiasProducto.ts';
 import {
   canonV2, copiaV2, hashV2, hashInputV2, construirPlanMixtoV2, validarHashPlanSheetsV2,
@@ -8,7 +9,7 @@ import {
   type ProductoSheetsV2, type DetalleMixtoV2, type MovimientoSheetsV2,
 } from './planMixtoV2.ts';
 
-export interface OperacionSheetsV2 {
+export interface OperacionSheetsV2 extends ResolucionRevisionV1 {
   operacion_id: string; idempotency_key: string; tipo_operacion: string; id_pedido: string; actor: string;
   estado_operacion: 'PREPARADA' | 'APLICANDO' | 'COMPLETADA' | 'REQUIERE_REVISION';
   paso: number; payload_hash: string; snapshot_json: string; resultado_json: string;
@@ -40,9 +41,9 @@ export interface AlmacenSheetsLocalV2 {
 }
 export interface OpcionesDurableV2 {
   ahora: () => string;
-  resolverPoliticaFamiliaDesactivada?: (caso: { pedido: PedidoSheetsV2; snapshot: FamiliaProducto; actual: FamiliaProducto })
-    => Promise<'PERMITIR_SNAPSHOT' | 'BLOQUEAR' | undefined> | 'PERMITIR_SNAPSHOT' | 'BLOQUEAR' | undefined;
 }
+/** D50: decisión de Omar. Afecta pedidos recibidos; C1 sigue rechazando nuevas ofertas inactivas. */
+export const POLITICA_FAMILIA_DESACTIVADA = 'PERMITIR_SNAPSHOT' as const;
 export interface ResultadoDurableV2 {
   operacion_id: string; id_pedido: string; tipo_operacion: TipoOperacionSheetsV2;
   estado_operacion: 'COMPLETADA' | 'REQUIERE_REVISION'; estado_pedido?: PedidoSheetsV2['estado'];
@@ -58,6 +59,8 @@ export function obtenerBloqueosOperativos(ops: readonly OperacionSheetsV2[], exc
   let global = false;
   for (const op of ops) {
     if (op.estado_operacion === 'COMPLETADA' || op.operacion_id === excluir) continue;
+    const identidadUnica = ops.filter(x => x.operacion_id === op.operacion_id || x.idempotency_key === op.idempotency_key).length === 1;
+    if (identidadUnica && revisionV1Acreditada(op as unknown as Record<string, unknown>)) continue;
     operaciones.push(op.operacion_id); pedidos.add(op.id_pedido);
     if (/^(PLAN_|DIARIO_|RESULTADO_)/.test(op.error_codigo ?? '')
       || ops.filter(x => x.operacion_id === op.operacion_id || x.idempotency_key === op.idempotency_key).length !== 1) global = true;
@@ -103,7 +106,7 @@ async function contextoActual(a: AlmacenSheetsLocalV2, pedido: PedidoSheetsV2): 
   exigirV2(new Set(filas.map(f => f.producto_id)).size === filas.length && filas.every(f => ['SI', 'NO'].includes(f.habilitado)), 'APERTURA_DUPLICADA_O_INVALIDA', 409);
   return { apertura_id: id, sku_habilitados: filas.filter(f => f.habilitado === 'SI').map(f => f.producto_id).sort() };
 }
-async function resolverFamilias(a: AlmacenSheetsLocalV2, p: PedidoSheetsV2, ds: DetalleMixtoV2[], opciones: OpcionesDurableV2) {
+async function resolverFamilias(a: AlmacenSheetsLocalV2, ds: DetalleMixtoV2[]) {
   const familias = await a.leer('FAMILIAS_PRODUCTO'), observadas: FamiliaProducto[] = [], decisiones: PlanSheetsV2['decisiones_familia'] = [];
   for (const l of ds.filter(l => l.modelo_linea === 'FAMILIA_V2') as Parameters<typeof leerOfertaSnapshotV2>[0][]) {
     const snapshot = leerOfertaSnapshotV2(l);
@@ -111,10 +114,7 @@ async function resolverFamilias(a: AlmacenSheetsLocalV2, p: PedidoSheetsV2, ds: 
     const actual = uno(familias, 'familia_id', snapshot.familia_id, 'FAMILIA_ACTUAL_INEXISTENTE_O_DUPLICADA');
     exigirV2(actual.activo === 'SI' || actual.activo === 'NO', 'FAMILIA_ACTUAL_INVALIDA', 409);
     if (actual.activo === 'NO') {
-      const decision = await opciones.resolverPoliticaFamiliaDesactivada?.({ pedido: copiaV2(p), snapshot: copiaV2(snapshot), actual: copiaV2(actual) });
-      exigirV2(decision === 'PERMITIR_SNAPSHOT' || decision === 'BLOQUEAR', 'HUMAN_GATE_FAMILIA_DESACTIVADA', 423);
-      exigirV2(decision === 'PERMITIR_SNAPSHOT', 'FAMILIA_DESACTIVADA_POLITICA_BLOQUEAR', 409);
-      decisiones.push({ familia_id: actual.familia_id, decision });
+      decisiones.push({ familia_id: actual.familia_id, decision: POLITICA_FAMILIA_DESACTIVADA });
     }
     observadas.push(copiaV2(actual));
   }
@@ -277,7 +277,7 @@ async function mutar(a: AlmacenSheetsLocalV2, tipo: TipoOperacionSheetsV2, input
       exigirV2(canonV2(asignaciones_vigentes) === canonV2(vigente.asignaciones_nuevas), 'HISTORICO_VIGENTE_ALTERADO', 409);
     }
     const contexto = tipo === 'CANCELAR_V2' ? {} : await contextoActual(a, pedido);
-    const f = tipo === 'CANCELAR_V2' ? { observadas: [], decisiones: [] } : await resolverFamilias(a, pedido, detalles, opciones);
+    const f = tipo === 'CANCELAR_V2' ? { observadas: [], decisiones: [] } : await resolverFamilias(a, detalles);
     const operacion_id = 'OP-C4-' + (await hashV2({ id_pedido: input.id_pedido, key: input.idempotency_key })).slice(0, 32);
     exigirV2(!ops.some(o => o.operacion_id === operacion_id), 'OPERACION_ID_COLISION', 409);
     const meta = { operacion_id, idempotency_key: input.idempotency_key, actor: input.actor, creado_en: opciones.ahora() };

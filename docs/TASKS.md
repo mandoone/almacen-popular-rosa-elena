@@ -1,5 +1,11 @@
 # TASKS.md — Tareas vivas y backlog
 
+## Remediación previa C5 (2026-10-07)
+
+- [x] R0–R10: preservar trabajo, forense, backup TEST, remediación mínima, readback20/0, replay0 y preflight limpio.
+- [ ] Continuar C5: puerto GAS, QA, backup/migración/deploy TEST y E2E sintéticos aislados. F10 no cambia.
+
+
 > Tareas por fase. Estado: ⬜ pendiente · 🔄 en curso · ✅ hecho · 🚧 bloqueada.
 > Una fase = una rama. Detalle de requisitos en `docs/REQUIREMENTS.md`.
 
@@ -13,7 +19,8 @@
 - ✅ C2 motor puro local y 38 tests de reparto, durable/replay/revisión, reversión/reasignación y granel.
 - ✅ C3 auditoría V1, 648 tests, QA y [plan de activación](operativa/SESION_LARGA_FAMILIAS_SKU_2026-10-07.md). Sin activación/carga real.
 - ✅ C4 adaptador durable local, pedidos mixtos, recovery/fault injection, bloqueos, cancelación/reasignación y176 tests nuevos. [Evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C4_DURABLE_LOCAL_2026-10-07.md). Sin Sheets/deploy/rutas públicas.
-- ⬜ C5 eventual puerto TEST con garantías de escritura/recibos/lock, respaldo/restauración y fixtures aislados; requiere autorización separada y HUMAN_GATE familia desactivada antes de operación. No ejecutado por C4.
+- ✅ C5 local: D50 PERMITIR_SNAPSHOT, esquema mínimo/migrador inyectado, 33 pruebas y documentación. [Entrega parcial](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+- 🚧 C5 remoto autorizado pero detenido por preflight: ID de movimiento duplicado y diarios V1 inciertos preexistentes. Sin migración/deploy/fixtures. Auditar con evidencia esos registros y definir una remediación autorizada que preserve histórico, antes de repetir preflight/backup y desarrollar puerto/deploy TEST. No deduplicar ni descartar operaciones automáticamente.
 
 ## IDENTIDAD SKU / COMPRAS — FASE B1 LOCAL 2026-10-07
 
