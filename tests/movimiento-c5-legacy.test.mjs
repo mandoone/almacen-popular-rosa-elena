@@ -76,3 +76,17 @@ test('C5 reportes: intención APPLY/REVIEW invisible; COMPLETE visible; V1 siemp
   c.accion('confirmarPedidoV2Test',i);assert.equal(c.contexto.movimientoCompletadoReporteC5_(movs[0],c.puerto().leer('OPERACIONES_PEDIDOS')),true);
   const corrupt={...movs[0],cantidad:-99};assert.equal(c.contexto.movimientoCompletadoReporteC5_(corrupt,c.puerto().leer('OPERACIONES_PEDIDOS')),false);
 });
+for(const campo of ['tipo','origen','id_movimiento','id_producto','referencia_tipo','referencia_id','observaciones'])test('C5 readback rechaza representación legacy alterada '+campo,async()=>{
+  const c=await escenarioGasC5(),f=c.preparar(),r=c.accion('confirmarPedidoV2Test',c.input(f));c.hojas.MOVIMIENTOS_STOCK.grid[1][head(c,'MOVIMIENTOS_STOCK').indexOf(campo)]='alterado';
+  assert.equal(c.accion('verificarOperacionV2Test',{operacion_id:r.operacion_id}).valido,false);
+});
+test('C5 preflight valida también el rango del segundo movimiento antes de diario',async()=>{
+  const c=await escenarioGasC5(),f=c.preparar(),sheet=c.hojas.MOVIMIENTOS_STOCK,original=sheet.getRange.bind(sheet);
+  sheet.getRange=(r,...args)=>{const range=original(r,...args);if(r===3){const validations=range.getDataValidations;range.getDataValidations=()=>{const rules=validations();rules[0][head(c,'MOVIMIENTOS_STOCK').indexOf('origen')]={getAllowInvalid:()=>false,getCriteriaType:()=> 'VALUE_IN_LIST',getCriteriaValues:()=>[['compra']]};return rules;};}return range;};
+  const antes=c.estado.escrituras.length;assert.throws(()=>c.accion('confirmarPedidoV2Test',c.input(f)),/VALIDACION_RECHAZA_origen/);assert.equal(c.estado.escrituras.length,antes);assert.equal(c.puerto().leer('OPERACIONES_PEDIDOS').length,0);
+});
+for(const campo of ['observacion','movimiento_id'])test('C5 evidencia corrupta '+campo+' marca REVIEW, sin adivinar stock',async()=>{
+  const c=await escenarioGasC5(),f=c.preparar(),i=c.input(f);assert.throws(()=>c.accion('confirmarPedidoV2Test',{...i,fallo_punto:'MOVIMIENTO_2'}),/INTERRUPCION_QA/);
+  c.hojas.MOVIMIENTOS_STOCK.grid[1][head(c,'MOVIMIENTOS_STOCK').indexOf(campo)]='';const r=c.accion('confirmarPedidoV2Test',i);
+  assert.equal(r.estado_operacion,'REQUIERE_REVISION');assert.deepEqual(c.puerto().leer('PRODUCTOS').map(p=>p.stock_actual),[4,7]);
+});

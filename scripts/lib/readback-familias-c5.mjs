@@ -2,9 +2,30 @@
 import {createHash} from 'node:crypto';
 import {firmaEstadoB2,ID_TEST_B2,NOMBRE_TEST_B2} from './familias-b2.mjs';
 import {COLUMNAS_ADITIVAS_C5,COLUMNAS_ASIGNACIONES_PEDIDO} from '../../src/lib/familias/esquemaDurableV2.ts';
+import {hashRevision} from '../../src/lib/familias/revisionV1.ts';
 const exigir=(v,c)=>{if(!v)throw new Error('STOP_READBACK_C5_'+c);};
 const idsQa={APERTURAS:['apertura_id','APE-20991231'],PRODUCTOS:['id_producto','PROD-QA-C5-'],FAMILIAS_PRODUCTO:['familia_id','FAM-QA-C5-'],PEDIDOS:['id_pedido','PED-QA-C5-'],DETALLE_PEDIDOS:['id_pedido','PED-QA-C5-'],APERTURA_PRODUCTOS:['producto_id','PROD-QA-C5-'],ASIGNACIONES_PEDIDO:['producto_id','PROD-QA-C5-'],MOVIMIENTOS_STOCK:['producto_id','PROD-QA-C5-'],OPERACIONES_PEDIDOS:['id_pedido','PED-QA-C5-'],AUDITORIA_PRODUCTOS:['entidad_id','']};
 const objeto=(rows,r)=>Object.fromEntries(rows[0].map((h,c)=>[h,rows[r]?.[c]??'']));
+/** Evidencia adicional autorizada de recovery. No acepta un prefijo OP/AUD por sí solo. */
+export function auditoriaRecoveryQaC5Valida(a,valores,profundidad=0){
+  try{
+    const buscar=(hoja,campo,id)=>(valores[hoja]??[]).slice(1).map((_,i)=>objeto(valores[hoja],i+1)).filter(x=>x[campo]===id);
+    if(a.entidad_tipo!=='QA_C5'||profundidad>1)return false;
+    const prueba=JSON.parse(a.cambios_json);if(hashRevision(prueba)!==a.payload_hash)return false;
+    if(a.accion==='RECUPERAR_MOVIMIENTO_PARCIAL_C5'){
+      if(prueba.modelo!=='RECOVERY_MOVIMIENTO_C5_1'||prueba.clasificacion!=='MOVIMIENTO_V2_PARCIAL_ACREDITADO'||a.entidad_id!=='OP-C4-bde46db073f83e4dd1bb7f37ac6c7f6f-M-0'||a.referencia_id!==prueba.operacion_id)return false;
+      const ops=buscar('OPERACIONES_PEDIDOS','operacion_id',prueba.operacion_id),movs=buscar('MOVIMIENTOS_STOCK','movimiento_id',a.entidad_id);
+      if(ops.length!==1||movs.length!==1||ops[0].id_pedido!=='PED-QA-C5-ECO-PRINCIPAL')return false;
+      const plan=JSON.parse(ops[0].snapshot_json);return hashRevision({...plan,plan_hash:''})===plan.plan_hash&&plan.plan_hash===prueba.plan_hash&&plan.movimientos[0].movimiento_id===a.entidad_id&&firmaEstadoB2(movs[0])===firmaEstadoB2(prueba.fila_serializada);
+    }
+    if(a.accion==='CONFIGURAR_FIXTURE_C5'&&/^AUD-QA-C5-REC-M0-/.test(a.entidad_id)&&a.referencia_id===a.entidad_id){
+      const targets=buscar('AUDITORIA_PRODUCTOS','auditoria_id',a.entidad_id);if(targets.length!==1||prueba.modelo!=='AUDITORIA_QA_C5_1'||prueba.antes.auditoria_id!==a.entidad_id||prueba.despues.auditoria_id!==a.entidad_id)return false;
+      const target=targets[0],sinResultado=x=>Object.fromEntries(Object.entries(x).filter(([k])=>k!=='resultado_json'));
+      return firmaEstadoB2(target)===firmaEstadoB2(prueba.despues)&&firmaEstadoB2(sinResultado(prueba.antes))===firmaEstadoB2(sinResultado(prueba.despues))&&auditoriaRecoveryQaC5Valida(target,valores,profundidad+1);
+    }
+    return false;
+  }catch{return false;}
+}
 export function verificarReadbackC5(antes,despues){
   exigir(despues.meta.spreadsheetId===ID_TEST_B2&&despues.meta.properties.title===NOMBRE_TEST_B2,'DESTINO');
   exigir(despues.meta.sheets.length===antes.meta.sheets.length+1,'PESTANAS');
@@ -20,7 +41,7 @@ export function verificarReadbackC5(antes,despues){
     for(let r=rows.length;r<actual.length;r++){
       const [campo,prefijo]=idsQa[hoja]??[];const obj=objeto(actual,r);
       exigir(campo&&typeof obj[campo]==='string'&&obj[campo].startsWith(prefijo),'FILA_NO_QA');
-      if(hoja==='AUDITORIA_PRODUCTOS')exigir(obj.entidad_tipo==='QA_C5'&&(/^(FAM|PROD|PED)-QA-C5-/.test(obj.entidad_id)||obj.entidad_id==='APE-20991231'),'AUDITORIA_NO_QA');
+      if(hoja==='AUDITORIA_PRODUCTOS')exigir(obj.entidad_tipo==='QA_C5'&&(/^(FAM|PROD|PED)-QA-C5-/.test(obj.entidad_id)||obj.entidad_id==='APE-20991231'||auditoriaRecoveryQaC5Valida(obj,despues.valores)),'AUDITORIA_NO_QA');
       if(hoja==='APERTURAS')exigir(obj.apertura_id==='APE-20991231','APERTURA_NO_QA');
       if(hoja==='APERTURA_PRODUCTOS')exigir(obj.apertura_id==='APE-20991231','APERTURA_NO_QA');
       qaRows.add(r);nuevas++;

@@ -1,6 +1,6 @@
 # TASKS.md — Tareas vivas y backlog
 
-Continuación C5 autorizada: serializador V2/legacy, recovery M-0 con plan exacto y reporte sin intenciones incompletas verificados localmente; v23 reproducible, backup previo al movimiento verificado. Pendiente inmediato: deploy TEST, recovery, misma key y E2E/cleanup/readback. No iniciar C6 hasta cerrar C5. [Seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+Continuación C5: recovery M-0 y misma key cerrados en TEST v24; A4+B2/cancelación/reasignación/mixto/insuficiencia/granel100 PASS. Pendiente: hardening de readback TEST, restantes E2E, cleanup/readback final y push. No iniciar C6 hasta cerrar C5. [Seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
 ## C5 continuación desde30e047e — nuevo STOP técnico (2026-10-08)
 

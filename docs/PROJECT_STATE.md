@@ -1,6 +1,6 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
-Continuación autorizada C5: v23 acreditada/reproducible; serializador legacy, prevalidación completa, recovery M-0 y filtro de intenciones en reportes preparados y verificados localmente. Backup nuevo previo al movimiento verificado; TEST todavía conserva la operación parcial, sin nuevas escrituras. [Checkpoint y seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+Continuación C5: checkpoint974a188 reproducible, TEST v24, M-0 recuperado con auditoría/replay0; confirmación original y cancelación/reasignación/mixto/insuficiencia/granel100 acreditados en TEST. E2E restantes/cleanup pendientes. Hardening de readback completo verificado localmente con1033 tests; próximo deploy solo TEST. Los apartados STOP v23 siguientes conservan el historial previo. [Estado y evidencia actual](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
 ## C5 TEST — preparación recuperada; STOP en movimiento (2026-10-08)
 

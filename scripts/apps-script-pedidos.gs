@@ -6259,10 +6259,12 @@ function normalizarFilaC5_(tabla, raw) {
     var extra;
     try { extra = JSON.parse(o.observacion); } catch (_) { extra = null; }
     if (!extra || extra.modelo !== d.esquema.MODELO_OBSERVACION_MOVIMIENTO_C5) {
-      if (o.referencia_tipo === 'PEDIDO_V2_QA') lanzar_('C5_MOVIMIENTO_SNAPSHOT_CORRUPTO', 409);
+      if (o.referencia_tipo === 'PEDIDO_V2_QA') throw new d.pedido.ErrorPedidoFamilia('C5_MOVIMIENTO_SNAPSHOT_CORRUPTO', 409);
       return { movimiento_id: o.movimiento_id || o.id_movimiento, operacion_id: o.operacion_id || '', referencia_id: o.referencia_id || '' };
     }
-    if (!o.movimiento_id) lanzar_('C5_MOVIMIENTO_CANONICO_REQUERIDO', 409);
+    if (!o.movimiento_id) throw new d.pedido.ErrorPedidoFamilia('C5_MOVIMIENTO_CANONICO_REQUERIDO', 409);
+    var esSalida=['ASIGNACION_V2','SALIDA_SKU_V1'].includes(o.tipo_movimiento),esDevolucion=['DEVOLUCION_V2','DEVOLUCION_SKU_V1'].includes(o.tipo_movimiento);
+    if(!esSalida&&!esDevolucion||o.tipo!==(esSalida?'salida':'devolucion')||!['pedido','cancelacion'].includes(o.origen)||o.id_movimiento!==o.movimiento_id||o.id_producto!==o.producto_id||o.referencia_tipo!=='PEDIDO_V2_QA'||o.referencia_id!==o.operacion_id||o.observaciones!==o.observacion||extra.tipo_logico_v2!==o.tipo_movimiento||!/^[a-f0-9]{64}$/.test(extra.plan_hash||''))throw new d.pedido.ErrorPedidoFamilia('C5_MOVIMIENTO_REPRESENTACION_ALTERADA',409);
     var m = {};
     Object.keys(d.esquema.MAPEO_MOVIMIENTO_C5).forEach(function (k) { m[k] = o[d.esquema.MAPEO_MOVIMIENTO_C5[k]]; });
     d.esquema.CAMPOS_OBSERVACION_MOVIMIENTO_C5.forEach(function (k) { if (extra[k] !== undefined) m[k] = extra[k]; });
@@ -6317,12 +6319,14 @@ function planMovimientoPersistenciaC5_(ss,id) {
 /** Preflight de todas las representaciones/validaciones nativas antes del primer efecto. */
 function validarPlanPersistenciaC5_(ss,op) {
   var d=DominioPedidoDurableC5,p=JSON.parse(op.snapshot_json);d.plan.validarHashPlanSheetsV2(p);
-  function check(tabla,fila,row){var h=leerHoja_(ss,tabla),obj=serializarFilaC5_(tabla,fila,p),raw=row?h.filas[row-2].slice():h.headers.map(function(){return '';});
+  var siguientes={};
+  function check(tabla,fila,row){var h=leerHoja_(ss,tabla),obj=serializarFilaC5_(tabla,fila,p),raw=row&&row<=h.sheet.getLastRow()?h.filas[row-2].slice():h.headers.map(function(){return '';});
     Object.keys(obj).forEach(function(k){if(h.mapa[k]===undefined)lanzar_('C5_COLUMNA_NO_EXISTE',409);raw[h.mapa[k]]=obj[k]===undefined?'':obj[k];});
     validarFilaPersistenciaC5_(h,row||h.sheet.getLastRow()+1,raw);
   }
-  p.asignaciones_nuevas.forEach(function(a){check('ASIGNACIONES_PEDIDO',a);});
-  p.movimientos.forEach(function(m){check('MOVIMIENTOS_STOCK',m);});
+  function filaAppend(tabla,id,clave){var h=leerHoja_(ss,tabla),i=h.filas.findIndex(function(f){var o=filaAObjeto_(h,f);return o[clave]===id||tabla==='MOVIMIENTOS_STOCK'&&o.id_movimiento===id;});if(i>=0)return i+2;siguientes[tabla]=siguientes[tabla]||h.sheet.getLastRow()+1;return siguientes[tabla]++;}
+  p.asignaciones_nuevas.forEach(function(a){check('ASIGNACIONES_PEDIDO',a,filaAppend('ASIGNACIONES_PEDIDO',a.asignacion_id,'asignacion_id'));});
+  p.movimientos.forEach(function(m){check('MOVIMIENTOS_STOCK',m,filaAppend('MOVIMIENTOS_STOCK',m.movimiento_id,'movimiento_id'));});
   p.saldos.forEach(function(s){var h=leerHoja_(ss,'PRODUCTOS'),i=h.filas.findIndex(function(f){return f[h.mapa.id_producto]===s.producto_id;});if(i<0)lanzar_('C5_SKU_INEXISTENTE',409);check('PRODUCTOS',d.plan.productoResultanteV2(p,s),i+2);});
   var hp=leerHoja_(ss,'PEDIDOS'),ip=hp.filas.findIndex(function(f){return f[hp.mapa.id_pedido]===p.pedido_antes.id_pedido;});if(ip<0)lanzar_('C5_PEDIDO_INEXISTENTE',409);
   check('PEDIDOS',d.plan.pedidoResultanteV2(p),ip+2);

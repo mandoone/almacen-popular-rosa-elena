@@ -1,5 +1,13 @@
 # Familias / SKU — C5 TEST real: preparación recuperada, nuevo STOP
 
+## Estado de continuación — recovery M-0 cerrado; E2E en curso
+
+Checkpoint974a1883557e46b9af2d784767f7f729f742f15c preservó y versionó los36 archivos necesarios, incluida reproducción v23 sin credenciales. TEST v23→v24, con backup/rollback v23 conservado. La misma fila M-0 se completó, conservando ID/fecha, auditoría previa y metadata de recuperación. Primera respuesta HTTP ambigua, readback nativo explícito y dos replay0 acreditados. Solo esa fila QA y dos auditorías QA cambiaron; stocks/pedido/asignaciones siguieron idénticos antes del replay original.
+
+El replay de qa_c5_eco_confirmar cerró la operación original: A0/B5,2 asignaciones/2 movimientos, pedido pendiente y puntero/recibos/readback COMPLETADA. Replay sin nuevos efectos. Cancelación restauró A4/B7 y conservó historia. Reasignación en otro pedido: A4+B2→A1+B5,4 asignaciones append-only, cancelación vigente al baseline. Mixto: un plan/3 efectos/2 asignaciones familiares y reversión exacta. Insuficiencia global rechazada antes de diario/efectos. Granel100:150g/$203, reasignación50+100 y cancelación2/2; lectura nativa acreditó las3 operaciones COMPLETADA tras una respuesta HTTP de lectura ambigua.250/1000 y escenarios restantes siguen pendientes.
+
+Hardening local adicional: readback exige aliases/tipos/origen/referencias/JSON legacy coherentes; evidencia corrupta exige REQUIERE_REVISION. Preflight valida el rango concreto de cada fila nueva. Auditorías del recovery y su actualización son aceptadas solo mediante hash/plan/fila/target exactos, nunca por prefijo. QA1033 PASS/0 skipped; lint/typecheck/build aislado/scan/diff/V1 PASS. Este bloque aún no cambia v24; siguiente deploy solo TEST con runner pausado y fixtures actuales ya cancelados. C5 integral y C6 aún no cerrados/iniciados.
+
 ## Continuación autorizada: frontera legacy y recovery local (2026-10-08)
 
 Se preservaron los29 archivos iniciales mediante copia/diff/manifest SHA256 y se acreditó la fuente inmutable TEST v23: idéntica al template conservado al reemplazar únicamente ID/token por placeholders. El patch y su SHA256 permiten reproducirla desde Git sin credenciales. No se rehízo preparación, R0 ni esquema.
