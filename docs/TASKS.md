@@ -7,9 +7,17 @@
 - [x] Recover misma fila M-0/key; A4+B2, replay/cancelación/reasignación/mixto/granel/D50.
 - [x] Fallos controlados, HTTP ambiguo, autoría y reconciliación QA auditada.
 - [x] Cleanup/replay0, stock QA restaurado,0 bloqueos y readback histórico/V1 idéntico.
-- [ ] C6: shadow TEST/admin y simulador read-only, dry-run mapa y auditoría humana sin mutar.
+- [x] C6: shadow TEST/admin y simulador read-only, dry-run mapa y auditoría de faltantes sin mutar.
+- [ ] Omar: revisar identidad física/mapa comercial con evidencia y validarlo en dry-run; granel real postergado.
+- [ ] Tarea futura explícita: migración TEST del mapa validado con backup/readback, sin activación pública automática.
 
-Sin catálogo/carrito familiar público ni mapa comercial. F10 sin cambio. [Acta C5](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+[Alcance, QA y pendientes C6](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
+Sin catálogo/carrito familiar público ni mapa comercial cargado en Sheet. F10 sin cambio. [Acta C5](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+
+- [x] Propuesta comercial versionada para revisión de Omar; C7 remoto no iniciado.
+
+[Propuesta de mapa y evidencia por SKU](operativa/MAPA_COMERCIAL_FAMILIAS_SKU_PROPUESTA_2026-10-08.md).
 
 ## Remediación previa C5 (2026-10-07)
 

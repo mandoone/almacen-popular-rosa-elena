@@ -1,5 +1,12 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C6 shadow TEST/admin —2026-10-08
+
+75 pruebas focales, suite1125 PASS/0 skipped, frontera TEST/capacidad/solo GET, precio independiente, marcas, equivalencia, apertura, granel, overflow y mapa sin mutaciones. QA visual localhost desktop1280×900/móvil390×844 con mocks/red remota bloqueada; GET TEST reales por separado, sin formulario ni escritura. Lint/typecheck/build aislado/scan/diff/auditoría V1 acreditados. Revisión visual humana sigue pendiente, no cambia F10. [Evidencia, reproducción y auditoría de faltantes](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
+Validar además contenido físico interno, política pública, errores comprensibles y viewport desktop/móvil con fixtures locales.
+[Propuesta de mapa y evidencia por SKU](operativa/MAPA_COMERCIAL_FAMILIAS_SKU_PROPUESTA_2026-10-08.md).
+
 ## C5 cierre TEST real —2026-10-08
 
 20 escenarios E2E/194 respuestas checkpointadas, cleanup91/replay0,0 bloqueos QA. Native readback completo de19 hojas preserva valores/fórmulas/formatos/validaciones; catálogo V1 idéntico. Suite1050 PASS/0 skipped:161 pruebas netas nuevas desde889 del checkpoint30e047e. Focal de cadena de readback23 PASS; los casos negativos rechazan evidencia, actor, recibo, transición y auditorías faltantes/duplicadas. Lint/typecheck/build aislado/scan/diff/V1 se verifican en cierre. [Matriz y evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).

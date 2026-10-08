@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import Link from 'next/link';
 import AdminFase78Nav from './AdminFase78Nav';
 import { useSesionAdmin } from '@/lib/fase9/useSesionAdmin';
 import { resolverIntentoIdempotente, solicitarAdmin, type IntentoIdempotente } from '@/lib/fase8/clienteAdmin';
@@ -72,6 +73,7 @@ export default function FamiliasAdmin() {
   return <main className="mx-auto max-w-5xl space-y-6 p-6">
     <AdminFase78Nav /><h1 className="font-heading text-3xl text-primary-dark">Familias y SKU · TEST</h1>
     <p>Preparación administrativa. La tienda y los pedidos siguen operando por SKU.</p>
+    <Link href="/admin/familias/simulador" className="inline-block text-primary-dark underline">Simulador y mapa propuesto · solo lectura</Link>
     <p role="status" aria-live="polite">{mensaje}</p>
     <section className="rounded-xl border bg-white p-5"><h2 className="mb-3 text-xl font-semibold">Oferta pública</h2>
       <div className="mb-4 flex flex-wrap gap-2"><button onClick={() => seleccionarOferta(null)} disabled={ocupado} className="rounded border px-3 py-2">Nueva familia</button>

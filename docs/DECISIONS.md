@@ -1,5 +1,14 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D56 — C6 diagnóstico paralelo de lectura (2026-10-08)
+
+Según el alcance autorizado por Omar, la disponibilidad shadow usa agregado elegible >0 y precio explícito familiar; excluye SKU incompatibles sin perder el stock de otros válidos y conserva warnings. Oferta y diagnóstico físico admin se separan:VARIABLE/NO_APLICA sin marca pública, EXPLICITA con marca_publica. No se modifica la lectura diagnóstica A ni operación V1, no se reserva stock ni se activa tienda/carrito familiar.
+
+El mapa JSON/CSV solo proyecta copias y no infiere identidad desde nombres. Clasificar NO_REQUIERE_FAMILIA_MULTI_SKU exige evidencia humana explícita. Sin escritura/deploy C6 y sin cambiar F10. [Contrato, verificación y límites](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
+Propuesta comercial incorporada sin inferir identidad física ni autorizar migración; revisión de Omar y C7 pendientes.
+[Propuesta de mapa y evidencia por SKU](operativa/MAPA_COMERCIAL_FAMILIAS_SKU_PROPUESTA_2026-10-08.md).
+
 ## D55 — Frontera V2/legacy y recuperación M-0 acreditada (2026-10-08)
 
 Autorización explícita de Omar: conservar tipos lógicos C4 y enums legacy de Sheet. Salidas usan salida/pedido; cancelaciones devolucion/cancelacion; reversión de reasignación devolucion/pedido. Metadata moderna y JSON conservan operación/hash/snapshots. Validación de fila/plan completo precede efectos; readback sigue obligatorio, sin ACID.

@@ -1,10 +1,17 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## C6 shadow de lectura —2026-10-08
+
+Catálogo familiar paralelo TEST/admin, simulador `/admin/familias/simulador`, mapa JSON/CSV dry-run y auditoría de faltantes implementados sin mutar Sheet ni desplegar. C5 sigue cerrado/v25 y sin bloqueos QA. El catálogo/carrito público sigue SKU_V1; no mapa comercial cargado en Sheet. F10 sin cambio. [Entrega C6, auditoría y próximo paso humano](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
+Propuesta comercial incorporada sin inferir identidad física ni autorizar migración; revisión de Omar y C7 pendientes.
+[Propuesta de mapa y evidencia por SKU](operativa/MAPA_COMERCIAL_FAMILIAS_SKU_PROPUESTA_2026-10-08.md).
+
 ## C5 TEST cerrado —2026-10-08
 
 TEST v25:20 escenarios E2E, recovery M-0/misma key, confirmación/cancelación/reasignación, mixto, granel y D50 acreditados. Cleanup:37 SKU/18 familias QA inactivos,19 pedidos cancelados,41 operaciones completas y0 bloqueos. Readback nativo completo:0 cambios históricos/comerciales; catálogo V1 idéntico. F10 sigue1 READY/19 PENDING. [Acta, backups, QA y rollback](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
-C6 solo lectura paralela queda como siguiente alcance autorizado, sin mapa comercial ni activación pública. Los apartados fechados siguientes son historia previa al cierre; no reabrir remediación/preparación.
+C6 de lectura paralela completado arriba, sin mapa comercial cargado en Sheet ni activación pública. Los apartados fechados siguientes son historia previa al cierre; no reabrir remediación/preparación.
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
 > tarea que cambie el estado. Última actualización: 2026-10-08.

@@ -1,5 +1,9 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Vista C6 sin persistencia adicional (2026-10-08)
+
+Catálogo shadow derivado de FAMILIAS_PRODUCTO/PRODUCTOS/APERTURA_PRODUCTOS; `oferta` no contiene stock/costo/proveedor ni marcas físicas. Diagnóstico admin contiene cantidades internas/elegibilidad/warnings. Granel agrega gramos; precio solo de familia. Mapa propuesto se valida en copias, no genera columnas/filas ni migra SKU_V1. [Contrato completo y D56](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
 Frontera C5 vigente: tipo legacy mantiene entrada/salida/ajuste/devolucion; origen mantiene pedido/venta/compra/ajuste/cancelacion. tipo_movimiento y observacion JSON preservan semántica C4 y plan_hash. No se añaden columnas para recovery; su evidencia se conserva en observacion y AUDITORIA_PRODUCTOS. [D55 y contrato completo](DECISIONS.md).
 
 ## Preparación QA C5 y frontera vigente (2026-10-08)

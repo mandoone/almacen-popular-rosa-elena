@@ -1,5 +1,12 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-08 — C6 shadow, simulador y mapa dry-run
+
+Catálogo familiar paralelo exclusivo TEST/admin, simulador de lectura y validación JSON/CSV sin guardar; auditoría comercial sin inferir marcas. Sin deploy/Sheet writes/Cambios V1; Apps Script continúa v25 y F10 intacto. [Entrega C6 y QA](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+
+Propuesta comercial incorporada sin inferir identidad física ni autorizar migración; revisión de Omar y C7 pendientes.
+[Propuesta de mapa y evidencia por SKU](operativa/MAPA_COMERCIAL_FAMILIAS_SKU_PROPUESTA_2026-10-08.md).
+
 ## 2026-10-08 — C5 durable TEST cerrado
 
 Preserva/reproduce v23; TEST v23→v24→v25, serialización V2/legacy sin ampliar enums, mismo M-0/fecha/key recuperados con auditoría.20 E2E completos: confirmación/replay/cancelación/reasignación, mixto, granel, D50, fallos/HTTP/autoría. Cleanup idempotente,0 bloqueos QA y0 cambios comerciales/históricos por native readback completo. Suite1050 PASS/0 skipped; fuente desplegada versionada, rollback conservado y público V1 intacto. [Acta integral](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
