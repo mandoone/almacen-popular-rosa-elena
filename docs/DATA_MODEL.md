@@ -1,5 +1,11 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Proyección C7-A sin cambio de esquema (2026-10-08)
+
+JSON local separa familias completas mapeadas, aprobaciones de identidad y ofertas incompletas sin asociación. Solo se proyectan marca/presentación/contenido en copias; familia_id se evalúa mediante mapa C6, nunca se escribe en maestro real. No hay nuevas hojas/columnas ni cambios en stock/costo/precio V1.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## Vista C6 sin persistencia adicional (2026-10-08)
 
 Catálogo shadow derivado de FAMILIAS_PRODUCTO/PRODUCTOS/APERTURA_PRODUCTOS; `oferta` no contiene stock/costo/proveedor ni marcas físicas. Diagnóstico admin contiene cantidades internas/elegibilidad/warnings. Granel agrega gramos; precio solo de familia. Mapa propuesto se valida en copias, no genera columnas/filas ni migra SKU_V1. [Contrato completo y D56](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).

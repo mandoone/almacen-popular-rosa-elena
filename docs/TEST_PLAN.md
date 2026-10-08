@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C7-A proyección comercial local —2026-10-08
+
+Pruebas de los tres mapas aprobados, marca/presentación/precio, entrada preservada, validadores C6 intactos, variable sin marca bloqueado, Clorinda sin doble asociación, inyección de stock/costo/precio rechazada y cero puertos HTTP. Dry-run sobre captura nativa conservada verifica ocho precios y devuelve CUMPLE para tres asociaciones. QA final en acta.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## C6 shadow TEST/admin —2026-10-08
 
 75 pruebas focales, suite1125 PASS/0 skipped, frontera TEST/capacidad/solo GET, precio independiente, marcas, equivalencia, apertura, granel, overflow y mapa sin mutaciones. QA visual localhost desktop1280×900/móvil390×844 con mocks/red remota bloqueada; GET TEST reales por separado, sin formulario ni escritura. Lint/typecheck/build aislado/scan/diff/auditoría V1 acreditados. Revisión visual humana sigue pendiente, no cambia F10. [Evidencia, reproducción y auditoría de faltantes](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).

@@ -1,5 +1,11 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-08 — C7-A primer mapa comercial dry-run
+
+Identidades Fuzol/Ballerina acreditadas para copias, IDs propuestos, ocho precios de comanda contrastados y tres asociaciones CUMPLE. Matriz de revisión29 y propuestas sin multi-SKU; preguntas agrupadas sin volver a pedir decisiones cerradas. Sin lecturas remotas nuevas, escrituras/deploy ni activación pública.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## 2026-10-08 — C6 shadow, simulador y mapa dry-run
 
 Catálogo familiar paralelo exclusivo TEST/admin, simulador de lectura y validación JSON/CSV sin guardar; auditoría comercial sin inferir marcas. Sin deploy/Sheet writes/Cambios V1; Apps Script continúa v25 y F10 intacto. [Entrega C6 y QA](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).

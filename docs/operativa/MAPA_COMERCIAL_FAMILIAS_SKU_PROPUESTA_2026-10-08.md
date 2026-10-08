@@ -1,10 +1,10 @@
 # Propuesta comercial familia → SKU para revisión de Omar
 
-Fecha: 2026-10-08. **PROPUESTA, no migración ni autorización de escritura.** No asigna IDs nuevos ni modifica PRODUCTOS/FAMILIAS_PRODUCTO. [Auditoría y fronteras C6](FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
+Fecha: 2026-10-08. **PROPUESTA, no migración ni autorización de escritura.** No crea IDs/filas remotamente ni modifica PRODUCTOS/FAMILIAS_PRODUCTO. Los IDs definitivos propuestos y el primer mapa local se añadieron en C7-A. [Auditoría y fronteras C6](FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
 
 ## Evidencia y criterio
 
-La captura nativa TEST al cierre C5 y los GET C6 acreditan 54 SKU comerciales: 36 envasados y 18 graneles. Se excluyen 39 fixtures: 37 QA C5 y los dos fixtures previos documentados. Ninguno de los 36 envasados tiene todavía identidad física estructurada suficiente en los campos nuevos. Los nombres siguientes son etiquetas vigentes, **no prueba de la marca física**.
+La captura nativa TEST al cierre C5 y los GET C6 acreditan 54 SKU comerciales: 36 envasados y 18 graneles. Se excluyen 39 fixtures: 37 QA C5 y los dos fixtures previos documentados. Ninguno de los36 envasados tiene todavía identidad física estructurada suficiente en los campos nuevos del maestro real. C7-A acredita localmente tres identidades mediante H2, sin escribir esos campos. Los nombres siguientes son etiquetas vigentes, **no prueba de la marca física**.
 
 Fuentes de esta propuesta:
 
@@ -14,7 +14,20 @@ Fuentes de esta propuesta:
 
 Una marca física distinta requiere un SKU interno distinto; una oferta VARIABLE puede agrupar marcas equivalentes. Una oferta EXPLICITA conserva su marca pública y no admite otra marca silenciosamente. Precio futuro: familia/comanda aprobada, nunca costo, promedio o margen automático.
 
-## Clasificaciones de revisión
+## Actualización C7-A — acreditación sin migración
+
+**H2:** Omar aprobó expresamente identidad física/pública Fuzol900ml para PROD-040 y Ballerina750ml para PROD-046/047 en la instrucción C7-A2026-10-08. Ya no son preguntas pendientes. Cuatro ofertas VARIABLE siguen FALTA_IDENTIDAD_FISICA; Clorinda queda OFERTA_APROBADA_SIN_SKU_ACREDITADO. [IDs/precios/mapa ejecutable CUMPLE y matriz racionalizada](FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
+| Estado actual de revisión | SKU | Alcance |
+|---|---:|---|
+| IDENTIDAD_APROBADA_PARA_DRY_RUN |3|Fuzol900ml y Shampoo/Bálsamo Ballerina750ml. Copias locales, ninguna autorización remota. |
+| FALTA_IDENTIDAD_FISICA |4|Ofertas Económico aprobadas, identidad física pendiente. |
+| FALTA_IDENTIDAD |29|Revisión racionalizada A/B/C/D en acta C7-A. |
+| POSTERGADO_GRANEL |18|D40 intacto. |
+
+Hay10 PROPUESTO_NO_REQUIERE_MULTI_SKU para revisión final de Omar, todavía0 exenciones aprobadas automáticamente. La tabla siguiente conserva el cierre C6, no contradice la acreditación posterior H2.
+
+## Clasificaciones al cierre C6 — historia conservada
 
 | Clasificación | SKU actuales | Alcance |
 |---|---:|---|
@@ -28,17 +41,17 @@ La oferta adicional Clorinda se describe aparte: no incrementa el número de SKU
 
 ## Ofertas con decisiones públicas acreditadas
 
-Todos los SKU de esta tabla mantienen **identidad física insuficiente en el maestro**. Las políticas son propuestas para revisión; no una asignación automática.
+El maestro real sigue sin nuevos campos completados. Los tres SKU acreditados por H2 son IDENTIDAD_APROBADA_PARA_DRY_RUN; las cuatro variables siguen FALTA_IDENTIDAD_FISICA. Ninguna fila autoriza una asignación remota.
 
 | Producto actual | Familia pública propuesta | Política propuesta | Presentación pública acreditada | Clase | Acción futura | Evidencia / incertidumbre |
 |---|---|---|---|---|---|---|
-| PROD-023 · Aceite vegetal | Aceite vegetal Económico | VARIABLE | Por acreditar | LISTO_PARA_REVISAR | Confirmar contenido y marca física; revisar familia variable sin crear otro SKU por suposición. | H1 acredita Económico; M1 no acredita formato/marca. |
-| PROD-033 · Cloro 1 L | Cloro 1 L Económico | VARIABLE | 1 L / 1000 ml | LISTO_PARA_REVISAR | Acreditar qué marca contiene este SKU y su equivalencia antes de asociarlo. | H1 acredita oferta económica y separación Clorinda; no prueba que PROD-033 sea físicamente Clorinda ni otra marca. |
-| PROD-040 · Lavaloza Fuzol | Lavaloza Fuzol 900 ml | EXPLICITA · Fuzol | 900 ml | LISTO_PARA_REVISAR | Validar identidad física Fuzol del SKU y etiqueta/presentación; luego revisar asociación. | H1 acredita nombre/marca pública y 900 ml; no exigir un nuevo levantamiento de ese formato público. |
-| PROD-044 · Desinfectante suelo (Todos) | Desinfectante suelo Económico | VARIABLE | Por acreditar | LISTO_PARA_REVISAR | Acreditar contenido y marca física; conservar histórico/nombre actual hasta migración aprobada. | H1 acredita Económico; “Todos” en el nombre no acredita marca del SKU. |
-| PROD-046 · Shampoo Ballerina | Shampoo Ballerina 750 ml | EXPLICITA · Ballerina | 750 ml | LISTO_PARA_REVISAR | Validar identidad física Ballerina y presentación del SKU antes de asociar. | H1 acredita oferta/750 ml; marca maestra aún vacía. |
-| PROD-047 · Bálsamo Ballerina | Bálsamo Ballerina 750 ml | EXPLICITA · Ballerina | 750 ml | LISTO_PARA_REVISAR | Validar identidad física Ballerina y presentación del SKU antes de asociar. | H1 acredita oferta/750 ml; no agrupar con Shampoo. |
-| PROD-048 · Limpiador crema | Limpiador crema Económico | VARIABLE | Por acreditar | LISTO_PARA_REVISAR | Acreditar contenido/marca; revisar agrupación únicamente de SKU equivalentes existentes. | H1 acredita Económico; no inferir marca genérica/Wyn por nombre. |
+| PROD-023 · Aceite vegetal | Aceite vegetal Económico | VARIABLE | Por acreditar | FALTA_IDENTIDAD_FISICA | Confirmar contenido y marca física; revisar familia variable sin crear otro SKU por suposición. | H1 acredita Económico; M1 no acredita formato/marca. |
+| PROD-033 · Cloro 1 L | Cloro 1 L Económico | VARIABLE | 1 L / 1000 ml | FALTA_IDENTIDAD_FISICA | Acreditar qué marca contiene este SKU y su equivalencia antes de asociarlo. | H1 acredita oferta económica y separación Clorinda; no prueba que PROD-033 sea físicamente Clorinda ni otra marca. |
+| PROD-040 · Lavaloza Fuzol | Lavaloza Fuzol 900 ml | EXPLICITA · Fuzol | 900 ml | IDENTIDAD_APROBADA_PARA_DRY_RUN | Proyectar Fuzol/900ml y validar FAM-LAVALOZA-FUZOL-900ML→PROD-040 en copia. | H2 acredita identidad física y pública; no volver a preguntar. |
+| PROD-044 · Desinfectante suelo (Todos) | Desinfectante suelo Económico | VARIABLE | Por acreditar | FALTA_IDENTIDAD_FISICA | Acreditar contenido y marca física; conservar histórico/nombre actual hasta migración aprobada. | H1 acredita Económico; “Todos” en el nombre no acredita marca del SKU. |
+| PROD-046 · Shampoo Ballerina | Shampoo Ballerina 750 ml | EXPLICITA · Ballerina | 750 ml | IDENTIDAD_APROBADA_PARA_DRY_RUN | Proyectar Ballerina/750ml y validar FAM-SHAMPOO-BALLERINA-750ML→PROD-046 en copia. | H2 acredita identidad física y pública; maestro remoto intacto. |
+| PROD-047 · Bálsamo Ballerina | Bálsamo Ballerina 750 ml | EXPLICITA · Ballerina | 750 ml | IDENTIDAD_APROBADA_PARA_DRY_RUN | Proyectar Ballerina/750ml y validar FAM-BALSAMO-BALLERINA-750ML→PROD-047 en copia. | H2 acredita identidad física y pública; separado de Shampoo. |
+| PROD-048 · Limpiador crema | Limpiador crema Económico | VARIABLE | Por acreditar | FALTA_IDENTIDAD_FISICA | Acreditar contenido/marca; revisar agrupación únicamente de SKU equivalentes existentes. | H1 acredita Económico; no inferir marca genérica/Wyn por nombre. |
 
 **Oferta separada sin SKU acreditado:** Cloro 1 L Clorinda, política EXPLICITA, marca pública Clorinda, 1 L / 1000 ml (H1/C1). No fusionar con Económico. Antes de un mapa ejecutable, acreditar un SKU físico Clorinda existente o decidir su alta en otra tarea autorizada. No asignar PROD-033 a ambas ofertas, no renombrarlo ni crear SKU/stock virtual.
 
@@ -103,8 +116,10 @@ Cada fila mantiene D40, gramos libres y referencia de precio vigente. Familia p�
 | PROD-018 | Orégano | Granel D40 | POSTERGADO_GRANEL |
 | PROD-019 | Aliño completo | Granel D40 | POSTERGADO_GRANEL |
 
-## C7 propuesto — primero revisión humana, luego dry-run
+## Plan al cierre C6 — preservado, supersedido parcialmente por C7-A
 
 Omar revisa las siete ofertas apoyadas por H1 y las incertidumbres físicas de los 36 envasados. La revisión debe acreditar cada SKU, sin renombrar IDs históricos ni reasignar compras/stock antiguos. Después se podrá preparar un mapa ejecutable con IDs de familias aprobados, contenido normalizado, política/marca pública y precio explícito de comanda; validarlo localmente con el dry-run C6.
 
-La propuesta actual **no es un JSON/CSV importable**: contiene pendientes que bloquearían cualquier migración. NO_REQUIERE_MULTI_SKU solo se marcará con evidencia expresa por SKU. Una eventual migración TEST necesita otra tarea autorizada con backup/readback; no implica activar tienda/carrito V2. C7 remoto no se ejecutó.
+La propuesta amplia C6 **no es un JSON/CSV importable**: contiene pendientes que bloquearían cualquier migración. NO_REQUIERE_MULTI_SKU solo se marcará con evidencia expresa por SKU. Una eventual migración TEST necesita otra tarea autorizada con backup/readback; no implica activar tienda/carrito V2. C7 remoto no se ejecutó.
+
+Estado actual: el JSON C7-A de solo tres asociaciones sí es ejecutable en dry-run y dio CUMPLE. Las aprobaciones H2 no se vuelven a solicitar. El resto permanece propuesta/revisión, con preguntas mínimas agrupadas; no migración.

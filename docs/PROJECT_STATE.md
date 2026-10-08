@@ -1,5 +1,11 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## C7-A mapa comercial local —2026-10-08
+
+Tres identidades físicas/públicas acreditadas por Omar y mapa familiar ejecutable únicamente en copias: CUMPLE. Cuatro Económico con identidad pendiente y Clorinda sin SKU; matriz racionalizada del resto y preguntas mínimas. Sheet TEST intacta, GAS v25 sin deploy; público/V1/F10 sin cambio.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## C6 shadow de lectura —2026-10-08
 
 Catálogo familiar paralelo TEST/admin, simulador `/admin/familias/simulador`, mapa JSON/CSV dry-run y auditoría de faltantes implementados sin mutar Sheet ni desplegar. C5 sigue cerrado/v25 y sin bloqueos QA. El catálogo/carrito público sigue SKU_V1; no mapa comercial cargado en Sheet. F10 sin cambio. [Entrega C6, auditoría y próximo paso humano](operativa/FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).

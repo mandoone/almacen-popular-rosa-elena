@@ -1,5 +1,11 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D57 — C7-A identidad acreditada solo para dry-run (2026-10-08)
+
+Omar aprueba identidad física/pública de PROD-040 Fuzol900ml y PROD-046/047 Ballerina750ml, política EXPLICITA. Ya no son pendientes humanos. IDs familiares definitivos propuestos y precios de comanda se evalúan solo en copias; no autoriza escribir maestro ni familias. Las cuatro Económico mantienen marca física pendiente, Clorinda oferta separada sin SKU. PROPUESTO_NO_REQUIERE_MULTI_SKU no es exención aprobada; no se infiere marca por rótulo.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## D56 — C6 diagnóstico paralelo de lectura (2026-10-08)
 
 Según el alcance autorizado por Omar, la disponibilidad shadow usa agregado elegible >0 y precio explícito familiar; excluye SKU incompatibles sin perder el stock de otros válidos y conserva warnings. Oferta y diagnóstico físico admin se separan:VARIABLE/NO_APLICA sin marca pública, EXPLICITA con marca_publica. No se modifica la lectura diagnóstica A ni operación V1, no se reserva stock ni se activa tienda/carrito familiar.

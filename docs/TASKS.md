@@ -1,5 +1,15 @@
 # TASKS.md — Tareas vivas y backlog
 
+## C7-A cerrado localmente —2026-10-08
+
+- [x] Tres identidades aprobadas y IDs familiares/precios de comanda verificados.
+- [x] JSON ejecutable, proyección local y dry-run C6 CUMPLE sin relajar validadores.
+- [x] Matriz29,10 propuestas sin multi-SKU y preguntas agrupadas.
+- [ ] C7-B: revisión de propuestas y respuestas mínimas; ampliar solo copias con evidencia.
+- [ ] Migración TEST: otra tarea explícita, con backup/readback; no autorizada por C7-A.
+
+[Mapa, acreditaciones, evidencia y límites C7-A](operativa/FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+
 ## C5 completado —2026-10-08
 
 - [x] Preservar/reproducir v23; checkpoints seguros sin descartar trabajo.

@@ -1,0 +1,97 @@
+{
+  "modelo": "PROPUESTA_C7A_LOCAL",
+  "familias": [
+    {
+      "familia_id": "FAM-LAVALOZA-FUZOL-900ML",
+      "activo": "SI",
+      "nombre_publico": "Lavaloza Fuzol 900 ml",
+      "categoria": "Limpieza",
+      "precio_venta": 1000,
+      "modo_venta": "UNIDAD",
+      "unidad_venta": "unidad",
+      "permite_decimal": "NO",
+      "paso_venta": 1,
+      "contenido_cantidad": 900,
+      "contenido_unidad": "ml",
+      "presentacion_publica": "900 ml",
+      "politica_marca": "EXPLICITA",
+      "marca_publica": "Fuzol",
+      "version_oferta": 1
+    },
+    {
+      "familia_id": "FAM-SHAMPOO-BALLERINA-750ML",
+      "activo": "SI",
+      "nombre_publico": "Shampoo Ballerina 750 ml",
+      "categoria": "Higiene",
+      "precio_venta": 1400,
+      "modo_venta": "UNIDAD",
+      "unidad_venta": "unidad",
+      "permite_decimal": "NO",
+      "paso_venta": 1,
+      "contenido_cantidad": 750,
+      "contenido_unidad": "ml",
+      "presentacion_publica": "750 ml",
+      "politica_marca": "EXPLICITA",
+      "marca_publica": "Ballerina",
+      "version_oferta": 1
+    },
+    {
+      "familia_id": "FAM-BALSAMO-BALLERINA-750ML",
+      "activo": "SI",
+      "nombre_publico": "Bálsamo Ballerina 750 ml",
+      "categoria": "Higiene",
+      "precio_venta": 1400,
+      "modo_venta": "UNIDAD",
+      "unidad_venta": "unidad",
+      "permite_decimal": "NO",
+      "paso_venta": 1,
+      "contenido_cantidad": 750,
+      "contenido_unidad": "ml",
+      "presentacion_publica": "750 ml",
+      "politica_marca": "EXPLICITA",
+      "marca_publica": "Ballerina",
+      "version_oferta": 1
+    }
+  ],
+  "identidades_aprobadas": [
+    {
+      "producto_id": "PROD-040",
+      "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Fuzol 900 ml aprobada exclusivamente para dry-run local.",
+      "marca": "Fuzol",
+      "presentacion": "900 ml",
+      "contenido_cantidad": 900,
+      "contenido_unidad": "ml"
+    },
+    {
+      "producto_id": "PROD-046",
+      "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Shampoo, exclusivamente para dry-run local.",
+      "marca": "Ballerina",
+      "presentacion": "750 ml",
+      "contenido_cantidad": 750,
+      "contenido_unidad": "ml"
+    },
+    {
+      "producto_id": "PROD-047",
+      "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Bálsamo, exclusivamente para dry-run local.",
+      "marca": "Ballerina",
+      "presentacion": "750 ml",
+      "contenido_cantidad": 750,
+      "contenido_unidad": "ml"
+    }
+  ],
+  "ofertas_sin_asociacion": [
+    { "familia_id": "FAM-CLORO-1L-ECO", "nombre_publico": "Cloro 1 L Económico", "politica_marca": "VARIABLE", "precio_venta": 650, "presentacion_publica": "1 L / 1000 ml", "estado": "FALTA_IDENTIDAD_FISICA", "sku_a_acreditar": "PROD-033" },
+    { "familia_id": "FAM-ACEITE-VEGETAL-ECO", "nombre_publico": "Aceite vegetal Económico", "politica_marca": "VARIABLE", "precio_venta": 1700, "estado": "FALTA_IDENTIDAD_FISICA", "sku_a_acreditar": "PROD-023" },
+    { "familia_id": "FAM-DESINFECTANTE-SUELO-ECO", "nombre_publico": "Desinfectante suelo Económico", "politica_marca": "VARIABLE", "precio_venta": 1100, "estado": "FALTA_IDENTIDAD_FISICA", "sku_a_acreditar": "PROD-044" },
+    { "familia_id": "FAM-LIMPIADOR-CREMA-ECO", "nombre_publico": "Limpiador crema Económico", "politica_marca": "VARIABLE", "precio_venta": 1400, "estado": "FALTA_IDENTIDAD_FISICA", "sku_a_acreditar": "PROD-048" },
+    { "familia_id": "FAM-CLORO-CLORINDA-1L", "nombre_publico": "Cloro 1 L Clorinda", "politica_marca": "EXPLICITA", "marca_publica": "Clorinda", "precio_venta": 1200, "presentacion_publica": "1 L / 1000 ml", "estado": "OFERTA_APROBADA_SIN_SKU_ACREDITADO" }
+  ],
+  "mapa": [
+    { "familia_id": "FAM-LAVALOZA-FUZOL-900ML", "producto_id": "PROD-040" },
+    { "familia_id": "FAM-SHAMPOO-BALLERINA-750ML", "producto_id": "PROD-046" },
+    { "familia_id": "FAM-BALSAMO-BALLERINA-750ML", "producto_id": "PROD-047" }
+  ]
+}
