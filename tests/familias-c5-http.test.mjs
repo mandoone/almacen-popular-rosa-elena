@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {solicitarHttpC5} from '../scripts/lib/http-test-c5.mjs';
+import {solicitarHttpC5,esFalloServicioSheetsC5} from '../scripts/lib/http-test-c5.mjs';
 const config={url:'https://script.google.com/macros/s/QA_LOCAL/exec',token:'token_sintetico'},target='https://script.googleusercontent.com/macros/echo?user_content_key=QA_LOCAL';
 test('C5 HTTP 404 al leer redirect: relee la misma respuesta y ejecuta exactamente un POST',async()=>{
   const calls=[];
@@ -21,3 +21,12 @@ test('C5 HTTP fallo funcional tras escritura: conserva respuesta 503 sin repetir
   let n=0;const fetch=async()=>++n===1?new Response('',{status:303,headers:{Location:target}}):Response.json({ok:false,error:'C5_INTERRUPCION_QA_STOCK_1',codigo:503});
   const r=await solicitarHttpC5(config,'POST','confirmarPedidoV2Test',{}, {fetch});assert.equal(r.codigo,503);assert.equal(n,2);
 });
+
+for(const [caso,response,expected] of [
+  ['Sheets ES',{ok:false,codigo:500,error:'El servicio Hojas de cálculo falló al acceder al documento con el ID QA_LOCAL.'},true],
+  ['Sheets EN',{ok:false,codigo:500,error:'Service Spreadsheets failed while accessing document QA_LOCAL.'},true],
+  ['fallo controlado',{ok:false,codigo:500,error:'C5_INTERRUPCION_QA_STOCK_1'},false],
+  ['conflicto',{ok:false,codigo:409,error:'El servicio Hojas de cálculo falló al acceder al documento QA_LOCAL.'},false],
+  ['validación',{ok:false,codigo:500,error:'C5_VALIDACION_NATIVA_RECHAZA_tipo'},false],
+  ['sin error de servidor',{ok:true,codigo:500,error:'Service Spreadsheets failed while accessing document QA_LOCAL.'},false],
+])test('C5 retry de servicio distingue '+caso,()=>assert.equal(esFalloServicioSheetsC5(response),expected));

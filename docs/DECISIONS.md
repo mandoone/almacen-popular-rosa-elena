@@ -6,11 +6,13 @@ Autorización explícita de Omar: conservar tipos lógicos C4 y enums legacy de 
 
 Solo el prefijo M-0 acreditado del plan/key originales puede completarse en la misma fila bajo lock, sin borrar evidencia ni modificar stock. Auditoría precede reparación y replay reconoce esa fila. Reportes excluyen intenciones V2 hasta COMPLETADA, sin reinterpretar V1. [Contrato, pruebas y estado real](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
+El readback final acredita la transición de revisión del fixture AUTORIA únicamente mediante plan/key/pedido/actor exactos y cadena auditada pre-inyección/recibo/reconciliación; no basta un prefijo OP. Esa evidencia no habilita reconciliar stock comercial ni inferir autoría por saldo. C5 remoto y cleanup quedaron acreditados; los STOP descritos en D53/D54 son históricos resueltos.
+
 ## D54 — Recuperación QA acreditada y validaciones nativas (2026-10-08)
 
 Autorización explícita de Omar: conservar el mismo fixture, acreditar identidad/detalle/precios/snapshots y ausencia de efectos, completar solo campos QA vacíos mediante un plan previo auditado y crear la apertura sintética faltante. La preparación usa clasificaciones/lock/readback/replay; no asume apertura en confirmación ni modifica datos comerciales. Históricos con mojibake se conservan; el deploy lee UTF8 explícito.
 
-La recuperación pasó en TEST v23, supersediendo el rechazo local sin recuperación descrito al final deD53. El nuevo STOP está en el puerto de movimientos: ASIGNACION_V2 no pertenece al enum legacy tipo. Se preservan diario/asignaciones/fila parcial y bloqueos; no se modifica validación ni se repara automáticamente. D50 PERMITIR_SNAPSHOT continúa cerrada. [Evidencia y siguiente paso técnico](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+La recuperación pasó en TEST v23, supersediendo el rechazo local sin recuperación descrito al final deD53. Estado histórico posterior: STOP por tipo lógico copiado al enum legacy; su resolución acreditada es D55, sin modificar enums ni borrar evidencia. D50 PERMITIR_SNAPSHOT continúa cerrada. [Evidencia y recuperación](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
 ## D53 — Puerto durable C5 aislado y compilación GAS (2026-10-08)
 

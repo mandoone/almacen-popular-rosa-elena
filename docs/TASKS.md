@@ -1,24 +1,20 @@
 # TASKS.md — Tareas vivas y backlog
 
-Continuación C5: recovery M-0 y misma key cerrados en TEST v24; A4+B2/cancelación/reasignación/mixto/insuficiencia/granel100 PASS. Pendiente: hardening de readback TEST, restantes E2E, cleanup/readback final y push. No iniciar C6 hasta cerrar C5. [Seguimiento](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+## C5 completado —2026-10-08
 
-## C5 continuación desde30e047e — nuevo STOP técnico (2026-10-08)
+- [x] Preservar/reproducir v23; checkpoints seguros sin descartar trabajo.
+- [x] Frontera V2/legacy, prevalidación nativa y readback fuerte; TEST v25 con rollback.
+- [x] Recover misma fila M-0/key; A4+B2, replay/cancelación/reasignación/mixto/granel/D50.
+- [x] Fallos controlados, HTTP ambiguo, autoría y reconciliación QA auditada.
+- [x] Cleanup/replay0, stock QA restaurado,0 bloqueos y readback histórico/V1 idéntico.
+- [ ] C6: shadow TEST/admin y simulador read-only, dry-run mapa y auditoría humana sin mutar.
 
-- [x] Preservar25 archivos, incluidos untracked, diff binario y hashes de recuperación.
-- [x] Diagnosticar preparación: APERTURAS omitida y forma_pago fuera del dropdown; reproducir prefijo parcial v22.
-- [x] Preparación durable con plan/hash/auditoría/readback, backup pre-recovery verificado, deploy TEST v23 y recuperación explícita del mismo fixture.
-- [x] Segunda preparación0 cambios; fecha/detalle/snapshot y stocks4/7 intactos.
-- [x] QA982 PASS y readback histórico/comercial0 cambios.
-- [ ] Corregir puerto de movimientos: tipo moderno no puede copiarse al enum legacy. Incorporar validaciones nativas completas y prevalidación antes de efectos.
-- [ ] Diseñar reconciliación explícita del movimiento QA parcial; operación APLICANDO/pedido/SKU permanecen bloqueados, sin reparación automática. Nuevo backup antes de escribir.
-- [ ] Completar A4+B2, cancelación/reasignación, mixto/granel/D50/faults, cleanup de apertura/habilitaciones y cierre Git.
-
-Sin escrituras TEST tras STOP; sin commit/push incompleto. F10 sin cambio. [Evidencia y archivos conservados](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+Sin catálogo/carrito familiar público ni mapa comercial. F10 sin cambio. [Acta C5](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
 ## Remediación previa C5 (2026-10-07)
 
 - [x] R0–R10: preservar trabajo, forense, backup TEST, remediación mínima, readback20/0, replay0 y preflight limpio.
-- [ ] Continuación C5 parcial: esquema y puerto/deploy alcanzados; E2E detenido por fixture incompleto. Usar el estado actual de arriba, sin repetir R0–R10.
+- [x] Continuación C5 cerrada; incidencias superadas mediante recovery acreditado. No repetir R0–R10.
 
 
 > Tareas por fase. Estado: ⬜ pendiente · 🔄 en curso · ✅ hecho · 🚧 bloqueada.

@@ -1,4 +1,8 @@
 /** ContentService devuelve un redirect de lectura. Nunca repetir el POST para recuperarlo. */
+export function esFalloServicioSheetsC5(response){
+  return response?.ok===false&&response.codigo===500&&typeof response.error==='string'
+    && /^(El servicio Hojas de cálculo falló al acceder al documento|Service Spreadsheets failed while accessing document)/.test(response.error);
+}
 export async function solicitarHttpC5(config,method,action,body={},options={}){
   const request=options.fetch??globalThis.fetch;
   const url=new URL(config.url);

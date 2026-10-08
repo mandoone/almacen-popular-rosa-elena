@@ -1,12 +1,10 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
-Continuación C5: checkpoint974a188 reproducible, TEST v24, M-0 recuperado con auditoría/replay0; confirmación original y cancelación/reasignación/mixto/insuficiencia/granel100 acreditados en TEST. E2E restantes/cleanup pendientes. Hardening de readback completo verificado localmente con1033 tests; próximo deploy solo TEST. Los apartados STOP v23 siguientes conservan el historial previo. [Estado y evidencia actual](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+## C5 TEST cerrado —2026-10-08
 
-## C5 TEST — preparación recuperada; STOP en movimiento (2026-10-08)
+TEST v25:20 escenarios E2E, recovery M-0/misma key, confirmación/cancelación/reasignación, mixto, granel y D50 acreditados. Cleanup:37 SKU/18 familias QA inactivos,19 pedidos cancelados,41 operaciones completas y0 bloqueos. Readback nativo completo:0 cambios históricos/comerciales; catálogo V1 idéntico. F10 sigue1 READY/19 PENDING. [Acta, backups, QA y rollback](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
-Continuación exacta de30e047e, con respaldo verificado de los25 archivos previos. Preparación QA durable cerrada: backup pre-recovery completo, apertura sintética y cuatro celdas QA faltantes completadas, readback y replay0. Apps Script TEST v22→v23 con rollback disponible.
-
-Confirmación detenida por enum legacy MOVIMIENTOS_STOCK.tipo incompatible con ASIGNACION_V2: diario APLICANDO,2 asignaciones,1 movimiento parcial; stocks QA4/7 y pedido recibido sin puntero. Pedido/SKU bloqueados. Sin escrituras después de STOP; sin cleanup, commit ni push. QA982 PASS, histórico/comercial intacto. F10 sigue1 READY/19 PENDING. [Causas, backups, readback y próximo paso](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+C6 solo lectura paralela queda como siguiente alcance autorizado, sin mapa comercial ni activación pública. Los apartados fechados siguientes son historia previa al cierre; no reabrir remediación/preparación.
 
 > Documento vivo. Refleja el estado **actual** del proyecto. Actualizar en cada
 > tarea que cambie el estado. Última actualización: 2026-10-08.

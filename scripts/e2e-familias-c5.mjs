@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {validarConfiguracionF78,validarDestinoF78} from './lib/fase78-e2e-guardrails.mjs';
-import {solicitarHttpC5} from './lib/http-test-c5.mjs';
+import {solicitarHttpC5,esFalloServicioSheetsC5} from './lib/http-test-c5.mjs';
 
 export async function ejecutarE2eC5(call, progreso=()=>{}) {
   const results=[];
@@ -123,7 +123,15 @@ async function main(){
     const reintentable=!!body.idempotency_key||action==='prepararFixturePedidoV2Test'||action.startsWith('obtener')||action==='verificarOperacionV2Test';
     let response;
     for(let intento=0;intento<(reintentable?3:1);intento++){
-      try{response=await solicitarHttpC5(c,'POST',action,body);break;}catch{
+      try{
+        response=await solicitarHttpC5(c,'POST',action,body);
+        if(reintentable&&esFalloServicioSheetsC5(response)){
+          (saved.fallos_servicio??=[]).push({label,intento:intento+1,codigo:500,mismo_payload:true,fecha:new Date().toISOString()});await persist();
+          if(intento===2)throw new Error('SERVICIO_SHEETS_C5_INCIERTO');
+          continue;
+        }
+        break;
+      }catch{
         (saved.transportes_ambiguos??=[]).push({label,intento:intento+1,mismo_payload:true,fecha:new Date().toISOString()});await persist();
         if(intento===(reintentable?2:0))throw new Error('STOP_RESPUESTA_AMBIGUA_'+label);
       }

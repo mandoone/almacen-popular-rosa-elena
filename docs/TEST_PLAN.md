@@ -1,13 +1,10 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
-Checkpoint recovery M-0:1015 tests PASS/0 skipped; frontera salida/devolucion y origen native, campos no finitos/faltantes, prevalidación sin efectos, prefijo/hash/stock/asignaciones exactos, caída/replay y filtro de intenciones V2. Lint/typecheck/build aislado/scan/diff/V1 PASS. Validación remota sigue pendiente en este checkpoint. [Evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
+## C5 cierre TEST real —2026-10-08
 
-## C5 recuperación de preparación y enum real (2026-10-08)
+20 escenarios E2E/194 respuestas checkpointadas, cleanup91/replay0,0 bloqueos QA. Native readback completo de19 hojas preserva valores/fórmulas/formatos/validaciones; catálogo V1 idéntico. Suite1050 PASS/0 skipped:161 pruebas netas nuevas desde889 del checkpoint30e047e. Focal de cadena de readback23 PASS; los casos negativos rechazan evidencia, actor, recibo, transición y auditorías faltantes/duplicadas. Lint/typecheck/build aislado/scan/diff/V1 se verifican en cierre. [Matriz y evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
 
-19 tests focales de preparación: ausente/parcial real/replay, apertura faltante, detalle/identidad/stock/precio/apertura incompatibles, efectos existentes, plan/readback corrupto y caída después de cada hoja. El fixture inmutable v22 reproduce validación de pago y prefijo A:I. Encoding UTF8 del ejecutor tiene prueba focal. Dos pruebas nuevas incorporan enum nativo de movimiento: STOP exacto v23 y retry LOCAL que exige revisión sin descontar.
-
-Suite982 PASS; preparación REAL acreditada con backup/readback/replay0. A4+B2 REAL detenido en tipo legacy; no se aprueban cancelación/reasignación/mixto/granel/D50/faults ni cleanup remoto. [Matriz local versus TEST y próximos requisitos](operativa/FAMILIAS_PRODUCTO_FASE_C5_TEST_REAL_2026-10-07.md).
-
+Los registros siguientes conservan resultados históricos; los STOP ya fueron resueltos, no son el estado actual.
 
 ## Estado histórico previo a recuperación: C5 puerto GAS y migración TEST (2026-10-08)
 
