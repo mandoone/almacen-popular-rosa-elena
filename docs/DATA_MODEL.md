@@ -1,5 +1,11 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Manifest y planes C7-B (2026-10-12)
+
+Artefactos de preparación locales separan estado de evidencia/borrador/contrato aprobado. Plan incluye precondiciones por fila/celda,hash,evidencia,recibos simulados e inverso que desactiva familias nuevas sin borrar. Ninguna columna/hoja nueva, sin alterar PRODUCTOS real.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## Proyección C7-A sin cambio de esquema (2026-10-08)
 
 JSON local separa familias completas mapeadas, aprobaciones de identidad y ofertas incompletas sin asociación. Solo se proyectan marca/presentación/contenido en copias; familia_id se evalúa mediante mapa C6, nunca se escribe en maestro real. No hay nuevas hojas/columnas ni cambios en stock/costo/precio V1.

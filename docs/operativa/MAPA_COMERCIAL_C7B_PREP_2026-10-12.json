@@ -1,0 +1,1528 @@
+{
+  "modelo": "MANIFEST_C7B_PREP_LOCAL",
+  "fecha": "2026-10-12",
+  "base_git": "897c7b77035063673ad9823505e3b0c522b28071",
+  "autorizacion_remota": false,
+  "entradas": [
+    {
+      "producto_id": "PROD-001",
+      "nombre_actual": "Arroz",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ARROZ",
+        "nombre_publico": "Arroz",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-002",
+      "nombre_actual": "Arroz integral",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ARROZ-INTEGRAL",
+        "nombre_publico": "Arroz integral",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-003",
+      "nombre_actual": "Avena Integral",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-AVENA-INTEGRAL",
+        "nombre_publico": "Avena Integral",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-004",
+      "nombre_actual": "Carne vegetal",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-CARNE-VEGETAL",
+        "nombre_publico": "Carne vegetal",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-005",
+      "nombre_actual": "Garbanzos",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-GARBANZOS",
+        "nombre_publico": "Garbanzos",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-006",
+      "nombre_actual": "Harina",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-HARINA",
+        "nombre_publico": "Harina",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-007",
+      "nombre_actual": "Harina Integral",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-HARINA-INTEGRAL",
+        "nombre_publico": "Harina Integral",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-008",
+      "nombre_actual": "Lentejas",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-LENTEJAS",
+        "nombre_publico": "Lentejas",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-009",
+      "nombre_actual": "Poroto blanco",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-POROTO-BLANCO",
+        "nombre_publico": "Poroto blanco",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-010",
+      "nombre_actual": "Poroto burro",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-POROTO-BURRO-HISTORICO",
+        "nombre_publico": "Poroto burro",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [],
+      "accion_futura": "CONSERVAR_HISTORICO_NO_MIGRAR"
+    },
+    {
+      "producto_id": "PROD-011",
+      "nombre_actual": "Quínoa",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-QUINOA",
+        "nombre_publico": "Quínoa",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-012",
+      "nombre_actual": "Sal de Cáhuil",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-SAL-DE-CAHUIL",
+        "nombre_publico": "Sal de Cáhuil",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-013",
+      "nombre_actual": "Mote",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-MOTE",
+        "nombre_publico": "Mote",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-014",
+      "nombre_actual": "Té",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-TE",
+        "nombre_publico": "Té",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-015",
+      "nombre_actual": "Pimienta",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-PIMIENTA",
+        "nombre_publico": "Pimienta",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-016",
+      "nombre_actual": "Ají de color",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-AJI-DE-COLOR",
+        "nombre_publico": "Ají de color",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-017",
+      "nombre_actual": "Bicarbonato",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-BICARBONATO",
+        "nombre_publico": "Bicarbonato",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-018",
+      "nombre_actual": "Orégano",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-OREGANO",
+        "nombre_publico": "Orégano",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-019",
+      "nombre_actual": "Aliño completo",
+      "grupo_revision": null,
+      "estado": "POSTERGADO_GRANEL",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ALINO-COMPLETO",
+        "nombre_publico": "Aliño completo",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "POSTERGADO_GRANEL"
+      ],
+      "accion_futura": "Mantener D40; postergar mapa multi-SKU."
+    },
+    {
+      "producto_id": "PROD-020",
+      "nombre_actual": "Aceite Oliva Vor 250 ml",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ACEITE-OLIVA-VDR-250-ML",
+        "nombre_publico": "Aceite Oliva VDR 250 ml",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "250 ml (oferta VDR acreditada; identidad física pendiente)"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-021",
+      "nombre_actual": "Aceite Oliva Vor 500 ml",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ACEITE-OLIVA-VDR-500-ML",
+        "nombre_publico": "Aceite Oliva VDR 500 ml",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "500 ml (oferta VDR acreditada; identidad física pendiente)"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-022",
+      "nombre_actual": "Aceite Natura",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ACEITE-NATURA",
+        "nombre_publico": "Aceite Natura",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-023",
+      "nombre_actual": "Aceite vegetal",
+      "grupo_revision": null,
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ACEITE-VEGETAL-ECO",
+        "nombre_publico": "Aceite vegetal Económico",
+        "precio_comanda": 1700,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "VARIABLE",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-024",
+      "nombre_actual": "Azúcar",
+      "grupo_revision": "A",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-AZUCAR",
+        "nombre_publico": "Azúcar",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "1 kg envasado, no granel"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-025",
+      "nombre_actual": "Tallarines Parma",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-TALLARINES-PARMA",
+        "nombre_publico": "Tallarines Parma",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-026",
+      "nombre_actual": "Fideos Parma",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-FIDEOS-PARMA",
+        "nombre_publico": "Fideos Parma",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-027",
+      "nombre_actual": "Sal",
+      "grupo_revision": "A",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-SAL",
+        "nombre_publico": "Sal",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "1 kg envasado, no granel"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-028",
+      "nombre_actual": "Salsa de tomate Toddo",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-SALSA-DE-TOMATE-COLUNQUEN",
+        "nombre_publico": "Salsa de tomate Colunquen",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-029",
+      "nombre_actual": "Tallarines Luchetti",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-TALLARINES-LUCHETTI",
+        "nombre_publico": "Tallarines Luchetti",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-030",
+      "nombre_actual": "Fideos Luchetti",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-FIDEOS-LUCHETTI",
+        "nombre_publico": "Fideos Luchetti",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-031",
+      "nombre_actual": "Cloro gel Igenix",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-CLORO-GEL-IGENIX-REVISION",
+        "nombre_publico": "Cloro gel Igenix",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-032",
+      "nombre_actual": "Cloro gel Excell",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-CLORO-GEL-EXCELL-REVISION",
+        "nombre_publico": "Cloro gel Excell",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-033",
+      "nombre_actual": "Cloro 1 L",
+      "grupo_revision": null,
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-CLORO-1L-ECO",
+        "nombre_publico": "Cloro 1 L Económico",
+        "precio_comanda": 650,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "VARIABLE",
+        "marca_publica": "",
+        "presentacion_conocida": "1 L / 1000 ml"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-034",
+      "nombre_actual": "Manga Swan",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-MANGA-SWAN",
+        "nombre_publico": "Manga Swan",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "Manga/paquete; contenido pendiente"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-035",
+      "nombre_actual": "Papel Higiénico 6u Swan",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-PAPEL-HIGIENICO-6U-SWAN",
+        "nombre_publico": "Papel Higiénico 6u Swan",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "Pack 6 unidades (oferta nominal)"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-036",
+      "nombre_actual": "Detergente 5L",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-DETERGENTE-5L",
+        "nombre_publico": "Detergente 5L",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "5 L"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-037",
+      "nombre_actual": "Detergente 5L con suavizante",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-DETERGENTE-5L-CON-SUAVIZANTE",
+        "nombre_publico": "Detergente 5L con suavizante",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "5 L"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-038",
+      "nombre_actual": "Detergente concentrado",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-DETERGENTE-CONCENTRADO-HISTORICO",
+        "nombre_publico": "Detergente concentrado",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [],
+      "accion_futura": "CONSERVAR_HISTORICO_NO_MIGRAR"
+    },
+    {
+      "producto_id": "PROD-039",
+      "nombre_actual": "Jabón 1L",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-JABON-1L",
+        "nombre_publico": "Jabón 1L",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "1 L (oferta nominal)"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-040",
+      "nombre_actual": "Lavaloza Fuzol",
+      "grupo_revision": null,
+      "estado": "APROBADO",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Fuzol 900 ml aprobada exclusivamente para dry-run local.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-LAVALOZA-FUZOL-900ML",
+        "nombre_publico": "Lavaloza Fuzol 900 ml",
+        "precio_comanda": 1000,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "EXPLICITA",
+        "marca_publica": "Fuzol",
+        "presentacion_conocida": "900 ml"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [],
+      "accion_futura": "Solo dry-run y plan local; sin migración remota.",
+      "contrato_aprobado": {
+        "familia_id": "FAM-LAVALOZA-FUZOL-900ML",
+        "activo": "SI",
+        "nombre_publico": "Lavaloza Fuzol 900 ml",
+        "categoria": "Limpieza",
+        "precio_venta": 1000,
+        "modo_venta": "UNIDAD",
+        "unidad_venta": "unidad",
+        "permite_decimal": "NO",
+        "paso_venta": 1,
+        "contenido_cantidad": 900,
+        "contenido_unidad": "ml",
+        "presentacion_publica": "900 ml",
+        "politica_marca": "EXPLICITA",
+        "marca_publica": "Fuzol",
+        "version_oferta": 1
+      },
+      "identidad_aprobada": {
+        "producto_id": "PROD-040",
+        "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+        "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Fuzol 900 ml aprobada exclusivamente para dry-run local.",
+        "marca": "Fuzol",
+        "presentacion": "900 ml",
+        "contenido_cantidad": 900,
+        "contenido_unidad": "ml"
+      }
+    },
+    {
+      "producto_id": "PROD-041",
+      "nombre_actual": "Pasta Pepsodent (90 g)",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-PASTA-PEPSODENT-90-G",
+        "nombre_publico": "Pasta Pepsodent (90 g)",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "90 g (unidad comercial acreditada)"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-042",
+      "nombre_actual": "Toalla Nova x3",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-TOALLA-NOVA-X3",
+        "nombre_publico": "Toalla Nova x3",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "Pack x3 (oferta nominal)"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-043",
+      "nombre_actual": "Toalla Tork",
+      "grupo_revision": "C",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-TOALLA-TORK",
+        "nombre_publico": "Toalla Tork",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "EXPLICITA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "Paquete; contenido pendiente"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-044",
+      "nombre_actual": "Desinfectante suelo (Todos)",
+      "grupo_revision": null,
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-DESINFECTANTE-SUELO-ECO",
+        "nombre_publico": "Desinfectante suelo Económico",
+        "precio_comanda": 1100,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "VARIABLE",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-045",
+      "nombre_actual": "Servilletas (300u)",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-SERVILLETAS-300U",
+        "nombre_publico": "Servilletas (300u)",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "Pack 300 unidades (oferta nominal)"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-046",
+      "nombre_actual": "Shampoo Ballerina",
+      "grupo_revision": null,
+      "estado": "APROBADO",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Shampoo, exclusivamente para dry-run local.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-SHAMPOO-BALLERINA-750ML",
+        "nombre_publico": "Shampoo Ballerina 750 ml",
+        "precio_comanda": 1400,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "EXPLICITA",
+        "marca_publica": "Ballerina",
+        "presentacion_conocida": "750 ml"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [],
+      "accion_futura": "Solo dry-run y plan local; sin migración remota.",
+      "contrato_aprobado": {
+        "familia_id": "FAM-SHAMPOO-BALLERINA-750ML",
+        "activo": "SI",
+        "nombre_publico": "Shampoo Ballerina 750 ml",
+        "categoria": "Higiene",
+        "precio_venta": 1400,
+        "modo_venta": "UNIDAD",
+        "unidad_venta": "unidad",
+        "permite_decimal": "NO",
+        "paso_venta": 1,
+        "contenido_cantidad": 750,
+        "contenido_unidad": "ml",
+        "presentacion_publica": "750 ml",
+        "politica_marca": "EXPLICITA",
+        "marca_publica": "Ballerina",
+        "version_oferta": 1
+      },
+      "identidad_aprobada": {
+        "producto_id": "PROD-046",
+        "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+        "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Shampoo, exclusivamente para dry-run local.",
+        "marca": "Ballerina",
+        "presentacion": "750 ml",
+        "contenido_cantidad": 750,
+        "contenido_unidad": "ml"
+      }
+    },
+    {
+      "producto_id": "PROD-047",
+      "nombre_actual": "Bálsamo Ballerina",
+      "grupo_revision": null,
+      "estado": "APROBADO",
+      "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Bálsamo, exclusivamente para dry-run local.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-BALSAMO-BALLERINA-750ML",
+        "nombre_publico": "Bálsamo Ballerina 750 ml",
+        "precio_comanda": 1400,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "EXPLICITA",
+        "marca_publica": "Ballerina",
+        "presentacion_conocida": "750 ml"
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [],
+      "accion_futura": "Solo dry-run y plan local; sin migración remota.",
+      "contrato_aprobado": {
+        "familia_id": "FAM-BALSAMO-BALLERINA-750ML",
+        "activo": "SI",
+        "nombre_publico": "Bálsamo Ballerina 750 ml",
+        "categoria": "Higiene",
+        "precio_venta": 1400,
+        "modo_venta": "UNIDAD",
+        "unidad_venta": "unidad",
+        "permite_decimal": "NO",
+        "paso_venta": 1,
+        "contenido_cantidad": 750,
+        "contenido_unidad": "ml",
+        "presentacion_publica": "750 ml",
+        "politica_marca": "EXPLICITA",
+        "marca_publica": "Ballerina",
+        "version_oferta": 1
+      },
+      "identidad_aprobada": {
+        "producto_id": "PROD-047",
+        "estado": "IDENTIDAD_APROBADA_PARA_DRY_RUN",
+        "evidencia": "Omar, instrucción C7-A 2026-10-08: identidad física/publica Ballerina 750 ml para Bálsamo, exclusivamente para dry-run local.",
+        "marca": "Ballerina",
+        "presentacion": "750 ml",
+        "contenido_cantidad": 750,
+        "contenido_unidad": "ml"
+      }
+    },
+    {
+      "producto_id": "PROD-048",
+      "nombre_actual": "Limpiador crema",
+      "grupo_revision": null,
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-LIMPIADOR-CREMA-ECO",
+        "nombre_publico": "Limpiador crema Económico",
+        "precio_comanda": 1400,
+        "fuente_precio": "FUENTES_CATALOGO_2026-10-01.csv; comanda contrastada C7-A",
+        "politica_propuesta": "VARIABLE",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-049",
+      "nombre_actual": "Paños amarillos",
+      "grupo_revision": "A",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-PANOS-AMARILLOS",
+        "nombre_publico": "Paños amarillos",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-050",
+      "nombre_actual": "Esponjas",
+      "grupo_revision": "A",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-ESPONJAS",
+        "nombre_publico": "Esponjas",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": "Unidad (fuente institucional)"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-051",
+      "nombre_actual": "Afeitadora desechable",
+      "grupo_revision": "A",
+      "estado": "PENDIENTE_CONTEO",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-AFEITADORA-DESECHABLE",
+        "nombre_publico": "Afeitadora desechable",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "POR_DEFINIR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-052",
+      "nombre_actual": "B. de basura 70x90 VIRUTEX",
+      "grupo_revision": "B",
+      "estado": "PENDIENTE_NADIA",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-B-DE-BASURA-70X90-VIRUTEX-REVISION",
+        "nombre_publico": "B. de basura 70x90 VIRUTEX",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "VARIABLE_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": "70x90 (dimensión nominal); cantidad de pack pendiente"
+      },
+      "cardinalidad": {
+        "propuesta": "POR_REVISAR",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_NADIA"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-053",
+      "nombre_actual": "Pan de masa madre",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-PAN-DE-MASA-MADRE",
+        "nombre_publico": "Pan de masa madre",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "NO_APLICA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    },
+    {
+      "producto_id": "PROD-054",
+      "nombre_actual": "Empanadas",
+      "grupo_revision": "D",
+      "estado": "PENDIENTE_OMAR",
+      "evidencia": "C7-A/matriz de fuentes; pendiente humano no acreditado.",
+      "oferta_propuesta": {
+        "familia_id": "FAM-EMPANADAS",
+        "nombre_publico": "Empanadas",
+        "precio_comanda": null,
+        "fuente_precio": "SIN_PRECIO_POR_VARIANTE_O_HISTORICO",
+        "politica_propuesta": "NO_APLICA_POR_REVISAR",
+        "marca_publica": "",
+        "presentacion_conocida": null
+      },
+      "cardinalidad": {
+        "propuesta": "PROPUESTO_NO_REQUIERE_MULTI_SKU",
+        "estado": "PENDIENTE_OMAR",
+        "evidencia": "Propuesta C7-A, no aprobación de cardinalidad.",
+        "decision": null
+      },
+      "bloqueos_humanos": [
+        "HUMAN_GATE_IDENTIDAD_FISICA",
+        "HUMAN_GATE_OMAR_POLITICA_CARDINALIDAD"
+      ],
+      "accion_futura": "Acreditar identidad/política con respuesta o conteo; proyectar y validar sin escribir."
+    }
+  ],
+  "ofertas_sin_sku": [
+    {
+      "familia_id": "FAM-CLORO-CLORINDA-1L",
+      "nombre_publico": "Cloro 1 L Clorinda",
+      "politica_marca": "EXPLICITA",
+      "marca_publica": "Clorinda",
+      "precio_venta": 1200,
+      "presentacion_publica": "1 L / 1000 ml",
+      "estado": "PENDIENTE_OMAR",
+      "estado_oferta": "OFERTA_APROBADA_SIN_SKU_ACREDITADO",
+      "bloqueos_humanos": [
+        "HUMAN_GATE_ALTA_SKU_EXPLICITA"
+      ],
+      "contenido_cantidad": 1000,
+      "contenido_unidad": "ml"
+    }
+  ],
+  "grupos_variantes": [
+    {
+      "grupo": "CLORO_GEL",
+      "sku": [
+        "PROD-031",
+        "PROD-032"
+      ],
+      "estado": "PENDIENTE_NADIA"
+    },
+    {
+      "grupo": "BOLSAS_70X90",
+      "sku": [
+        "PROD-052"
+      ],
+      "estado": "PENDIENTE_NADIA"
+    }
+  ]
+}

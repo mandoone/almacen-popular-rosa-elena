@@ -1,5 +1,11 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## C7-B PREP local —2026-10-12
+
+Manifest54, tres aprobados y pendientes explícitos; template/validador Nadia y plan/inverso simulados sin puerto remoto. Nadia pendiente; sin escribir TEST/deploy. C5/C6/C7-A cerrados, GAS TEST v25 y F10 intactos.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## C7-A mapa comercial local —2026-10-08
 
 Tres identidades físicas/públicas acreditadas por Omar y mapa familiar ejecutable únicamente en copias: CUMPLE. Cuatro Económico con identidad pendiente y Clorinda sin SKU; matriz racionalizada del resto y preguntas mínimas. Sheet TEST intacta, GAS v25 sin deploy; público/V1/F10 sin cambio.

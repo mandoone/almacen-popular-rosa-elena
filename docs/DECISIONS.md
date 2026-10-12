@@ -1,5 +1,11 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D58 — Identidad y preparación local C7-B (2026-10-12)
+
+Decisión de Omar: marca física o formato comercialmente relevante distinto exige SKU distinto; cambio solo de proveedor conserva SKU, proveedor por compra. Económico/VARIABLE oculta marca pública y preserva identidad interna. Manifest pendiente no es contrato vendible. Plan/inverso solo local; cardinalidades siguen sin aprobación y no se habilita un migrador remoto.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## D57 — C7-A identidad acreditada solo para dry-run (2026-10-08)
 
 Omar aprueba identidad física/pública de PROD-040 Fuzol900ml y PROD-046/047 Ballerina750ml, política EXPLICITA. Ya no son pendientes humanos. IDs familiares definitivos propuestos y precios de comanda se evalúan solo en copias; no autoriza escribir maestro ni familias. Las cuatro Económico mantienen marca física pendiente, Clorinda oferta separada sin SKU. PROPUESTO_NO_REQUIERE_MULTI_SKU no es exención aprobada; no se infiere marca por rótulo.

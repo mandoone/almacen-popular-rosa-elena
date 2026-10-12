@@ -1,5 +1,14 @@
 # TASKS.md — Tareas vivas y backlog
 
+## Sesión autónoma C7-B —2026-10-12
+
+- [x] Manifest, ingesta futura, plan/inverso y simulación local.
+- [ ] Política/auditoría de imágenes y simulador.
+- [ ] Walkthrough Omar y estado pre-lanzamiento/F10.
+- [ ] HUMAN_GATE Nadia/cardinalidad/políticas/conteo/derechos; no inventar respuestas.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## C7-A cerrado localmente —2026-10-08
 
 - [x] Tres identidades aprobadas y IDs familiares/precios de comanda verificados.

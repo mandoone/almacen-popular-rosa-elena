@@ -1,0 +1,95 @@
+{
+  "modelo": "RESPUESTAS_NADIA_C7_LOCAL",
+  "productos": [
+    {
+      "producto_id": "PROD-033",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-023",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-044",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-048",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-031",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-032",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "producto_id": "PROD-052",
+      "estado": "PENDIENTE",
+      "marca_fisica": null,
+      "contenido_cantidad": null,
+      "contenido_unidad": null,
+      "presentacion": null,
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    }
+  ],
+  "variantes": [
+    {
+      "grupo": "CLORO_GEL",
+      "estado": "PENDIENTE",
+      "conviven_actualmente": null,
+      "politica_publica": null,
+      "observacion": "",
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    },
+    {
+      "grupo": "BOLSAS_70X90",
+      "estado": "PENDIENTE",
+      "conviven_actualmente": null,
+      "politica_publica": null,
+      "observacion": "",
+      "respuesta_fuente": "",
+      "fecha_acreditacion": null
+    }
+  ]
+}

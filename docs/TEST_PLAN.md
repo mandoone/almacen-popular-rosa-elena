@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C7-B PREP/ingesta —2026-10-12
+
+Focales de manifest, tres casos aprobados, plan9/replay0/rollback, fila concurrente cambiada,recibos inciertos y respuestas Nadia normalizadas/rechazadas sin mutaciones. Todas las pruebas usan copias/mocks; ningún E2E real C5.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## C7-A proyección comercial local —2026-10-08
 
 Pruebas de los tres mapas aprobados, marca/presentación/precio, entrada preservada, validadores C6 intactos, variable sin marca bloqueado, Clorinda sin doble asociación, inyección de stock/costo/precio rechazada y cero puertos HTTP. Dry-run sobre captura nativa conservada verifica ocho precios y devuelve CUMPLE para tres asociaciones. QA final en acta.

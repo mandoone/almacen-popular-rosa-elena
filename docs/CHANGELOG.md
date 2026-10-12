@@ -1,5 +1,11 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-12 — C7-B PREP local
+
+Manifest comercial54 y template Nadia pendientes; tres aprobaciones C7-A preservadas, plan exacto9/replay0/inverso9 en memoria. Sin Google Sheets writes ni Apps Script deploy.
+
+[Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## 2026-10-08 — C7-A primer mapa comercial dry-run
 
 Identidades Fuzol/Ballerina acreditadas para copias, IDs propuestos, ocho precios de comanda contrastados y tres asociaciones CUMPLE. Matriz de revisión29 y propuestas sin multi-SKU; preguntas agrupadas sin volver a pedir decisiones cerradas. Sin lecturas remotas nuevas, escrituras/deploy ni activación pública.
