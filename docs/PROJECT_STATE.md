@@ -2,7 +2,7 @@
 
 ## C7-C UI local —2026-10-12
 
-Modelo oferta/SKU, ejemplos sintéticos, ingesta JSON y preview plan/inverso preparados en pantalla TEST/admin. Cierre visual/QA final sigue dentro de la sesión C7-C. Sin puerto de escritura ni lectura comercial; F10/v25 intactos. [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+Modelo oferta/SKU, ejemplos sintéticos, ingesta JSON/formulario y preview plan/inverso preparados en pantalla TEST/admin. Walkthrough desktop/móvil local completo; sin puerto de escritura ni lectura comercial y F10/v25 intactos. Revisión de fotos queda en Carolina, con cobertura ya entregada por Omar; no backlog paralelo. [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
 
 ## Sesión C7-B local preparada —2026-10-12
 

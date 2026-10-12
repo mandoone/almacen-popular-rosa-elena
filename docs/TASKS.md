@@ -4,7 +4,8 @@
 
 - [x] Separar oferta pública e identidad SKU en UI local TEST/admin.
 - [x] Ingesta local, mapa y preview plan/inverso sin ejecutar.
-- [ ] Walkthrough desktop/móvil y QA final.
+- [x] Walkthrough desktop/móvil local, explicación Almacén y registro de responsabilidad Carolina.
+- [x] QA final y checkpoint C7-C; [evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
 - [ ] HUMAN_GATE respuestas Nadia y cardinalidad Omar; migración en otra tarea autorizada.
 
 [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).

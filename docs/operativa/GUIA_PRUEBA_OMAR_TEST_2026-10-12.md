@@ -44,6 +44,7 @@ No pulsar Guardar/Crear/Confirmar/Registrar/Cancelar/Ajustar sobre datos reales.
 |---|---|---|---|---|
 | Familias | LECTURA | Oferta pública separada de identidad física; no crear/activar/asociar familias reales. | | |
 | Familias: simulador | MOCK LOCAL / LECTURA | `/admin/familias/simulador`: política, imagen/origen, precio, disponibilidad y SKU/stock interno claramente separados. | | |
+| Familias: preparación C7-C | MOCK LOCAL | `/admin/familias/preparacion`: elegir oferta/SKU, comparar identidad con datos internos MOCK, validar template pendiente, ver9 cambios e inverso, cargar ejemplo sintético, rechazar campos stock/precio. No guardar ni migrar. | | |
 | Simulador Económico | MOCK LOCAL | Aceite1700 sin marca pública; placeholder genérico; foto branded bloqueada con aviso; ninguna petición de guardar. | | |
 | Simulador mapa | MOCK LOCAL | JSON/CSV válido/inválido, CUMPLE/ADVERTENCIA/BLOQUEADO; no alterar Sheet. | | |
 | Productos | LECTURA | SKU/activo/unidad/stock/costo/precio e identidad legible; no inferir marca desde el nombre ni editar. | | |

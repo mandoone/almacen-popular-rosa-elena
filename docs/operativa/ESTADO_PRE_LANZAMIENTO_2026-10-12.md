@@ -19,7 +19,7 @@ No faltan textos editoriales desde cero. Los grupos de variantes pueden requerir
 
 ## ESPERANDO_CAROLINA
 
-Fotos en proceso según Omar; revisar calidad, compatibilidad de marca/presentación, asociación y derechos/créditos. [Auditoría read-only41 fotos](AUDITORIA_IMAGENES_CATALOGO_VARIABLE_2026-10-12.md):4 branded no aptas para VARIABLE,1 genérica visual y36 ambiguas; Fuzol/Clorinda sin foto identificable en esa carpeta. Ningún archivo se alteró ni se aprobó automáticamente para publicar. Que una foto sea genérica no acredita derechos.
+Omar ya realizó la revisión manual de cobertura contra comanda y la entregó a Carolina. Ella completa faltantes, corrige asociaciones y entrega la carpeta final; no se abre otra auditoría general ni backlog paralelo. El aporte C7 queda en la regla de compatibilidad VARIABLE/genérica y EXPLICITA/marca-presentación. [Alcance vigente y hallazgos históricos](AUDITORIA_IMAGENES_CATALOGO_VARIABLE_2026-10-12.md). Ninguna imagen fue alterada ni aprobada automáticamente; derechos/créditos siguen HUMAN_GATE independiente.
 
 ## ESPERANDO_OMAR
 

@@ -41,21 +41,22 @@ export default function C7cIngesta({ manifest, base }: { manifest: ManifestC7; b
         <label>Unidad <select className={input} value={form.contenido_unidad} onChange={e => setForm({ ...form, contenido_unidad: e.target.value })}>{['ml', 'g', 'unidad', 'L', 'kg'].map(u => <option key={u}>{u}</option>)}</select></label>
         <label>Origen de evidencia <select className={input} value={form.fuente} onChange={e => setForm({ ...form, fuente: e.target.value as FuenteEvidenciaC7c })}>{['NADIA', 'OMAR', 'CONTEO_FISICO', 'DOCUMENTO_VIGENTE'].map(f => <option key={f}>{f}</option>)}</select></label>
         <label>Fuente / referencia <input required maxLength={950} className={input} value={form.evidencia} onChange={e => setForm({ ...form, evidencia: e.target.value })} /></label>
-        <label>Fecha de evidencia <input required type="date" className={input} value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} /></label>
+        <label>Fecha de evidencia · AAAA-MM-DD <input required type="text" maxLength={10} pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="AAAA-MM-DD" className={input} value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} /></label>
         <button disabled={ocupado} className="rounded border px-4 py-2 sm:col-span-2">Incorporar propuesta al JSON local</button>
       </form><p className="mt-2 text-sm">No se editan stock, costo, precio ni IDs. La evidencia sigue sujeta a revisión humana.</p>
     </details>
-    <label className="block">Cargar JSON local · máximo200 KB <input disabled={ocupado} type="file" accept=".json,application/json" className={`${input} file:mr-2 file:rounded file:border-0 file:p-2`} onChange={async e => {
+    <label className="block">Cargar JSON local · máximo 200 KB <input disabled={ocupado} type="file" accept=".json,application/json" className={`${input} file:mr-2 file:rounded file:border-0 file:p-2`} onChange={async e => {
       const archivo = e.target.files?.[0]; if (!archivo) return;
-      const actual = ++generacion.current; setRevision(null); setMensaje('');
+      const actual = ++generacion.current; setRevision(null); setMensaje(''); setOcupado(true);
       try { if (archivo.size > MAX_JSON_C7C) throw new Error('ARCHIVO_DEMASIADO_GRANDE'); const texto = await archivo.text(); if (actual === generacion.current) cambiarTexto(texto); }
       catch (error) { if (actual === generacion.current) setMensaje(`BLOQUEADO · ${explicarErrorRevisionC7c(error)}`); }
+      finally { setOcupado(false); }
       e.target.value = '';
     }} /></label>
     <form onSubmit={revisar} className="mt-3 space-y-3">
       <label className="block">Respuestas Nadia / propuestas en JSON <textarea spellCheck={false} disabled={ocupado} rows={8} className={`${input} font-mono text-xs`} value={json} onChange={e => cambiarTexto(e.target.value)} aria-describedby="limite-ingesta-c7c" /></label>
       <p id="limite-ingesta-c7c" className="text-sm">Solo template C7. Se rechazan identidad contradictoria, SKU desconocido, campos operativos y precio. La plantilla original del repositorio no cambia.</p>
-      <div className="flex flex-wrap gap-3"><button disabled={ocupado} className="rounded bg-primary-dark px-4 py-2 text-white">{ocupado ? 'Validando…' : 'Validar dry-run'}</button><button disabled={ocupado} type="button" className="rounded border px-4 py-2" onClick={ejemplo}>Cargar ejemplo sintético</button><button disabled={ocupado} type="button" className="rounded border px-4 py-2" onClick={() => cambiarTexto(JSON.stringify(template, null, 2))}>Restablecer template pendiente</button></div>
+      <div className="flex flex-wrap gap-3"><button disabled={ocupado} className="rounded bg-primary-dark px-4 py-2 text-white">{ocupado ? 'Validando…' : 'Validar dry-run'}</button><button disabled={ocupado} type="button" className="rounded border px-4 py-2" onClick={ejemplo}>Cargar ejemplo sintético</button><button disabled={ocupado} type="button" className="rounded border px-4 py-2" onClick={() => { setForm(inicial); cambiarTexto(JSON.stringify(template, null, 2)); }}>Restablecer template pendiente</button></div>
     </form>
     <p role="status" aria-live="polite" className={`mt-3 break-words text-sm ${mensaje.startsWith('BLOQUEADO') ? 'rounded bg-red-50 p-3 text-red-900' : ''}`}>{mensaje}</p>
     {revision && <C7cRevisionPlan revision={revision} />}

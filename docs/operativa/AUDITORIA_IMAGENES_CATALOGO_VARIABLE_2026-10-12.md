@@ -1,5 +1,11 @@
 # Auditoría de imágenes para catálogo VARIABLE
 
+## Alcance vigente y responsable — cierre C7-C
+
+Omar confirma que ya revisó manualmente la cobertura del catálogo contra la comanda y entregó esa revisión a Carolina. Carolina completa faltantes, corrige asociaciones y entrega la carpeta final. El inventario/hallazgos C7-B que siguen abajo son evidencia histórica, no un backlog paralelo ni una solicitud de reinspeccionar41 fotos. En C7-C no se volvió a acceder a Drive ni a auditar cobertura.
+
+El aporte C7 se limita a compatibilidad: VARIABLE/Económico requiere imagen genérica sin marca comprometida; EXPLICITA imagen de la marca/presentación; NO_APLICA imagen de oferta. DE REYES no representa permanentemente Aceite Económico. Derechos permanecen HUMAN_GATE separado.
+
 Fecha:2026-10-12. Carpeta Drive «Productos del almacén» leída sin mutar. Inventario directo completo:41 JPEG; la búsqueda inicial por tipo devolvió34 y se completó mediante lectura de carpeta (no se asumió que faltaran archivos). No renombres/movimientos/borrado/edición de fotos, ni escritura Sheet.
 
 Se inspeccionaron visualmente7 fotos prioritarias; las34 restantes están inventariadas y AMBIGUA_REVISAR por no tener inspección visual acreditada en esta tarea. Un nombre de archivo no acredita producto/SKU, marca o formato. Ninguna asociación comercial se aplica. Derechos HUMAN_GATE separado: Carolina está trabajando las fotos según Omar; esta auditoría no acredita permisos ni créditos.

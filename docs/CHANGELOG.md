@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-12 — C7-C walkthrough y explicación Almacén
+
+Revisión local desktop/móvil con fixtures y red remota bloqueada; formulario, archivo JSON, escenarios Económico, plan/inverso y rechazos comprobados. Explicación sin nuevas preguntas; cobertura fotográfica ya entregada por Omar a Carolina, sin backlog paralelo. [Acta C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+
 ## 2026-10-12 — C7-C ingesta y preview local
 
 JSON/formulario de identidad y evidencia, proyección mapa/dry-run y tabla de plan/inverso. Template pendiente simula9/replay0/inverso9; ninguna aprobación autoriza migrar. [Acta C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).

@@ -1,5 +1,9 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D62 — Cobertura de fotos entregada a Carolina (2026-10-12)
+
+Omar acredita que ya revisó cobertura contra comanda y entregó el trabajo a Carolina, responsable de completar faltantes, corregir asociaciones y entregar carpeta final. C7 conserva solo la regla de compatibilidad de imagen con política pública; no reabre auditoría exhaustiva ni backlog paralelo. Derechos siguen gate separado. [Alcance vigente y evidencia histórica](operativa/AUDITORIA_IMAGENES_CATALOGO_VARIABLE_2026-10-12.md).
+
 ## D61 — Revisión administrativa local sin autorización de migración (2026-10-12)
 
 Omar solicita distinguir oferta pública e identidad física, y preparar ingesta/mapa/plan en copias. Estados de revisión PENDIENTE, PROPUESTO, APROBADO_PARA_DRY_RUN, BLOQUEADO; nunca aprobación para migrar. Un experimento Económico cambia solo la presentación pública y mantiene identidad interna. No modifica el manifest acreditado. Proveedor por compra, sin selector fijo del SKU. [Implementación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).

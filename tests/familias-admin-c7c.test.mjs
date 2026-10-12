@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+import ts from 'typescript';
+import { obtenerEntornoAplicacion } from '../src/lib/env.ts';
+import { capacidadParaRuta } from '../src/lib/fase9/autorizacion.ts';
+import { rolTieneCapacidad } from '../src/lib/fase9/roles.ts';
 import { crearBaseSinteticaC7c, estadoRevisionC7c, fuentePendienteC7c, identidadEnRevisionC7c,
   proyectarPoliticaPublicaC7c, requiereNuevoSkuC7c, crearEscenarioC7c } from '../src/lib/familias/revisionAdminC7c.ts';
 const manifest = JSON.parse(await readFile(new URL('../docs/operativa/MAPA_COMERCIAL_C7B_PREP_2026-10-12.json', import.meta.url), 'utf8'));
@@ -64,4 +69,17 @@ test('C7-C frontera local: página TEST/capacidad, sin API nueva ni transporte/p
  for(const f of ['../src/lib/familias/revisionAdminC7c.ts','../src/lib/familias/revisionIngestaC7c.ts','../src/components/admin/FamiliasPreparacionC7c.tsx','../src/components/admin/C7cEscenarios.tsx','../src/components/admin/C7cIngesta.tsx','../src/components/admin/C7cRevisionPlan.tsx']) {
   const code=await readFile(new URL(f,import.meta.url),'utf8');assert.doesNotMatch(code,/\bfetch\s*\(|solicitarAdmin|appsScriptPedidos|SpreadsheetApp|localStorage|sessionStorage|method:\s*['"](?:POST|PATCH|PUT|DELETE)/);
  }
+});
+test('C7-C página real bloquea entornos inciertos/productivo antes de render y acepta TEST explícito',async()=>{
+ const code=await readFile(new URL('../src/app/admin/familias/preparacion/page.tsx',import.meta.url),'utf8');
+ for(const entorno of ['production','demo','local','',undefined,'test',' TEST ']) {
+  const exports={},renders=[];
+  const mocks={'next/navigation':{notFound:()=>{throw new Error('404_TEST_ONLY')}},'@/lib/env':{obtenerEntornoAplicacion},'@/components/admin/FamiliasPreparacionC7c':{default:'LOCAL_UI'},'react/jsx-runtime':{jsx:(...a)=>{renders.push(a);return a}}};
+  vm.runInNewContext(ts.transpileModule(code,{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX}}).outputText,{exports,process:{env:{NEXT_PUBLIC_APP_ENV:entorno}},require:n=>mocks[n]??assert.fail(n)});
+  if(obtenerEntornoAplicacion(entorno)==='test'){exports.default();assert.equal(renders.length,1)}else{assert.throws(()=>exports.default(),/404_TEST_ONLY/);assert.equal(renders.length,0)}
+ }
+});
+test('C7-C página hereda autorización por capacidad; Venta/Operación no acceden',()=>{
+ const c=capacidadParaRuta('/admin/familias/preparacion','GET');assert.equal(c,'productos:gestionar');
+ assert.equal(rolTieneCapacidad('administracion',c),true);assert.equal(rolTieneCapacidad('venta',c),false);assert.equal(rolTieneCapacidad('operacion',c),false);
 });

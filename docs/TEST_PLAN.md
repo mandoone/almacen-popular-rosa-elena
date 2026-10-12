@@ -2,7 +2,7 @@
 
 ## C7-C UI oferta/SKU —2026-10-12
 
-Pruebas locales de identidades preservadas, marcas VARIABLE/EXPLICITA/NO_APLICA, stock interno, proveedor por compra y formato distinto. Ingesta JSON/formulario, conflictos/inyecciones, plan/inverso/replay y resultados obsoletos. Revisión de permisos TEST/admin y ausencia de transporte de escritura. [QA y recorrido C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+34 pruebas nuevas y suite1224 PASS/0 skipped. Identidades preservadas, marcas VARIABLE/EXPLICITA/NO_APLICA, stock interno, proveedor por compra y formato distinto. Ingesta JSON/formulario, conflictos/inyecciones, plan/inverso/replay y resultados obsoletos. Página real TEST/roles y ausencia de transporte de escritura; QA desktop/móvil local. [QA y recorrido C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
 
 ## Cierre sesión C7-B —2026-10-12
 
