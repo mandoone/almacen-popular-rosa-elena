@@ -9,10 +9,11 @@ const m=()=>structuredClone(manifest), t=()=>structuredClone(template);
 const base=()=>({familias:[],skus:manifest.entradas.map(e=>({id_producto:e.producto_id,nombre:e.nombre_actual,categoria:e.contrato_aprobado?.categoria??'Limpieza',activo:'SI',modo_venta:e.estado==='POSTERGADO_GRANEL'?'GRANEL':'UNIDAD',unidad_medida:'unidad',permite_decimal:'NO',paso_venta:1,stock_actual:10,precio_costo:500,precio_venta:600,familia_id:'',marca:'',presentacion:'',contenido_cantidad:'',contenido_unidad:''}))});
 const recibida=(id='PROD-023')=>({producto_id:id,estado:'RECIBIDA',marca_fisica:'Marca sintética A',contenido_cantidad:1,contenido_unidad:'L',presentacion:'Botella 1 L',respuesta_fuente:'Respuesta SINTÉTICA de prueba, no Nadia real',fecha_acreditacion:'2026-10-12'});
 const aplicarRespuesta=(p=recibida())=>{const r=t();r.productos[r.productos.findIndex(x=>x.producto_id===p.producto_id)]=p;return r};
-test('C7-B manifest54: tres aprobados, pendientes no contratos y10 cardinalidades pendientes',()=>{
+test('C7-B manifest54: tres aprobados, pendientes no contratos y10 cardinalidades iniciales aprobadas',()=>{
  assert.equal(manifest.entradas.length,54);assert.equal(extraerAprobadosC7(manifest).length,3);
  assert.equal(manifest.entradas.filter(e=>e.cardinalidad.propuesta==='PROPUESTO_NO_REQUIERE_MULTI_SKU').length,10);
- assert.ok(manifest.entradas.every(e=>e.cardinalidad.estado==='PENDIENTE_OMAR'&&e.cardinalidad.decision===null));
+ assert.equal(manifest.entradas.filter(e=>e.cardinalidad.estado==='CARDINALIDAD_INICIAL_APROBADA'&&e.cardinalidad.decision==='SI').length,10);
+ assert.ok(manifest.entradas.filter(e=>e.cardinalidad.estado==='PENDIENTE_OMAR').every(e=>e.cardinalidad.decision===null));
  assert.ok(manifest.entradas.filter(e=>e.estado!=='APROBADO').every(e=>!e.contrato_aprobado&&!e.identidad_aprobada));
  assert.equal(new Set(manifest.entradas.map(e=>e.oferta_propuesta.familia_id)).size,54);
 });

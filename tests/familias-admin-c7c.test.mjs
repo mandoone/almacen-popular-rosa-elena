@@ -17,10 +17,10 @@ test('C7-C base sintética54 no acredita pendientes ni incluye proveedor', () =>
  const e=manifest.entradas.find(e=>e.producto_id==='PROD-023');
  assert.equal(identidadEnRevisionC7c(e,base.skus.find(s=>s.id_producto===e.producto_id)).marca,'');
 });
-test('C7-C tres identidades siguen aprobadas para dry-run; diez cardinalidades siguen pendientes', () => {
+test('C7-C tres identidades siguen aprobadas para dry-run; diez cardinalidades iniciales aprobadas', () => {
  const base=crearBaseSinteticaC7c(manifest);
  assert.deepEqual(manifest.entradas.filter(e=>estadoRevisionC7c(e)==='APROBADO_PARA_DRY_RUN').map(e=>e.producto_id),['PROD-040','PROD-046','PROD-047']);
- assert.equal(manifest.entradas.filter(e=>e.cardinalidad.propuesta==='PROPUESTO_NO_REQUIERE_MULTI_SKU'&&e.cardinalidad.estado==='PENDIENTE_OMAR').length,10);
+ assert.equal(manifest.entradas.filter(e=>e.cardinalidad.propuesta==='PROPUESTO_NO_REQUIERE_MULTI_SKU'&&e.cardinalidad.estado==='CARDINALIDAD_INICIAL_APROBADA').length,10);
  for(const id of ['PROD-040','PROD-046','PROD-047']) {
   const e=manifest.entradas.find(e=>e.producto_id===id),s=base.skus.find(s=>s.id_producto===id), p=identidadEnRevisionC7c(e,s);
   assert.equal(p.marca,e.identidad_aprobada.marca); assert.equal(p.stock_actual,s.stock_actual); assert.equal(s.marca,'');

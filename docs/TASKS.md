@@ -1,12 +1,22 @@
 # TASKS.md — Tareas vivas y backlog
 
+## Cierre humano Omar posterior a C7-C —2026-10-12
+
+- [x] Registrar diez CARDINALIDAD_INICIAL_APROBADA sin imponer límite permanente.
+- [x] Registrar diez políticas EXPLICITA actuales revisables del grupo C, sin inferir marca física.
+- [x] Conservar IDs/snapshots y versionar proyección pública; mapa dry-run sigue limitado a tres.
+- [ ] Respuestas Nadia, identidad/contenido al conteo y otras políticas/cardinalidades fuera de estas aprobaciones.
+- [ ] Migración TEST: tarea futura explícitamente autorizada; no iniciada.
+
+[Decisiones D63/D64](DECISIONS.md).
+
 ## C7-C preparación UI —2026-10-12
 
 - [x] Separar oferta pública e identidad SKU en UI local TEST/admin.
 - [x] Ingesta local, mapa y preview plan/inverso sin ejecutar.
 - [x] Walkthrough desktop/móvil local, explicación Almacén y registro de responsabilidad Carolina.
 - [x] QA final y checkpoint C7-C; [evidencia](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
-- [ ] HUMAN_GATE respuestas Nadia y cardinalidad Omar; migración en otra tarea autorizada.
+- [ ] HUMAN_GATE respuestas Nadia, identidad/conteo y revisiones restantes de Omar; las diez cardinalidades iniciales ya cerradas en D63 no se vuelven a preguntar.
 
 [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
 

@@ -9,10 +9,12 @@ Solo revisión, sin formulario ni mensaje enviado al Almacén. [Matriz por SKU, 
 
 No se necesitan29 respuestas individuales para avanzar el mapa de tres ya aprobado. Estos dos bloques permiten priorizar el siguiente conjunto; los demás datos físicos pueden levantarse juntos sobre etiquetas/respaldos identificados por SKU.
 
-## REVISAR_CON_OMAR — dos revisiones agrupadas
+## REVISAR_CON_OMAR — dos revisiones ya cerradas después de C7-C
 
-1. ¿Aprueba la propuesta de **10 casos NO_REQUIERE_MULTI_SKU** del acta, entendida como una familia con un único SKU equivalente en el alcance inicial? Incluye las tres marcas ya acreditadas, dos formatos VDR separados, Pasta90g, Papel6u, Nova×3 y Pan/Empanadas. Es una revisión de cardinalidad; no vuelve a pedir las tres identidades aprobadas ni autoriza migración.
-2. ¿Conservamos oferta explícita para los10 candidatos del grupoC de la matriz, y mantenemos los demás grupos como revisión hasta contar con identidad/contenido? VDR y Colunquen ya son denominaciones públicas acreditadas, no opciones de nombre por volver a elegir. La correspondencia física y los packs se verifican sin reinterpretar histórico; poroto burro y concentrado siguen excluidos del primer mapa.
+1. **CERRADA D63:** diez cardinalidades iniciales aprobadas; un SKU al comenzar, ampliable con equivalentes. No preguntar nuevamente ni interpretar como identidad o autorización de migración.
+2. **CERRADA D64:** diez candidatos del grupo C mantienen oferta explícita actualmente, revisable después. No preguntar nuevamente la política; correspondencia física y packs siguen pendientes sin reinterpretar histórico. Otras políticas/cardinalidades no incluidas permanecen revisión. Poroto burro y concentrado siguen excluidos del primer mapa.
+
+[Decisiones y alcance exacto D63/D64](../DECISIONS.md). Las preguntas ya enviadas a Nadia arriba permanecen sin cambios.
 
 IDs de los tres mapas C7-A, marcas físicas Fuzol/Ballerina y900/750ml ya están definidos para dry-run. No forman preguntas nuevas.
 

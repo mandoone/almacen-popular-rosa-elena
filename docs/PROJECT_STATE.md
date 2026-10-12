@@ -1,5 +1,9 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## Decisiones Omar posteriores a C7-C —2026-10-12
+
+Diez cardinalidades iniciales y diez políticas explícitas actuales del grupo C cerradas; identidad y migración siguen separadas. Manifest local/UI de revisión actualizados, familia_id estable y proyección de política versionada. Solo tres identidades/mapas ejecutables permanecen acreditados; Nadia/conteo y las otras revisiones pendientes no se inventan. [Decisiones D63/D64](DECISIONS.md). Sheets sin escrituras, GASv25 sin deploy y F10 sin cambio.
+
 ## C7-C UI local —2026-10-12
 
 Modelo oferta/SKU, ejemplos sintéticos, ingesta JSON/formulario y preview plan/inverso preparados en pantalla TEST/admin. Walkthrough desktop/móvil local completo; sin puerto de escritura ni lectura comercial y F10/v25 intactos. Revisión de fotos queda en Carolina, con cobertura ya entregada por Omar; no backlog paralelo. [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).

@@ -5,8 +5,9 @@ import { ejecutarDryRunComercialC7a, type IdentidadAprobadaC7a } from './mapaCom
 export type EstadoEvidenciaC7 = 'APROBADO' | 'PENDIENTE_NADIA' | 'PENDIENTE_OMAR' | 'PENDIENTE_CONTEO' | 'POSTERGADO_GRANEL';
 export interface EntradaManifestC7 {
   producto_id: string; estado: EstadoEvidenciaC7; evidencia: string;
-  oferta_propuesta: { familia_id: string; nombre_publico: string; precio_comanda: number | null; politica_propuesta: string; presentacion_conocida: string | null };
-  cardinalidad: { propuesta: string; estado: 'APROBADO' | 'PENDIENTE_OMAR'; evidencia: string; decision: 'SI' | 'NO' | null };
+  oferta_propuesta: { familia_id: string; nombre_publico: string; precio_comanda: number | null; politica_propuesta: string; presentacion_conocida: string | null;
+    marca_publica?: string; estado_politica?: 'POLITICA_PUBLICA_ACTUAL_APROBADA'; politica_revisable?: boolean; evidencia_politica?: string };
+  cardinalidad: { propuesta: string; estado: 'APROBADO' | 'CARDINALIDAD_INICIAL_APROBADA' | 'PENDIENTE_OMAR'; evidencia: string; decision: 'SI' | 'NO' | null };
   bloqueos_humanos: string[]; accion_futura: string;
   contrato_aprobado?: FamiliaProducto; identidad_aprobada?: IdentidadAprobadaC7a;
 }

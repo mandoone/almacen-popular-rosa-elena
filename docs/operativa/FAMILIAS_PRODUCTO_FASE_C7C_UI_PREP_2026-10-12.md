@@ -1,5 +1,7 @@
 # C7-C — Preparación administrativa local
 
+**Actualización humana posterior al cierre48eb4ec:** diez cardinalidades iniciales y diez políticas explícitas actuales del grupo C cerradas por Omar en [D63/D64](../DECISIONS.md). UI/manifest dejan de mostrar esas cardinalidades como pendientes, sin acreditar identidades ni autorizar migración. EXPLICITA puede pasar a VARIABLE con otra versión, manteniendo familia_id, SKU e históricos. Las menciones de diez cardinalidades pendientes y QA1224 en esta acta describen el cierre original; la verificación posterior se registra en TEST_PLAN.
+
 Base: `9318e43b2c0f28a7c17d144bc285851f277b1803`, rama `feature/fase-3a-operativa`.
 
 ## Bloque 1 — Oferta pública e identidad física

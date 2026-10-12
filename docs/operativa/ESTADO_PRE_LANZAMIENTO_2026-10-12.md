@@ -24,7 +24,7 @@ Omar ya realizó la revisión manual de cobertura contra comanda y la entregó a
 ## ESPERANDO_OMAR
 
 - Recorrido personal público/admin, implementación editorial/contactos, UX/errores; luego priorizar cambios y recién coordinar capacitación. No capacitar al equipo antes de esa prueba.
-- Diez propuestas sin multi-SKU y políticas/cardinalidades restantes siguen PENDIENTE_OMAR; revisión no equivale a autorización de migración. [Matriz C7-A](FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
+- Las diez cardinalidades iniciales están aprobadas y las diez políticas explícitas actuales del grupo C también; no se vuelven a consultar. No acreditan identidad física ni migración. Otras políticas/cardinalidades fuera de ese alcance siguen en revisión. [Decisiones D63/D64](../DECISIONS.md), [manifest vigente](MAPA_COMERCIAL_C7B_PREP_2026-10-12.json); matriz C7-A conserva el origen de las propuestas.
 - Acreditar futura alta SKU Clorinda si corresponde; no usar PROD-033 ni inventar existencia.
 - Cuentas individuales, entrega segura de credenciales, ensayos/permisos y evidencia por titular. No crear usuarios ni imprimir secretos en esta tarea.
 - Designar responsables/suplentes/segundo revisor, ventana y canales del eventual corte; confirmar mínimos/prioridades sin inventarlos.

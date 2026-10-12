@@ -1,5 +1,38 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D64 — Política explícita actual revisable y familia estable (2026-10-12)
+
+Omar aprueba la política pública actual EXPLICITA para los diez candidatos del grupo C de C7-A:
+
+| SKU actual | Oferta / marca pública aprobada |
+|---|---|
+| PROD-020 | VDR250ml |
+| PROD-021 | VDR500ml |
+| PROD-022 | Aceite Natura |
+| PROD-025 | Tallarines Parma |
+| PROD-026 | Fideos Parma |
+| PROD-028 | Salsa actual Colunquen; preservar histórico Toddo |
+| PROD-029 | Tallarines Luchetti |
+| PROD-030 | Fideos Luchetti |
+| PROD-041 | Pepsodent90g |
+| PROD-043 | Toalla Tork |
+
+Esta decisión acredita la oferta pública, no la identidad física pendiente ni precios/formatos faltantes. El [manifest local](operativa/MAPA_COMERCIAL_C7B_PREP_2026-10-12.json) registra POLITICA_PUBLICA_ACTUAL_APROBADA, EXPLICITA, marca pública y evidencia; no crea contratos físicos ni asociaciones.
+
+EXPLICITA es revisable por una decisión futura de Omar/Almacén. Pasar a VARIABLE/Económico cambia politica_marca, vacía marca_publica, reemplaza imagen branded por genérica segura (o placeholder), permite cambiar nombre público e incrementa version_oferta. No borra marca/identidad/stock del SKU, compras/costos ni snapshots de pedidos anteriores; no fusiona SKU. Ejemplo: Fuzol900ml puede seguir como SKU dentro de Lavaloza Económico900ml junto a otra marca equivalente, con oferta versionada y distribución física trazable.
+
+familia_id es identidad técnica estable. Cambiar política/nombre comercial no obliga a renombrarlo/recrearlo aunque contenga una marca en el texto del ID; IDs históricos y propuestas C7 actuales se conservan. Otra presentación/producto no equivalente se evalúa como otra familia. Ningún cambio público actual ni migración se ejecuta en esta tarea.
+
+Se conserva D58: otro proveedor mantiene SKU, proveedor por compra; otra marca o contenido/formato comercialmente relevante exige otro SKU. La proyección local C7-C incrementa versión solo cuando cambia política/marca pública/imagen; repetir la misma proyección no vuelve a incrementar. Un futuro editor también deberá versionar otros cambios comerciales (nombre/precio/presentación) y congelar oferta previa, sin reescribir snapshots.
+
+## D63 — Diez cardinalidades iniciales aprobadas (2026-10-12)
+
+Omar aprueba las diez propuestas PROPUESTO_NO_REQUIERE_MULTI_SKU de C7-A: PROD-040 Fuzol900ml, PROD-046 Shampoo Ballerina750ml, PROD-047 Bálsamo Ballerina750ml, PROD-020 VDR250ml, PROD-021 VDR500ml, PROD-041 Pepsodent90g, PROD-035 Papel Swan6u, PROD-042 Nova×3, PROD-053 Pan de masa madre y PROD-054 Empanadas.
+
+Estado humano del manifest: **CARDINALIDAD_INICIAL_APROBADA**, decision SI, evidencia Omar. Significa familia pública con un único SKU físico **en el alcance inicial**, no un límite permanente. Se podrán añadir SKU equivalentes posteriormente con su identidad acreditada. No aprueba identidades/formatos aún desconocidos, no convierte borradores en contratos vendibles y no autoriza migración. Fuzol/Ballerina siguen siendo los únicos tres mapas ejecutables dry-run. No se cambian respuestas Nadia, fotos Carolina, F10, Sheet ni GAS.
+
+La ampliación también respeta la política pública: otra marca no entra silenciosamente en una familia que todavía promete una marca explícita. Su eventual paso a VARIABLE requiere la decisión comercial/versionado de D64; no requiere renombrar el ID estable.
+
 ## D62 — Cobertura de fotos entregada a Carolina (2026-10-12)
 
 Omar acredita que ya revisó cobertura contra comanda y entregó el trabajo a Carolina, responsable de completar faltantes, corregir asociaciones y entregar carpeta final. C7 conserva solo la regla de compatibilidad de imagen con política pública; no reabre auditoría exhaustiva ni backlog paralelo. Derechos siguen gate separado. [Alcance vigente y evidencia histórica](operativa/AUDITORIA_IMAGENES_CATALOGO_VARIABLE_2026-10-12.md).

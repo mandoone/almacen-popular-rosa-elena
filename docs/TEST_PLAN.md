@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Decisiones Omar posteriores a C7-C —2026-10-12
+
+Ocho pruebas nuevas: aprobaciones exactas sin promoción de identidades; IDs/precios/contratos/template Nadia idénticos al cierre C7-C; EXPLICITA→VARIABLE con versión nueva y snapshots anteriores intactos; segundo SKU equivalente, formato incompatible excluido; proveedor conserva SKU y dry-run tres9/replay0. Validación solo local, sin servicios remotos. [Decisiones D63/D64](DECISIONS.md).
+
+QA posterior:66 focales y1232 suite PASS,0 skipped. Lint, typecheck, build aislado, secretos412 archivos, diff-check y diferencial V1 PASS. F10 conserva SHA256 `56fd599dfd1fe4162cb004d3adbba71f956d8556d107458df7e159a906b0aed9`. No llamadas Google/Drive, escrituras TEST ni deploy; v25 intacta.
+
 ## C7-C UI oferta/SKU —2026-10-12
 
 34 pruebas nuevas y suite1224 PASS/0 skipped. Identidades preservadas, marcas VARIABLE/EXPLICITA/NO_APLICA, stock interno, proveedor por compra y formato distinto. Ingesta JSON/formulario, conflictos/inyecciones, plan/inverso/replay y resultados obsoletos. Página real TEST/roles y ausencia de transporte de escritura; QA desktop/móvil local. [QA y recorrido C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).

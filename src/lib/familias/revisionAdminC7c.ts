@@ -33,8 +33,11 @@ export function identidadEnRevisionC7c(e: EntradaManifestC7, s: SkuFamilia): Sku
 }
 /** Una configuración pública experimental no es una aprobación del manifest ni una edición del SKU. */
 export function proyectarPoliticaPublicaC7c(f: FamiliaProducto, politica: PoliticaMarca, marcaPublica = ''): FamiliaProducto {
-  return { ...f, politica_marca: politica, marca_publica: politica === 'EXPLICITA' ? marcaPublica.trim() : '',
+  const publico = { politica_marca: politica, marca_publica: politica === 'EXPLICITA' ? marcaPublica.trim() : '',
     imagen_url: politica === 'VARIABLE' ? '' : f.imagen_url };
+  const cambio = f.politica_marca !== publico.politica_marca || (f.marca_publica ?? '') !== publico.marca_publica || (f.imagen_url ?? '') !== (publico.imagen_url ?? '');
+  if (cambio && (!Number.isSafeInteger(f.version_oferta) || f.version_oferta < 1 || f.version_oferta === Number.MAX_SAFE_INTEGER)) throw new Error('VERSION_OFERTA_FUERA_RANGO');
+  return { ...f, ...publico, version_oferta: f.version_oferta + (cambio ? 1 : 0) };
 }
 export function requiereNuevoSkuC7c(anterior: Pick<SkuFamilia, 'marca' | 'contenido_cantidad' | 'contenido_unidad'>,
   propuesta: Pick<SkuFamilia, 'marca' | 'contenido_cantidad' | 'contenido_unidad'>) {

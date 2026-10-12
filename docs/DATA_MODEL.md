@@ -139,12 +139,14 @@ Clave: `familia_id`, única, formato `FAM-[A-Za-z0-9][A-Za-z0-9-]{0,79}`. No se 
 | `presentacion_publica` | Etiqueta legible obligatoria; no prueba equivalencia por sí sola. |
 | `politica_marca`, `marca_publica` | VARIABLE/EXPLICITA/NO_APLICA. Marca pública obligatoria solamente en EXPLICITA; vacía en las otras políticas. |
 | `imagen_url` | Opcional; no se asocian ni modifican fotos en esta fase. |
-| `version_oferta` | Entero seguro positivo; reservado para contratos comerciales posteriores. |
+| `version_oferta` | Entero seguro positivo; cambia al revisar condiciones comerciales y queda congelado en snapshots de pedido V2. |
 | `actualizado_en` | Texto opcional de auditoría. El lector GAS convierte Date de celda a ISO sin escribirla. |
 
 #### Relación física opcional en PRODUCTOS
 
 Campos aditivos: `familia_id`, `marca`, `presentacion`, `contenido_cantidad`, `contenido_unidad`. SKU sin familia conserva validez V1 y no necesita ninguno de los nuevos campos. Cada fila puede referenciar como máximo una familia; IDs duplicados o familia inexistente fallan en la auditoría paralela. No se infiere marca ni se asigna familia automáticamente. Fase A no modificó DTOs de escritura ni validadores operativos; Fase B1 prepara esos contratos internos en código local, sin activar controles de UI ni desplegar backend.
+
+Política pública e identidad técnica son independientes: familia_id permanece estable al pasar EXPLICITA→VARIABLE; marca_publica vacía/imagen genérica/nombre público revisado corresponden a una nueva version_oferta. La marca y contenido de cada SKU y los snapshots anteriores se conservan. CARDINALIDAD_INICIAL_APROBADA es metadata humana del manifest local, no una restricción de máximo un SKU ni una aprobación de identidad/migración. [Decisiones D63/D64](DECISIONS.md).
 
 Al vincular un SKU se exige categoría/modo compatibles y presentación física legible. VARIABLE permite diferentes marcas físicas documentadas; EXPLICITA exige la misma marca pública (comparación textual normalizada, sin equiparar marcas diferentes); NO_APLICA no exige marca física. En UNIDAD se exige contenido numérico/unidad idénticos, misma unidad de venta y reglas de cantidad compatibles. 750 ml y 1000 ml no son equivalentes. La asociación explícita aprobada sigue siendo necesaria incluso si los contenidos coinciden.
 

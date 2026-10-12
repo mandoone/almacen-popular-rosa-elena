@@ -1,5 +1,7 @@
 # Propuesta comercial familia → SKU para revisión de Omar
 
+**Cierre humano posterior a C7-C:** las diez propuestas de un SKU inicial y las diez políticas explícitas del grupo C ya tienen aprobación Omar, sin completar identidad física ni autorizar migración. [Alcance y evidencia D63/D64](../DECISIONS.md) y [manifest vigente](MAPA_COMERCIAL_C7B_PREP_2026-10-12.json). Se conserva la matriz original como historia de revisión; sus estados provisionales no reabren esas decisiones.
+
 Fecha: 2026-10-08. **PROPUESTA, no migración ni autorización de escritura.** No crea IDs/filas remotamente ni modifica PRODUCTOS/FAMILIAS_PRODUCTO. Los IDs definitivos propuestos y el primer mapa local se añadieron en C7-A. [Auditoría y fronteras C6](FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).
 
 ## Evidencia y criterio

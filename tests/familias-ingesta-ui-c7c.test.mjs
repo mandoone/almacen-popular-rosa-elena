@@ -7,10 +7,10 @@ const manifest=JSON.parse(await readFile(new URL('../docs/operativa/MAPA_COMERCI
 const template=JSON.parse(await readFile(new URL('../docs/operativa/C7_RESPUESTAS_NADIA_TEMPLATE_2026-10-12.json',import.meta.url),'utf8'));
 const texto=()=>JSON.stringify(template),base=()=>crearBaseSinteticaC7c(manifest);
 const propuesta=(extra={})=>({producto_id:'PROD-023',marca_fisica:'Marca QA',presentacion:'Botella 1 L',contenido_cantidad:1,contenido_unidad:'L',fuente:'NADIA',evidencia:'SINTÉTICO: solo prueba, sin respuesta humana',fecha:'2026-10-12',...extra});
-test('UI C7-C template pendiente: CUMPLE, 3familias/3SKU/3asociaciones,51pendientes y10 gates Omar',async()=>{
+test('UI C7-C template pendiente: CUMPLE, 3familias/3SKU/3asociaciones,51identidades pendientes y0 gates de las diez cardinalidades cerradas',async()=>{
  const b=base(),antes=JSON.stringify({manifest,template,b}),r=await revisarPreparacionLocalC7c(texto(),manifest,b);
  assert.equal(r.proyeccion.dry_run.estado,'CUMPLE');assert.deepEqual(r.resumen,{familias:3,skus:3,asociaciones:3,pendientes:51,bloqueados:20,warnings:0});
- assert.equal(r.autorizacion_remota,false);assert.equal(r.estado_revision,'APROBADO_PARA_DRY_RUN');assert.equal(r.cardinalidades_pendientes.length,10);
+ assert.equal(r.autorizacion_remota,false);assert.equal(r.estado_revision,'APROBADO_PARA_DRY_RUN');assert.equal(r.cardinalidades_pendientes.length,0);
  assert.deepEqual(r.simulacion,{primera:9,segunda:0,inversa:9});assert.equal(JSON.stringify({manifest,template,b}),antes);
 });
 test('UI C7-C preview inverso mantiene historia y evidencia, solo3 aprobados',async()=>{
@@ -21,13 +21,13 @@ test('UI C7-C preview inverso mantiene historia y evidencia, solo3 aprobados',as
  assert.equal(r.plan.cambios.find(c=>c.entidad_id==='PROD-040'&&c.tipo==='UPDATE_PRODUCTO_IDENTIDAD').valor_nuevo.marca,'Fuzol');
  assert.ok(r.plan.inverso.some(c=>c.tipo==='SET_FAMILIA_ID'&&c.valor_nuevo.familia_id===''));
 });
-test('UI C7-C propuesta sintética normaliza y genera cuarta oferta sin aprobar cardinalidad ni remoto',async()=>{
+test('UI C7-C propuesta sintética normaliza y genera cuarta oferta sin promover identidades reales ni autorizar remoto',async()=>{
  const t=incorporarPropuestaLocalC7c(template,propuesta()),r=await revisarPreparacionLocalC7c(JSON.stringify(t),manifest,base());
  assert.equal(template.productos.find(p=>p.producto_id==='PROD-023').estado,'PENDIENTE');
  assert.equal(r.plan.cambios.length,12);assert.equal(r.proyeccion.identidades[0].contenido_cantidad,1000);
  const s=r.plan.resultado.skus.find(s=>s.id_producto==='PROD-023'),f=r.plan.resultado.familias.find(f=>f.familia_id===s.familia_id);
  assert.equal(s.marca,'Marca QA');assert.equal(s.stock_actual,10);assert.equal(s.precio_costo,500);assert.equal(s.precio_venta,600);
- assert.equal(f.precio_venta,1700);assert.equal(f.marca_publica,'');assert.equal(f.politica_marca,'VARIABLE');assert.equal(r.cardinalidades_pendientes.length,10);assert.equal(r.autorizacion_remota,false);
+ assert.equal(f.precio_venta,1700);assert.equal(f.marca_publica,'');assert.equal(f.politica_marca,'VARIABLE');assert.equal(r.cardinalidades_pendientes.length,0);assert.equal(r.autorizacion_remota,false);
 });
 for(const fuente of ['NADIA','OMAR','CONTEO_FISICO','DOCUMENTO_VIGENTE'])test(`UI C7-C origen ${fuente} conserva referencia sin dar autoridad remota`,async()=>{
  const t=incorporarPropuestaLocalC7c(template,propuesta({fuente})),r=await revisarPreparacionLocalC7c(JSON.stringify(t),manifest,base());

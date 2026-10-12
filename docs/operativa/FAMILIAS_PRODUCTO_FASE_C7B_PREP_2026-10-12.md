@@ -1,5 +1,7 @@
 # C7-B PREP — Manifest, ingesta y paquete de migración local
 
+**Actualización posterior a C7-C:** Omar cerró las diez cardinalidades iniciales y las diez políticas explícitas actuales del grupo C ([D63/D64](../DECISIONS.md)). El manifest vigente refleja esos cierres por separado de identidad; no aumenta los tres contratos/mapas dry-run. Los conteos, tabla y pendientes de cardinalidad del cierre original B que siguen abajo son evidencia histórica, supersedida en esos dos aspectos; no se vuelve a preguntar lo cerrado. Las identidades, respuestas Nadia y fotografías no se completaron por esta aprobación.
+
 Fecha:2026-10-12. Base897c7b7, rama exclusiva feature/fase-3a-operativa. Ningún paso escribe Sheet, despliega GAS ni activa público. Nadia aún no respondió; Omar ya envió las preguntas.
 
 ## Manifest y evidencia
