@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## C7-C UI oferta/SKU —2026-10-12
+
+Pruebas locales de identidades preservadas, marcas VARIABLE/EXPLICITA/NO_APLICA, stock interno, proveedor por compra y formato distinto. Revisión de permisos TEST/admin y ausencia de transporte de escritura. [QA y recorrido C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+
 ## Cierre sesión C7-B —2026-10-12
 
 46 pruebas nuevas de sesión:24 PREP/ingesta,17 imágenes y5 flujo futuro; suite1190 PASS/0 skipped. F10 local leído1/19 e idéntico por hash. Guía humana conserva resultados vacíos. QA final y limitaciones de revisión visual en acta de sesión.

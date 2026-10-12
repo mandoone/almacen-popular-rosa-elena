@@ -1,5 +1,9 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## C7-C UI local —2026-10-12
+
+Modelo oferta/SKU, ejemplos sintéticos y pantalla TEST/admin preparados. Ingesta/preview y cierre visual siguen dentro de la sesión C7-C. Sin puerto de escritura ni lectura comercial; F10/v25 intactos. [Estado y verificación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+
 ## Sesión C7-B local preparada —2026-10-12
 
 Manifest/ingesta/plan, imágenes shadow y escenarios futuros en mocks completos técnicamente; guía Omar y pre-lanzamiento entregados. Nadia/fotos/derechos/cardinalidad/conteo/caja/capacitación siguen HUMAN_GATES. F10 mantiene1 READY/19 PENDING, no Go. Sheets sin escrituras/GAS v25 sin deploy, público V1 intacto.

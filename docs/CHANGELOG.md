@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-12 — C7-C modelo/UI local oferta y SKU
+
+Pantalla TEST/admin con manifest y datos operativos sintéticos; política pública y marca física diferenciadas. Ejemplos Económico/EXPLICITA/NO_APLICA sin mutaciones. [Acta C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+
 ## 2026-10-12 — Walkthrough y estado pre-lanzamiento sin promoción F10
 
 Guía personal Omar para público/admin; informe distingue técnico/Nadia/Carolina/Omar/conteo/corte. Mantiene seis costos sin fuente,saldos/corte pendientes y capacitación después de revisión. F10 local sin cambios; no migración/despliegue/activación.

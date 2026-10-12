@@ -71,6 +71,7 @@ export default function FamiliasSimulador() {
     <h1 className="font-heading text-3xl text-primary-dark">Simulador de familias · TEST</h1>
     <p>Solo lectura. La tienda sigue por SKU. Esta vista no reserva stock ni guarda el mapa propuesto.</p>
     <Link href="/admin/familias" className="inline-block text-primary-dark underline">Volver a familias y SKU</Link>
+    <Link href="/admin/familias/preparacion" className="ml-3 inline-block text-primary-dark underline">Preparación local · identidad y mapa</Link>
     <form onSubmit={e => { e.preventDefault(); void cargar(apertura.trim()); }} className="flex flex-wrap items-end gap-3">
       <label className="min-w-60">Apertura para disponibilidad <input className={inputClass} value={apertura} onChange={e => setApertura(e.target.value)} placeholder="APE-AAAAMMDD (opcional)" /></label>
       <button disabled={ocupado} className="rounded border px-4 py-2">{ocupado ? 'Leyendo…' : 'Actualizar lectura'}</button>

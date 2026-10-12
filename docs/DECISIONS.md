@@ -1,5 +1,9 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D61 — Revisión administrativa local sin autorización de migración (2026-10-12)
+
+Omar solicita distinguir oferta pública e identidad física, y preparar ingesta/mapa/plan en copias. Estados de revisión PENDIENTE, PROPUESTO, APROBADO_PARA_DRY_RUN, BLOQUEADO; nunca aprobación para migrar. Un experimento Económico cambia solo la presentación pública y mantiene identidad interna. No modifica el manifest acreditado. Proveedor por compra, sin selector fijo del SKU. [Implementación C7-C](operativa/FAMILIAS_PRODUCTO_FASE_C7C_UI_PREP_2026-10-12.md).
+
 ## D60 — Prueba de Omar antes de capacitación (2026-10-12)
 
 Instrucción de Omar: capacitación espera su revisión personal de la página. Walkthrough distingue lectura actual de mutaciones solo en mocks o futuro ensayo autorizado. Preparación técnica/auditoría de fotos no cambia READY/PENDING humanos ni autoriza corte productivo.
