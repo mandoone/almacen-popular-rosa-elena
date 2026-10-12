@@ -61,7 +61,7 @@ test('C7-C contenido750/900/1000 y unidad definen otro SKU; etiqueta legible sol
 test('C7-C frontera local: página TEST/capacidad, sin API nueva ni transporte/persistencia en UI',async()=>{
  const page=await readFile(new URL('../src/app/admin/familias/preparacion/page.tsx',import.meta.url),'utf8');assert.match(page,/!== 'test'\) notFound\(\)/);
  const ui=await readFile(new URL('../src/components/admin/FamiliasPreparacionC7c.tsx',import.meta.url),'utf8');assert.match(ui,/tiene\('productos:gestionar'\)/);
- for(const f of ['../src/lib/familias/revisionAdminC7c.ts','../src/components/admin/FamiliasPreparacionC7c.tsx','../src/components/admin/C7cEscenarios.tsx']) {
+ for(const f of ['../src/lib/familias/revisionAdminC7c.ts','../src/lib/familias/revisionIngestaC7c.ts','../src/components/admin/FamiliasPreparacionC7c.tsx','../src/components/admin/C7cEscenarios.tsx','../src/components/admin/C7cIngesta.tsx','../src/components/admin/C7cRevisionPlan.tsx']) {
   const code=await readFile(new URL(f,import.meta.url),'utf8');assert.doesNotMatch(code,/\bfetch\s*\(|solicitarAdmin|appsScriptPedidos|SpreadsheetApp|localStorage|sessionStorage|method:\s*['"](?:POST|PATCH|PUT|DELETE)/);
  }
 });

@@ -7,6 +7,7 @@ import { crearBaseSinteticaC7c, estadoRevisionC7c, fuentePendienteC7c, identidad
 import ImagenOfertaShadow from './ImagenOfertaShadow';
 import { resolverImagenPublicaFamiliaC7 } from '@/lib/familias/imagenPublicaC7';
 import C7cEscenarios from './C7cEscenarios';
+import C7cIngesta from './C7cIngesta';
 
 const manifest = manifestJson as ManifestVistaC7c;
 const base = crearBaseSinteticaC7c(manifest);
@@ -50,6 +51,6 @@ export default function FamiliasPreparacionC7c() {
       <p className="mt-3 text-sm">Clorinda: oferta separada aprobada sin SKU acreditado. Nunca se asocia a PROD-033. Los 18 graneles reales siguen postergados.</p>
     </section>
     <C7cEscenarios />
-    <section id="revision-c7c" className="scroll-mt-4 rounded-xl border bg-white p-4 sm:p-6"><h2 className="text-xl font-semibold">Revisión / dry-run</h2><p className="mt-2">La ingesta y el preview local se incorporan en el siguiente bloque C7-C. No existe una acción de migración.</p></section>
+    <C7cIngesta manifest={manifest} base={base} />
   </main>;
 }

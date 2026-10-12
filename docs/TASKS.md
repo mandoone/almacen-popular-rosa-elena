@@ -3,7 +3,7 @@
 ## C7-C preparación UI —2026-10-12
 
 - [x] Separar oferta pública e identidad SKU en UI local TEST/admin.
-- [ ] Ingesta local, mapa y preview plan/inverso sin ejecutar.
+- [x] Ingesta local, mapa y preview plan/inverso sin ejecutar.
 - [ ] Walkthrough desktop/móvil y QA final.
 - [ ] HUMAN_GATE respuestas Nadia y cardinalidad Omar; migración en otra tarea autorizada.
 
