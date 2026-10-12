@@ -1,5 +1,9 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Cierre C7-B: sin migración de datos (2026-10-12)
+
+Manifest/precios/identidades aprobadas siguen proyecciones locales; planes,receipts y rollback solo simulados. F10 y datos reales no cambian. [Paquete y contrato](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).
+
 ## Imagen pública calculada C7 (2026-10-12)
 
 Shadow agrega imagen_publica derivada de familia y evaluación explícita local. Registro vacío; no campos/hojas nuevas ni copias de foto SKU a oferta. Origen y avisos son diagnóstico administrativo, sin cambiar precio/stock.

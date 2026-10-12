@@ -4,7 +4,7 @@
 
 - [x] Manifest, ingesta futura, plan/inverso y simulación local.
 - [x] Política/auditoría de imágenes y simulador; [evidencia](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
-- [ ] Walkthrough Omar y estado pre-lanzamiento/F10.
+- [x] Walkthrough Omar y estado pre-lanzamiento/F10 sin cambiar gates humanos; [evidencia](operativa/ESTADO_PRE_LANZAMIENTO_2026-10-12.md).
 - [ ] HUMAN_GATE Nadia/cardinalidad/políticas/conteo/derechos; no inventar respuestas.
 
 [Contrato/evidencia C7-B PREP](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).

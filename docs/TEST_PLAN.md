@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Cierre sesión C7-B —2026-10-12
+
+46 pruebas nuevas de sesión:24 PREP/ingesta,17 imágenes y5 flujo futuro; suite1190 PASS/0 skipped. F10 local leído1/19 e idéntico por hash. Guía humana conserva resultados vacíos. QA final y limitaciones de revisión visual en acta de sesión.
+
+[Estado pre-lanzamiento](operativa/ESTADO_PRE_LANZAMIENTO_2026-10-12.md) · [guía de prueba](operativa/GUIA_PRUEBA_OMAR_TEST_2026-10-12.md).
+
 ## Imagen/flujo futuro C7 —2026-10-12
 
 97 focales y1190 suite PASS/0 skipped. Resolver prueba marca/presentación/evidencia/URL, ausencia de fallback SKU; compra/pedido/asignación/cancelación/proveedor/formato se verifican solo en mocks. Revisión desktop/móvil local; limitación de fuente fallback del harness documentada.

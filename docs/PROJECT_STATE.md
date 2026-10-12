@@ -1,5 +1,11 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## Sesión C7-B local preparada —2026-10-12
+
+Manifest/ingesta/plan, imágenes shadow y escenarios futuros en mocks completos técnicamente; guía Omar y pre-lanzamiento entregados. Nadia/fotos/derechos/cardinalidad/conteo/caja/capacitación siguen HUMAN_GATES. F10 mantiene1 READY/19 PENDING, no Go. Sheets sin escrituras/GAS v25 sin deploy, público V1 intacto.
+
+[Estado pre-lanzamiento](operativa/ESTADO_PRE_LANZAMIENTO_2026-10-12.md) · [guía de prueba](operativa/GUIA_PRUEBA_OMAR_TEST_2026-10-12.md).
+
 ## Imágenes shadow C7 —2026-10-12
 
 Política/resolver/placeholder y simulador local preparados, sin tienda familiar. Inventario Drive read-only41;7 fotos inspeccionadas: cuatro branded no aptas para VARIABLE, arroz genérico y dos Ballerina ambiguas por formato. Fotos y derechos siguen gates; GAS/Sheets/V1 intactos.

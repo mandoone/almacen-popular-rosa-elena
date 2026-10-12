@@ -1,5 +1,11 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-12 — Walkthrough y estado pre-lanzamiento sin promoción F10
+
+Guía personal Omar para público/admin; informe distingue técnico/Nadia/Carolina/Omar/conteo/corte. Mantiene seis costos sin fuente,saldos/corte pendientes y capacitación después de revisión. F10 local sin cambios; no migración/despliegue/activación.
+
+[Estado pre-lanzamiento](operativa/ESTADO_PRE_LANZAMIENTO_2026-10-12.md) · [guía de prueba](operativa/GUIA_PRUEBA_OMAR_TEST_2026-10-12.md).
+
 ## 2026-10-12 — Política imágenes, inventario y simulador C7
 
 Imagen familiar genérica para VARIABLE, placeholder y bloqueo branded en shadow.41 fotos inventariadas por Drive read-only; caso DE REYES900ml confirmado y excluido de oferta Económico. Pruebas futuras marca/proveedor/formato y simulación administrativa sin guardar.

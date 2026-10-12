@@ -1,5 +1,11 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D60 — Prueba de Omar antes de capacitación (2026-10-12)
+
+Instrucción de Omar: capacitación espera su revisión personal de la página. Walkthrough distingue lectura actual de mutaciones solo en mocks o futuro ensayo autorizado. Preparación técnica/auditoría de fotos no cambia READY/PENDING humanos ni autoriza corte productivo.
+
+[Estado pre-lanzamiento](operativa/ESTADO_PRE_LANZAMIENTO_2026-10-12.md) · [guía de prueba](operativa/GUIA_PRUEBA_OMAR_TEST_2026-10-12.md).
+
 ## D59 — Imagen pública familiar segura (2026-10-12)
 
 Omar cierra: VARIABLE/Económico usa imagen genérica; EXPLICITA imagen de su marca/presentación; NO_APLICA de la oferta. Familia es autoridad, no fallback a SKU. Foto sin evaluación compatible usa representación neutral; derechos son HUMAN_GATE independiente y ninguna foto se aprueba por filename.
