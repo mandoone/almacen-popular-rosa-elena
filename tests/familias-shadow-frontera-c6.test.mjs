@@ -21,6 +21,7 @@ async function handler(entorno = 'test', fallar = false) {
     'next/server': { NextResponse: { json: (v, o) => Response.json(v, o) } },
     '@/lib/appsScriptPedidos': backend, '@/lib/session': { sesionTieneCapacidad }, '@/lib/env': { obtenerEntornoAplicacion },
     '@/lib/familias/catalogoShadow': shadow, '@/lib/familias/auditoriaIdentidad': auditoria,
+    '@/lib/familias/evaluacionesImagenC7': { EVALUACIONES_IMAGEN_C7: [] },
     '@/lib/fase8/apiAdmin': { respuestaErrorAdmin: () => Response.json({ ok: false }, { status: 502 }) },
   };
   vm.runInNewContext(ts.transpileModule(fuente, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports, URL, Date, process: { env: { NEXT_PUBLIC_APP_ENV: entorno } }, require: n => mocks[n] ?? assert.fail(n) });

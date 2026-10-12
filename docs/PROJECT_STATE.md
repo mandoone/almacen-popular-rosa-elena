@@ -1,5 +1,11 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## Imágenes shadow C7 —2026-10-12
+
+Política/resolver/placeholder y simulador local preparados, sin tienda familiar. Inventario Drive read-only41;7 fotos inspeccionadas: cuatro branded no aptas para VARIABLE, arroz genérico y dos Ballerina ambiguas por formato. Fotos y derechos siguen gates; GAS/Sheets/V1 intactos.
+
+[Política, arquitectura y QA](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
+
 ## C7-B PREP local —2026-10-12
 
 Manifest54, tres aprobados y pendientes explícitos; template/validador Nadia y plan/inverso simulados sin puerto remoto. Nadia pendiente; sin escribir TEST/deploy. C5/C6/C7-A cerrados, GAS TEST v25 y F10 intactos.

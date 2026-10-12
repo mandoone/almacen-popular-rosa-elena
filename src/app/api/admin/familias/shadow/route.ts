@@ -6,6 +6,7 @@ import { obtenerEntornoAplicacion } from '@/lib/env';
 import { construirCatalogoFamiliasShadow, skuParaShadow } from '@/lib/familias/catalogoShadow';
 import { auditarFaltantesIdentidad, esSkuFixtureConocido } from '@/lib/familias/auditoriaIdentidad';
 import type { SkuFamilia } from '@/lib/familiasProducto';
+import { EVALUACIONES_IMAGEN_C7 } from '@/lib/familias/evaluacionesImagenC7';
 
 export const dynamic = 'force-dynamic';
 /** Solo lecturas administrativas existentes. Sin acciones HTTP nuevas en Apps Script. */
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
     const contexto = { apertura_id, sku_habilitados: habilitaciones.filter(h => h.habilitado === true).map(h => h.producto_id) };
     return NextResponse.json({ ok: true, data: {
       familias: f.familias, skus, contexto,
-      catalogo: construirCatalogoFamiliasShadow(f.familias, skus, contexto),
+      catalogo: construirCatalogoFamiliasShadow(f.familias, skus, contexto, EVALUACIONES_IMAGEN_C7),
       faltantes: auditarFaltantesIdentidad(skus.filter(s => !esSkuFixtureConocido(s)), f.familias),
       lectura_en: new Date().toISOString(), modelo: 'SHADOW_C6', solo_lectura: true,
     } }, { headers: { 'Cache-Control': 'private, no-store' } });

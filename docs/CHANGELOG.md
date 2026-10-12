@@ -1,5 +1,11 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-12 — Política imágenes, inventario y simulador C7
+
+Imagen familiar genérica para VARIABLE, placeholder y bloqueo branded en shadow.41 fotos inventariadas por Drive read-only; caso DE REYES900ml confirmado y excluido de oferta Económico. Pruebas futuras marca/proveedor/formato y simulación administrativa sin guardar.
+
+[Política, arquitectura y QA](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
+
 ## 2026-10-12 — C7-B PREP local
 
 Manifest comercial54 y template Nadia pendientes; tres aprobaciones C7-A preservadas, plan exacto9/replay0/inverso9 en memoria. Sin Google Sheets writes ni Apps Script deploy.

@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Imagen/flujo futuro C7 —2026-10-12
+
+97 focales y1190 suite PASS/0 skipped. Resolver prueba marca/presentación/evidencia/URL, ausencia de fallback SKU; compra/pedido/asignación/cancelación/proveedor/formato se verifican solo en mocks. Revisión desktop/móvil local; limitación de fuente fallback del harness documentada.
+
+[Política, arquitectura y QA](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
+
 ## C7-B PREP/ingesta —2026-10-12
 
 Focales de manifest, tres casos aprobados, plan9/replay0/rollback, fila concurrente cambiada,recibos inciertos y respuestas Nadia normalizadas/rechazadas sin mutaciones. Todas las pruebas usan copias/mocks; ningún E2E real C5.

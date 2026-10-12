@@ -1,5 +1,11 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D59 — Imagen pública familiar segura (2026-10-12)
+
+Omar cierra: VARIABLE/Económico usa imagen genérica; EXPLICITA imagen de su marca/presentación; NO_APLICA de la oferta. Familia es autoridad, no fallback a SKU. Foto sin evaluación compatible usa representación neutral; derechos son HUMAN_GATE independiente y ninguna foto se aprueba por filename.
+
+[Política, arquitectura y QA](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
+
 ## D58 — Identidad y preparación local C7-B (2026-10-12)
 
 Decisión de Omar: marca física o formato comercialmente relevante distinto exige SKU distinto; cambio solo de proveedor conserva SKU, proveedor por compra. Económico/VARIABLE oculta marca pública y preserva identidad interna. Manifest pendiente no es contrato vendible. Plan/inverso solo local; cardinalidades siguen sin aprobación y no se habilita un migrador remoto.

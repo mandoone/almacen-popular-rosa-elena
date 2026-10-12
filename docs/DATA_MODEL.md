@@ -1,5 +1,11 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Imagen pública calculada C7 (2026-10-12)
+
+Shadow agrega imagen_publica derivada de familia y evaluación explícita local. Registro vacío; no campos/hojas nuevas ni copias de foto SKU a oferta. Origen y avisos son diagnóstico administrativo, sin cambiar precio/stock.
+
+[Política, arquitectura y QA](operativa/POLITICA_IMAGEN_PUBLICA_C7_2026-10-12.md).
+
 ## Manifest y planes C7-B (2026-10-12)
 
 Artefactos de preparación locales separan estado de evidencia/borrador/contrato aprobado. Plan incluye precondiciones por fila/celda,hash,evidencia,recibos simulados e inverso que desactiva familias nuevas sin borrar. Ninguna columna/hoja nueva, sin alterar PRODUCTOS real.

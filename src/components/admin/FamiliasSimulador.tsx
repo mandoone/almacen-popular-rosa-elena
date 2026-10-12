@@ -9,6 +9,8 @@ import type { FamiliaProducto, SkuFamilia, ContextoDisponibilidadFamilia } from 
 import type { FamiliaShadow } from '@/lib/familias/catalogoShadow';
 import { leerMapaPropuesto, validarMapaPropuesto, type ResultadoMapa } from '@/lib/familias/mapaDryRun';
 import { auditarFaltantesIdentidad } from '@/lib/familias/auditoriaIdentidad';
+import ImagenOfertaShadow from './ImagenOfertaShadow';
+import { resolverImagenPublicaFamiliaC7 } from '@/lib/familias/imagenPublicaC7';
 
 interface LecturaShadow {
   familias: FamiliaProducto[]; skus: SkuFamilia[]; contexto: ContextoDisponibilidadFamilia;
@@ -48,6 +50,7 @@ export default function FamiliasSimulador() {
   const [ocupado, setOcupado] = useState(false), [apertura, setApertura] = useState('');
   const [mapa, setMapa] = useState('[]'), [formato, setFormato] = useState<'JSON' | 'CSV'>('JSON');
   const [resultado, setResultado] = useState<ResultadoMapa | null>(null), [errorMapa, setErrorMapa] = useState('');
+  const [imagenConMarca,setImagenConMarca]=useState<Record<string,boolean>>({});
   const cargar = useCallback(async (aperturaId = '') => {
     setOcupado(true); setError(''); setResultado(null); setLectura(null);
     try {
@@ -84,6 +87,10 @@ export default function FamiliasSimulador() {
           {f.oferta.politica_marca === 'EXPLICITA' && <p>Marca: {f.oferta.marca_publica}</p>}
           <p>{f.oferta.precio_venta === null ? 'Precio inválido' : pesos(f.oferta.precio_venta)}{f.oferta.modo_venta === 'GRANEL' ? ` por ${f.oferta.gramos_referencia} g` : ''}</p>
           <p className="font-medium">{f.disponible ? 'Disponible' : 'Agotado'}{f.oferta.activo === 'NO' ? ' · Familia inactiva' : ''}</p>
+          <ImagenOfertaShadow key={`${f.oferta.familia_id}-${imagenConMarca[f.oferta.familia_id]?'marca':'familia'}-${f.imagen_publica.url??''}`} imagen={imagenConMarca[f.oferta.familia_id]
+            ? resolverImagenPublicaFamiliaC7({...f.oferta,imagen_url:'/simulacion-local/sku-con-marca.png'}, {familia_id:f.oferta.familia_id,imagen_url:'/simulacion-local/sku-con-marca.png',clasificacion:'NO_APTA_VARIABLE_MARCA_VISIBLE',evidencia:'Prueba local explícita de foto de marca; no imagen real ni escritura.',marca_visible:'Marca sintética'})
+            : f.imagen_publica} />
+          {f.oferta.politica_marca==='VARIABLE'&&<label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={!!imagenConMarca[f.oferta.familia_id]} onChange={e=>setImagenConMarca({...imagenConMarca,[f.oferta.familia_id]:e.target.checked})} />Simular foto de SKU con marca · solo local</label>}
           <details className="mt-3"><summary className="cursor-pointer">Identidad física y stock interno</summary>
             <p className="my-2">Auditoría interna · agregado elegible: {valorOperativo(f.stock_agregado_interno)} {f.unidad_stock_interna}. La oferta solo indica Disponible/Agotado.</p>
             <div className="overflow-x-auto"><table className="w-full text-left text-sm"><caption className="sr-only">SKU de {f.oferta.nombre_publico}</caption>

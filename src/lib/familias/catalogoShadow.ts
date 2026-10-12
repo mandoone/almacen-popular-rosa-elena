@@ -5,6 +5,7 @@ import {
   type FamiliaProducto, type SkuFamilia, type ContextoDisponibilidadFamilia,
   type InconsistenciaFamilia,
 } from '../familiasProducto.ts';
+import { resolverImagenPublicaFamiliaC7, type ImagenPublicaC7, type EvaluacionImagenC7 } from './imagenPublicaC7.ts';
 
 export interface OfertaShadow {
   familia_id: string;
@@ -32,6 +33,7 @@ export interface FamiliaShadow {
     inconsistencias: InconsistenciaFamilia[];
   }>;
   inconsistencias: InconsistenciaFamilia[];
+  imagen_publica: ImagenPublicaC7;
 }
 const id = (v?: string) => v?.trim() ?? '';
 const repetidos = (ids: readonly string[]) => new Set(ids.filter((v, n) => ids.indexOf(v) !== n));
@@ -41,6 +43,7 @@ const incidencia = (codigo: string, familia_id: string, producto_id?: string): I
 /** Solo la oferta lleva marca pública EXPLICITA; marcas físicas quedan en diagnóstico admin. */
 export function construirCatalogoFamiliasShadow(
   familias: readonly FamiliaProducto[], skus: readonly SkuFamilia[], contexto: ContextoDisponibilidadFamilia = {},
+  evaluacionesImagen: readonly EvaluacionImagenC7[] = [],
 ): FamiliaShadow[] {
   const familiasDuplicadas = repetidos(familias.map(f => id(f.familia_id)));
   const skuDuplicados = repetidos(skus.map(s => id(s.id_producto)));
@@ -84,7 +87,9 @@ export function construirCatalogoFamiliasShadow(
     return { oferta, stock_agregado_interno: cantidad, unidad_stock_interna: vista.unidad_disponibilidad,
       disponible: familiaValida && f.activo === 'SI' && f.precio_venta > 0 && cantidad > 0 && vista.inconsistencias.length === 0,
       sku_elegibles: familiaValida ? vista.sku_elegibles : [], sku_integrantes: diagnostico,
-      inconsistencias: problemas.filter((e, n, todos) => todos.findIndex(i => JSON.stringify(i) === JSON.stringify(e)) === n) };
+      inconsistencias: problemas.filter((e, n, todos) => todos.findIndex(i => JSON.stringify(i) === JSON.stringify(e)) === n),
+      imagen_publica: resolverImagenPublicaFamiliaC7(f, evaluacionesImagen.filter(e => e.familia_id === f.familia_id && e.imagen_url === f.imagen_url).length === 1
+        ? evaluacionesImagen.find(e => e.familia_id === f.familia_id && e.imagen_url === f.imagen_url) : undefined) };
   });
 }
 
