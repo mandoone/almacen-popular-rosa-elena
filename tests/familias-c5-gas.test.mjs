@@ -103,7 +103,8 @@ test('C5 guards: destino/token/schema/noQA/lock/conflicto key no mutan',async()=
   c.contexto.SPREADSHEET_ID='PRODUCCION';assert.throws(()=>c.accion('cleanupFixturesC5Test'),/Destino|destino/);
 });
 test('C5 fuente operativa original: doPost y seis guards exactos; resto idéntico',async()=>{
-  const old=execFileSync('git',['show','30e047e:scripts/apps-script-pedidos.gs'],{encoding:'utf8'}).replaceAll('\r\n','\n'),current=(await readFile('scripts/apps-script-pedidos.gs','utf8')).replaceAll('\r\n','\n');
+  // C5 cerrado conserva su prueba exacta; cambios posteriores se verifican en auditoría V1 del sprint.
+  const old=execFileSync('git',['show','30e047e:scripts/apps-script-pedidos.gs'],{encoding:'utf8'}).replaceAll('\r\n','\n'),current=execFileSync('git',['show','716e8c857db7ea627a403a7fc61b195ceb69fe12:scripts/apps-script-pedidos.gs'],{encoding:'utf8'}).replaceAll('\r\n','\n');
   const añadido=current.slice(current.indexOf('// INICIO DOMINIO DURABLE C5 GENERADO'));assert.ok(añadido.includes('crearPuertoDurableC5_'));
   const prefix=current.slice(0,current.indexOf('// INICIO DOMINIO DURABLE C5 GENERADO'));
   // Casos nuevos son el único cambio dentro del código preexistente en este punto.

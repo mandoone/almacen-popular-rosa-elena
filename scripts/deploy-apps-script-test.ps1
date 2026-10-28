@@ -357,6 +357,7 @@ try {
   Write-Output 'ENTORNO: TEST'
   Write-Output 'PROYECTO: Apps Script TEST verificado'
   Write-Output 'DEPLOYMENT: Web App TEST existente verificado'
+  Write-Output ('VERSION TEST VERIFICADA: v' + $baselineVersion)
   Write-Output 'PAYLOAD: un archivo Apps Script y manifest; configuracion remota preservada'
 
   if (-not $Execute) {

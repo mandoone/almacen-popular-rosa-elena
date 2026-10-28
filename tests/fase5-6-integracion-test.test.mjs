@@ -231,9 +231,12 @@ test('Fase 5/6: los selectores muestran fecha amigable sin cambiar apertura_id',
   }
 });
 
-test('Fase 6: la vista se declara de lectura y no ofrece cierre persistente', async () => {
+test('Fase 6 + sprint: resumen conserva lectura; arqueo financiero es componente separado del calendario', async () => {
   const fuente = await archivo('../src/app/admin/caja/page.tsx');
-  assert.match(fuente, /Cierre de lectura \/ borrador/);
-  assert.match(fuente, /no cierra ni modifica la apertura/);
+  assert.match(fuente, /ArqueoTurno/);
+  assert.match(fuente, /Resumen por apertura/);
   assert.doesNotMatch(fuente, /method:\s*'POST'/);
+  const arqueo=await archivo('../src/components/admin/ArqueoTurno.tsx');
+  assert.match(arqueo,/\/api\/admin\/caja-turno/);
+  assert.doesNotMatch(arqueo,/\/api\/admin\/aperturas\/.*(?:cerrar|estado)/);
 });

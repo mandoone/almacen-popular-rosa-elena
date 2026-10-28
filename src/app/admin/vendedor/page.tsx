@@ -1,5 +1,7 @@
 'use client';
 
+import { useSesionAdmin } from '@/lib/fase9/useSesionAdmin';
+
 import Link from 'next/link';
 import CantidadGranel from '@/components/CantidadGranel';
 import { esGranel, subtotalVenta, referenciaPrecio, formatoCantidad, cantidadStock } from '@/lib/granel';
@@ -10,7 +12,6 @@ import {
 } from '@/components/admin/ComandaVenta';
 import { formatearFechaApertura } from '@/lib/fase3b/adminAperturas';
 import { FORMAS_PAGO_VENTA_PRESENCIAL } from '@/lib/fase5/ventaPresencial';
-import { useSesionAdmin } from '@/lib/fase9/useSesionAdmin';
 
 interface Producto {
   id_producto: string;
@@ -56,13 +57,13 @@ async function datosRespuesta(res: Response) {
 }
 
 export default function PanelVendedorPage() {
-  const { tiene } = useSesionAdmin();
+  const { tiene, sesion } = useSesionAdmin();
   const [productos, setProductos] = useState<Producto[]>([]);
   const [aperturas, setAperturas] = useState<Apertura[]>([]);
   const [aperturaId, setAperturaId] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
-  const [vendedor, setVendedor] = useState('');
+  const vendedor = sesion?.actor_id ?? '';
   const [formaPago, setFormaPago] = useState<(typeof FORMAS_PAGO_VENTA_PRESENCIAL)[number]>('efectivo');
   const [observaciones, setObservaciones] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -138,9 +139,7 @@ export default function PanelVendedorPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apertura_id: aperturaId,
-          fecha_hora: fechaHoraSantiago(),
-          vendedor: vendedor.trim(),
-          forma_pago: formaPago,
+          fecha_hora: fechaHoraSantiago(),          forma_pago: formaPago,
           observaciones: observaciones.trim(),
           lineas: lineas.map(({ producto, cantidad }) => ({
             producto_id: producto.id_producto,
@@ -200,7 +199,7 @@ export default function PanelVendedorPage() {
                   const paso = producto.permite_decimal === 'SI' ? producto.paso_venta || 0.25 : 1;
                   return <div key={producto.id_producto} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-gray-100 p-3">
                     <div><p className="font-medium text-primary-dark">{producto.nombre}</p><p className="text-xs text-gray-500">{referenciaPrecio(producto, producto.precio_venta)} · stock {esGranel(producto) ? `${producto.stock_actual * Number(producto.gramos_unidad_stock) / 1000} kg` : `${producto.stock_actual} ${producto.unidad_medida}`}</p></div>
-                    {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidades[producto.id_producto] ?? 0} onCantidad={g => cambiarCantidad(producto,g)} /> : <input aria-label={`Cantidad de ${producto.nombre}`} type="number" min="0" max={producto.stock_actual} step={paso} value={cantidades[producto.id_producto] ?? 0} onChange={(e) => cambiarCantidad(producto, Number(e.target.value))} className="w-24 rounded-md border border-gray-200 px-2 py-1.5 text-right" />}
+                    {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidades[producto.id_producto] ?? 0} precio={producto.precio_venta} gramosReferencia={Number(producto.gramos_referencia)} stockGramos={producto.stock_actual * Number(producto.gramos_unidad_stock)} onCantidad={g => cambiarCantidad(producto,g)} /> : <input aria-label={`Cantidad de ${producto.nombre}`} type="number" min="0" max={producto.stock_actual} step={paso} value={cantidades[producto.id_producto] ?? 0} onChange={(e) => cambiarCantidad(producto, Number(e.target.value))} className="w-24 rounded-md border border-gray-200 px-2 py-1.5 text-right" />}
                   </div>;
                 })}
               </div>
@@ -213,7 +212,7 @@ export default function PanelVendedorPage() {
               </ul>
               <p className="border-t border-gray-100 pt-3 text-xl font-bold text-primary">Total visual: {formatoPrecio(totalVisual)}</p>
               <p className="mb-4 text-xs text-gray-400">El total definitivo se calcula nuevamente en el servidor.</p>
-              <label className="mb-3 block text-sm">Vendedor/a<input value={vendedor} onChange={(e) => { marcarVentaEditada(); setVendedor(e.target.value); }} maxLength={100} className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2" required /></label>
+              <p className="mb-3 text-sm">Vendedor/a de sesión: {sesion?.nombre || sesion?.actor_id}</p>
               <label className="mb-3 block text-sm">Forma de pago<select value={formaPago} onChange={(e) => { marcarVentaEditada(); setFormaPago(e.target.value as typeof formaPago); }} className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2">{FORMAS_PAGO_VENTA_PRESENCIAL.map((forma) => <option key={forma} value={forma}>{forma}</option>)}</select></label>
               <label className="mb-4 block text-sm">Observación opcional<textarea value={observaciones} onChange={(e) => { marcarVentaEditada(); setObservaciones(e.target.value); }} maxLength={500} className="mt-1 min-h-20 w-full rounded-md border border-gray-200 px-3 py-2" /></label>
               <button disabled={guardando || !aperturaId} className="w-full rounded-md bg-primary px-4 py-2.5 font-semibold text-white disabled:opacity-50">{guardando ? 'Registrando...' : 'Registrar venta'}</button>

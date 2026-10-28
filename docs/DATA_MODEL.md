@@ -1,5 +1,17 @@
 # DATA_MODEL.md — Modelo de datos
 
+## Turno web TEST —2026-10-28
+
+Contrato aditivo `CIERRES_CAJA` (18 columnas): cierre_id, apertura_id, fecha_hora, responsable, estado_cierre, saldo_inicial, efectivo_cobrado, transferencias_cobradas, pagos_pendientes, gastos_efectivo, efectivo_esperado, efectivo_contado, diferencia, observaciones, snapshot_json, fuente_hash, idempotency_key, payload_hash. Clave técnica determinista actor/key; una apertura tiene un cierre financiero original. PREPARADA antes de confirmar; readback íntegro; retry de la misma key conserva resultado. CONFIRMADA es inmutable. Una rectificación posterior exige nuevo procedimiento auditado; no se ofrece edición del original.
+
+La fuente congela cobros/pedidos/ventas/gastos explícitos, hash y responsable del servidor. Efectivo esperado = saldo inicial declarado + efectivo cobrado − gastos en efectivo asociados. Transferencias y pendientes se mantienen separados. Campos vacíos no se convierten a saldos cero implícitos. Una operación PREPARADA también bloquea nuevas mutaciones incompatibles de esa apertura. Lectura no crea tablas.
+
+GASTOS_EXTRA conserva sus columnas. Solo gastos nuevos asociados explícitamente guardan en observaciones JSON `GASTO_CAJA_V1` con apertura_id, forma_pago y observacion. No se infiere relación histórica por fecha. Proveedor sigue en COMPRAS, no en SKU.
+
+Inventario usa MOVIMIENTOS_STOCK existente: motivo recuento_fisico, referencia ajuste_admin, key por sesión/SKU y saldo esperado CAS. No registra un cierre global de inventario ni convierte omisiones en ceros. Alta web automática genera PROD-TEST-WEB + SHA256 parcial de actor/key; stock0/inactivo, unicidad auditada por backend. No activa familias comerciales.
+
+Esquema instalado solo TEST con backup y readback íntegro de las 19 hojas anteriores; [evidencia y estado de despliegue](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## Cierre C7-B: sin migración de datos (2026-10-12)
 
 Manifest/precios/identidades aprobadas siguen proyecciones locales; planes,receipts y rollback solo simulados. F10 y datos reales no cambian. [Paquete y contrato](operativa/FAMILIAS_PRODUCTO_FASE_C7B_PREP_2026-10-12.md).

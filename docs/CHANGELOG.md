@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-28 — Operación TEST usable, primer bloque local
+
+Inventario parcial recuperable, alta con ID servidor, actor automático, compras con entrada natural/readback y granel compartido. Sin migración familiar ni cambios comerciales; sprint aún en curso, sin afirmar E2E remoto completo. [Estado](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## 2026-10-12 — Decisiones Omar posteriores a C7-C
 
 Diez cardinalidades iniciales y diez ofertas explícitas actuales acreditadas únicamente en manifest/documentación local. UI retira gates ya cerrados; proyección pública incrementa versión y conserva identidad/ID/snapshots. Sin migración, Sheet writes, deploy o activación. [Decisiones D63/D64](DECISIONS.md).

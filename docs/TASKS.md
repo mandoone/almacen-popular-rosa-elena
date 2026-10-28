@@ -1,5 +1,15 @@
 # TASKS.md — Tareas vivas y backlog
 
+## Operación TEST usable —28/10/2026
+
+- [x] Auditar continuidad/destino; preservar maestro del usuario.
+- [x] Inventario parcial web con referencias recuperables; alta ID servidor; actor y compra natural; input granel compartido.
+- [x] Arqueo/cierre durable, relación explícita de gastos y configuración inicial en código local; contrato aditivo TEST verificado.
+- [ ] QA completo, backup/readback, E2E sintético aislado, cleanup y Preview.
+- [ ] Acceso individual Omar: preparar sin inventar activación/credencial humana.
+
+[Matriz y evidencia](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## Cierre humano Omar posterior a C7-C —2026-10-12
 
 - [x] Registrar diez CARDINALIDAD_INICIAL_APROBADA sin imponer límite permanente.

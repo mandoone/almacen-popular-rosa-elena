@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Operación TEST usable —bloque inicial28/10
+
+21 pruebas nuevas de pesos/conteo/bases100/250/1000, evidencia/duplicados, CAS/replay contra GAS en memoria, ID automático y spoofing del handler real;207 focales PASS. Typecheck y build aislado PASS. El guard C4 ahora permite exclusivamente el nuevo lector administrativo, manteniendo todas las declaraciones previas idénticas por AST; no se elimina su protección V1/V2. QA/E2E final pendiente. [Auditoría](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## Decisiones Omar posteriores a C7-C —2026-10-12
 
 Ocho pruebas nuevas: aprobaciones exactas sin promoción de identidades; IDs/precios/contratos/template Nadia idénticos al cierre C7-C; EXPLICITA→VARIABLE con versión nueva y snapshots anteriores intactos; segundo SKU equivalente, formato incompatible excluido; proveedor conserva SKU y dry-run tres9/replay0. Validación solo local, sin servicios remotos. [Decisiones D63/D64](DECISIONS.md).

@@ -142,7 +142,7 @@ function CarritoPanel({
                 {referenciaPrecio(producto, producto.precio)}
               </p>
             </div>
-            {esGranel(producto) ? <div className="order-3 w-full"><CantidadGranel nombre={producto.nombre} cantidad={cantidad} onCantidad={g => onCantidad(producto, g)} /></div> : <div className="flex items-center gap-1 shrink-0">
+            {esGranel(producto) ? <div className="order-3 w-full"><CantidadGranel nombre={producto.nombre} cantidad={cantidad} precio={producto.precio} gramosReferencia={Number(producto.gramos_referencia)} onCantidad={g => onCantidad(producto, g)} /></div> : <div className="flex items-center gap-1 shrink-0">
               <button
                 type="button"
                 onClick={() => onReducir(producto.id)}
@@ -631,7 +631,7 @@ export default function TiendaPage() {
                       <p className="font-bold text-sm md:text-lg text-primary">
                         {referenciaPrecio(producto, producto.precio)}
                       </p>
-                      {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidad} onCantidad={g => establecerCantidad(producto,g)} /> : cantidad === 0 ? (
+                      {esGranel(producto) ? <CantidadGranel nombre={producto.nombre} cantidad={cantidad} precio={producto.precio} gramosReferencia={Number(producto.gramos_referencia)} onCantidad={g => establecerCantidad(producto,g)} /> : cantidad === 0 ? (
                         <button
                           type="button"
                           onClick={() => agregar(producto)}

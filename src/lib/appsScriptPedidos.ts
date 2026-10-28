@@ -977,6 +977,18 @@ export function obtenerCajaCompraAdmin(): Promise<CajaCompraAdmin> {
   return getAdminFase78({ action: 'obtenerCajaCompra' });
 }
 
+export function listarMovimientosStockAdmin(producto_id: string): Promise<Array<Record<string, unknown>>> {
+  return getAdminFase78<{ movimientos: Array<Record<string, unknown>> }>({ action: 'listarMovimientosStockAdmin', producto_id }).then(data => data.movimientos);
+}
+
+export function obtenerCajaTurnoAdmin(apertura_id: string): Promise<Record<string, unknown>> {
+  return getAdminFase78({ action: 'obtenerCajaTurnoTest', apertura_id });
+}
+
+export function registrarCierreCajaTurnoAdmin(input: Record<string, unknown>, actor: string): Promise<Record<string, unknown>> {
+  return postAdminFase78('registrarCierreCajaTurnoTest', actor, input);
+}
+
 export function obtenerPropuestaAbastecimientoAdmin(presupuesto: number): Promise<PropuestaAbastecimientoAdmin> {
   return getAdminFase78({ action: 'obtenerPropuestaAbastecimiento', presupuesto: String(presupuesto) });
 }

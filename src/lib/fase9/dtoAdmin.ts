@@ -59,11 +59,21 @@ export function dtoCompraAdmin(body: JsonObject) {
 }
 
 export function dtoGastoAdmin(body: JsonObject) {
+  let observaciones = body.observaciones === undefined ? undefined : String(body.observaciones);
+  if (body.apertura_id) {
+    if (!/^APE-[0-9]{8}$/.test(String(body.apertura_id)) || !['efectivo', 'transferencia'].includes(String(body.forma_pago))) {
+      throw new Error('Apertura o medio del gasto inválido.');
+    }
+    observaciones = JSON.stringify({ modelo: 'GASTO_CAJA_V1', apertura_id: String(body.apertura_id), forma_pago: String(body.forma_pago), observacion: observaciones || '' });
+    if (observaciones.length > 500) throw new Error('Observación del gasto demasiado larga.');
+  } else if (observaciones?.includes('GASTO_CAJA_V1')) {
+    throw new Error('Asocia el gasto mediante los campos de apertura y medio de pago.');
+  }
   return {
     categoria: String(body.categoria ?? ''),
     descripcion: String(body.descripcion ?? ''),
     monto: Number(body.monto),
-    observaciones: body.observaciones === undefined ? undefined : String(body.observaciones),
+    observaciones,
     idempotency_key: String(body.idempotency_key ?? ''),
   };
 }

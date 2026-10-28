@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
+import ts from 'typescript';
 import { escenarioC4, opcionesC4, cancelarInputC4, reasignarInputC4 } from './fixtures/familias-durable-c4.mjs';
 import { confirmarPedidoV2Durable, cancelarPedidoV2Durable, reasignarPedidoV2Durable, obtenerBloqueosOperativos, exigirRecursosLibresV2, verificarOperacionV2 } from '../src/lib/familias/adaptadorDurableV2.ts';
 import { llamadaHttpMockV2, InterrupcionSimuladaV2 } from '../src/lib/familias/almacenSheetsMemoriaV2.ts';
@@ -244,10 +245,21 @@ test('C4 diario V1 completo se preserva; incierto desconocido bloquea conservado
   assert.equal(obtenerBloqueosOperativos([{ ...historico, estado_operacion: 'REQUIERE_REVISION' }]).global, true);
 });
 test('C4 fuente C1/C2 y transporte público permanecen idénticos; GAS aditivo se audita en C5', async () => {
-  for (const p of ['src/lib/familias/pedidoV2.ts', 'src/lib/familias/asignacionV2.ts', 'scripts/setup-google-sheet.gs', 'src/lib/appsScriptPedidos.ts']) {
+  for (const p of ['src/lib/familias/pedidoV2.ts', 'src/lib/familias/asignacionV2.ts', 'scripts/setup-google-sheet.gs']) {
     const original = execFileSync('git', ['show', `8b1d105b33659ce7468c92fc10413167922bc879:${p}`], { encoding: 'utf8' });
     assert.equal((await readFile(p, 'utf8')).replaceAll('\r\n', '\n'), original.replaceAll('\r\n', '\n'), p);
   }
+  // Sprint28/10 autoriza lectores admin y cierre TEST aditivos; declaraciones previas idénticas.
+  const p='src/lib/appsScriptPedidos.ts',old=execFileSync('git',['show',`8b1d105b33659ce7468c92fc10413167922bc879:${p}`],{encoding:'utf8'});
+  const parse=s=>ts.createSourceFile(p,s,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS);
+  const actual=parse(await readFile(p,'utf8')),anterior=parse(old);
+  const permitidas=['listarMovimientosStockAdmin','obtenerCajaTurnoAdmin','registrarCierreCajaTurnoAdmin'];
+  const nuevas=actual.statements.filter(n=>ts.isFunctionDeclaration(n)&&permitidas.includes(n.name?.text));
+  assert.equal(nuevas.length,3);
+  assert.match(nuevas[0].getText(actual),/getAdminFase78.*movimientos/s);
+  assert.match(nuevas[1].getText(actual),/getAdminFase78.*obtenerCajaTurnoTest/s);
+  assert.match(nuevas[2].getText(actual),/postAdminFase78.*registrarCierreCajaTurnoTest.*actor/s);
+  assert.deepEqual(actual.statements.filter(n=>!nuevas.includes(n)).map(n=>n.getText(actual).replaceAll('\r\n','\n')),anterior.statements.map(n=>n.getText(anterior).replaceAll('\r\n','\n')));
   for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/admin/pedidos/route.ts', 'src/lib/appsScriptPedidos.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /adaptadorDurableV2|planMixtoV2|almacenSheetsMemoriaV2/);
 });
 

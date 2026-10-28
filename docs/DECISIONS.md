@@ -1,5 +1,9 @@
 # DECISIONS.md — Decisiones cerradas
 
+## D65 — Operación desde web y ensayo TEST aislado (2026-10-28)
+
+Omar autoriza sprint de operación administrativa usable, preservando servicios existentes y Production prohibida. Inventario parcial no convierte omitidos en cero, usa unidad/base histórica, revisión por línea, CAS e idempotencia; operación incierta se acredita por referencia/autor/efecto, nunca saldo solo. Alta genera ID técnico estable por actor/key y nace inactiva con stock0. Actor exclusivamente de sesión; proveedor por compra. UX granel admite gramos enteros libres g/kg y ±100g con subtotal D40. Cierre financiero se separa de calendario y de caja de abastecimiento; requiere registro durable/inmutable. Fixtures y cifras sintéticas no promueven F10. [Alcance/estado](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## D64 — Política explícita actual revisable y familia estable (2026-10-12)
 
 Omar aprueba la política pública actual EXPLICITA para los diez candidatos del grupo C de C7-A:

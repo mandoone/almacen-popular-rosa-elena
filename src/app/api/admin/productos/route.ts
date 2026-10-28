@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { idProductoAutomatico } from '@/lib/fase8/altaProducto';
 import { actualizarProductoAdmin, crearProductoAdmin, listarProductosAdmin } from '@/lib/appsScriptPedidos';
 import { idempotencyKeyValida, respuestaErrorAdmin } from '@/lib/fase8/apiAdmin';
 import { actorIdFromRequest, sesionTieneCapacidad } from '@/lib/session';
@@ -43,9 +44,15 @@ export async function POST(req: Request) {
     if (solicitudModificaPrecios(body, true) && !sesionTieneCapacidad(req, 'precios:gestionar')) {
       return NextResponse.json({ ok: false, error: 'Acceso denegado.' }, { status: 403 });
     }
+    const actor = actorIdFromRequest(req);
+    const dto = dtoCreacionProductoAdmin(body);
+    if (!dto.producto_id.trim()) {
+      dto.producto_id = await idProductoAutomatico(actor, dto.idempotency_key);
+      dto.producto.activo = 'NO';
+    }
     return NextResponse.json({
       ok: true,
-      data: await crearProductoAdmin(dtoCreacionProductoAdmin(body), actorIdFromRequest(req)),
+      data: await crearProductoAdmin(dto, actor),
     }, { status: 201 });
   } catch (error) { return respuestaErrorAdmin(error); }
 }

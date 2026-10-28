@@ -1,5 +1,9 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## Sprint Operación TEST usable —28/10/2026, en curso
+
+Base9200139 preservada y maestro local respaldado. Inventario parcial con CAS/readback, alta automática, granel directo, compras/actor y arqueo durable preparados. QA local1272 PASS/0 omitidas. Backup completo verificado y CIERRES_CAJA aditiva instalada TEST, 19 hojas previas idénticas. GAS aúnv25; faltan deploy/E2E/Preview final, sin atribuir operación remota a código local. [Auditoría y estado por bloque](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## Decisiones Omar posteriores a C7-C —2026-10-12
 
 Diez cardinalidades iniciales y diez políticas explícitas actuales del grupo C cerradas; identidad y migración siguen separadas. Manifest local/UI de revisión actualizados, familia_id estable y proyección de política versionada. Solo tres identidades/mapas ejecutables permanecen acreditados; Nadia/conteo y las otras revisiones pendientes no se inventan. [Decisiones D63/D64](DECISIONS.md). Sheets sin escrituras, GASv25 sin deploy y F10 sin cambio.

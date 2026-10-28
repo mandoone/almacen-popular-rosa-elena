@@ -41,6 +41,7 @@ export function capacidadParaRuta(pathname: string, metodo = 'GET'): Capacidad |
   if (rutaEsODescendiente(pathname, '/api/admin/gastos')) return 'gastos:gestionar';
   if (rutaEsODescendiente(pathname, '/api/admin/abastecimiento')) return 'abastecimiento:gestionar';
   if (rutaEsODescendiente(pathname, '/api/admin/caja-compra')) return 'caja:gestionar';
+  if (rutaEsODescendiente(pathname, '/api/admin/caja-turno')) return 'caja:gestionar';
   if (rutaEsODescendiente(pathname, '/api/admin/reportes')) return 'reportes:ver';
 
   if (pathname === '/admin' || rutaEsODescendiente(pathname, '/admin/ventas')) return 'pedidos:ver';
@@ -51,6 +52,8 @@ export function capacidadParaRuta(pathname: string, metodo = 'GET'): Capacidad |
   if (rutaEsODescendiente(pathname, '/admin/caja')) return 'caja:gestionar';
   if (rutaEsODescendiente(pathname, '/admin/historiales')) return 'reportes:ver';
   if (rutaEsODescendiente(pathname, '/admin/productos')) return 'stock:ver';
+  if (rutaEsODescendiente(pathname, '/admin/inventario')) return 'stock:ajustar';
+  if (rutaEsODescendiente(pathname, '/admin/configuracion-inicial')) return 'configuracion:gestionar';
   if (rutaEsODescendiente(pathname, '/admin/familias')) return 'productos:gestionar';
 
   // Cierre seguro: cualquier nueva superficie admin requiere administración

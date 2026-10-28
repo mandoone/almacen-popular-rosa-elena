@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import ArqueoTurno from '@/components/admin/ArqueoTurno';
 import { useCallback, useEffect, useState } from 'react';
 import { formatearFechaApertura } from '@/lib/fase3b/adminAperturas';
 
@@ -108,7 +109,7 @@ export default function CajaPorAperturaPage() {
               <h1 className="font-serif text-2xl font-bold text-primary-dark">Caja por apertura</h1>
               <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">TEST</span>
             </div>
-            <p className="text-sm text-gray-500">Cierre de lectura / borrador. Esta vista no cierra ni modifica la apertura.</p>
+            <p className="text-sm text-gray-500">Resumen por apertura y arqueo financiero revisado.</p>
           </div>
           <nav className="flex gap-2 text-sm">
             <Link className="rounded-md border border-gray-200 bg-white px-3 py-2" href="/admin">Pedidos</Link>
@@ -164,9 +165,7 @@ export default function CajaPorAperturaPage() {
               <div><p className="text-sm text-gray-500">Cancelados separados</p><strong>{resumen.cantidad_cancelados} · {formatoPrecio(resumen.total_cancelado)}</strong></div>
             </section>
 
-            <p className="mt-4 text-xs text-gray-500">
-              Gastos extra y cierre definitivo siguen pendientes de una decisión operativa; esta entrega no inventa tablas ni cambia estados.
-            </p>
+            <ArqueoTurno key={aperturaId} aperturaId={aperturaId} />
           </>
         )}
       </div>

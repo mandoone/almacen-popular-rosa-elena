@@ -1,0 +1,16 @@
+'use client';
+import {useEffect,useState} from 'react';
+import Link from 'next/link';
+import {solicitarAdmin} from '@/lib/fase8/clienteAdmin';
+import type {ProductoAdmin} from '@/lib/appsScriptPedidos';
+import AdminFase78Nav from './AdminFase78Nav';
+import {useSesionAdmin} from '@/lib/fase9/useSesionAdmin';
+export default function ConfiguracionInicial(){
+ const {tiene}=useSesionAdmin(),[productos,setProductos]=useState<ProductoAdmin[]|null>(null),[error,setError]=useState('');
+ useEffect(()=>{if(tiene('configuracion:gestionar'))void solicitarAdmin<ProductoAdmin[]>('/api/admin/productos').then(setProductos).catch(()=>setError('No se pudo leer TEST. No se certifica preparación.'));},[tiene]);
+ if(!tiene('configuracion:gestionar'))return <main className="p-6">Configuración inicial requiere Administración.</main>;
+ const comerciales=productos?.filter(p=>!/^PROD-(?:QA|TEST)-/.test(p.id_producto))??[];
+ const sinCosto=comerciales.filter(p=>typeof p.precio_costo!=='number'||p.precio_costo<=0).length;
+ const filas=[['Productos','PARCIAL',`${comerciales.length} SKU comerciales leídos; presencia de maestro no acredita identidad ni aprobación.`, '/admin/productos'],['Costos','PENDIENTE_COSTO',productos?`${sinCosto} sin costo positivo en la lectura. Seis pendientes conocidos: Harina Integral, Mote, Papel Higiénico6u Swan, Afeitadora, Pan masa madre y Empanadas.`:'Sin lectura verificada.', '/admin/compras'],['Conteo','PENDIENTE_CONTEO','Stock TEST no es conteo físico aprobado. Realizar y revisar por SKU.', '/admin/inventario'],['Apertura','PARCIAL','Revisar fecha, modos y oferta especial. Una apertura QA no acredita calendario real.', '/admin'],['Saldos / arqueo','PROVISORIO_TEST','Efectivo/banco al corte pendientes. Cifras sintéticas solo para ensayo identificado.', '/admin/caja'],['Mínimos/prioridades','PENDIENTE','Valores técnicos0/media no acreditan parámetros operativos.', '/admin/abastecimiento'],['Identidad Económico/variantes','PENDIENTE_NADIA','Las respuestas ya fueron solicitadas. No inferir marca/formato ni reabrir D63/D64.', '/admin/familias/preparacion'],['Imágenes','PENDIENTE_CAROLINA','Carolina completa/corrige carpeta final; no nueva auditoría ni aprobación de derechos automática.', '/admin/familias/preparacion'],['Usuarios / acceso Omar','PARCIAL','Registro individual y permisos existentes; cada titular debe configurar su credencial privada y probar acceso. No se muestran secretos.', '/admin/login'],['Ensayo / preparación','PROVISORIO_TEST','Ensayo sintético no cambia F10. Omar prueba antes de capacitación y corte.', '/admin/historiales']];
+ return <main className="mx-auto max-w-6xl space-y-5 px-4 py-8"><AdminFase78Nav/><h1 className="text-3xl font-bold text-primary-dark">Configuración inicial · TEST</h1><p>Diagnóstico de preparación, solo lectura. LISTO requiere evidencia real; PARCIAL/PENDIENTE/PROVISORIO_TEST no autorizan Production ni promueven F10.</p>{error&&<p role="alert">{error}</p>}<div className="grid gap-4 md:grid-cols-2">{filas.map(([n,e,t,url])=><section key={n} className="min-w-0 rounded-xl border bg-white p-4"><h2 className="font-semibold">{n}</h2><p className="my-2 break-words font-medium text-amber-900">{e}</p><p className="text-sm">{t}</p><Link href={url} className="mt-3 inline-block underline">Revisar {n.toLowerCase()}</Link></section>)}</div></main>;
+}

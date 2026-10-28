@@ -12,6 +12,9 @@ const enlaces: ReadonlyArray<readonly [string, string, Capacidad]> = [
   ['/admin/abastecimiento', 'Abastecimiento', 'abastecimiento:gestionar'],
   ['/admin/historiales', 'Historiales y reportes', 'reportes:ver'],
   ['/admin/productos', 'Productos y stock', 'stock:ver'],
+  ['/admin/inventario', 'Inventario físico', 'stock:ajustar'],
+  ['/admin/caja', 'Caja y arqueo', 'caja:gestionar'],
+  ['/admin/configuracion-inicial', 'Configuración inicial', 'configuracion:gestionar'],
   ['/admin/familias', 'Familias y SKU · TEST', 'productos:gestionar'],
 ];
 

@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
-import { ajustarStockAdmin } from '@/lib/appsScriptPedidos';
+import { ajustarStockAdmin, listarMovimientosStockAdmin } from '@/lib/appsScriptPedidos';
 import { idempotencyKeyValida, respuestaErrorAdmin } from '@/lib/fase8/apiAdmin';
 import { actorIdFromRequest } from '@/lib/session';
 import { dtoAjusteStockAdmin } from '@/lib/fase9/dtoAdmin';
+
+export const dynamic = 'force-dynamic';
+export async function GET(req: Request) {
+  const p = new URL(req.url).searchParams;
+  const id = p.get('producto_id') ?? '', key = p.get('referencia_id') ?? '';
+  if (!/^PROD-[A-Za-z0-9-]{1,80}$/.test(id) || !idempotencyKeyValida(key)) return NextResponse.json({ ok: false, error: 'Referencia de ajuste inválida.' }, { status: 400 });
+  try { return NextResponse.json({ ok: true, data: (await listarMovimientosStockAdmin(id)).filter(m => m.referencia_tipo === 'ajuste_admin' && m.referencia_id === key) }, { headers: { 'Cache-Control': 'private, no-store' } }); }
+  catch (error) { return respuestaErrorAdmin(error); }
+}
 
 export async function POST(req: Request) {
   try {
