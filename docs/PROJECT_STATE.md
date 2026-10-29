@@ -2,6 +2,8 @@
 
 ## Sprint Operación TEST usable —28/10/2026, cierre técnico TEST
 
+Continuación29/10: CI recupera historial para las auditorías y pasa1286/lint/build; parche de seguridad Next15.5.28 sin salto mayor ni relajación de audit. Cero críticas, ocho alertas no críticas pendientes de mantenimiento. No se repiten escrituras del E2E ya cerrado.
+
 Preview de feature READY en fb400b1; acceso funcional remoto pendiente por protección Vercel (403 del conector y SSO en navegador). No se debilitó protección ni se activó cuenta Omar. El checkpoint posterior solo documenta ese gate; E2E acreditado: Next local→backend TEST real.
 
 **COMPLETO técnicamente contra TEST; acceso y primer turno humano pendientes.** Reanudado sin repetir unidad: alta granel corregida en payload (DTO ya incluía base), conteo, compras/reposición, apertura QA, pedido/POS, confirmación/pago/cancelación, gasto, caja/cierre, reportes y cleanup PASS.1286 pruebas,0 skipped; lint/typecheck/build/scan/diferencial V1 PASS. Visual focal desktop/móvil con mocks y red externa bloqueada. TESTv26/rollbackv25, respaldo incremental20 hojas,54 SKU comerciales intactos; dos SKU del turno inactivos/stock0 y apertura cerrada. Cuenta Omar sin activar, F10 sin promoción automática. [Evidencia y Preview](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [guía Omar](operativa/GUIA_OMAR_TURNO_COMPLETO_TEST_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).

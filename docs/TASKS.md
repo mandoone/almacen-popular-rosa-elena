@@ -11,6 +11,7 @@ Turno técnico terminado desde alta_granel, sin repetir alta_unidad. Regresión 
 - [x] Procedimiento privado de acceso individual preparado; no se generó ni activó cuenta humana.
 - [x] Push exclusivo feature y build Preview READY; Production mantiene despliegue/main anteriores.
 - [ ] Acceso Vercel autorizado: SSO/403 impide acreditar navegación funcional del Preview; no cambiar protección para probarlo.
+- [ ] Mantenimiento dependencias:8 alertas no críticas (4 altas/4 moderadas) después del parche Next15.5.28; crítica eliminada, sin aceptar excepciones ni actualizar mayor automáticamente.
 - [ ] Omar: activación segura, primer login y walkthrough humano de la guía. No confundir con tres actores efímeros de QA.
 
 [Matriz y evidencia](operativa/OPERACION_TEST_USABLE_2026-10-27.md).

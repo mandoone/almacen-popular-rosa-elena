@@ -2,6 +2,8 @@
 
 ## Operación TEST usable —QA final28/10
 
+Revalidación29/10:1286 PASS/0 skipped también en CI con historial completo; build/lint CI exitosos. Nuevo parche Next15.5.28 conserva1286 PASS/0 skipped, lint/typecheck local y elimina la alerta crítica (ocho alertas no críticas pendientes). No confundir auditoría crítica exit0 con cero vulnerabilidades de cualquier severidad. El acta registra build/readback posteriores y gate SSO de Preview.
+
 1286 PASS,0 FAIL,0 skipped (baseline1280 más cinco integrales de alta granel y una de compra inactiva/activación). Traza real DTO→Next→transporte→GAS en memoria prueba bases100/250/1000 y reproduce el409 kg250; D40/DTO intactos. Compatibilidad observacion moderna/observaciones legacy acreditada sin perder controles de actor/hash/ref/saldo.
 
 E2E HTTP sobre handlers reales/backend TESTv26: alta, conteo, compra/reposición, apertura, web/POS, confirmación/pago/cancelación/replay, gasto, arqueo/cierre2503 diferencia0, historial, permisos/logout y cleanup PASS. Readback nativo20 hojas/54 SKU comerciales intactos; tres operaciones nuevas completas. Lint, typecheck, build aislado, secretos, diff y diferencial V1 PASS. Visual focal1280×900/390×844 con mocks y red remota bloqueada: inventario recuperado, alta granel, compras, caja/historial y entrada directa granel/POS. Revisión humana Omar pendiente. [Alcance, evidencias y límites](operativa/OPERACION_TEST_USABLE_2026-10-27.md).

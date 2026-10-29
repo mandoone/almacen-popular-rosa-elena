@@ -45,6 +45,14 @@ Preview de la rama: [abrir TEST](https://almacen-popular-rosa-ele-git-99da69-oma
 
 CI posterior de21e26a8 detectó otra brecha de infraestructura: checkout superficial no incluía los hitos9200139/716e8c8/30e047e/48eb4ec/8b1d105, por lo que cinco auditorías basadas en `git show` fallaban antes de comparar. Se configura `actions/checkout` con `fetch-depth: 0`, preservando todas las pruebas y sus referencias originales. No es una regresión funcional ni una omisión aceptada; el resultado del siguiente run se verifica antes de la entrega final.
 
+### Gate de dependencias resuelto localmente —29/10/2026
+
+Run447cf29: las1286 pruebas (0 skipped), lint y build pasan en Linux. El último paso `npm audit --audit-level=critical` falla por Next15.5.24. Se verifica el [aviso del mantenedor GHSA-2464-fhr4-w9xw](https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw) y se fija Next/eslint-config-next15.5.28, manteniendo rama15.5/React19.3.0. Lockfile revisado: solo Next/ESLint correspondientes, sharp0.35.5 y sus binarios/libvips. Sin `audit fix --force`, cambios de reglas o excepciones de seguridad.
+
+Suite local posterior al parche1286 PASS/0 FAIL/0 skipped, lint/typecheck PASS y auditoría crítica exit0. Permanecen **8 alertas no críticas (4 altas/4 moderadas)** de dependencias de CSS/expansión y sus transitivas; no se declara auditoría limpia de toda severidad. Mantenimiento posterior separado, sin salto automático a Next16 ni cambios Production. Logs privados `sprint-*-next-parche.log` y `npm-audit-post-parche.json` conservan evidencia. El E2E de escritura completo fue previo a este parche; no se repiten transacciones del turno cerrado.
+
+Build aislado posterior PASS. Lectura HTTP posterior al parche (`--solo-readback`) PASS: sesión/roles locales, productos QA stock0, cierre confirmado y ausencia de fixtures en oferta; solo GET al backend TEST y logout de sesiones locales. No se repiten altas, compras, conteos, pagos o cierres. El resumen impreso por el arnés conserva el nombre del turno completo; en esta ejecución solo se acredita readback, no un nuevo E2E de escritura. `tsconfig.json` vuelve a su contenido original al finalizar.
+
 Checkpoints previos de este sprint:3af0d6d (implementación local),0a94679 (arreglo alta y traza). El checkpoint final incorpora arneses/evidencia y guía sin secretos. El maestro del usuario se conserva sin editar como untracked preexistente; árbol versionado limpio no implica borrarlo.
 
 Pendientes humanos: acceso individual/primer turno de Omar, respuestas Nadia, fotos Carolina, seis costos acreditados, conteo y saldos reales/corte, capacitación tras la prueba de Omar. F10 no cambia automáticamente. Producción/main/datos comerciales intactos; no familias comerciales, catálogo/carrito/POS familiar ni promociones productivas.

@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-29 — Gates de CI del sprint TEST
+
+Checkout completo para auditorías históricas;1286 pruebas/lint/build CI pasan sin omitir tests. Parche de seguridad Next/eslint-config-next15.5.28 y sharp0.35.5, sin salto mayor ni cambio de umbral audit crítico. Revalidación local y evidencia en el acta; acceso SSO Preview y cuenta Omar siguen pendientes. Production/GAS/Sheet no se modifican por este checkpoint.
+
 ## 2026-10-28 — Cierre técnico Operación TEST usable
 
 Reanudación desde alta_granel sin repetir unidad; corrección de unidad nativa para bases100/250 sin tocar D40. Turno HTTP completo en TESTv26: conteo, compras/reposición, web/POS, confirmación/pago/cancelación/replay, gasto, arqueo/cierre durable, historial y cleanup.1286 pruebas PASS, visual focal desktop/móvil y54 SKU comerciales intactos. Cuenta humana Omar y su revisión pendientes; guía/procedimiento preparados, sin activación ni promoción F10. [Acta y resultados](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
