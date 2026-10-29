@@ -36,6 +36,7 @@ import {
 import type { VentaPresencialInput } from './fase5/ventaPresencial';
 import type { IdentidadSkuFamilia } from './familiasProducto';
 import { payloadAdminFase78 } from './fase9/dtoAdmin';
+import { fetchAppsScriptTestSeguro } from './appsScriptTransporteTest';
 import {
   diagnosticarRespuestaNoJson,
   clasificarFalloRespuestaNoJson,
@@ -358,6 +359,10 @@ function errorRedSeguro(error: unknown): AppsScriptError {
 }
 
 async function postScript<T>(body: Record<string, unknown>): Promise<T> {
+  if (entornoActual() === 'test') {
+    const res = await fetchAppsScriptTestSeguro(baseUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store' });
+    return leerRespuesta<T>(res, `POST ${nombreAccionSeguro(body.action)}`, 'POST');
+  }
   const res = await fetch(baseUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

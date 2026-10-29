@@ -2,6 +2,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { solicitarAdmin, resolverIntentoIdempotente, type IntentoIdempotente } from '@/lib/fase8/clienteAdmin';
 import type { ProductoAdmin } from '@/lib/appsScriptPedidos';
+import { unidadStockInicialGranel } from '@/lib/fase8/altaProducto';
 const inicial={nombre:'',marca:'',presentacion:'',contenido_cantidad:'',contenido_unidad:'ml',categoria:'Alimentos',modo_venta:'UNIDAD',unidad_medida:'unidad',tipo_disponibilidad:'REGULAR',precio_venta:'',precio_costo:'',gramos_referencia:'1000',gramos_unidad_stock:'1000'};
 export default function AltaProductoFisico({ onCreado }: { onCreado: (p:ProductoAdmin)=>void }) {
   const [f,setF]=useState(inicial),[mensaje,setMensaje]=useState(''),[ocupado,setOcupado]=useState(false);
@@ -10,7 +11,7 @@ export default function AltaProductoFisico({ onCreado }: { onCreado: (p:Producto
   const campo=(k:keyof typeof f,v:string)=>setF(a=>({...a,[k]:v}));
   async function crear(e:FormEvent){e.preventDefault();if(bloqueo.current)return;bloqueo.current=true;setOcupado(true);
     try{
-      const producto={nombre:f.nombre,categoria:f.categoria,marca:f.marca,presentacion:f.presentacion,...(f.contenido_cantidad?{contenido_cantidad:Number(f.contenido_cantidad),contenido_unidad:f.contenido_unidad}:{}),modo_venta:f.modo_venta,unidad_medida:f.modo_venta==='GRANEL'?'kg':f.unidad_medida,permite_decimal:f.modo_venta==='GRANEL'?'SI':'NO',paso_venta:f.modo_venta==='GRANEL'?0.001:1,gramos_referencia:f.modo_venta==='GRANEL'?Number(f.gramos_referencia):0,gramos_unidad_stock:f.modo_venta==='GRANEL'?Number(f.gramos_unidad_stock):0,precio_venta:Number(f.precio_venta),precio_costo:f.precio_costo===''?'':Number(f.precio_costo),stock_minimo:0,prioridad:'media',activo:'NO',tipo_disponibilidad:f.tipo_disponibilidad,imagen_url:''};
+      const producto={nombre:f.nombre,categoria:f.categoria,marca:f.marca,presentacion:f.presentacion,...(f.contenido_cantidad?{contenido_cantidad:Number(f.contenido_cantidad),contenido_unidad:f.contenido_unidad}:{}),modo_venta:f.modo_venta,unidad_medida:f.modo_venta==='GRANEL'?unidadStockInicialGranel(Number(f.gramos_unidad_stock)):f.unidad_medida,permite_decimal:f.modo_venta==='GRANEL'?'SI':'NO',paso_venta:f.modo_venta==='GRANEL'?0.001:1,gramos_referencia:f.modo_venta==='GRANEL'?Number(f.gramos_referencia):0,gramos_unidad_stock:f.modo_venta==='GRANEL'?Number(f.gramos_unidad_stock):0,precio_venta:Number(f.precio_venta),precio_costo:f.precio_costo===''?'':Number(f.precio_costo),stock_minimo:0,prioridad:'media',activo:'NO',tipo_disponibilidad:f.tipo_disponibilidad,imagen_url:''};
       intento.current=resolverIntentoIdempotente(intento.current,'ALTA',producto);
       setPendiente(true);
       const p=await solicitarAdmin<ProductoAdmin>('/api/admin/productos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({producto,idempotency_key:intento.current.clave})});

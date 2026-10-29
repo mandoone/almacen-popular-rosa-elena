@@ -35,6 +35,7 @@ function crearCliente(respuestas) {
     },
     './fase9/dtoAdmin': { payloadAdminFase78: () => ({}) },
     './appsScriptRespuesta': respuesta,
+    './appsScriptTransporteTest': {fetchAppsScriptTestSeguro:()=>assert.fail('Los GET conservan su transporte y límites de lectura.')},
   };
   vm.runInNewContext(codigo, {
     exports,

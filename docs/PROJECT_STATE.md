@@ -2,7 +2,7 @@
 
 ## Sprint Operación TEST usable —28/10/2026, en curso
 
-Base9200139 preservada y maestro local respaldado. Inventario parcial con CAS/readback, alta automática, granel directo, compras/actor y arqueo durable preparados. QA local1272 PASS/0 omitidas. Backup completo verificado y CIERRES_CAJA aditiva instalada TEST, 19 hojas previas idénticas. GAS aúnv25; faltan deploy/E2E/Preview final, sin atribuir operación remota a código local. [Auditoría y estado por bloque](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+**REANUDADO desde alta_granel.** Trabajo previo preservado. La traza desmiente omisión en DTO: fallo real kg+base250 en payload. Construcción corregida sin modificar D40/GAS;26 focales y typecheck PASS. TESTv26/rollbackv25, backup incremental y baseline20 hojas verificados; unidad QA existente se conserva. E2E/visual/build final y acceso humano pendientes; no declarar turno completo. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [estado de pausa conservado](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
 
 ## Decisiones Omar posteriores a C7-C —2026-10-12
 

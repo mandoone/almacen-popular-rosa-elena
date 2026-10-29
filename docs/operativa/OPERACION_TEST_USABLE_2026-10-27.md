@@ -47,4 +47,16 @@ Destino y versión real verificados: Sheet exacta, GASv25. Baseline:54 SKU comer
 
 Backup: [BACKUP TEST OPERACION USABLE 2026-10-28T18-07-00Z](https://docs.google.com/spreadsheets/d/1_jeHvpqSdxdE7b8exFFkGV3ZgpPs_nDasBQFYZ8jh_I/edit). Verificación completa:19 pestañas, valores/fórmulas/formatos/validaciones/notas idénticos. Tabla nueva CIERRES_CAJA:18 headers,0 datos. Readback confirmó las19 hojas preexistentes idénticas. Segunda planificación idempotente:0 requests. No se tocaron celdas históricas. Rollback de esquema: conservar tabla vacía o archivarla con evidencia; nunca restaurar toda la Sheet sobre nuevas operaciones.
 
-Pendiente de este checkpoint: backup de fuente GASv25/deploy TEST, E2E nuevo de turno, cleanup, guía/visual y Preview. No se considera sprint terminado todavía.
+Pendiente de este checkpoint original: backup de fuente GASv25/deploy TEST, E2E nuevo de turno, cleanup, guía/visual y Preview. No se considera sprint terminado todavía.
+
+## Recuperación controlada posterior —sprint detenido
+
+El deploy TESTv25→v26 y su backup sí se completaron después del checkpoint. El ensayo superó login/me de tres roles sintéticos y creó una unidad QA inactiva/stock0; luego se bloqueó al crear granel. La hipótesis de campo omitido en DTO se corrigió con la traza integral descrita abajo. No hubo conteos, compras, ventas, pedidos, gastos, movimientos ni cierres nuevos al recuperar. La recuperación confirmó19 hojas previas/54 SKU comerciales intactos y CIERRES_CAJA vacía; únicamente la unidad y su auditoría son nuevas. Última suite previa1280 PASS/0 FAIL/0 skipped; build final/visual/E2E aún pendientes. No hubo escrituras TEST, deploy ni push en la recuperación. [Continuidad exacta, archivos, backups y matriz](PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
+
+## Reanudación — corrección mínima de alta granel
+
+Comparación literal de9200139/local: el DTO siempre incluye gramos_unidad_stock; los únicos cambios del DTO son de gastos, no de producto. Traza formulario→payload→DTO→ruta Next→transporte TEST→doPost GASv26 conserva base250. El formulario y el arnés fijaban kg para cualquier base; el contrato D40 histórico rechaza kg+250. Se añade unidadStockInicialGranel y se usa al construir el payload:100/250→unidad,1000→kg. No cambia GAS, DTO, conversión, IDs, stock histórico ni validación; no requiere deploy Apps Script.
+
+Regresión nueva integral con las bases100/250/1000, actor firmado, stock0/inactivo, persistencia, replay y protección de base histórica; reproduce además el409 original sin crear filas.26 focales PASS (5 nuevos+21 previos), typecheck y diferencial V1 PASS. La suite1280 previa sigue siendo baseline; suite/build final se reservan para integración terminada.
+
+Readback antes de reanudar:20 hojas idénticas al cierre recuperado, unidad QA intacta/granel ausente, sin ejecución concurrente. Backup incremental [BACKUP TEST TURNO REANUDACION 2026-10-28T23-13-00](https://docs.google.com/spreadsheets/d/1qf_VINtC-xif7kan7Vu9nTSZnznLAjIGnp6g2TK21E8/edit):20 pestañas y todas sus celdas/fórmulas/formatos/validaciones/notas idénticas; conserva el backup inicial. El arnés mantiene el archivo de pasos y las keys, verifica la unidad existente y se detiene si encuentra un granel sin paso acreditado.

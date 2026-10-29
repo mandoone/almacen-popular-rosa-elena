@@ -259,7 +259,9 @@ test('C4 fuente C1/C2 y transporte público permanecen idénticos; GAS aditivo s
   assert.match(nuevas[0].getText(actual),/getAdminFase78.*movimientos/s);
   assert.match(nuevas[1].getText(actual),/getAdminFase78.*obtenerCajaTurnoTest/s);
   assert.match(nuevas[2].getText(actual),/postAdminFase78.*registrarCierreCajaTurnoTest.*actor/s);
-  assert.deepEqual(actual.statements.filter(n=>!nuevas.includes(n)).map(n=>n.getText(actual).replaceAll('\r\n','\n')),anterior.statements.map(n=>n.getText(anterior).replaceAll('\r\n','\n')));
+  const ramaTest="  if (entornoActual() === 'test') {\n    const res = await fetchAppsScriptTestSeguro(baseUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store' });\n    return leerRespuesta<T>(res, `POST ${nombreAccionSeguro(body.action)}`, 'POST');\n  }\n";
+  const normalizar=n=>{let s=n.getText(actual).replaceAll('\r\n','\n');if(ts.isFunctionDeclaration(n)&&n.name?.text==='postScript'){assert.equal(s.split(ramaTest).length,2);s=s.replace(ramaTest,'');}return s;};
+  assert.deepEqual(actual.statements.filter(n=>!nuevas.includes(n)&&!(ts.isImportDeclaration(n)&&n.moduleSpecifier.text==='./appsScriptTransporteTest')).map(normalizar),anterior.statements.map(n=>n.getText(anterior).replaceAll('\r\n','\n')));
   for (const p of ['src/app/api/pedidos/route.ts', 'src/app/api/admin/pedidos/route.ts', 'src/lib/appsScriptPedidos.ts']) assert.doesNotMatch(await readFile(p, 'utf8'), /adaptadorDurableV2|planMixtoV2|almacenSheetsMemoriaV2/);
 });
 

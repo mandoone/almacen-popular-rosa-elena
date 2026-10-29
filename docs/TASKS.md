@@ -2,6 +2,8 @@
 
 ## Operación TEST usable —28/10/2026
 
+Recuperación terminada; reanudación autorizada desde alta_granel. Causa real del payload corregida con regresión integral, sin repetir alta_unidad. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
+
 - [x] Auditar continuidad/destino; preservar maestro del usuario.
 - [x] Inventario parcial web con referencias recuperables; alta ID servidor; actor y compra natural; input granel compartido.
 - [x] Arqueo/cierre durable, relación explícita de gastos y configuración inicial en código local; contrato aditivo TEST verificado.

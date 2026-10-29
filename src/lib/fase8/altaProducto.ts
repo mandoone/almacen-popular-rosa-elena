@@ -4,3 +4,9 @@ export async function idProductoAutomatico(actor: string, key: string): Promise<
   const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${actor}\0${key}`));
   return `PROD-TEST-WEB-${Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2, '0')).join('').slice(0, 32)}`;
 }
+
+/** Unidad nativa histórica; la entrada de venta sigue siendo gramos (D40). */
+export function unidadStockInicialGranel(baseGramos: number): 'kg' | 'unidad' {
+  if (![100, 250, 1000].includes(baseGramos)) throw new Error('Base inicial de stock inválida.');
+  return baseGramos === 1000 ? 'kg' : 'unidad';
+}
