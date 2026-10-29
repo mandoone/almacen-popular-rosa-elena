@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-10-28 — Cierre técnico Operación TEST usable
+
+Reanudación desde alta_granel sin repetir unidad; corrección de unidad nativa para bases100/250 sin tocar D40. Turno HTTP completo en TESTv26: conteo, compras/reposición, web/POS, confirmación/pago/cancelación/replay, gasto, arqueo/cierre durable, historial y cleanup.1286 pruebas PASS, visual focal desktop/móvil y54 SKU comerciales intactos. Cuenta humana Omar y su revisión pendientes; guía/procedimiento preparados, sin activación ni promoción F10. [Acta y resultados](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## 2026-10-28 — Operación TEST usable, primer bloque local
 
 Inventario parcial recuperable, alta con ID servidor, actor automático, compras con entrada natural/readback y granel compartido. Sin migración familiar ni cambios comerciales; sprint aún en curso, sin afirmar E2E remoto completo. [Estado](operativa/OPERACION_TEST_USABLE_2026-10-27.md).

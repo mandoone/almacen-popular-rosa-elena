@@ -1,5 +1,50 @@
 # Sprint Operación TEST usable
 
+## Cierre técnico verificado —28/10/2026
+
+**COMPLETO en TEST por HTTP real; revisión personal de Omar y activación segura de su cuenta pendientes.** Los apartados siguientes conservan la cronología del sprint y de sus interrupciones. No reiniciar los fixtures ni reabrir el turno cerrado.
+
+| Componente | Resultado final |
+|---|---|
+| Alta unidad/granel | COMPLETO. Se reutilizó la unidad existente; nueva alta granel base250 acreditada. Regresión integral100/250/1000. |
+| Inventario parcial / autoría | COMPLETO. Conteo5 unidades/1700g, referencias, actor, hash y readback; no inferencia por saldo solamente. Lectura admite observaciones legacy y observacion moderna. |
+| Compras / reposición | COMPLETO. Compra2800 y reposición1300, proveedores distintos/mismo SKU, snapshots físicos y tres líneas de historial de costos. Revisión/activación antes de comprar, conservando el rechazo backend del SKU inactivo. |
+| Apertura / web / POS | COMPLETO. Apertura QA propia APE-20261028; pedido1203 durante anticipados, luego transición explícita a presencial y venta2203. |
+| Confirmar / pagar / cancelar | COMPLETO. Stock conjunto6/10,2→5/9,6→6/10,2 bases; replay sin doble descuento/devolución. Subtotal150g a1350/kg conserva203. |
+| Gasto / caja / cierre | COMPLETO. Gasto200 explícitamente asociado, inicial500, efectivo esperado/contado2503, diferencia0. Cierre CONFIRMADA y replay; mutación financiera incompatible posterior bloqueada409. |
+| Historiales / reportes | COMPLETO. Readback final de13 movimientos únicos,3 costos,2 compras,1 venta,1 pedido cancelado,1 gasto y1 cierre; resumen de venta vigente2203. |
+| Cleanup / integridad | COMPLETO. Dos SKU QA inactivos/stock0; apertura cerrada y habilitaciones NO. Historia conservada.54 SKU comerciales y todas las filas/celdas preexistentes ajenas al fixture autorizado idénticas al backup. |
+| Roles / logout | COMPLETO en ensayo: tres roles sintéticos efímeros locales y backend TEST real; permisos y logout401. No se creó ni activó cuenta humana. |
+| Visual | COMPLETO focal con mocks sin red remota: desktop1280×900 y móvil390×844. Alta granel, inventario recuperado, compras, g/kg/POS y arqueo/historial. No se afirma E2E remoto completo por navegador. |
+| Acceso Omar | PENDIENTE del procedimiento privado de activación y de su primer login/turno personal. No equivale a F10 READY. |
+
+### Ejecución y evidencia
+
+`scripts/e2e-turno-web-test.mjs` llama los handlers Next reales y Apps Script TESTv26, conservando `operativa.local/e2e-turno-web-20261028.json`, IDs y keys. La continuación no volvió a crear la unidad. El modo `--solo-readback` verifica reportes mediante GET; únicamente login/logout modifican la sesión local. Credenciales de los tres actores QA aleatorias, efímeras y solo en memoria, nunca guardadas en Git ni transferidas a una cuenta humana.
+
+Pedido `PED-20261028-232814-480a46fa`, venta `VEN-20261028-233028-3bcaccdb`, cierre `CIE-85224594e1932a6b67d229b16cc0c928`. El cierre registra actor `qa-sprint-operacion`, esperado/contado2503 y diferencia0. Los dos SKU propios terminan en stock0/NO: `PROD-TEST-WEB-90cbfde8cd54c0e13353e156570719e5` y `PROD-TEST-WEB-b514621449e6a99f482571352e56bc78`. Sus costos/precios sintéticos quedan en historia; no se borran ni se toman como valores comerciales.
+
+Comparación nativa de20 hojas contra backup incremental, incluyendo valores, fórmulas, formatos, validaciones y notas: PASS; única fila previa autorizada a cambiar, la unidad QA existente. Filas nuevas respecto de ese respaldo: PRODUCTOS1, AUDITORIA_PRODUCTOS5, APERTURAS1, APERTURA_PRODUCTOS2, COMPRAS2, DETALLE_COMPRAS3, HISTORIAL_COSTOS3, PEDIDOS1, DETALLE_PEDIDOS2, VENTAS1, DETALLE_VENTAS2, MOVIMIENTOS_STOCK13, GASTOS_EXTRA1, OPERACIONES_PEDIDOS3 y CIERRES_CAJA1. Tres operaciones nuevas COMPLETADA; cero bloqueos QA nuevos. Se conservan las dos REQUIERE_REVISION legacy ya acreditadas en30e047e; no se borraron para obtener PASS.
+
+### QA final ejecutado
+
+- **1286 PASS,0 FAIL,0 skipped**: seis pruebas nuevas sobre baseline1280 (cinco de traza integral de alta granel y una de compra inactiva/activación). Evidencia moderna de movimiento incorporada a una prueba existente.
+- Lint, typecheck, build aislado, scan de secretos y `git diff --check`: PASS. Diferencial V1:244 declaraciones GAS, siete guards/adiciones exactas y doce archivos críticos; D40 intacto.
+- E2E HTTP completo y lectura final de reportes: PASS. Autoría por referencias/actor/hash, replay de compra/confirmación/cancelación/cierre, cierre durable y cleanup acreditados.
+- Visual con `scripts/qa-visual-turno.mjs --local-mocks`: red externa bloqueada. Capturas ignoradas en `operativa.local/visual-turno/`. Caja visual usa2703 porque ese mock no incluye el gasto200; no se confunde con cierre TEST real2503. Compras, caja y POS sin overflow móvil (ancho375/scrollWidth375 dentro de viewport390). Datos exclusivamente sintéticos.
+
+Logs privados ignorados: `sprint-suite-final.log`, `sprint-build-final.log`, `sprint-e2e-web-continuacion-6.log`, `sprint-e2e-readback-reportes.log`, `recuperacion-preflight-v26.log`. No contienen credenciales impresas ni se versionan backups de fuente con secretos.
+
+### Entrega, rollback y límites
+
+Apps Script **v26**, sin nuevo deploy durante esta continuación; v25 recuperable con fuente/manifest respaldados privadamente. Backup original19 hojas y backup incremental20 hojas enlazados más abajo, ambos conservados. Rollback no consiste en restaurar toda la Sheet sobre operaciones nuevas: preservar historia y compensar solo efectos QA acreditados; nunca borrar el cierre confirmado.
+
+Preview de la rama: [abrir TEST](https://almacen-popular-rosa-ele-git-99da69-omarquezadac-9434s-projects.vercel.app). Acceso por `/admin/login`, sujeto a protección Vercel y cuenta individual autorizada. Su validación de despliegue final se registra en el checkpoint de entrega. [Guía del primer turno de Omar](GUIA_OMAR_TURNO_COMPLETO_TEST_2026-10-27.md).
+
+Checkpoints previos de este sprint:3af0d6d (implementación local),0a94679 (arreglo alta y traza). El checkpoint final incorpora arneses/evidencia y guía sin secretos. El maestro del usuario se conserva sin editar como untracked preexistente; árbol versionado limpio no implica borrarlo.
+
+Pendientes humanos: acceso individual/primer turno de Omar, respuestas Nadia, fotos Carolina, seis costos acreditados, conteo y saldos reales/corte, capacitación tras la prueba de Omar. F10 no cambia automáticamente. Producción/main/datos comerciales intactos; no familias comerciales, catálogo/carrito/POS familiar ni promociones productivas.
+
 Nombre solicitado27/10; ejecución real iniciada28/10/2026. Base `9200139c365483ab3fb18b85219f2c36dd9e8e64`, rama exclusiva `feature/fase-3a-operativa`. Archivo maestro del usuario preservado sin editar y respaldado en operativa.local, SHA256 `7041ec5089fa5e1cb14e8ec1f097c76ae01ddf7c82c8a8b9a3da6d9d833938d5`. Local/remoto coinciden; único untracked previo es ese maestro. No se reabre C5/C6/C7 ni D63/D64.
 
 ## Auditoría inicial

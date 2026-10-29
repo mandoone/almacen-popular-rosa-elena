@@ -27,6 +27,7 @@ test('Turno: saldo solo no acredita; referencia/autor/hash/efecto y duplicados',
  const l=prepararLineaConteo(unidad,'7','unidad','SESION1234','revisado');assert.equal(acreditarMovimientoConteo(l,'qa',[]),false);
  const m={referencia_tipo:'ajuste_admin',referencia_id:l.idempotency_key,producto_id:l.producto_id,usuario:'qa',payload_hash:'hash-servidor',cantidad:3,stock_anterior:4,stock_resultante:7,observaciones:l.observaciones};
  assert.equal(acreditarMovimientoConteo(l,'qa',[m]),true);
+ const {observaciones,...moderno}=m;assert.equal(acreditarMovimientoConteo(l,'qa',[{...moderno,observacion:observaciones}]),true);
  for(const patch of [{usuario:'otro'},{stock_resultante:8},{payload_hash:''},{cantidad:4}])assert.throws(()=>acreditarMovimientoConteo(l,'qa',[{...m,...patch}]),/REVISION/);
  assert.throws(()=>acreditarMovimientoConteo(l,'qa',[m,m]),/duplicada/);
 });
@@ -52,4 +53,11 @@ test('Turno: POST alta real usa actor de sesión, ID automático e inactivo; ign
 test('Turno: roles inventario/configuración y spoofing compras/gastos/ajustes',()=>{
  assert.equal(capacidadParaRuta('/admin/inventario'),'stock:ajustar');assert.equal(capacidadParaRuta('/admin/configuracion-inicial'),'configuracion:gestionar');
  for(const dto of [dtos.dtoCompraAdmin,dtos.dtoGastoAdmin,dtos.dtoAjusteStockAdmin]){const r=dto({actor:'fake',responsable:'fake',rol:'administracion'});assert.equal('responsable' in r,false);assert.equal('actor' in r,false);}
+});
+
+test('Turno: compra de SKU inactivo falla sin efectos; revisión/activación permite misma compra sin relajar backend',async()=>{
+ const c=await crearEscenarioCompra(),h=c.productos.headers,activo=h.indexOf('activo');c.productos.filas[0][activo]='NO';
+ const antes=c.estado();assert.throws(()=>c.contexto.crearCompra_(c.bodyCompra),/Producto inactivo/);assert.deepEqual(c.estado(),antes);
+ c.contexto.actualizarProductoAdmin_({producto_id:c.bodyCompra.lineas[0].producto_id,cambios:{activo:'SI'},responsable:'qa-admin',idempotency_key:'ACTIVAR-REVISION-12345'});
+ const r=c.contexto.crearCompra_(c.bodyCompra);assert.equal(r.compra.total,12*590+10*610);assert.equal(r.detalle.length,2);assert.equal(c.hojas.COMPRAS.filas.length,1);
 });

@@ -1,8 +1,8 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
-## Sprint Operación TEST usable —28/10/2026, en curso
+## Sprint Operación TEST usable —28/10/2026, cierre técnico TEST
 
-**REANUDADO desde alta_granel.** Trabajo previo preservado. La traza desmiente omisión en DTO: fallo real kg+base250 en payload. Construcción corregida sin modificar D40/GAS;26 focales y typecheck PASS. TESTv26/rollbackv25, backup incremental y baseline20 hojas verificados; unidad QA existente se conserva. E2E/visual/build final y acceso humano pendientes; no declarar turno completo. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [estado de pausa conservado](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
+**COMPLETO técnicamente contra TEST; acceso y primer turno humano pendientes.** Reanudado sin repetir unidad: alta granel corregida en payload (DTO ya incluía base), conteo, compras/reposición, apertura QA, pedido/POS, confirmación/pago/cancelación, gasto, caja/cierre, reportes y cleanup PASS.1286 pruebas,0 skipped; lint/typecheck/build/scan/diferencial V1 PASS. Visual focal desktop/móvil con mocks y red externa bloqueada. TESTv26/rollbackv25, respaldo incremental20 hojas,54 SKU comerciales intactos; dos SKU del turno inactivos/stock0 y apertura cerrada. Cuenta Omar sin activar, F10 sin promoción automática. [Evidencia y Preview](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [guía Omar](operativa/GUIA_OMAR_TURNO_COMPLETO_TEST_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
 
 ## Decisiones Omar posteriores a C7-C —2026-10-12
 

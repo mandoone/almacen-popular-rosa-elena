@@ -44,6 +44,6 @@ export function acreditarMovimientoConteo(l: LineaConteo, actor: string, movimie
   const m = filas[0];
   if ((m.producto_id || m.id_producto) !== l.producto_id || m.usuario !== actor || !m.payload_hash
     || Number(m.stock_anterior) !== l.stock_esperado || Number(m.stock_resultante) !== l.stock_contado
-    || Number(m.cantidad) !== l.delta || !String(m.observaciones ?? '').includes(l.observaciones)) throw new Error('REQUIERE_REVISION: evidencia de ajuste incompatible.');
+    || Number(m.cantidad) !== l.delta || !String(m.observaciones || m.observacion || '').includes(l.observaciones)) throw new Error('REQUIERE_REVISION: evidencia de ajuste incompatible.');
   return true;
 }

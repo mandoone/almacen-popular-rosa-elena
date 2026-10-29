@@ -2,13 +2,14 @@
 
 ## Operación TEST usable —28/10/2026
 
-Recuperación terminada; reanudación autorizada desde alta_granel. Causa real del payload corregida con regresión integral, sin repetir alta_unidad. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
+Turno técnico terminado desde alta_granel, sin repetir alta_unidad. Regresión integral, E2E HTTP/TEST, visual focal y comparación contra backup PASS. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).
 
 - [x] Auditar continuidad/destino; preservar maestro del usuario.
 - [x] Inventario parcial web con referencias recuperables; alta ID servidor; actor y compra natural; input granel compartido.
 - [x] Arqueo/cierre durable, relación explícita de gastos y configuración inicial en código local; contrato aditivo TEST verificado.
-- [ ] QA completo, backup/readback, E2E sintético aislado, cleanup y Preview.
-- [ ] Acceso individual Omar: preparar sin inventar activación/credencial humana.
+- [x] QA completo1286/0, backup/readback, E2E sintético aislado, cleanup y guía/visual focal.
+- [x] Procedimiento privado de acceso individual preparado; no se generó ni activó cuenta humana.
+- [ ] Omar: activación segura, primer login y walkthrough humano de la guía. No confundir con tres actores efímeros de QA.
 
 [Matriz y evidencia](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
 

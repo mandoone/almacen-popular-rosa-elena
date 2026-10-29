@@ -1,5 +1,11 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Operación TEST usable —QA final28/10
+
+1286 PASS,0 FAIL,0 skipped (baseline1280 más cinco integrales de alta granel y una de compra inactiva/activación). Traza real DTO→Next→transporte→GAS en memoria prueba bases100/250/1000 y reproduce el409 kg250; D40/DTO intactos. Compatibilidad observacion moderna/observaciones legacy acreditada sin perder controles de actor/hash/ref/saldo.
+
+E2E HTTP sobre handlers reales/backend TESTv26: alta, conteo, compra/reposición, apertura, web/POS, confirmación/pago/cancelación/replay, gasto, arqueo/cierre2503 diferencia0, historial, permisos/logout y cleanup PASS. Readback nativo20 hojas/54 SKU comerciales intactos; tres operaciones nuevas completas. Lint, typecheck, build aislado, secretos, diff y diferencial V1 PASS. Visual focal1280×900/390×844 con mocks y red remota bloqueada: inventario recuperado, alta granel, compras, caja/historial y entrada directa granel/POS. Revisión humana Omar pendiente. [Alcance, evidencias y límites](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
+
 ## Operación TEST usable —bloque inicial28/10
 
 21 pruebas nuevas de pesos/conteo/bases100/250/1000, evidencia/duplicados, CAS/replay contra GAS en memoria, ID automático y spoofing del handler real;207 focales PASS. Typecheck y build aislado PASS. El guard C4 ahora permite exclusivamente el nuevo lector administrativo, manteniendo todas las declaraciones previas idénticas por AST; no se elimina su protección V1/V2. QA/E2E final pendiente. [Auditoría](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
