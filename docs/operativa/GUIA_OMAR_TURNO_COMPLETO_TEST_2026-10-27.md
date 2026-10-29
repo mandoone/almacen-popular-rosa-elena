@@ -6,6 +6,8 @@ Preparada el28/10/2026. Ensayo con productos nuevos identificados **ENSAYO-TEST*
 
 ## Antes de entrar
 
+El build Preview está READY. La última verificación automatizada llegó a SSO Vercel y el conector devolvió403; no se pudo acreditar la navegación remota posterior. Omar necesita primero su acceso Vercel habitual y, por separado, la activación segura de su cuenta individual de la aplicación. No compartir credenciales ni desactivar protección para superar este punto.
+
 1. Abrir el [Preview TEST de feature/fase-3a-operativa](https://almacen-popular-rosa-ele-git-99da69-omarquezadac-9434s-projects.vercel.app), no el dominio público. Debe mostrar TEST. Si aparece protección Vercel, usar el acceso habitual autorizado del proyecto; no desactivar protección.
 2. Abrir `/admin/login`. Usar el actor individual aprobado de Omar y su credencial entregada privadamente. No escribir contraseñas en esta guía/chat ni compartir capturas de credenciales. Si aún no se generó/entregó, seguir [Activación de cuentas TEST](ACTIVACION_CUENTAS_TEST.md): el custodio genera el hash con prompt sin eco, valida registro y configura solo Preview/rama; Omar realiza su primer login. No usar la cuenta sintética de QA como cuenta personal.
 3. Verificar nombre/rol de sesión y que puede abrir Productos, Inventario, Compras, Gastos y Caja. Un403 es un permiso, no una invitación a probar otro actor. Operación puede comprar/contar/cancelar/caja; Venta puede vender/confirmar/entregar, pero no contar/cancelar/cerrar caja. Administración gestiona catálogo/precios/configuración.

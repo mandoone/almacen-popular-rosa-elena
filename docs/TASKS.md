@@ -9,6 +9,8 @@ Turno técnico terminado desde alta_granel, sin repetir alta_unidad. Regresión 
 - [x] Arqueo/cierre durable, relación explícita de gastos y configuración inicial en código local; contrato aditivo TEST verificado.
 - [x] QA completo1286/0, backup/readback, E2E sintético aislado, cleanup y guía/visual focal.
 - [x] Procedimiento privado de acceso individual preparado; no se generó ni activó cuenta humana.
+- [x] Push exclusivo feature y build Preview READY; Production mantiene despliegue/main anteriores.
+- [ ] Acceso Vercel autorizado: SSO/403 impide acreditar navegación funcional del Preview; no cambiar protección para probarlo.
 - [ ] Omar: activación segura, primer login y walkthrough humano de la guía. No confundir con tres actores efímeros de QA.
 
 [Matriz y evidencia](operativa/OPERACION_TEST_USABLE_2026-10-27.md).
