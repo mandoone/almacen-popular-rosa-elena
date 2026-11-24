@@ -1,5 +1,7 @@
 # F10 — Readiness operativa y puesta en marcha
 
+> Actualización 24/11: [respuesta del equipo del 11/11](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md) aclara tres identidades físicas y criterio comercial, sin acreditar precios actuales, existencias, costos, fotografías, derechos ni saldos. No se requiere otra consulta general a Nadia. Último estado documentado 1 READY /19 PENDING /0 FAIL; no se cambia el manifiesto. TEST v26 y CI del sprint aprobados; falta turno humano y cuentas. Meta 01/12 condicionada a gates y autorización expresa.
+
 Este documento prepara el trabajo; **no autoriza Producción**, no contiene
 secretos y no reemplaza el Go/No-Go humano de `GO_NO_GO_FASE_9_10.md`.
 

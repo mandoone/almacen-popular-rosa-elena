@@ -1,5 +1,11 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+## Continuidad 24/11/2026 — respuesta equipo y entrega
+
+Respuesta del equipo recibida el 11/11 por Nadia, confirmada por Omar: tres identidades Económico completas (PROD-033 Excell 1L, PROD-023 Reyes 900ml, PROD-044 Excell 900ml), PROD-048 Excell sin volumen. Criterio general de marcas coexistentes y agrupación según precio confirmado; convivencia específica y política por grupo aún no acreditadas. [Acta vigente](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md) · [entrada JSON](operativa/C7_RESPUESTAS_NADIA_2026-11-11.json). Ingesta preparada, dry-run ampliado pendiente de ejecutar; no migración. Las consultas Nadia anteriores de este documento son historia. Fotos Carolina, conteo, costos/saldos y F10 siguen pendientes.
+
+Objetivo entrega 01/12 condicionado a gates. Omar confirmó que la página pública Preview carga en Chrome; /admin/login muestra credenciales inválidas con admin y con usuario vacío. Según informe Codex, acceso individual TEST pendiente y registro actual secreto sin respaldo vigente localizado; preservar registro antes de alta omar-test. Continuar con primer turno personal, correcciones críticas y preparación del corte. HEAD técnico e020908, CI verde, Preview READY, TEST v26; no repetir E2E ni promover Production.
+
 ## Sprint Operación TEST usable —28/10/2026, cierre técnico TEST
 
 Continuación29/10: CI recupera historial para las auditorías y pasa1286/lint/build; parche de seguridad Next15.5.28 sin salto mayor ni relajación de audit. Cero críticas, ocho alertas no críticas pendientes de mantenimiento. No se repiten escrituras del E2E ya cerrado.

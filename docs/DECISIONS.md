@@ -1,5 +1,9 @@
 # DECISIONS.md — Decisiones cerradas
 
+## Acreditación comercial posterior — respuesta equipo del 11/11/2026 (registrada 24/11)
+
+Evidencia humana complementaria de D58/D59/D64: el equipo, por Nadia, informa las tres identidades completas y una parcial descritas en [el acta](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md). La variación de marca y la coexistencia potencial de remanentes son parte del abastecimiento; se agrupa cuando el precio es cercano, se diferencia cuando cambia mucho. No se fija umbral, oferta concreta por variante ni cantidad existente. Se preserva la decisión de SKU distintos por marca/formato y la imagen neutral para VARIABLE. El contenido 900ml del aceite es dato acreditado, no el ejemplo previo de 1L. Registro e ingesta para copias exclusivamente; no se crea un nuevo ADR de migración ni se alteran aprobaciones D63/D64.
+
 ## D65 — Operación desde web y ensayo TEST aislado (2026-10-28)
 
 Omar autoriza sprint de operación administrativa usable, preservando servicios existentes y Production prohibida. Inventario parcial no convierte omitidos en cero, usa unidad/base histórica, revisión por línea, CAS e idempotencia; operación incierta se acredita por referencia/autor/efecto, nunca saldo solo. Alta genera ID técnico estable por actor/key y nace inactiva con stock0. Actor exclusivamente de sesión; proveedor por compra. UX granel admite gramos enteros libres g/kg y ±100g con subtotal D40. Cierre financiero se separa de calendario y de caja de abastecimiento; requiere registro durable/inmutable. Fixtures y cifras sintéticas no promueven F10. [Alcance/estado](operativa/OPERACION_TEST_USABLE_2026-10-27.md).

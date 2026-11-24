@@ -1,5 +1,7 @@
 # C7-A — Preguntas mínimas que cambian el mapa
 
+> Actualización 24/11: [respuesta del equipo del 11/11](RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md). Los dos bloques originales ya fueron respondidos en términos generales: tres identidades completas, limpiador Excell sin volumen y criterio de variantes. Solo falta completar etiqueta/pack, convivencia y agrupación/precio concreto en el conteo/revisión; no repetir el cuestionario. El aceite es 900 ml. Este documento conserva las preguntas históricas.
+
 Solo revisión, sin formulario ni mensaje enviado al Almacén. [Matriz por SKU, evidencia y mapa ejecutable local](FAMILIAS_PRODUCTO_FASE_C7A_REVISION_MAPA_2026-10-08.md).
 
 ## PREGUNTAR_A_NADIA — dos bloques

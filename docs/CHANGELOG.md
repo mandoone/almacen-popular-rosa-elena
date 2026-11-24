@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-11-24 — Acreditación documental respuesta del equipo C7
+
+Respuesta del 11/11 incorporada: Excell 1L, Reyes 900ml y Excell suelo 900ml; limpiador Excell sin contenido, criterio de agrupación según precio y coexistencia potencial. JSON de ingesta preparado; dry-run ampliado no ejecutado. Actualización de pendientes y continuidad de entrega; sin cambios de runtime, Sheet, GAS, familias públicas o Production. [Acta](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md).
+
 ## 2026-10-29 — Gates de CI del sprint TEST
 
 Checkout completo para auditorías históricas;1286 pruebas/lint/build CI pasan sin omitir tests. Parche de seguridad Next/eslint-config-next15.5.28 y sharp0.35.5, sin salto mayor ni cambio de umbral audit crítico. Revalidación local y evidencia en el acta; acceso SSO Preview y cuenta Omar siguen pendientes. Production/GAS/Sheet no se modifican por este checkpoint.

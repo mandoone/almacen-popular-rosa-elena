@@ -1,5 +1,7 @@
 # Propuesta comercial familia → SKU para revisión de Omar
 
+> Actualización 24/11: [respuesta del equipo del 11/11](RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md) acredita Excell 1000ml (PROD-033), Reyes 900ml (PROD-023), Excell 900ml (PROD-044); PROD-048 Excell con contenido pendiente. Criterio de variantes confirmado sin política concreta por grupo. El cuadro siguiente conserva su estado histórico; las tres nuevas identidades están preparadas para proyección en copias, todavía no ejecutada. No inferir stock, precios actuales, ni SKU Clorinda.
+
 **Cierre humano posterior a C7-C:** las diez propuestas de un SKU inicial y las diez políticas explícitas del grupo C ya tienen aprobación Omar, sin completar identidad física ni autorizar migración. [Alcance y evidencia D63/D64](../DECISIONS.md) y [manifest vigente](MAPA_COMERCIAL_C7B_PREP_2026-10-12.json). Se conserva la matriz original como historia de revisión; sus estados provisionales no reabren esas decisiones.
 
 Fecha: 2026-10-08. **PROPUESTA, no migración ni autorización de escritura.** No crea IDs/filas remotamente ni modifica PRODUCTOS/FAMILIAS_PRODUCTO. Los IDs definitivos propuestos y el primer mapa local se añadieron en C7-A. [Auditoría y fronteras C6](FAMILIAS_PRODUCTO_FASE_C6_SHADOW_2026-10-08.md).

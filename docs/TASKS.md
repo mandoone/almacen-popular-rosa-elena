@@ -1,5 +1,15 @@
 # TASKS.md — Tareas vivas y backlog
 
+## Continuidad prioritaria — 24/11/2026
+
+- [x] Registrar respuesta oficial del equipo comunicada por Nadia (11/11); tres identidades completas, limpiador parcial y criterio de variantes. [Evidencia](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md).
+- [x] Preparar JSON de ingesta local sin alterar template ni manifest histórico.
+- [ ] Ejecutar validación, proyección y dry-run ampliado en copias; comprobar seis asociaciones si CUMPLE; plan/inverso y revisión de conflictos. Sin migración remota.
+- [ ] Verificar registro activo Preview y activar omar-test con procedimiento privado preservando cuentas; no reemplazar a ciegas. Acceso público Preview desde Chrome acreditado por Omar, login admin pendiente.
+- [ ] Primer turno humano, correcciones críticas, revisión de tienda y contenido.
+- [ ] Levantar contenido de limpiador Excell, variantes/packs y precios/mapa concreto junto con conteo; no reenviar cuestionario Nadia. Fotos finales/derechos, seis costos, saldos, mínimos, cuentas, capacitación y corte permanecen pendientes.
+- [ ] Meta 01/12/2026 condicionada al Go/No-Go y autorización explícita de Production. Los pendientes Nadia/SSO de secciones históricas se interpretan según este estado vigente.
+
 ## Operación TEST usable —28/10/2026
 
 Turno técnico terminado desde alta_granel, sin repetir alta_unidad. Regresión integral, E2E HTTP/TEST, visual focal y comparación contra backup PASS. [Evidencia actual](operativa/OPERACION_TEST_USABLE_2026-10-27.md), [pausa histórica](operativa/PAUSA_TECNICA_OPERACION_TEST_2026-10-28.md).

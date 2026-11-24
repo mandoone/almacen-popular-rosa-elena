@@ -1,5 +1,7 @@
 # Estado previo al lanzamiento — revisión de solo lectura
 
+> Actualización 24/11: [respuesta del equipo](RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md) supersede ESPERANDO_NADIA: tres identidades completas, una parcial y criterio general comercial; el conteo y revisión de variantes siguen pendientes. Fotos/derechos no acreditados. TEST técnico v26 con CI verde, acceso público Preview confirmado por Omar; falta activación admin y turno personal. Objetivo entrega 01/12 sujeto a los gates. F10 sigue NO-GO; no se modifica el manifiesto ni se autoriza Production. Las versiones/estados de la revisión del 12/10 son históricos.
+
 Fecha:2026-10-12. Base de sesión C7-A897c7b7, continuación exclusiva feature/fase-3a-operativa. Production prohibida; no autorización ni Go. Lectura del preflight F10 local: **1 READY /19 PENDING /0 FAIL /0 N/A**, mismo resultado histórico; estado global PENDING/NO-GO. Hash del manifest humano antes/después idéntico. No se modifican READY/PENDING ni se sustituyen evidencias humanas por tests.
 
 ## RESUELTO_TECNICO
