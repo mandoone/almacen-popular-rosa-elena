@@ -4,7 +4,6 @@ import {
   crearSessionKeyring,
   readSessionTokenConRotacion,
   COOKIE_NAME,
-  permiteLoginLegacy,
   SESSION_ACTOR_HEADER,
   SESSION_NAME_HEADER,
   SESSION_ROLE_HEADER,
@@ -12,7 +11,8 @@ import {
 import { esModoDemoAdmin } from '@/lib/fase3a/adminDemo';
 import { capacidadParaRuta } from '@/lib/fase9/autorizacion';
 import { rolTieneCapacidad } from '@/lib/fase9/roles';
-import { leerUsuariosAdmin, sesionCorrespondeAUsuario } from '@/lib/fase9/identidades';
+import { sesionCorrespondeAUsuario } from '@/lib/fase9/identidades';
+import { leerAccesoAdmin } from '@/lib/fase9/accesoAdmin';
 import { solicitudAdminMismoOrigen } from '@/lib/fase9/seguridadHttp';
 
 export async function middleware(request: NextRequest) {
@@ -39,16 +39,8 @@ export async function middleware(request: NextRequest) {
         ? await readSessionTokenConRotacion(token, keyring.keyring)
         : null;
       if (session) {
-        const usuarios = leerUsuariosAdmin(process.env.ADMIN_USERS_JSON);
-        const recuperacionLegacy = process.env.ADMIN_LEGACY_RECOVERY_ENABLED === 'true';
-        const legacyVigente = usuarios.estado !== 'invalida' &&
-          session.actor_id === 'legacy-admin' &&
-          permiteLoginLegacy(
-            process.env.NODE_ENV,
-            process.env.NEXT_PUBLIC_APP_ENV,
-            usuarios.estado === 'valida',
-            recuperacionLegacy
-          );
+        const { usuarios, legacyPermitido } = leerAccesoAdmin();
+        const legacyVigente = legacyPermitido && session.actor_id === 'legacy-admin';
         if (legacyVigente || sesionCorrespondeAUsuario(usuarios, session)) {
           return NextResponse.redirect(new URL('/admin', request.url));
         }
@@ -74,16 +66,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 
-  const usuarios = leerUsuariosAdmin(process.env.ADMIN_USERS_JSON);
-  const recuperacionLegacy = process.env.ADMIN_LEGACY_RECOVERY_ENABLED === 'true';
-  const esSesionLegacy = usuarios.estado !== 'invalida' &&
-    session.actor_id === 'legacy-admin' &&
-    permiteLoginLegacy(
-      process.env.NODE_ENV,
-      process.env.NEXT_PUBLIC_APP_ENV,
-      usuarios.estado === 'valida',
-      recuperacionLegacy
-    );
+  const { usuarios, legacyPermitido } = leerAccesoAdmin();
+  const esSesionLegacy = legacyPermitido && session.actor_id === 'legacy-admin';
   const identidadVigente = esSesionLegacy || sesionCorrespondeAUsuario(usuarios, session);
   if (!identidadVigente) {
     if (pathname.startsWith('/api/admin/')) {

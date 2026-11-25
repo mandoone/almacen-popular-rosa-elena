@@ -1,5 +1,15 @@
 # Activación de cuentas humanas — procedimiento listo
 
+## Cuenta personal de Omar en Preview TEST
+
+Omar autorizó un registro complementario para `omar-test` el 24/11/2026. `ADMIN_USERS_JSON` es el registro original y debe preservarse. Configurar `ADMIN_USERS_PREVIEW_ADDITIONAL_JSON` como secreto exclusivo de Preview y de `feature/fase-3a-operativa`. El complemento contiene una sola cuenta, con actor `omar-test` y rol `administracion`. Se habilita cuando la app declara TEST y Vercel identifica tanto el destino Preview como la rama exacta. El login y el middleware consultan el mismo registro.
+
+Se requiere un registro original válido. Si el complemento es inválido, excede la capacidad o repite un actor del original, se descarta y se preserva el acceso existente. Un duplicado se opera desde el registro original, con su rol, clave y versión actuales. El acceso legacy se bloquea en ese Preview aun cuando exista una configuración antigua de recuperación. Para revocar la cuenta complementaria, desactivarla e incrementar `session_version`, o retirar su secreto y publicar un nuevo Preview. El control de URLs históricas se aplica conforme al procedimiento de revocación.
+
+El complemento guarda la versión normal de la cuenta. Para las sesiones de esa cuenta, el servidor usa un rango numérico separado. Así un cambio de registro invalida la sesión anterior aunque coincidan actor, rol y versión guardada.
+
+Usar solo el archivo privado que contiene a Omar. El candidato anterior con las tres cuentas sintéticas queda descartado para publicación. Tras publicar, el estado personal se acredita únicamente con el primer login, la revisión en modo lectura y el logout. El gate F10 de las diez cuentas humanas sigue su propio procedimiento.
+
 Estado: PREPARADO, no ejecutado. Matriz aprobada: dos Administración, dos Operación y seis Venta. Actor_id/roles ya definidos: no volver a pedirlos. Los diez nombres y comandos específicos están en operativa.local/PROCEDIMIENTO_CUENTAS.md; checklist nominal ignorada en ACTIVACION_10_CUENTAS.csv. No existen contraseñas/hashes humanos creados por esta sesión.
 
 ## Preparación y orden

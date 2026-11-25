@@ -4,10 +4,10 @@ import {
   makeSessionToken,
   COOKIE_NAME,
   cookieOptions,
-  permiteLoginLegacy,
   SESSION_MAX_AGE_S,
 } from '@/lib/session';
-import { autenticarUsuarioAdmin, leerUsuariosAdmin } from '@/lib/fase9/identidades';
+import { autenticarUsuarioAdmin } from '@/lib/fase9/identidades';
+import { leerAccesoAdmin } from '@/lib/fase9/accesoAdmin';
 import { clavesLimiteLogin, limitadorLogin } from '@/lib/fase9/proteccionLogin';
 
 async function timingSafeEqual(a: string, b: string): Promise<boolean> {
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     return jsonSinCache({ ok: false, error: 'Solicitud inválida.' }, { status: 413 });
   }
   const adminPassword = process.env.ADMIN_PANEL_PASSWORD;
-  const usuarios = leerUsuariosAdmin(process.env.ADMIN_USERS_JSON);
+  const { usuarios, legacyPermitido } = leerAccesoAdmin();
   const keyring = crearSessionKeyring({
     currentSecret: process.env.ADMIN_SESSION_SECRET,
     currentVersion: process.env.ADMIN_SESSION_SECRET_VERSION,
@@ -97,13 +97,6 @@ export async function POST(req: Request) {
       autenticado = true;
     }
   } else {
-    const recuperacionLegacy = process.env.ADMIN_LEGACY_RECOVERY_ENABLED === 'true';
-    const legacyPermitido = permiteLoginLegacy(
-      process.env.NODE_ENV,
-      process.env.NEXT_PUBLIC_APP_ENV,
-      usuarios.estado === 'valida',
-      recuperacionLegacy
-    );
     if (legacyPermitido && adminPassword && await timingSafeEqual(password, adminPassword)) {
       identity = undefined;
       autenticado = true;

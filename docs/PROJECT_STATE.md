@@ -1,5 +1,7 @@
 # PROJECT_STATE.md — Estado vivo del proyecto
 
+La cuenta personal `omar-test` tiene credencial preparada en privado y un mecanismo complementario para Preview TEST. Su activación requiere publicación y primer login comprobado. [Procedimiento de activación](operativa/ACTIVACION_CUENTAS_TEST.md).
+
 ## Continuidad 24/11/2026 — respuesta equipo y entrega
 
 Respuesta del equipo recibida el 11/11 por Nadia, confirmada por Omar: tres identidades Económico completas (PROD-033 Excell 1L, PROD-023 Reyes 900ml, PROD-044 Excell 900ml), PROD-048 Excell sin volumen. Criterio general de marcas coexistentes y agrupación según precio confirmado; convivencia específica y política por grupo aún no acreditadas. [Acta vigente](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md) · [entrada JSON](operativa/C7_RESPUESTAS_NADIA_2026-11-11.json). Ingesta preparada, dry-run ampliado pendiente de ejecutar; no migración. Las consultas Nadia anteriores de este documento son historia. Fotos Carolina, conteo, costos/saldos y F10 siguen pendientes.

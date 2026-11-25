@@ -1,5 +1,7 @@
 # TASKS.md — Tareas vivas y backlog
 
+- [ ] Acreditar el primer acceso personal de Omar en Preview TEST y el logout. [Procedimiento de activación](operativa/ACTIVACION_CUENTAS_TEST.md).
+
 ## Continuidad prioritaria — 24/11/2026
 
 - [x] Registrar respuesta oficial del equipo comunicada por Nadia (11/11); tres identidades completas, limpiador parcial y criterio de variantes. [Evidencia](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md).

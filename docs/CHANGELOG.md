@@ -1,5 +1,9 @@
 # CHANGELOG.md — Hitos del proyecto
 
+## 2026-11-24 — Carga complementaria de cuenta personal TEST
+
+Registro separado para Omar con prioridad del original y acceso legacy bloqueado en el Preview operativo. [Procedimiento y alcance](operativa/ACTIVACION_CUENTAS_TEST.md).
+
 ## 2026-11-24 — Acreditación documental respuesta del equipo C7
 
 Respuesta del 11/11 incorporada: Excell 1L, Reyes 900ml y Excell suelo 900ml; limpiador Excell sin contenido, criterio de agrupación según precio y coexistencia potencial. JSON de ingesta preparado; dry-run ampliado no ejecutado. Actualización de pendientes y continuidad de entrega; sin cambios de runtime, Sheet, GAS, familias públicas o Production. [Acta](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md).

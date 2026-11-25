@@ -3,6 +3,7 @@ import { esRolOperativo, type RolOperativo } from './roles.ts';
 export const PBKDF2_ALGORITHM = 'pbkdf2-sha256';
 export const PBKDF2_ITERATIONS = 310_000;
 export const MAX_USUARIOS_ADMIN = 50;
+export const MAX_VERSION_SESION_ADMIN = 1_000_000;
 
 export interface UsuarioAdmin {
   actor_id: string;
@@ -107,7 +108,7 @@ export function leerUsuariosAdmin(valor: string | undefined): ConfiguracionUsuar
         typeof active !== 'boolean' ||
         !Number.isSafeInteger(session_version) ||
         Number(session_version) < 1 ||
-        Number(session_version) > 1_000_000 ||
+        Number(session_version) > MAX_VERSION_SESION_ADMIN ||
         typeof password_hash !== 'string' ||
         !parsePasswordHash(password_hash) ||
         actores.has(String(actor_id))) {

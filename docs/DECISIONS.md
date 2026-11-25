@@ -1,5 +1,9 @@
 # DECISIONS.md — Decisiones cerradas
 
+## Cuenta personal en Preview TEST — 24/11/2026
+
+Omar autoriza agregar su cuenta mediante un complemento exclusivo del Preview de la rama operativa. El registro original conserva prioridad, incluso si una cuenta está revocada. [Procedimiento de activación](operativa/ACTIVACION_CUENTAS_TEST.md).
+
 ## Acreditación comercial posterior — respuesta equipo del 11/11/2026 (registrada 24/11)
 
 Evidencia humana complementaria de D58/D59/D64: el equipo, por Nadia, informa las tres identidades completas y una parcial descritas en [el acta](operativa/RESPUESTAS_EQUIPO_CATALOGO_C7_2026-11-11.md). La variación de marca y la coexistencia potencial de remanentes son parte del abastecimiento; se agrupa cuando el precio es cercano, se diferencia cuando cambia mucho. No se fija umbral, oferta concreta por variante ni cantidad existente. Se preserva la decisión de SKU distintos por marca/formato y la imagen neutral para VARIABLE. El contenido 900ml del aceite es dato acreditado, no el ejemplo previo de 1L. Registro e ingesta para copias exclusivamente; no se crea un nuevo ADR de migración ni se alteran aprobaciones D63/D64.

@@ -1,5 +1,9 @@
 # TEST_PLAN.md — Plan de pruebas manuales
 
+## Acceso complementario de Omar en Preview
+
+`tests/registro-complementario-preview.test.mjs` verifica el aislamiento por entorno y rama, prioridad y revocación del registro original, validación del complemento, bloqueo legacy y recorrido por login, middleware y `/me`. El primer login humano se acredita por separado, con lectura de los paneles y logout. [Procedimiento de activación](operativa/ACTIVACION_CUENTAS_TEST.md).
+
 ## Operación TEST usable —QA final28/10
 
 Revalidación29/10:1286 PASS/0 skipped también en CI con historial completo; build/lint CI exitosos. Nuevo parche Next15.5.28 conserva1286 PASS/0 skipped, lint/typecheck local y elimina la alerta crítica (ocho alertas no críticas pendientes). No confundir auditoría crítica exit0 con cero vulnerabilidades de cualquier severidad. El acta registra build/readback posteriores y gate SSO de Preview.
